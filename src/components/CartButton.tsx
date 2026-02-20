@@ -11,12 +11,18 @@ type CartButtonProps = {
   className?: string;
   /** aria-label override (opzionale) */
   ariaLabel?: string;
+  /** Se true, mostra solo su mobile (md:hidden) */
+  mobileOnly?: boolean;
+  /** Colore del badge: "default" (zinc) o "green" */
+  badgeColor?: "default" | "green";
 };
 
 export default function CartButton({
   icon,
   className = "",
   ariaLabel = "Apri carrello",
+  mobileOnly = false,
+  badgeColor = "default",
 }: CartButtonProps) {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
@@ -53,38 +59,46 @@ export default function CartButton({
     return !(hasH || hasW || hasSize);
   }, [className]);
 
+  // Badge colors
+  const badgeClasses = badgeColor === "green" 
+    ? "bg-emerald-500 text-white dark:bg-emerald-500 dark:text-white"
+    : "bg-zinc-900 text-white dark:bg-white dark:text-black";
+
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        data-testid="nav-cart-button"
-        className={[
-          "relative inline-flex items-center justify-center rounded-full",
-          "border border-black/10 bg-white hover:bg-zinc-50",
-          "dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-zinc-900",
-          shouldApplyDefaultSize ? "h-10 w-10" : "",
-          className,
-        ].join(" ")}
-        aria-label={ariaLabel}
-      >
-        {/* ✅ icona nuova se passata, altrimenti emoji originale */}
-        {icon ? icon : <span className="text-lg">🛒</span>}
-
-        {/* ✅ badge sempre in DOM (robusto per Playwright), visibile solo se count>0 */}
-        <span
-          data-testid="nav-cart-count"
+    <div className={mobileOnly ? "md:hidden" : ""}>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          data-testid="nav-cart-button"
           className={[
-            "absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1 text-[11px]",
-            "bg-zinc-900 text-white dark:bg-white dark:text-black",
-            mounted && count > 0 ? "opacity-100" : "opacity-0 pointer-events-none",
+            "relative inline-flex items-center justify-center rounded-full",
+            "border border-black/10 bg-white hover:bg-zinc-50",
+            "dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-zinc-900",
+            shouldApplyDefaultSize ? "h-10 w-10" : "",
+            className,
           ].join(" ")}
+          aria-label={ariaLabel}
         >
-          {mounted ? count : 0}
-        </span>
-      </button>
+          {/* ✅ icona nuova se passata, altrimenti emoji originale */}
+          {icon ? icon : <span className="text-lg">🛒</span>}
 
-      <CartDrawer open={open} onClose={() => setOpen(false)} />
+          {/* ✅ badge VERDE se richiesto, sempre in DOM per Playwright */}
+          <span
+            data-testid="nav-cart-count"
+            className={[
+              "absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1 text-[11px] font-medium",
+              badgeClasses,
+              mounted && count > 0 ? "opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none",
+              "transition-all duration-200",
+            ].join(" ")}
+          >
+            {mounted ? (count > 99 ? "99+" : count) : 0}
+          </span>
+        </button>
+
+        <CartDrawer open={open} onClose={() => setOpen(false)} />
+      </div>
     </div>
   );
 }

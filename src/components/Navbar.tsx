@@ -5,6 +5,25 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import CartButton from "@/components/CartButton";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { 
+  Menu, 
+  User, 
+  ShoppingBag, 
+  Store, 
+  ChevronDown,
+  X,
+  ArrowRight,
+  Instagram,
+  Facebook
+} from "lucide-react";
+
+// TikTok non esiste in Lucide, teniamo SVG custom o usiamo alternativa
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M14 3v10.5a4.5 4.5 0 1 1-4.5-4.5" />
+    <path d="M14 3c1.2 2.4 3.2 4 6 4v4c-2.8 0-4.8-1.1-6-2.6" />
+  </svg>
+);
 
 export default function Navbar() {
   const [langOpen, setLangOpen] = useState(false);
@@ -74,7 +93,7 @@ export default function Navbar() {
                 aria-haspopup="menu"
                 aria-expanded={langOpen}
               >
-                IT <ChevronDown className="h-4 w-4" />
+                IT <ChevronDown className="h-4 w-4" strokeWidth={1.5} />
               </button>
 
               <div
@@ -151,7 +170,7 @@ export default function Navbar() {
               aria-label="Chiudi"
               title="Chiudi"
             >
-              <XIcon className="h-7 w-7" />
+              <X className="h-7 w-7" strokeWidth={1.5} />
             </button>
           </div>
 
@@ -195,10 +214,10 @@ export default function Navbar() {
             <div className="border-t border-black/10 px-5 py-4 dark:border-white/10">
               <div className="flex items-center justify-end gap-3">
                 <SocialIcon href="https://instagram.com/" label="Instagram" onClick={() => setMobileOpen(false)}>
-                  <InstagramIcon className="h-5 w-5" />
+                  <Instagram className="h-5 w-5" strokeWidth={1.5} />
                 </SocialIcon>
                 <SocialIcon href="https://facebook.com/" label="Facebook" onClick={() => setMobileOpen(false)}>
-                  <FacebookIcon className="h-5 w-5" />
+                  <Facebook className="h-5 w-5" strokeWidth={1.5} />
                 </SocialIcon>
                 <SocialIcon href="https://tiktok.com/" label="TikTok" onClick={() => setMobileOpen(false)}>
                   <TikTokIcon className="h-5 w-5" />
@@ -223,7 +242,7 @@ export default function Navbar() {
                   aria-label="Apri menu"
                   title="Menu"
                 >
-                  <BurgerIcon className="h-7 w-7" />
+                  <Menu className="h-7 w-7" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -242,12 +261,12 @@ export default function Navbar() {
                   aria-label="Account"
                   title="Account"
                 >
-                  <UserIcon className="h-6 w-6" />
+                  <User className="h-6 w-6" strokeWidth={1.5} />
                 </Link>
               </div>
             </div>
 
-            {/* DESKTOP (invariato) */}
+            {/* DESKTOP (Lucide icons) */}
             <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
               <div className="relative z-10 hidden items-center gap-10 md:flex">
                 <NavLink href="/storia" className={navText}>
@@ -287,14 +306,20 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <CartButton />
+                  {/* Desktop: Cart con icona Lucide e badge verde */}
+                  <CartButton 
+                    icon={<ShoppingBag className="w-5 h-5 text-gray-700 dark:text-gray-200" strokeWidth={1.5} />}
+                    className="h-10 w-10"
+                    badgeColor="green"
+                  />
+                  
                   <Link
                     href="/login"
                     className="inline-flex items-center rounded-full p-2 text-gray-700 hover:bg-black/5 dark:text-gray-200 dark:hover:bg-white/10"
                     aria-label="Account"
                     title="Account"
                   >
-                    <UserIcon className="h-5 w-5" />
+                    <User className="h-5 w-5" strokeWidth={1.5} />
                   </Link>
                 </div>
               </div>
@@ -303,7 +328,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE BOTTOM BAR */}
+      {/* MOBILE BOTTOM BAR - Lucide icons */}
       <div
         className={[
           "md:hidden fixed left-0 right-0 bottom-0 z-[55]",
@@ -317,18 +342,22 @@ export default function Navbar() {
       >
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex h-[76px] items-center justify-between">
+            {/* SHOP - Store icon */}
             <Link
               href="/shop"
-              className="inline-flex items-center justify-center rounded-full p-3 text-gray-800 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
+              className="relative inline-flex items-center justify-center rounded-full p-3 text-gray-800 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
               aria-label="Shop"
               title="Shop"
             >
-              <ShopIcon className="h-7 w-7" />
+              <Store className="h-7 w-7" strokeWidth={1.5} />
             </Link>
 
-            <CartButton
-              className="rounded-full p-3 text-gray-800 hover:bg-black/5 dark:text-gray-100 dark:hover:bg-white/10"
-              icon={<CartIcon className="h-7 w-7" />}
+            {/* CART - ShoppingBag icon con badge VERDE */}
+            <CartButton 
+              icon={<ShoppingBag className="w-6 h-6 text-gray-700 dark:text-gray-200" strokeWidth={1.5} />}
+              className="h-12 w-12"
+              badgeColor="green"
+              mobileOnly={false}
             />
           </div>
         </div>
@@ -337,7 +366,7 @@ export default function Navbar() {
   );
 }
 
-/* ---------- Shared ---------- */
+/* ---------- Shared Components ---------- */
 
 function NavLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   return (
@@ -371,7 +400,7 @@ function MobileLink({
     >
       <span>{children}</span>
       <span className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
-        <ArrowRight className="h-4 w-4" />
+        <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
       </span>
     </Link>
   );
@@ -413,98 +442,5 @@ function LangItem({ label, onClick }: { label: string; onClick: () => void }) {
     >
       {label}
     </button>
-  );
-}
-
-/* ---------- Icons ---------- */
-
-function ChevronDown({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
-
-function BurgerIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  );
-}
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M18 6 6 18" />
-      <path d="M6 6l12 12" />
-    </svg>
-  );
-}
-
-function ArrowRight({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M5 12h14" />
-      <path d="M13 5l7 7-7 7" />
-    </svg>
-  );
-}
-
-function UserIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 21a8 8 0 0 0-16 0" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function ShopIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 9l1-5h16l1 5" />
-      <path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" />
-      <path d="M9 21V14h6v7" />
-      <path d="M3 9h18" />
-    </svg>
-  );
-}
-
-function CartIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="9" cy="20" r="1.5" />
-      <circle cx="17" cy="20" r="1.5" />
-      <path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L22 8H6" />
-    </svg>
-  );
-}
-
-function InstagramIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
-      <path d="M16 11.37a4 4 0 1 1-7.88 1.26 4 4 0 0 1 7.88-1.26Z" />
-      <path d="M17.5 6.5h.01" />
-    </svg>
-  );
-}
-
-function FacebookIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3V2z" />
-    </svg>
-  );
-}
-
-function TikTokIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M14 3v10.5a4.5 4.5 0 1 1-4.5-4.5" />
-      <path d="M14 3c1.2 2.4 3.2 4 6 4v4c-2.8 0-4.8-1.1-6-2.6" />
-    </svg>
   );
 }

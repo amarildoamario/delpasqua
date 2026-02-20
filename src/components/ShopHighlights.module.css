@@ -1,30 +1,25 @@
-/* ===== FULL BLEED + viewport corretta ===== */
+/* ===== FULL BLEED (vero) ===== */
 .mobileFullBleed {
   width: 100vw;
-  width: 100dvw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-
-  /* base */
-  --vp: 100vw;
-  --mobile-gap: 16px;
-
-  /* card width */
-  --mobile-card: clamp(280px, 86vw, 420px);
-
-  /* spazio per centrare prima/ultima */
-  --mobile-side: calc((var(--vp) - var(--mobile-card)) / 2);
-
   overflow: visible;
+
+  --card-w: 340px;
+  --gap: 16px;
+  --side: calc((100vw - var(--card-w)) / 2);
+
+  /* ✅ tweak rapidi */
+  --card-h: 520px;
+  --img-h: 320px; /* <-- aumenta/diminuisci qui (es. 330) */
 }
 
 @supports (width: 100dvw) {
   .mobileFullBleed {
-    --vp: 100dvw;
-    --mobile-card: clamp(280px, 86dvw, 420px);
+    width: 100dvw;
     margin-left: calc(50% - 50dvw);
     margin-right: calc(50% - 50dvw);
-    --mobile-side: calc((var(--vp) - var(--mobile-card)) / 2);
+    --side: calc((100dvw - var(--card-w)) / 2);
   }
 }
 
@@ -34,46 +29,46 @@
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
 
-  /* scroll perfetto in entrambi i versi */
-  touch-action: auto;
+  padding: 20px 0;
 
-  /* spazio verticale per evitare tagli ombra */
-  padding-top: 28px;
-  padding-bottom: 34px;
-
-  padding-left: 0;
-  padding-right: 0;
+  scroll-padding-left: calc(var(--side) + env(safe-area-inset-left));
+  scroll-padding-right: calc(var(--side) + env(safe-area-inset-right));
 
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .mobileScroller::-webkit-scrollbar {
   display: none;
 }
 
-/* ===== TRACK con SPACER per centratura perfetta ===== */
+/* ===== TRACK con SPACERS ===== */
 .mobileTrack {
   display: flex;
-  gap: var(--mobile-gap);
+  gap: var(--gap);
   overflow: visible;
+  justify-content: flex-start;
+  padding: 0;
 }
 
 .mobileTrack::before {
   content: "";
-  flex: 0 0 calc(var(--mobile-side) + env(safe-area-inset-left));
+  flex: 0 0 calc(var(--side) + env(safe-area-inset-left));
 }
 
 .mobileTrack::after {
   content: "";
-  flex: 0 0 calc(var(--mobile-side) + env(safe-area-inset-right));
+  flex: 0 0 calc(var(--side) + env(safe-area-inset-right));
 }
 
-/* snap center */
+/* ===== ITEM ===== */
 .mobileItem {
   flex: 0 0 auto;
-  width: var(--mobile-card);
+  width: var(--card-w);
   scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
 
 .mobileCardWrap {
@@ -87,149 +82,223 @@
   user-select: none;
 }
 
-/* ===== OMBRA NON CLIPPATA ===== */
-.mobileCardOuter {
-  width: 100%;
-  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.14)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.10));
-}
-
-:global(.dark) .mobileCardOuter {
-  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.18)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.12));
-}
-
-/* ===== CARD: layout stabile ===== */
+/* ===== CARD ===== */
 .mobileCard {
-  width: 100%;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: var(--card-h);
 
-  /* abbastanza alta, ma può crescere se serve */
-  min-height: 460px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.mobileCard:active {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  transform: scale(0.98);
 }
 
 :global(.dark) .mobileCard {
-  background: #000000;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #18181b;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
-/* media flessibile */
-.mobileMedia {
+:global(.dark) .mobileCard:active {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== IMMAGINE (più alta) ===== */
+.mobileImageSection {
   position: relative;
   width: 100%;
-  flex: 1 1 auto;
-  min-height: 300px;
+  height: var(--img-h);
+  flex-shrink: 0;
   background: #f4f4f5;
-}
-:global(.dark) .mobileMedia {
-  background: #0a0a0a;
-}
-
-.mobilePromoBadge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 2;
-
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-:global(.dark) .mobilePromoBadge {
-  background: rgba(255, 255, 255, 0.10);
-}
-
-/* ===== ✅ FIX: AREA TESTO A ALTEZZA FISSA (tutte uguali) ===== */
-.mobileInfo {
-  flex: 0 0 auto;
-  padding: 16px 16px 14px 16px;
-
-  /* questo rende la divisione immagine/testo IDENTICA su tutte */
-  min-height: 152px;
-}
-
-/* titolo può occupare fino a 2 righe, ma lo spazio viene RISERVATO sempre */
-.mobileTitle {
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  font-size: 16px;
-  line-height: 1.2;
-  letter-spacing: 0.06em;
-  color: #111827;
-
-  /* riserva sempre 2 righe anche se il titolo è 1 riga */
-  min-height: calc(1.2em * 2);
-
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
 }
-:global(.dark) .mobileTitle {
+
+:global(.dark) .mobileImageSection {
+  background: #27272a;
+}
+
+/* ===== BADGE ===== */
+.mobileBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.95);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: #ffffff;
+  text-transform: uppercase;
+}
+
+/* ===== LABEL TOP RIGHT ===== */
+.mobileLabelTopRight {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+:global(.dark) .mobileLabelTopRight {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* ===== CONTENT (condensato) ===== */
+.mobileContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px; /* prima 20px */
+  gap: 0;
+}
+
+/* Riga 1: Categoria (più bassa) */
+.mobileRowSubtitle {
+  height: 22px; /* prima 28px */
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .mobileSubtitle {
-  margin-top: 6px;
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  color: rgba(17, 24, 39, 0.62);
-
-  /* riserva 1 riga sempre */
-  min-height: 1.2em;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #71717a;
+  text-transform: uppercase;
+  margin: 0;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-:global(.dark) .mobileSubtitle {
-  color: rgba(255, 255, 255, 0.6);
+
+  line-height: 22px; /* prima 28px */
 }
 
-.mobileRow {
-  margin-top: 12px;
+:global(.dark) .mobileSubtitle {
+  color: #a1a1aa;
+}
+
+/* Riga 2: Titolo (più compatto) */
+.mobileRowTitle {
+  height: 48px; /* prima 56px */
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+  padding-top: 2px; /* prima 4px */
+}
+
+.mobileTitle {
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 18px; /* prima 19px */
+  line-height: 1.25; /* prima 1.3 */
+  font-weight: 500;
+  color: #18181b;
+  margin: 0;
+
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+:global(.dark) .mobileTitle {
+  color: #fafafa;
+}
+
+/* Riga 3: Prezzo (meno aria) */
+.mobilePriceRow {
+  height: 34px; /* prima 40px */
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-shrink: 0;
+
+  margin-top: 6px; /* prima 8px */
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 6px; /* prima 8px */
+}
+
+:global(.dark) .mobilePriceRow {
+  border-top-color: rgba(255, 255, 255, 0.08);
 }
 
 .mobilePrice {
-  font-size: 14px;
-  letter-spacing: 0.10em;
-  color: #111827;
-  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #18181b;
+  line-height: 1;
 }
+
 :global(.dark) .mobilePrice {
-  color: #ffffff;
+  color: #fafafa;
+}
+
+/* Riga 4: Bottone */
+.mobileCtaRow {
+  height: 40px; /* prima 44px */
+  display: flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 .mobileCta {
-  font-size: 14px;
-  letter-spacing: 0.10em;
-  color: rgba(17, 24, 39, 0.75);
-  white-space: nowrap;
-}
-:global(.dark) .mobileCta {
-  color: rgba(255, 255, 255, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 18px; /* prima 10px 20px */
+  border-radius: 999px;
+  background: #18181b;
+
+  font-size: 12.5px; /* prima 13px */
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+
+  transition: all 0.2s ease;
 }
 
-.mobileDivider {
-  margin-top: 12px;
-  height: 1px;
-  width: 40px;
-  background: rgba(17, 24, 39, 0.14);
+.mobileCard:active .mobileCta {
+  background: #10b981;
 }
-:global(.dark) .mobileDivider {
-  background: rgba(255, 255, 255, 0.16);
+
+:global(.dark) .mobileCta {
+  background: #fafafa;
+  color: #18181b;
+}
+
+:global(.dark) .mobileCard:active .mobileCta {
+  background: #10b981;
+  color: #ffffff;
 }
 
 /* ===== DOTS ===== */
@@ -238,30 +307,42 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .mobileDotBtn {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
   border: 0;
-  background: rgba(17, 24, 39, 0.22);
-  transition: width 180ms ease, background 180ms ease;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.mobileDotBtn:hover {
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(1.2);
 }
 
 .mobileDotActive {
-  height: 7px;
-  width: 18px;
+  width: 20px;
+  height: 6px;
   border-radius: 999px;
   border: 0;
-  background: rgba(17, 24, 39, 0.62);
-  transition: width 180ms ease, background 180ms ease;
+  background: #10b981;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 :global(.dark) .mobileDotBtn {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.25);
 }
+
+:global(.dark) .mobileDotBtn:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
 :global(.dark) .mobileDotActive {
-  background: rgba(255, 255, 255, 0.62);
+  background: #10b981;
 }

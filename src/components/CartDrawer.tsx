@@ -10,6 +10,15 @@ import { useCart } from "@/context/CartContext";
 import type { Product } from "@/lib/shopTypes";
 import { formatEUR } from "@/lib/money";
 import { goToCassa } from "@/lib/client/goToCassa";
+import { 
+  X, 
+  Trash2, 
+  Minus, 
+  Plus, 
+  ShoppingBag,
+  ArrowRight,
+  PackageOpen
+} from "lucide-react";
 
 const VAT_RATE = 0.04;
 const FREE_SHIPPING_THRESHOLD_CENTS = 6900;
@@ -69,17 +78,17 @@ export default function CartDrawer({
   const ui = (
     <div
       className={[
-        "fixed inset-0 z-[9999]", // ✅ altissimo e globale
+        "fixed inset-0 z-[9999]",
         open ? "pointer-events-auto" : "pointer-events-none",
       ].join(" ")}
       aria-hidden={!open}
     >
-      {/* Overlay — OSCURA TUTTO */}
+      {/* Overlay */}
       <button
         type="button"
         className={[
           "absolute inset-0 transition-opacity duration-200",
-          "bg-black/70", // più scuro
+          "bg-black/70",
           open ? "opacity-100" : "opacity-0",
         ].join(" ")}
         onClick={onClose}
@@ -87,7 +96,7 @@ export default function CartDrawer({
         tabIndex={open ? 0 : -1}
       />
 
-      {/* Drawer — più largo */}
+      {/* Drawer */}
       <aside
         className={[
           "fixed right-0 top-0 h-[100dvh] max-h-[100dvh]",
@@ -102,36 +111,16 @@ export default function CartDrawer({
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-black/10 px-6 py-5 dark:border-white/10">
-            <div>
-              <div className="text-[10px] tracking-[0.22em] text-zinc-500 dark:text-zinc-400">
-                CARRELLO
-              </div>
-              <div className="mt-1 font-serif text-2xl tracking-[0.06em] text-zinc-900 dark:text-white">
-                I tuoi prodotti
-              </div>
-
-              {lines.length > 0 ? (
-                <div className="mt-2 text-xs text-zinc-600 dark:text-zinc-300">
-                  {remainingForFreeShipping > 0 ? (
-                    <>
-                      Spedizione gratis sopra{" "}
-                      <span className="text-zinc-900 dark:text-white">
-                        {formatEUR(FREE_SHIPPING_THRESHOLD_CENTS)}
-                      </span>
-                      . Ti mancano{" "}
-                      <span className="text-zinc-900 dark:text-white">
-                        {formatEUR(remainingForFreeShipping)}
-                      </span>
-                      .
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-zinc-900 dark:text-white">Spedizione gratis attiva</span>{" "}
-                      (soglia {formatEUR(FREE_SHIPPING_THRESHOLD_CENTS)}).
-                    </>
-                  )}
+            <div className="flex items-center gap-3">
+              <ShoppingBag className="h-6 w-6 text-zinc-700 dark:text-zinc-300" strokeWidth={1.5} />
+              <div>
+                <div className="text-[10px] tracking-[0.22em] text-zinc-500 dark:text-zinc-400">
+                  CARRELLO
                 </div>
-              ) : null}
+                <div className="mt-1 font-serif text-2xl tracking-[0.06em] text-zinc-900 dark:text-white">
+                  I tuoi prodotti
+                </div>
+              </div>
             </div>
 
             <button
@@ -141,32 +130,70 @@ export default function CartDrawer({
               aria-label="Chiudi"
               title="Chiudi"
             >
-              <XIcon className="h-5 w-5" />
+              <X className="h-6 w-6" strokeWidth={1.5} />
             </button>
           </div>
+
+          {/* Info spedizione */}
+          {lines.length > 0 && (
+            <div className="border-b border-black/5 px-6 py-3 dark:border-white/5">
+              <div className="text-xs text-zinc-600 dark:text-zinc-300">
+                {remainingForFreeShipping > 0 ? (
+                  <div className="flex items-center gap-2">
+                    <PackageOpen className="h-4 w-4 text-zinc-500" strokeWidth={1.5} />
+                    <span>
+                      Spedizione gratis sopra{" "}
+                      <span className="font-medium text-zinc-900 dark:text-white">
+                        {formatEUR(FREE_SHIPPING_THRESHOLD_CENTS)}
+                      </span>
+                      . Ti mancano{" "}
+                      <span className="font-medium text-zinc-900 dark:text-white">
+                        {formatEUR(remainingForFreeShipping)}
+                      </span>
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                    <PackageOpen className="h-4 w-4" strokeWidth={1.5} />
+                    <span className="font-medium">Spedizione gratis attiva!</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex items-center justify-between px-6 py-3">
             <div className="text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-              {lines.length > 0 ? `${lines.length} RIGHE` : "VUOTO"}
+              {lines.length > 0 ? `${lines.length} ${lines.length === 1 ? 'PRODOTTO' : 'PRODOTTI'}` : "VUOTO"}
             </div>
 
-            {lines.length > 0 ? (
+            {lines.length > 0 && (
               <button
                 type="button"
                 onClick={clear}
-                className="text-xs tracking-[0.18em] text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+                className="flex items-center gap-2 text-xs tracking-[0.18em] text-zinc-600 hover:text-red-600 transition-colors dark:text-zinc-300 dark:hover:text-red-400"
               >
-                SVUOTA CARRELLO
+                <Trash2 className="h-4 w-4" strokeWidth={1.5} />
+                SVUOTA
               </button>
-            ) : null}
+            )}
           </div>
 
           {/* Body */}
           <div className="flex-1 overflow-y-auto border-t border-black/5 px-6 py-5 dark:border-white/10">
             {lines.length === 0 ? (
-              <div className="rounded-[14px] border border-black/10 bg-white p-6 text-sm text-zinc-500 dark:border-white/10 dark:bg-black/20 dark:text-zinc-400">
-                Il carrello è vuoto.
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <ShoppingBag className="h-16 w-16 text-zinc-300 dark:text-zinc-600 mb-4" strokeWidth={1.5} />
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Il carrello è vuoto.
+                </p>
+                <button
+                  onClick={onClose}
+                  className="mt-4 text-sm text-zinc-900 hover:text-zinc-600 dark:text-white dark:hover:text-zinc-300 underline underline-offset-4"
+                >
+                  Continua lo shopping
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
@@ -174,7 +201,6 @@ export default function CartDrawer({
                   const unit = variant?.priceCents ?? 0;
                   const lineTotal = unit * line.qty;
 
-                  // ✅ mostra l'immagine della VARIANTE (se presente), altrimenti quella del prodotto
                   const lineImageSrc = variant?.imageSrc ?? product?.imageSrc;
                   const lineImageAlt =
                     variant?.imageAlt ?? product?.imageAlt ?? product?.title ?? "Prodotto";
@@ -189,7 +215,7 @@ export default function CartDrawer({
                       ].join(" ")}
                     >
                       <div className="flex items-stretch">
-                        {/* Immagine FULL height */}
+                        {/* Immagine */}
                         <div className="relative w-[110px] sm:w-[140px] md:w-[160px] shrink-0">
                           <div className="absolute inset-0">
                             {lineImageSrc ? (
@@ -201,7 +227,9 @@ export default function CartDrawer({
                                 className="object-cover"
                               />
                             ) : (
-                              <div className="h-full w-full bg-zinc-100 dark:bg-white/5" />
+                              <div className="h-full w-full bg-zinc-100 dark:bg-white/5 flex items-center justify-center">
+                                <ShoppingBag className="h-8 w-8 text-zinc-300" strokeWidth={1.5} />
+                              </div>
                             )}
                           </div>
                         </div>
@@ -222,17 +250,17 @@ export default function CartDrawer({
                               onClick={() => remove(line.productId, line.variantId)}
                               data-testid="remove-line"
                               className={[
-                                "shrink-0 inline-flex items-center gap-2",
+                                "shrink-0 inline-flex items-center gap-1.5",
                                 "rounded-full border px-3 py-2",
-                                "text-xs tracking-[0.18em]",
+                                "text-xs tracking-[0.12em]",
                                 "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
                                 "dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60",
+                                "transition-colors",
                               ].join(" ")}
                               aria-label="Rimuovi prodotto"
                               title="Rimuovi"
                             >
-                              <RedXIcon className="h-4 w-4" />
-                              RIMUOVI
+                              <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
                             </button>
                           </div>
 
@@ -246,10 +274,7 @@ export default function CartDrawer({
                           </div>
 
                           <div className="mt-4 flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-                                Q.TÀ
-                              </span>
+                            <div className="flex items-center gap-3">
                               <QtyStepper
                                 qty={line.qty}
                                 onDec={() => setQty(line.productId, line.variantId, Math.max(1, line.qty - 1))}
@@ -284,18 +309,19 @@ export default function CartDrawer({
               </div>
               <div className="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
                 <span>Spedizione (stima)</span>
-                <span className="text-zinc-900 dark:text-white">
+                <span className={shippingPreview === 0 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-zinc-900 dark:text-white"}>
                   {shippingPreview === 0 ? "Gratis" : formatEUR(shippingPreview)}
                 </span>
               </div>
             </div>
 
             <div className="mt-7 grid gap-3">
-              {payError ? (
-                <div className="text-sm text-red-600 dark:text-red-400" data-testid="drawer-pay-error">
+              {payError && (
+                <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400" data-testid="drawer-pay-error">
+                  <X className="h-4 w-4" strokeWidth={1.5} />
                   {payError}
                 </div>
-              ) : null}
+              )}
 
               <button
                 type="button"
@@ -315,16 +341,26 @@ export default function CartDrawer({
                   clear();
                   onClose();
                 }}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-emerald-600 px-4 text-sm tracking-[0.10em] text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 text-sm tracking-[0.10em] text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition-colors"
                 data-testid="drawer-go-to-cassa"
               >
-                {payLoading ? "Reindirizzo…" : "Vai alla cassa"}
+                {payLoading ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Reindirizzo…
+                  </>
+                ) : (
+                  <>
+                    Vai alla cassa
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
+                  </>
+                )}
               </button>
 
               <Link
                 href="/cart"
                 onClick={onClose}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white px-4 text-sm tracking-[0.10em] text-zinc-900 shadow-sm hover:bg-zinc-50 dark:border-white/10 dark:bg-black/20 dark:text-white dark:hover:bg-white/10"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white px-4 text-sm tracking-[0.10em] text-zinc-900 shadow-sm hover:bg-zinc-50 dark:border-white/10 dark:bg-black/20 dark:text-white dark:hover:bg-white/10 transition-colors"
               >
                 Visualizza carrello
               </Link>
@@ -339,7 +375,6 @@ export default function CartDrawer({
     </div>
   );
 
-  // ✅ Render globale su body per evitare “solo navbar scura”
   if (!mounted) return null;
   return createPortal(ui, document.body);
 }
@@ -360,11 +395,12 @@ function QtyStepper({
       <button
         type="button"
         onClick={onDec}
-        className="h-10 w-10 text-zinc-700 hover:bg-black/5 dark:text-zinc-200 dark:hover:bg-white/10"
+        disabled={qty <= 1}
+        className="h-10 w-10 flex items-center justify-center text-zinc-700 hover:bg-black/5 disabled:opacity-30 dark:text-zinc-200 dark:hover:bg-white/10 transition-colors"
         aria-label="Diminuisci quantità"
         data-testid="qty-dec"
       >
-        −
+        <Minus className="h-4 w-4" strokeWidth={1.5} />
       </button>
 
       <input
@@ -383,30 +419,13 @@ function QtyStepper({
       <button
         type="button"
         onClick={onInc}
-        className="h-10 w-10 text-zinc-700 hover:bg-black/5 dark:text-zinc-200 dark:hover:bg-white/10"
+        disabled={qty >= 99}
+        className="h-10 w-10 flex items-center justify-center text-zinc-700 hover:bg-black/5 disabled:opacity-30 dark:text-zinc-200 dark:hover:bg-white/10 transition-colors"
         aria-label="Aumenta quantità"
         data-testid="qty-inc"
       >
-        +
+        <Plus className="h-4 w-4" strokeWidth={1.5} />
       </button>
     </div>
-  );
-}
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 6 6 18" />
-      <path d="M6 6l12 12" />
-    </svg>
-  );
-}
-
-function RedXIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 6 6 18" />
-      <path d="M6 6l12 12" />
-    </svg>
   );
 }

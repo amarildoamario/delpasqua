@@ -6,6 +6,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import styles from "./ShopHighlights.module.css";
 import productsData from "@/db/products.json";
 import type { Product as DbProduct } from "@/lib/shopTypes";
+import { ArrowRight } from "lucide-react";
 
 type HighlightProduct = {
   id: string;
@@ -14,6 +15,7 @@ type HighlightProduct = {
   price: string;
   href: string;
   badge?: string;
+  labelTopRight?: string;
   imageSrc: string;
   imageAlt: string;
 };
@@ -35,6 +37,7 @@ function buildHighlight(p: DbProduct): HighlightProduct {
     price: `${hasMany ? "Da " : ""}${formatEur(minPriceCents)} + IVA`,
     href: `/shop/${encodeURIComponent(p.slug)}`,
     badge: p.badge,
+    labelTopRight: p.labelTopRight,
     imageSrc: p.imageSrc,
     imageAlt: p.imageAlt,
   };
@@ -62,16 +65,20 @@ export default function ShopHighlights() {
     return picked.slice(0, 4).map(buildHighlight);
   }, []);
 
-  // ======= MOBILE: dots active =======
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
 
-  // Drag vs click: se trascini orizzontalmente, blocco la navigazione (ma scroll verticale libero)
+  const [activeIndex, setActiveIndex] = useState(0);
   const dragRef = useRef({ isDown: false, moved: false, startX: 0, startY: 0 });
 
   const updateActiveFromViewport = useCallback(() => {
-    const viewportCenterX = window.innerWidth / 2;
+    const scroller = scrollerRef.current;
+
+    const viewportCenterX = scroller
+      ? scroller.getBoundingClientRect().left + scroller.clientWidth / 2
+      : window.innerWidth / 2;
+
     let bestIdx = 0;
     let bestDist = Number.POSITIVE_INFINITY;
 
@@ -139,10 +146,15 @@ export default function ShopHighlights() {
       <div className="mx-auto max-w-6xl px-6 pt-20 pb-14 md:pt-24 md:pb-18">
         <Header />
 
-        {/* ✅ MOBILE */}
-        <div className="md:hidden mt-10 pb-10 overflow-visible">
+        {/* MOBILE */}
+        <div className="md:hidden mt-10 pb-10">
           <div className={styles.mobileFullBleed}>
-            <div className={styles.mobileScroller} onScroll={onMobileScroll} aria-label="Prodotti in evidenza">
+            <div
+              ref={scrollerRef}
+              className={styles.mobileScroller}
+              onScroll={onMobileScroll}
+              aria-label="Prodotti in evidenza"
+            >
               <div className={styles.mobileTrack}>
                 {products.map((p, idx) => (
                   <div
@@ -166,36 +178,44 @@ export default function ShopHighlights() {
                         onClickCapture={onLinkClickCapture}
                         draggable={false}
                       >
-                        <div className={styles.mobileCardOuter}>
-                          <div className={styles.mobileCard}>
-                            <div className={styles.mobileMedia}>
-                              {p.badge ? <div className={styles.mobilePromoBadge}>{p.badge}</div> : null}
-                              <Image
-                                src={p.imageSrc}
-                                alt={p.imageAlt}
-                                fill
-                                sizes="100vw"
-                                className="object-cover"
-                                priority
-                              />
-                            </div>
-
-                            {/* ✅ TESTO uguale a desktop */}
-                            <div className={styles.mobileInfo}>
-                              <div className={styles.mobileTitle}>{p.title}</div>
-                              <div className={styles.mobileSubtitle}>{p.subtitle}</div>
-
-                              <div className={styles.mobileRow}>
-                                <div className={styles.mobilePrice}>{p.price}</div>
-                                <div className={styles.mobileCta}>
-                                  Vedi <span aria-hidden="true">→</span>
-                                </div>
+                        <article className={styles.mobileCard}>
+                          <div className={styles.mobileImageSection}>
+                            {p.badge && (
+                              <div className={styles.mobileBadge}>
+                                <span>{p.badge}</span>
                               </div>
+                            )}
+                            {p.labelTopRight && (
+                              <div className={styles.mobileLabelTopRight}>{p.labelTopRight}</div>
+                            )}
+                            <Image
+                              src={p.imageSrc}
+                              alt={p.imageAlt}
+                              fill
+                              sizes="340px"
+                              className="object-cover"
+                              priority
+                            />
+                          </div>
 
-                              <div className={styles.mobileDivider} />
+                          <div className={styles.mobileContent}>
+                            <div className={styles.mobileRowSubtitle}>
+                              <p className={styles.mobileSubtitle}>{p.subtitle}</p>
+                            </div>
+                            <div className={styles.mobileRowTitle}>
+                              <h3 className={styles.mobileTitle}>{p.title}</h3>
+                            </div>
+                            <div className={styles.mobilePriceRow}>
+                              <span className={styles.mobilePrice}>{p.price}</span>
+                            </div>
+                            <div className={styles.mobileCtaRow}>
+                              <div className={styles.mobileCta}>
+                                <span>Scopri</span>
+                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </article>
                       </Link>
                     </div>
                   </div>
@@ -221,7 +241,7 @@ export default function ShopHighlights() {
           </div>
         </div>
 
-        {/* ✅ DESKTOP invariato */}
+        {/* DESKTOP */}
         <div className="hidden md:block mt-12">
           <ShopHighlightsDesktop products={products} />
         </div>
@@ -235,27 +255,23 @@ function Header() {
     <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
       <div>
         <div className="text-xs tracking-[0.22em] text-zinc-500 dark:text-zinc-400">SHOP</div>
-
         <h2 className="mt-2 font-serif text-3xl tracking-[0.06em] text-zinc-900 dark:text-white md:text-4xl">
           I più acquistati
         </h2>
-
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
           Dal nostro catalogo i prodotti best sellers.
         </p>
       </div>
-
       <Link
         href="/shop"
-        className="hidden md:inline-flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+        className="hidden md:inline-flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-colors"
       >
-        Vai allo shop <span aria-hidden="true">→</span>
+        Vai allo shop <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
       </Link>
     </div>
   );
 }
 
-/* ======================= DESKTOP — invariato ======================= */
 function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const cardsRef = useRef<Array<HTMLElement | null>>([]);
@@ -375,18 +391,18 @@ function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
             </div>
 
             <div className="px-4 pb-4 pt-4">
-              <div className="font-serif text-base tracking-[0.06em] text-zinc-900 dark:text-white">{p.title}</div>
-
-              <div className="mt-1 text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">{p.subtitle}</div>
-
+              <div className="font-serif text-base tracking-[0.06em] text-zinc-900 dark:text-white">
+                {p.title}
+              </div>
+              <div className="mt-1 text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
+                {p.subtitle}
+              </div>
               <div className="mt-3 flex items-center justify-between">
                 <div className="text-sm tracking-[0.10em] text-zinc-900 dark:text-white">{p.price}</div>
-
-                <span className="inline-flex items-center gap-2 text-sm tracking-[0.10em] text-zinc-700 group-hover:text-zinc-900 dark:text-zinc-300 dark:group-hover:text-white">
-                  Vedi <span aria-hidden="true">→</span>
+                <span className="inline-flex items-center gap-2 text-sm tracking-[0.10em] text-zinc-700 group-hover:text-zinc-900 dark:text-zinc-300 dark:group-hover:text-white transition-colors">
+                  Vedi <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
                 </span>
               </div>
-
               <div className="mt-3 h-px w-10 bg-zinc-200 transition-all duration-300 group-hover:w-20 dark:bg-white/15" />
             </div>
           </Link>
