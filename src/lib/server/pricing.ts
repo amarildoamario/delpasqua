@@ -103,6 +103,10 @@ export async function computeOrderPricing(args: {
 
     const sku = makeSku(p.id, v.id);
 
+    // ✅ FIX: immagine variante -> fallback prodotto
+    const variantImageSrc = (v as any).imageSrc ?? null;
+    const productImageSrc = (p as any).imageSrc ?? null;
+
     const productSnapshot = {
       productId: p.id,
       variantId: v.id,
@@ -111,8 +115,13 @@ export async function computeOrderPricing(args: {
       title: p.title,
       subtitle: (p as any).subtitle ?? null,
       badge: (p as any).badge ?? null,
-      imageSrc: (p as any).imageSrc ?? null,
+
+      imageSrc: productImageSrc ?? null,
       imageAlt: (p as any).imageAlt ?? null,
+
+      // ✅ aggiungo anche la variante nello snapshot
+      variantImageSrc: variantImageSrc ?? null,
+
       variantLabel: v.label,
     };
 
@@ -120,7 +129,9 @@ export async function computeOrderPricing(args: {
       productId: p.id,
       variantId: v.id,
       sku,
-      imageUrl: (p as any).imageSrc ?? null,
+
+      // ✅ qui ora salva la variante corretta
+      imageUrl: variantImageSrc ?? productImageSrc ?? null,
 
       title: p.title,
       variantLabel: v.label,
@@ -179,7 +190,7 @@ export async function computeOrderPricing(args: {
     }
   }
 
-  // 3) Shipping (mantieni regola attuale, ma promo può azzerare)
+  // 3) Shipping
   const shippingCents = freeShipping ? 0 : subtotalCents >= 6900 ? 0 : 590;
 
   // 4) Allocazione sconto per riga
@@ -189,7 +200,7 @@ export async function computeOrderPricing(args: {
     baseItems[i].lineDiscountCents = discountAlloc[i];
   }
 
-  // 5) IVA (adesso come prima: su subtotal). Se vuoi IVA su netto: baseVat = subtotalCents - discountCents
+  // 5) IVA (come prima: su subtotal)
   const baseVat = subtotalCents;
   const vatCents = calcVatCentsFromSubtotal(baseVat);
 

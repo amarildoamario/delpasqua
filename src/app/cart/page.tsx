@@ -201,7 +201,8 @@ export default function CartPage() {
                     return;
                   }
 
-                  clear();
+                  // ✅ NON SVUOTARE IL CARRELLO QUI.
+                  // Il carrello si azzera SOLO a pagamento riuscito (/checkout/success).
                 }}
                 className={[
                   "mt-6 inline-flex h-12 w-full items-center justify-center rounded-full px-4",

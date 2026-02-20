@@ -66,7 +66,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const clear = () => setLines([]);
+  const clear = () => {
+  setLines([]);
+  try {
+    localStorage.removeItem(LS_KEY);
+  } catch {}
+};
 
   // ✅ count coerente con l'hydration: finché non hydrated, count = 0
   const count = useMemo(

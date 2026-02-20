@@ -10,14 +10,14 @@ import { useCart } from "@/context/CartContext";
 import type { Product } from "@/lib/shopTypes";
 import { formatEUR } from "@/lib/money";
 import { goToCassa } from "@/lib/client/goToCassa";
-import { 
-  X, 
-  Trash2, 
-  Minus, 
-  Plus, 
+import {
+  X,
+  Trash2,
+  Minus,
+  Plus,
   ShoppingBag,
   ArrowRight,
-  PackageOpen
+  PackageOpen,
 } from "lucide-react";
 
 const VAT_RATE = 0.04;
@@ -165,7 +165,7 @@ export default function CartDrawer({
           {/* Actions */}
           <div className="flex items-center justify-between px-6 py-3">
             <div className="text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-              {lines.length > 0 ? `${lines.length} ${lines.length === 1 ? 'PRODOTTO' : 'PRODOTTI'}` : "VUOTO"}
+              {lines.length > 0 ? `${lines.length} ${lines.length === 1 ? "PRODOTTO" : "PRODOTTI"}` : "VUOTO"}
             </div>
 
             {lines.length > 0 && (
@@ -309,7 +309,13 @@ export default function CartDrawer({
               </div>
               <div className="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
                 <span>Spedizione (stima)</span>
-                <span className={shippingPreview === 0 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-zinc-900 dark:text-white"}>
+                <span
+                  className={
+                    shippingPreview === 0
+                      ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                      : "text-zinc-900 dark:text-white"
+                  }
+                >
                   {shippingPreview === 0 ? "Gratis" : formatEUR(shippingPreview)}
                 </span>
               </div>
@@ -338,7 +344,8 @@ export default function CartDrawer({
                     return;
                   }
 
-                  clear();
+                  // ✅ NON SVUOTARE IL CARRELLO QUI.
+                  // Il carrello si azzera SOLO a pagamento riuscito (/checkout/success).
                   onClose();
                 }}
                 className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 text-sm tracking-[0.10em] text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition-colors"
