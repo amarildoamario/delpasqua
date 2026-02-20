@@ -1,0 +1,398 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Order {
+  id             String @id @default(cuid())
+  idempotencyKey String @unique
+
+  status OrderStatus @default(PENDING)
+
+  orderNumber      String? @unique
+  orderPublicToken String? @unique
+
+  currency String @default("eur")
+
+  subtotalCents Int
+  vatCents      Int
+  shippingCents Int
+  totalCents    Int
+
+  discountCents Int @default(0)
+  taxCents      Int @default(0)
+
+  stripeFeeCents Int @default(0)
+  refundCents    Int @default(0)
+
+  paymentProvider  String @default("stripe")
+  stripeCustomerId String?
+
+  fullName String
+  email    String
+  address  String
+  city     String
+  zip      String
+
+  stripeCheckoutSessionId String? @unique @map("stripeSessionId")
+  stripePaymentIntentId   String?
+  stripeChargeId          String?
+  stripeBalanceTxnId      String?
+
+  paymentMethod String?
+  preparingAt DateTime?
+  shippedAt    DateTime?
+  trackingCode String?
+
+  deliveredAt DateTime?
+  canceledAt  DateTime?
+  refundedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  paidAt    DateTime?
+
+  ipAddress String?
+  userAgent String?
+  riskScore Int     @default(0)
+  isFlagged Boolean @default(false)
+  notes     String?
+
+  items  OrderItem[]
+  events OrderEvent[] // ✅ storico azioni
+
+
+
+  // ✅ Structured shipping address (P0.03)
+  addressLine1  String  @default("")
+  addressLine2  String?
+  province      String  @default("")
+  postalCode    String  @default("")
+  countryCode   String  @default("IT")
+  phone         String?
+  shippingNotes String?
+
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  EXPIRED
+  FAILED
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Riferimenti (best-effort)
+  productId String
+  variantId String
+
+  // Snapshot "operativo" (per magazzino/fulfillment)
+  sku       String                // es: "fruttato-medio:500ml" (stabile anche se cambia il catalogo)
+  imageUrl  String?               // snapshot immagine principale
+
+  // Snapshot "testo" (per storico/admin/email)
+  title        String             // snapshot nome
+  variantLabel String             // snapshot variante/label
+
+  // Pricing base
+  unitPriceCents Int
+  qty            Int
+  lineTotalCents Int              // totale riga (dopo sconti + imposte allocate, se usi allocation)
+
+  // Breakdown per future promo/tasse (copertura punto 4)
+  lineSubtotalCents Int           // unitPrice * qty (prima di sconti)
+  lineDiscountCents Int @default(0)
+  lineVatCents      Int @default(0)
+  lineTaxCents      Int @default(0)
+
+  // Snapshot esteso (copertura punto 2/3/4)
+  productSnapshot Json?
+  pricingSnapshot Json?
+
+  @@index([orderId])
+  @@index([sku])
+}
+
+
+
+model OrderEvent {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // Chi ha fatto l’azione (admin/email) – se non hai auth strutturata, può restare null
+  actor     String?
+
+  // Tipo evento: STATUS_CHANGED, NOTE_UPDATED, RISK_UPDATED, SHIPPED, TRACKING_UPDATED, ecc.
+  type      String
+
+  // Stato prima/dopo (se evento di status)
+  fromStatus OrderStatus?
+  toStatus   OrderStatus?
+
+  // Testo/nota leggibile (stampabile)
+  message   String?
+
+  // JSON per dettagli (opzionale)
+  metaJson  String?
+
+  @@index([orderId, createdAt])
+}
+
+
+enum StripeEventOutcome {
+  processed
+  ignored
+  duplicate
+  failed_signature
+  failed_validation
+  failed_processing
+  review
+}
+
+enum OutboxStatus {
+  pending
+  processing
+  done
+  failed
+}
+
+model StripeWebhookEvent {
+  id       String  @id @default(cuid())
+  eventId  String  @unique
+  type     String
+  livemode Boolean
+  created  Int // Stripe "event.created" (unix seconds)
+
+  // Correlazioni utili
+  orderId         String?
+  sessionId       String?
+  paymentIntentId String?
+
+  outcome  StripeEventOutcome @default(ignored)
+  attempts Int                @default(0)
+
+  errorMessage String?
+  errorStack   String?
+
+  // opzionale: hash/estratto payload, NON PII pesante
+  payloadSnippet String?
+
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  @@index([type])
+  @@index([orderId])
+  @@index([sessionId])
+}
+
+model OutboxEvent {
+  id        String       @id @default(cuid())
+  type      String
+  payload   Json
+  status    OutboxStatus @default(pending)
+  attempts  Int          @default(0)
+  runAt     DateTime     @default(now())
+  lastError String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([status, runAt])
+}
+
+model Promotion {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  description   String?
+  type          String // "percent" | "fixed" | "free_shipping" (puoi anche lasciarlo per compat)
+  percent       Int?
+  amountCents   Int?
+  freeShipping  Boolean   @default(false) // ✅ NEW
+  minOrderCents Int?
+  usageLimit    Int?
+  usedCount     Int       @default(0)
+  startsAt      DateTime?
+  endsAt        DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model ProductMerch {
+  id              String   @id @default(cuid())
+
+  // chiave del prodotto come sta in products.json (consiglio: usa product.id)
+  productKey      String   @unique
+
+  // Visibilità / placement
+  showInHome      Boolean  @default(false)
+  homeRank        Int      @default(0)      // più basso = più in alto in home
+  isBestSeller    Boolean  @default(false)
+
+  // Label / badge
+  badge           String?               // "PIU_VENDUTO", "IN_OFFERTA", "NOVITA", ...
+  promoLabel      String?               // testo libero
+
+  // Sconto per prodotto
+  discountPercent Int?                  // 0..100
+  discountCents   Int?                  // sconto fisso in centesimi
+
+  // Programmabile (range date)
+  startsAt        DateTime?
+  endsAt          DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([showInHome, homeRank])
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+
+  // Identità anonime first-party
+  visitorId   String
+  sessionId   String
+
+  // Tipo evento
+  type        String
+
+  // Contesto pagina
+  path        String?
+  referrer    String?
+  pageId      String?   // per correlare view + leave
+  durationMs  Int?      // per page_leave
+
+  // Prodotto / variante
+  productKey  String?
+  variantKey  String?
+
+  // Carrello / ordine
+  cartId      String?
+  orderId     String?
+
+  // Device
+  device      String?   // "mobile" | "desktop" | "tablet" | "bot" | "unknown"
+  userAgent   String?
+
+  // Qualità dato / segmentazione
+  // env: "prod" | "dev" | "preview" (o altri valori custom)
+  env        String  @default("prod")
+  isInternal Boolean @default(false)
+
+  // Extra libero (non indispensabile, ma utile)
+  data        Json?
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+  @@index([path, createdAt])
+  @@index([productKey, variantKey, createdAt])
+  @@index([cartId, createdAt])
+  @@index([visitorId, createdAt])
+  @@index([sessionId, createdAt])
+  @@index([env, isInternal, createdAt])
+}
+
+
+model InventoryItem {
+  sku      String @id
+  stock    Int
+  reserved Int    @default(0)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([stock])
+}
+
+
+model AdminSession {
+  id        String   @id @default(cuid())
+
+  // Store only hashes (never store raw tokens)
+  tokenHash String   @unique
+  csrfHash  String   @unique
+
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime?
+  rotatedAt  DateTime @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+
+  ipAddress String?
+  userAgent String?
+
+  @@index([expiresAt])
+  @@index([revokedAt])
+}
+
+model RateLimitCounter {
+  id          String   @id @default(cuid())
+  key         String
+  windowStart Int
+  count       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@unique([key, windowStart])
+  @@index([key, windowStart])
+}
+
+
+enum TransactionalEmailType {
+  ORDER_RECEIVED
+  ORDER_PAID
+  ORDER_SHIPPED
+  ORDER_CANCELED
+  ORDER_REFUNDED
+}
+
+enum TransactionalEmailStatus {
+  sent
+  failed
+  skipped
+}
+
+model TransactionalEmailLog {
+  id String @id @default(cuid())
+
+  type   TransactionalEmailType
+  status TransactionalEmailStatus @default(skipped)
+
+  orderId String
+  toEmail String
+
+  messageId String?
+  error     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@unique([orderId, type])
+  @@index([type, createdAt])
+  @@index([status, createdAt])
+}

@@ -1,0 +1,79 @@
+DELPAQUSQA — TODO LIST (AGGIORNATA)
+Data: 2026-02-18
+
+Legenda:
+✅ DONE  ⚠️ PARZIALE  ⏳ TODO  🔥 BLOCKER  🚫 SKIP (scelta intenzionale)
+
+============================================================
+P0 — VENDIBILE E SICURO
+============================================================
+
+[P0.01] ORDER MODEL ROBUSTO .................................. ✅ DONE
+[P0.02] ORDER ITEMS SNAPSHOT ................................ ✅ DONE
+[P0.03] SHIPPING ADDRESS + VALIDAZIONE ...................... ✅ DONE
+[P0.04] STRIPE WEBHOOK idempotente + LOG .................... ✅ DONE
+[P0.05] SPEDIZIONE: STATUS + EMAIL “SPEDITO” ................ ✅ DONE
+[P0.06] INVENTARIO / ANTI-OVERSELL .......................... ✅ DONE
+[P0.07] ADMIN HARDENING ..................................... ✅ DONE
+[P0.07b] CSRF admin ......................................... ✅ DONE
+
+[P0.08] VALIDAZIONE INPUT SERVER-SIDE (tutte le API) ........ ⚠️ PARZIALE (migliorata oggi: typecheck pulito + fix rotta admin/shipping + fix prop status; validazione API resta migliorabile)
+[P0.08b] NO PII nei log + prod-safe logging .................. ✅ DONE
+
+[P0.09] EMAIL TRANSAZIONALI (minimo) ........................ ⚠️ PARZIALE (per scelta)
+        - ORDER_PAID ........................................ ✅ DONE
+        - ORDER_SHIPPED ..................................... ✅ DONE
+        - ORDER_CANCELED .................................... 🚫 SKIP (non serve)
+        - ORDER_DELIVERED ................................... 🚫 SKIP (non serve)
+
+[P0.10] ANTI-FRODE LIGHT .................................... ✅ DONE
+[P0.11] MOBILE UI “VENDIBILE” ................................ ⚠️ PARZIALE
+[P0.12] FOTO PRODOTTI: PIPELINE ............................. 🔥 BLOCKER — 🚫 SKIP (per ora)
+[P0.13] PAGINE LEGALI + COOKIE CONSENSO ...................... ⚠️ PARZIALE (banner cookie mancante)
+
+[P0.14] ERROR PAGES + UX FALLIMENTO (404/500) ............... ✅ DONE
+[P0.15] ABANDONED CHECKOUT / ORDINI PENDING (expire) ........ ✅ DONE
+[P0.16] CONSISTENZA PREZZI / INTEGRITÀ SERVER-SIDE .......... ✅ DONE
+
+[P0.17] ACCESSIBILITÀ MINIMA ................................. 🚫 SKIP (scelta intenzionale oggi)
+
+============================================================
+P1 — STABILITÀ OPERATIVA
+============================================================
+
+[P1.01] ORDER TIMELINE / EVENTI ............................. ✅ DONE
+[P1.02] ADMIN “DA LAVORO” ................................... ⚠️ PARZIALE
+[P1.03] REFUND FLOW COMPLETO Stripe .......................... ⏳ TODO
+[P1.05] EMAIL LOGGING + ALERTING + BACKUP + RUNBOOK ......... ⚠️ PARZIALE
+[P1.05b] OUTBOX robusto (retry failed) ...................... ✅ DONE
+[P1.06] HARDENING PROD (security headers) ................... ⏳ TODO
+[P1.06b] Rate limit distribuito (Redis/Upstash) ............. ⏳ TODO
+[P1.08] Migrazione DB prod (se serve) ....................... ⏳ TODO
+[P1.09] CI/CD minimo + env vars + config prod ............... ⏳ TODO
+
+============================================================
+HY — IGIENE REPO
+============================================================
+
+[HY.01] SEGRETI/FILE LOCALI FUORI DAL REPO (.env/.db) ....... ✅ DONE
+[HY.02] README deploy/run notes ............................. ⚠️ PARZIALE
+
+============================================================
+FATTO OGGI (confermato)
+============================================================
+
+- ✅ Aggiunto script "typecheck" in package.json (tsc --noEmit).
+- ✅ Typecheck ora passa senza errori.
+- ✅ Fix TS: ShipToggleButton ora riceve status={order.status}.
+- ✅ Fix TS: sistemata rotta /admin/shipping mancante (per eliminare errore .next/types/validator).
+
+============================================================
+NEXT TASK (consigliata)
+============================================================
+
+1) P0.08 — completare validazione input server-side (coverage + rifiniture)
+2) P0.11 — mobile UI “vendibile”
+3) P0.13 — banner cookie (completare)
+4) P1.06 — security headers in prod
+5) P1.06b — rate limit distribuito (Redis/Upstash)
+6) P1.03 — refund flow completo Stripe

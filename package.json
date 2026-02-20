@@ -1,0 +1,45 @@
+{
+  "name": "delpasqua",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "postinstall": "prisma generate",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "build": "npm run lint && next build",
+    "reset:db": "tsx tools/reset-db.ts",
+    "sim:users": "node tools/simulate-users.mjs",
+    "inventory:init": "tsx tools/init-inventory.ts",
+    "inventory:zero": "tsx tools/zero-inventory.ts",
+    "sync:product-images": "node tools/sync-product-images.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.3.0",
+    "better-sqlite3": "^12.6.2",
+    "lucide-react": "^0.563.0",
+    "next": "16.1.6",
+    "prisma": "^7.3.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "resend": "^6.9.1",
+    "stripe": "^20.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.3.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "playwright": "^1.58.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

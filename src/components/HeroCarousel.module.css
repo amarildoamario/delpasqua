@@ -1,0 +1,44 @@
+.mobileRoot {
+  position: absolute;
+  inset: 0;
+}
+
+/* IMPORTANTISSIMO:
+   - touch-action: pan-y => la pagina scrolla SEMPRE in verticale
+   - drag orizzontale lo gestiamo noi in TSX (scrollLeft)
+*/
+.mobileScroller {
+  position: absolute;
+  inset: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+
+  /* vertical page scroll sempre disponibile */
+  touch-action: pan-y;
+
+  /* hide scrollbar */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.mobileScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.mobileTrack {
+  display: flex;
+  height: 100%;
+}
+
+/* slide full screen */
+.mobileSlide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100vw;
+  width: 100dvw;
+  height: 100%;
+  scroll-snap-align: center;
+}
