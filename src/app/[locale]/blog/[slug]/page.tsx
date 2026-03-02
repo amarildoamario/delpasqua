@@ -5,11 +5,6 @@ import { Link } from "@/i18n/routing";
 import { ChevronRight, Share2, Printer, Tag, User, Clock, CalendarDays, RefreshCcw, ArrowRight, ExternalLink, BookOpen } from "lucide-react";
 import Footer from "@/components/Footer";
 
-export async function generateStaticParams() {
-    const posts = await getBlogPosts();
-    return posts.map((post) => ({ slug: post.slug }));
-}
-
 import { Metadata, ResolvingMetadata } from 'next';
 
 export async function generateMetadata(

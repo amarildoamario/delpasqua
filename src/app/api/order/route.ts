@@ -168,7 +168,12 @@ export async function POST(req: Request) {
     });
 
     // Stripe checkout
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    // Use true incoming origin dynamically 
+    const isLocal = req.url.includes("localhost:");
+    let appUrl = isLocal ? "http://localhost:3000" : new URL(req.url).origin;
+    if (process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL !== "http://localhost:3000") {
+      appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    }
     const vatRatePct = Math.round(getVatRate() * 100);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
