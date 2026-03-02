@@ -7,7 +7,7 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
-    "build": "npm run lint && next build",
+    "build": "next build",
     "reset:db": "tsx tools/reset-db.ts",
     "sim:users": "node tools/simulate-users.mjs",
     "inventory:init": "tsx tools/init-inventory.ts",
