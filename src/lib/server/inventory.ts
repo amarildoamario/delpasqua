@@ -94,7 +94,8 @@ export async function commitReservedToSoldOrThrow(tx: Tx, lines: StockLine[]) {
   );
 }
 
-export async function releaseReserved(tx: Tx, lines: StockLine[]) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function releaseReserved(_tx: Tx, _lines: StockLine[]) {
   // No-op because we no longer allocate a "reserved" state
   return Promise.resolve();
 }

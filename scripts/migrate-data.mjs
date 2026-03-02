@@ -85,7 +85,7 @@ async function main() {
                             parsed[key] = parsed[key] === 1;
                         }
                         if (['productSnapshot', 'pricingSnapshot', 'payload', 'data'].includes(key) && typeof parsed[key] === 'string') {
-                            try { parsed[key] = JSON.parse(parsed[key]); } catch (e) { }
+                            try { parsed[key] = JSON.parse(parsed[key]); } catch { }
                         }
                     }
                     return parsed;

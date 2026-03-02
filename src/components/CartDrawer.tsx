@@ -240,9 +240,13 @@ export default function CartDrawer({
                 <p className="text-sm text-zinc-500">
                   Il carrello è vuoto.
                 </p>
+                <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-zinc-600 bg-zinc-50 px-3 py-1.5 rounded-full border border-black/5">
+                  <PackageOpen className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  <span>Spedizione a partire da {formatEUR(SHIPPING_CENTS)}</span>
+                </div>
                 <button
                   onClick={onClose}
-                  className="mt-4 text-sm text-zinc-900 hover:text-zinc-600 underline underline-offset-4"
+                  className="mt-6 text-sm text-zinc-900 hover:text-zinc-600 underline underline-offset-4"
                 >
                   Continua lo shopping
                 </button>

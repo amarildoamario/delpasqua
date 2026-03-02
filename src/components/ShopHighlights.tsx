@@ -23,25 +23,9 @@ type HighlightProduct = {
 
 const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
 
-function formatEur(cents: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
-}
 
-function buildHighlight(p: DbProduct): HighlightProduct {
-  const minPriceCents = Math.min(...(p.variants?.map((v) => v.priceCents) ?? [0]));
-  const hasMany = (p.variants?.length ?? 0) > 1;
 
-  return {
-    id: p.id,
-    title: p.title,
-    subtitle: p.subtitle,
-    price: `${hasMany ? "Da " : ""}${formatEur(minPriceCents)}`,
-    href: `/shop/${encodeURIComponent(p.slug)}`,
-    badge: p.badge,
-    imageSrc: p.imageSrc,
-    imageAlt: p.imageAlt,
-  };
-}
+
 
 export default function ShopHighlights() {
   const t = useTranslations("HomePage.ShopHighlights");

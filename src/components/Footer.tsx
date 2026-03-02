@@ -9,8 +9,7 @@ import {
   Mail,
   ShieldCheck,
   Facebook,
-  Instagram,
-  ArrowUpRight
+  Instagram
 } from "lucide-react";
 
 export default function Footer() {

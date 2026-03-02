@@ -88,7 +88,7 @@ export default function ShopPage() {
       setProducts(mappedProducts);
       setFilteredProducts(mappedProducts);
     })();
-  }, []);
+  }, [locale, tp]);
 
   const handleFilter = useCallback((categoryId: string) => {
     setActiveCategory(categoryId);
@@ -116,7 +116,7 @@ export default function ShopPage() {
         listId: "shop",
       },
     });
-  }, [products]);
+  }, [products, CATEGORIES]);
 
   const handleProductClick = useCallback((product: ProductCardProduct) => {
     track({

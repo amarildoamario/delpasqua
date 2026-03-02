@@ -5,11 +5,10 @@ import { Link } from "@/i18n/routing";
 import { ChevronRight, Share2, Printer, Tag, User, Clock, CalendarDays, RefreshCcw, ArrowRight, ExternalLink, BookOpen } from "lucide-react";
 import Footer from "@/components/Footer";
 
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 
 export async function generateMetadata(
-    { params }: { params: Promise<{ slug: string, locale: string }> },
-    parent: ResolvingMetadata
+    { params }: { params: Promise<{ slug: string, locale: string }> }
 ): Promise<Metadata> {
     const { slug, locale } = await params;
     const post = await getBlogPostBySlug(slug);
@@ -499,7 +498,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#3D5A3D]/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                                 <h3 className="text-lg font-bold tracking-tight mb-2 relative z-10">Prenota una degustazione</h3>
                                 <p className="text-sm text-zinc-400 mb-5 relative z-10 leading-relaxed">
-                                    Vivi l'esperienza dal vivo nel nostro Frantoio in Toscana.
+                                    Vivi l&apos;esperienza dal vivo nel nostro Frantoio in Toscana.
                                 </p>
                                 <Link href="/degustazioni" className="inline-flex items-center gap-2 relative z-10 bg-white text-zinc-900 text-[11px] font-bold uppercase tracking-widest px-5 py-3 rounded-full hover:bg-stone-100 transition-colors">
                                     Scopri di più <ArrowRight className="w-3.5 h-3.5" />

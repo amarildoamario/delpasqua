@@ -1,5 +1,4 @@
 import type { PrismaClient } from "@/generated/prisma/client";
-import type * as Prisma from "@/generated/prisma/client";
 
 function pad6(n: number) {
   const s = String(n);

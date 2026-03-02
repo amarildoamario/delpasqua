@@ -8,7 +8,6 @@
 import "dotenv/config";
 import { PrismaClient, Prisma } from "../src/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
-import pg from "pg";
 
 function assertNotProduction() {
   const env = process.env.NODE_ENV;

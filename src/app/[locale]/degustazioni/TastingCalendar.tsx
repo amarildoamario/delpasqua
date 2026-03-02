@@ -174,7 +174,7 @@ export default function TastingsCalendar(props: {
       }
     }
     return false;
-  }, [timeReq, selectedDay, selected, activeType.durationMinutes, bookings, isMorningShift]);
+  }, [timeReq, selectedDay, selected, activeType.durationMinutes, bookings, isMorningShift, t]);
 
   const weekDays = useMemo(
     () => Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i)),

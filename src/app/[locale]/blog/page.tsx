@@ -3,11 +3,9 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { ChevronRight, FilterX, Clock, ArrowRight } from "lucide-react";
 import Footer from "@/components/Footer";
-import { getTranslations } from "next-intl/server";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = await getTranslations({ locale });
+
+export async function generateMetadata() {
     return {
         title: "Blog & Notizie | Frantoio del Pasqua",
         description: "Scopri le novità, i consigli di degustazione e i segreti del nostro frantoio. Un blog dedicato all'Olio Extravergine di Oliva.",
@@ -42,7 +40,7 @@ export default async function BlogPage({
                     </div>
                     <div className="border-b border-stone-100 pb-8">
                         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 mb-3">
-                            La cultura dell'Extravergine
+                            La cultura dell&apos;Extravergine
                         </h1>
                         <p className="text-base text-stone-500 font-normal max-w-2xl">
                             {selectedCategory
@@ -151,14 +149,14 @@ export default async function BlogPage({
                                                 <Link
                                                     href={`/blog?category=${encodeURIComponent(cat)}`}
                                                     className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isSelected
-                                                            ? 'bg-[#3D5A3D] text-white'
-                                                            : 'text-stone-600 hover:bg-stone-100 hover:text-zinc-900'
+                                                        ? 'bg-[#3D5A3D] text-white'
+                                                        : 'text-stone-600 hover:bg-stone-100 hover:text-zinc-900'
                                                         }`}
                                                 >
                                                     <span>{cat}</span>
                                                     <span className={`text-xs px-2 py-0.5 rounded-full font-bold transition-colors ${isSelected
-                                                            ? 'bg-white/20 text-white'
-                                                            : 'bg-stone-200 text-stone-500 group-hover:bg-stone-300'
+                                                        ? 'bg-white/20 text-white'
+                                                        : 'bg-stone-200 text-stone-500 group-hover:bg-stone-300'
                                                         }`}>
                                                         {count}
                                                     </span>
@@ -172,7 +170,7 @@ export default async function BlogPage({
                             {/* Featured Promo */}
                             <div className="bg-zinc-900 text-white rounded-2xl p-6 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-40 h-40 bg-[#3D5A3D]/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                                <h3 className="text-lg font-bold tracking-tight mb-2 relative z-10">Assapora l'autenticità</h3>
+                                <h3 className="text-lg font-bold tracking-tight mb-2 relative z-10">Assapora l&apos;autenticità</h3>
                                 <p className="text-sm text-zinc-400 mb-6 relative z-10 leading-relaxed">
                                     Scopri i nostri oli direttamente nel luogo in cui nascono.
                                 </p>
