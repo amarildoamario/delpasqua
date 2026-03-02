@@ -1,0 +1,727 @@
+{
+    "TastingsPage": {
+        "metadata": {
+            "title": "Extra Vierge Olijfolie Proeverij in Toscane | Frantoio del Pasqua",
+            "description": "Ontdek de ware smaken van Toscaanse EVO-olie. Boek een olijfolieproeverij bij Frantoio del Pasqua in Monte San Savino, Arezzo.",
+            "keywords": "olijfolie proeverij toscane, olijfolie proeverij arezzo, olijfpers arezzo, toscaanse extra vierge olijfolie"
+        },
+        "hero": {
+            "subtitle": "Rondleidingen & Proeverijen",
+            "title_part1": "Boek een ",
+            "title_italic": "proeverij",
+            "title_part2": " bij de pers",
+            "description": "Een begeleide zintuiglijke reis om de aroma's en tonen van extra vierge olijfolie te herkennen, onze cultivars te ontdekken en de olijfpers van dichtbij te ervaren.",
+            "duration": "min",
+            "from": "Vanaf",
+            "types": {
+                "classica": {
+                    "title": "Klassieke Proeverij",
+                    "subtitle": "Introductie tot Delpasqua-oliën met begeleide proeverij.",
+                    "includes": [
+                        "Proeverij van 3 oliën",
+                        "Brood & water",
+                        "Cultivars en persproces"
+                    ]
+                },
+                "premium": {
+                    "title": "Premium Proeverij",
+                    "subtitle": "Complete reis met spijskoppelingen en zintuiglijke tonen.",
+                    "includes": [
+                        "Proeverij van 5 oliën",
+                        "Koppelingen (brood / tomaat / kazen)",
+                        "Kleine rondleiding door de pers (indien beschikbaar)"
+                    ]
+                },
+                "privata": {
+                    "title": "Privé Proeverij",
+                    "subtitle": "Ervaring op maat voor groepen en speciale gelegenheden.",
+                    "includes": [
+                        "Gepersonaliseerd traject",
+                        "Aperitiefoptie",
+                        "Cadeau- / evenementoptie"
+                    ]
+                }
+            }
+        },
+        "calendar": {
+            "subtitle": "Kalender",
+            "title_part1": "Boek je ",
+            "title_italic": "tijdslot",
+            "description": "Kies een beschikbaar tijdslot en voltooi de aanvraag. Je ontvangt een bevestiging van de beheerders.",
+            "badge": "Koudgeperst"
+        },
+        "seo": {
+            "subtitle": "Ontdek meer",
+            "title_part1": "Proef-",
+            "title_italic": "ervaring",
+            "title_part2": " in Toscane",
+            "description": "Beleef een unieke ervaring in het hart van de provincie Arezzo. Frantoio del Pasqua verwelkomt je in Monte San Savino om de geheimen van Toscaanse extra vierge olijfolie te onthullen. Een authentieke reis van koude persing tot zintuiglijke analyse."
+        },
+        "features": {
+            "f1_title": "Arezzo, Toscane",
+            "f1_desc": "Ondergedompeld in het typische en sfeervolle Toscaanse landschap.",
+            "f2_title": "Authentieke EVO-olie",
+            "f2_desc": "Koudgeperst in de machines van onze olijfpers.",
+            "f3_title": "Zintuiglijke Analyse",
+            "f3_desc": "Leer de aroma's en smaken van de cultivars herkennen."
+        },
+        "image_alt": "Professionele Extra Vierge Olijfolie proeverij bij Frantoio del Pasqua, Monte San Savino, Arezzo, Toscane",
+        "image_badge": "[Afbeelding Proeverij]",
+        "faq": {
+            "q1": "Waar vinden de proeverijen plaats?",
+            "a1": "De bezoeken en proeverijen vinden direct plaats in onze Frantoio del Pasqua, gelegen in Loc. Infernaccio 510/B, Monte San Savino (in de provincie Arezzo). Je ontdekt hoe onze olie wordt geboren, omringd door de extractiemachines.",
+            "q2": "Waaruit bestaat de analyse bij de olijfpers?",
+            "a2": "We zullen je begeleiden om onze cultivars te ontdekken. Je leert de fruitige, bittere en kruidige tonen te herkennen die een echte hoogwaardige Toscaanse extra vierge olijfolie kenmerken.",
+            "q3": "Hoe lang duurt de ervaring en wat houdt deze in?",
+            "a3": "De ervaring duurt 30 tot 90 minuten. Het omvat een illustratie van het continue persproces en een technische proeverij, vaak verrijkt met verfijnde gastronomische combinaties.",
+            "q4": "Is het mogelijk om aan het eind olie te kopen?",
+            "a4": "Zeker. Je kunt onze koudgeperste evo-olie direct in onze boerderijwinkel kopen. Een perfect en exclusief souvenir van de excellentie van Arezzo."
+        }
+    },
+    "TastingsCalendar": {
+        "loading": "Laden...",
+        "today": "VANDAAG",
+        "no_slots": "Geen plekken",
+        "booked": "Gereserveerd",
+        "free": "Vrij",
+        "empty_state": {
+            "title": "Geen plekken beschikbaar",
+            "desc": "Probeer een andere week te selecteren"
+        },
+        "modal": {
+            "title": "Boek een Proeverij",
+            "close": "Sluiten",
+            "success": {
+                "title": "Aanvraag verzonden",
+                "desc": "We nemen contact met je op voor bevestiging",
+                "mail_sent": "✓ Melding verzonden",
+                "mail_skipped": "⚠ Melding overgeslagen",
+                "mail_error": "⚠ Fout bij melding"
+            },
+            "form": {
+                "selected_date": "Geselecteerde datum",
+                "type_label": "Type proeverij",
+                "people_label": "Aantal personen",
+                "time_label": "Voorkeurstijd *",
+                "use_suggestion": "gebruik {time}",
+                "name_label": "Naam en achternaam",
+                "name_placeholder": "Jan Jansen",
+                "email_label": "E-mail",
+                "email_placeholder": "jan@voorbeeld.nl",
+                "phone_label": "Telefoon",
+                "phone_placeholder": "+31 ...",
+                "notes_label": "Opmerkingen / Allergieën",
+                "notes_placeholder": "Schrijf hier...",
+                "submit": "Aanvraag indienen",
+                "submitting": "Bezig met verzenden..."
+            },
+            "errors": {
+                "morning_only": "Selecteer een tijd in de ochtend (bijv. 10:30).",
+                "afternoon_only": "Selecteer een tijd in de middag (bijv. 16:00).",
+                "conflict": "De tijd overlapt met een reservering. Controleer de suggestie.",
+                "just_booked": "Deze plek is net gereserveerd. Selecteer een andere tijd.",
+                "generic": "Fout tijdens reserveren."
+            }
+        },
+        "shifts": {
+            "morning": "Ochtend",
+            "evening": "Avond"
+        }
+    },
+    "Common": {
+        "navbar": {
+            "storia": "Geschiedenis",
+            "frantoio": "Olijfpers",
+            "olio": "Olie",
+            "degustazioni": "Proeverijen",
+            "shop": "Winkel",
+            "contatti": "Contact",
+            "menu": "Menu",
+            "login": "Inloggen / Registreren",
+            "cart": "Winkelwagen",
+            "open_menu": "Menu openen",
+            "close_menu": "Menu sluiten",
+            "location": "Italië",
+            "language": "Taal",
+            "blog": "Blog"
+        },
+        "ticker": {
+            "shipping": "Snelle levering 24/48u in Italië",
+            "artisanal": "Ambachtelijke EVO-olie • Familiedrukkerij",
+            "tastings": "Proeverijen beschikbaar op reservering"
+        },
+        "footer": {
+            "brand": {
+                "description": "Landbouwtraditie, kwaliteit en ambachtelijke zorg. Wij produceren extra vierge olijfolie met moderne technieken en respect voor de grondstof."
+            },
+            "contacts": {
+                "title": "CONTACT",
+                "address": "Loc. Infernaccio 510/B, Monte San Savino – Arezzo",
+                "gender_policy": "Gelijkheidbeleid UNI PDR 125"
+            },
+            "info": {
+                "title": "INFORMATIE",
+                "privacy": "Privacybeleid",
+                "cookie": "Cookiebeleid",
+                "terms": "Algemene voorwaarden",
+                "shipping": "Verzending",
+                "returns": "Retouren en terugbetalingen",
+                "contacts": "Contact"
+            },
+            "bottom": {
+                "rights": "© {year} Frantoio del Pasqua — Alle rechten voorbehouden.",
+                "back_to_top": "Terug naar boven",
+                "powered_by": "Powered by Modern Tech",
+                "secure_payments": "Veilige betalingen"
+            }
+        }
+    },
+    "Products": {
+        "evo": {
+            "title": "Extra Vierge - EVO",
+            "subtitle": "Extra vierge olijfolie",
+            "description": "De klassieke dagelijkse EVO. Kwaliteit, elegantie en een schone smaak: een fles die er goed uitziet in de keuken en op tafel.",
+            "badge": "EVO",
+            "variants": {
+                "750ml": "Fles 750 ml",
+                "3lt": "Blik 3 L",
+                "5lt": "Blik 5 L"
+            }
+        },
+        "fruttato-leggero": {
+            "title": "Extra Vierge - Licht Fruitig",
+            "subtitle": "Extra vierge olijfolie",
+            "description": "Verfijnd en harmonieus profiel, ideaal voor visgerechten en salades.",
+            "badge": "KLASSIEK"
+        },
+        "fruttato-medio": {
+            "title": "Extra Vierge - Gemiddeld Fruitig",
+            "subtitle": "Extra vierge olijfolie",
+            "description": "Gebalanceerde blend, ideaal rauw en om mee te koken.",
+            "badge": "KLASSIEK"
+        },
+        "fruttato-intenso": {
+            "title": "Extra Vierge - Intens Fruitig",
+            "subtitle": "Extra vierge olijfolie",
+            "description": "Sterke smaak, met meer aanwezige bittere en pittige tonen.",
+            "badge": "KLASSIEK"
+        },
+        "tartufo": {
+            "title": "Extra Vierge - Truffel",
+            "subtitle": "Gearomatiseerde extra vierge",
+            "description": "Perfect op eieren, aardappelen, carpaccio.",
+            "badge": "GEAROMATISEERD"
+        },
+        "peperoncino": {
+            "title": "Extra Vierge - Chili",
+            "subtitle": "Gearomatiseerde extra vierge",
+            "description": "Zuivere pittigheid, heerlijk op pizza en pasta.",
+            "badge": "GEAROMATISEERD"
+        },
+        "vino": {
+            "title": "Vino Vittoria",
+            "subtitle": "100% Sangiovese",
+            "description": "Een rode wijn met karakter, een uitdrukking van ons territorium.",
+            "badge": "NIEUW"
+        }
+    },
+    "ShopPage": {
+        "header": {
+            "label": "Winkel",
+            "title_part1": "Alle ",
+            "title_italic": "producten",
+            "description": "Selectie van onze extra vierge olijfoliën, verkrijgbaar in verschillende formaten en verpakkingen."
+        },
+        "categories": {
+            "all": "Alle",
+            "fruttato": "Fruitig",
+            "igp": "BGA",
+            "bio": "Biologisch",
+            "aromatico": "Gearomatiseerd"
+        },
+        "empty": {
+            "text": "Geen producten gevonden in deze categorie.",
+            "reset": "Toon alle producten"
+        },
+        "info": {
+            "shipping": "Gratis verzending bij bestellingen boven €50",
+            "notes": "Prijzen zijn indicatief en exclusief BTW. Neem contact met ons op voor maatwerkbestellingen."
+        },
+        "filters": {
+            "from": "Vanaf "
+        }
+    },
+    "HomePage": {
+        "HeroCarousel": {
+            "sr_title": "Olijfmolen en productie: geschiedenis, producten en moderne traditie",
+            "slides": {
+                "storia": {
+                    "title": "Onze Geschiedenis",
+                    "excerpt": "Familiewortels, oude gebaren en een eigentijdse visie: ontdek hoe onze identiteit is geboren.",
+                    "cta": "Lees meer",
+                    "alt": "Olijfbomen bij zonsondergang en landelijk landschap"
+                },
+                "oli": {
+                    "title": "Onze Oliën",
+                    "excerpt": "Een selectie van onze beste oliën, geliefd en bekroond: kwaliteit, balans en karakter.",
+                    "cta": "Ontdek",
+                    "alt": "Groene olijven in de hand (oogst)"
+                },
+                "tradizione": {
+                    "title": "Moderne Traditie",
+                    "excerpt": "Moderne technieken, respect voor grondstoffen en ambachtelijke zorg: de toekomst begint op het land.",
+                    "cta": "Leer meer",
+                    "alt": "Detail van olijfmolen of ambachtelijke verwerking"
+                }
+            },
+            "aria": {
+                "prev": "Vorige dia",
+                "next": "Volgende dia",
+                "go_to": "Ga naar dia",
+                "main_sections": "Hoofdsecties hero",
+                "hero_highlight": "Uitgelichte Hero"
+            }
+        },
+        "HeroSplitEvo": {
+            "label": "EXTRA VIERGE OLIJFOLIE — EVO",
+            "title": "EVO, de juiste voor elke dag.",
+            "description": "De klassieke dagelijkse EVO. Kwaliteit, elegantie en een schone smaak: een fles die er goed uitziet in de keuken en op tafel.",
+            "buy_btn": "Koop EVO",
+            "explore_btn": "Ontdek Shop"
+        },
+        "ShopHighlights": {
+            "label": "Shop",
+            "title_part1": "De meest ",
+            "title_italic": "populaire",
+            "subtitle": "Bestverkochte producten uit onze catalogus.",
+            "cta": "Ga naar de shop",
+            "add": "TOEVOEGEN",
+            "from": "Vanaf ",
+            "iva": "+ BTW"
+        },
+        "BioMethod": {
+            "label": "BIOMETHODE",
+            "title": "Kleine schaal. Gecontroleerde kwaliteit.",
+            "description": "Een ambachtelijke olie wordt niet geboren uit een industriële lijn: het wordt geboren uit de juiste timing, kleine batches en constante aandacht.",
+            "points": {
+                "control": "Echte controle",
+                "control_text": " bij elke stap",
+                "aroma": "Intacte aroma's",
+                "aroma_text": " dankzij delicate verwerking",
+                "stability": "Stabiliteit",
+                "stability_text": " met beschermde opslag"
+            },
+            "cta_prod": "Ontdek de productie",
+            "cta_oil": "Oliekwaliteiten",
+            "card_header": {
+                "label": "PRODUCTIEHANDVEST",
+                "title": "BIOMETHODE – Ambachtelijk",
+                "subtitle": "Kwaliteit uit een korte keten, niet uit industriële volumes."
+            },
+            "specs": {
+                "prod": "Productie",
+                "prod_val": "Kleine batches",
+                "work": "Verwerking",
+                "work_val": "Temp. gecontroleerd",
+                "chain": "Keten",
+                "chain_val": "Traceerbaarheid",
+                "storage": "Opslag",
+                "storage_val": "Staal • Donker"
+            },
+            "process": {
+                "label": "PROCES",
+                "step1_title": "Selectieve oogst",
+                "step1_text": "Zorg voor de vrucht en snelle levering",
+                "step2_title": "Koude persing",
+                "step2_text": "Precieze verwerking om aroma's te behouden",
+                "step3_title": "Schone scheiding",
+                "step3_text": "Controle voor een helder sensorisch profiel",
+                "step4_title": "Beschermde conservatie",
+                "step4_text": "Staal en stabiele omstandigheden"
+            },
+            "guarantees": {
+                "non_industrial": "Niet-industrieel",
+                "non_industrial_text": "Kwaliteit voor kwantiteit",
+                "fresh": "Vers en Schoon",
+                "fresh_text": "Levende en aromatische olie",
+                "control": "Totale controle",
+                "control_text": "Elke fase verzorgd"
+            },
+            "footer": "BIO • AMBACHTELIJKE PRODUCTIE",
+            "details": "Details"
+        },
+        "Discover": {
+            "label": "Ontdekken",
+            "title": "Ontdek de Del Pasqua molen",
+            "cards": {
+                "produzione": {
+                    "title": "PRODUCTIE",
+                    "subtitle": "Van veld tot molen"
+                },
+                "olio": {
+                    "title": "ONZE OLIE",
+                    "subtitle": "Extra vierge kwaliteit"
+                },
+                "contatti": {
+                    "title": "CONTACTEN",
+                    "subtitle": "Kom ons bezoeken"
+                }
+            }
+        },
+        "HeritageBridge": {
+            "label": "TRADITIE & CONTROLE",
+            "title_part1": "Een visuele brug tussen oude gebaren",
+            "title_italic": "en moderne precisie.",
+            "subtitle": "Beelden die vertellen over vakmanschap, grondstoffen en controle.",
+            "cta": "Geschiedenis & Territorium",
+            "tradition": {
+                "label": "TRADITIE",
+                "title": "Menselijk gebaar, de juiste timing",
+                "text": "Oogst, aandacht, zorg: kwaliteit wordt geboren vóór de molen.",
+                "tag1": "Korte keten",
+                "tag2": "Kleine schaal"
+            },
+            "control": {
+                "label": "CONTROLE",
+                "title": "Precisie zonder industrieel",
+                "text": "Oogst, aandacht, zorg: kwaliteit wordt geboren vóór de molen.",
+                "tag1": "Behoud van frisheid",
+                "tag2": "Schoon profiel"
+            }
+        }
+    },
+    "ProduzionePage": {
+        "hero": {
+            "label": "Molen",
+            "title_part1": "Het hart van",
+            "title_italic": "onze kwaliteit",
+            "description": "In de molen telt elk detail: van het reinigen van de olijven tot gecontroleerde malaxatie, extractie en opslag. Hier werken technologie en ambachtelijke zorg samen om versheid, aroma's en stabiliteit te behouden.",
+            "tag1": "Koude extractie",
+            "tag2": "IGP Gecertificeerd",
+            "img_alt": "Frantoio del Pasqua - exterieur"
+        },
+        "machines": {
+            "label": "Machines & Lijnen",
+            "title_part1": "Moderne installaties,",
+            "title_italic": "gecontroleerd proces",
+            "subtitle": "Bladverwijdering, pletten, kneden, extractie, scheiding en filtratie: elke fase is ontworpen om aroma's en stabiliteit te behouden.",
+            "defogliazione": {
+                "title": "Bladverwijdering",
+                "desc": "Verwijdering van bladeren en onzuiverheden, voorzichtig wassen."
+            },
+            "frangitura": {
+                "title": "Pletten",
+                "desc": "Snel pletten om verhitting en oxidatie te minimaliseren."
+            },
+            "gramolazione": {
+                "title": "Malaxatie",
+                "desc": "Langzaam mengen om microdruppels olie te combineren."
+            },
+            "estrazione": {
+                "title": "Extractie",
+                "desc": "Scheiding zonder thermische stress, gemonitorde parameters."
+            },
+            "separazione": {
+                "title": "Scheiding",
+                "desc": "Verfijning en klaring van de olie."
+            },
+            "filtrazione": {
+                "title": "Filtratie",
+                "desc": "Stabiliteit in de tijd en een schoon profiel."
+            }
+        },
+        "showcase": {
+            "trasporto": {
+                "kicker": "TRANSPORT",
+                "title": "Schoonheid en stabiliteit",
+                "text": "Binnen de molen vindt de verplaatsing van de olie uitsluitend plaats in roestvrijstalen containers. Plastic is streng verboden, omdat het bijsmaken afgeeft aan de olie, wat de smaak en geur bederft.",
+                "img_label": "AFBEELDING — FILTRATIE"
+            },
+            "stoccaggio": {
+                "kicker": "Opslag",
+                "title": "Opslag onder stikstof",
+                "text": "Ruimte voor informatie over opslag in silo's, temperatuurcontrole en bescherming tegen oxidatie om aroma's en polyfenolen te behouden.",
+                "img_label": "AFBEELDING — OPSLAG"
+            },
+            "imbottigliamento": {
+                "kicker": "Bottelen",
+                "title": "Vul- en verpakkingslijn",
+                "text": "Beschrijving van de lijn, formaten, etikettering en verpakking. Ideaal is een brede foto van de lijn.",
+                "tag1": "Variabele formaten",
+                "tag2": "Nauwkeurige etikettering",
+                "img_label": "AFBEELDING — BOTTELIJN"
+            },
+            "controllo": {
+                "kicker": "Controle",
+                "title": "Kwaliteit en traceerbaarheid",
+                "text": "Informatie over controles, batchtraceerbaarheid, beheer van leveringen en (indien aanwezig) een kleine laboratorium/proeverijhoek.",
+                "list1": "Sensorische analyse",
+                "list2": "Volledige traceerbaarheid",
+                "list3": "Actuele certificeringen",
+                "img_label": "AFBEELDING — KWALITEITSCONTROLE / TRACEERBAARHEID"
+            }
+        },
+        "technology": {
+            "label": "De Molen",
+            "title_part1": "Technologie, zorg",
+            "title_italic": "en traceerbaarheid",
+            "description": "In onze molen is elke fase ontworpen om aroma's en polyfenolen te beschermen: snelle levering, zorgvuldige reiniging, koude extractie en opslag onder gecontroleerde omstandigheden.",
+            "checks": {
+                "chain": {
+                    "title": "Korte keten",
+                    "desc": "Van oogst tot malen in korte tijd."
+                },
+                "clean": {
+                    "title": "Reiniging en selectie",
+                    "desc": "Bladverwijdering en wassen om onzuiverheden te elimineren."
+                },
+                "extraction": {
+                    "title": "Koude extractie",
+                    "desc": "Gecontroleerd proces om kwaliteit en aroma's te behouden."
+                },
+                "storage": {
+                    "title": "Opslag onder stikstof",
+                    "desc": "Bescherming tegen oxidatie voor het bottelen."
+                }
+            },
+            "cards": {
+                "molitura": {
+                    "title": "Loonmaling voor derden",
+                    "text": "Maal- en verpakkingsprocessen met batchtraceerbaarheid.",
+                    "badge": "Diensten"
+                },
+                "conferimento": {
+                    "title": "Olijflevering",
+                    "text": "Ontvangst en beheer met prioriteit op versheid.",
+                    "badge": "Operaties"
+                },
+                "controlli": {
+                    "title": "Kwaliteitscontroles",
+                    "text": "Monitoring van proces- en opslagparameters.",
+                    "badge": "Kwaliteit"
+                },
+                "visite": {
+                    "title": "Bezoeken & Proeverijen",
+                    "text": "Momenten van bezoek om de verwerkingsfasen te ontdekken.",
+                    "badge": "Ervaring"
+                }
+            }
+        },
+        "steps_section": {
+            "label": "Productie",
+            "title_part1": "Van het veld naar de",
+            "title_italic": "molen",
+            "subtitle": "Oogst, verwerking en certificeringen: de fasen die de kwaliteit van onze extra vierge olijfolie bepalen."
+        },
+        "steps": {
+            "brucatura": {
+                "kicker": "OOGST",
+                "title": "Handmatige pluk",
+                "paragraphs": [
+                    "Zelfs vandaag de dag vindt in Toscane een groot deel van de olijfoogst traditioneel met de hand plaats. De naar de molen getransporteerde olijven worden vervolgens binnen 24 uur verwerkt om de integriteit van de aromatische en fenolische componenten te waarborgen. De Del Pasqua-molen is uitgerust met een moderne Alfalaval-olijfverwerkingsinstallatie met koude extractie."
+                ],
+                "placeholder": "AFBEELDING — OOGST"
+            },
+            "imbottigliamento": {
+                "kicker": "INSTALLATIE",
+                "title": "De bottellijn",
+                "paragraphs": [
+                    "De installatie is uitgerust met een lijn voor bottelen en verpakken; en een stikstofopslag om de organoleptische eigenschappen van onze 'Il Magnifico'-olie te garanderen in afwachting van het bottelen.",
+                    "Maar we stoppen hier niet: we voeren ook maal- en verpakkingsprocessen uit voor derden."
+                ],
+                "placeholder": "AFBEELDING — LIJN"
+            },
+            "evo": {
+                "kicker": "KWALITEIT",
+                "title": "Onze EVO-olie",
+                "paragraphs": [
+                    "Al deze factoren zijn een absolute garantie voor de productie van extra vierge olijfolie van de hoogste kwaliteit, die de versheid en aroma's van vers geperste olie langer kan behouden."
+                ],
+                "placeholder": "AFBEELDING — EVO"
+            },
+            "igp_bio": {
+                "kicker": "CERTIFICERINGEN",
+                "title": "IGP EN BIO",
+                "paragraphs": [
+                    "De Del Pasqua-molen is gecertificeerd door Suolo e Salute voor de transformatie en productie van biologische producten en staat ingeschreven bij het Toscaanse Olieconsortium voor de productie van IGP Toscano extra vierge olijfolie."
+                ],
+                "placeholder": "AFBEELDING — IGP/BIO"
+            }
+        },
+        "shared": {
+            "machine": "Machine"
+        }
+    },
+    "OlioPage": {
+        "header": {
+            "label": "Onze olie",
+            "title_part1": "Onze",
+            "title_italic": "EVO-olie"
+        },
+        "sections": {
+            "intro": {
+                "title": "Onze EVO-olie",
+                "body": [
+                    "Onze Italiaanse extra vierge olijfolie is niet alleen afkomstig van olijven die met respect voor het milieu zijn geteeld, maar alle verwerkingsactiviteiten vallen onder het controlesysteem van erkende instanties om de eindconsument een natuurlijk, gecontroleerd en gecertificeerd product te garanderen."
+                ],
+                "placeholder": "AFBEELDING — INTRO"
+            },
+            "fruttato_leggero": {
+                "short_title": "Licht fruitig",
+                "title": "Extra vierge olijfolie - Licht fruitig 100% Italiaans",
+                "body": [
+                    "Delicaat en harmonieus profiel: lichte bitterheid en pittigheid, met grasachtige sensaties en zachte tonen.",
+                    "Ideaal rauw bij lichte gerechten, vis, groenten en salades."
+                ],
+                "formats": [
+                    "Fles: 250/500/750ml",
+                    "Blik: 1/3/5L"
+                ],
+                "placeholder": "AFBEELDING — LICHT FRUCHTIG"
+            },
+            "fruttato_intenso": {
+                "short_title": "Intens fruitig",
+                "title": "Extra vierge olijfolie - Intens fruitig 100% Italiaans",
+                "body": [
+                    "Met een sterke maar evenwichtige smaak; de bitterheid en pittigheid bevinden zich op een gemiddeld hoog niveau, met een afdronk die neigt naar artisjok, heldergroene kleur.",
+                    "De oogst vindt plaats voor de volledige rijping."
+                ],
+                "formats": [
+                    "Fles: 250/500/750ml",
+                    "Blik: 1/3/5L"
+                ],
+                "placeholder": "AFBEELDING — INTENS FRUCHTIG"
+            },
+            "fruttato_medio": {
+                "short_title": "Medium fruitig",
+                "title": "Extra vierge olijfolie - Medium fruitig 100% Italiaans",
+                "body": [
+                    "Mix van leccino-, frantoio- en moraiolo-olijven; uitgebalanceerd in pittigheid en bitterheid, met hints van amandel en een lichte sensatie van gras.",
+                    "Groene kleur met gele nerven."
+                ],
+                "formats": [
+                    "Fles: 250/500/750/1000ml",
+                    "Blik: 1/3/5L"
+                ],
+                "placeholder": "AFBEELDING — MEDIUM FRUCHTIG"
+            },
+            "evo": {
+                "short_title": "EVO",
+                "title": "Extra vierge olijfolie - EVO",
+                "body": [
+                    "Met de selectie van de beste olijven ontstaat onze 'EVO'-olie, koud geëxtraheerd volgens de principes van traditie en met een oog voor innovatie. Heldergroene kleur en grasgeur met hints van amandel."
+                ],
+                "formats": [
+                    "Fles: 500ml"
+                ],
+                "placeholder": "AFBEELDING — EVO"
+            },
+            "aromatico": {
+                "short_title": "Aromatisch",
+                "title": "Gearomatiseerde Extra Vierge Olijfolie",
+                "body": [
+                    "Onze speciale selectie van gearomatiseerde oliën.",
+                    "Beschikbare versies: truffel, chili en citroen."
+                ],
+                "formats": [
+                    "Fles: 250ml"
+                ],
+                "placeholder": "AFBEELDING — GEAROMATISEERD"
+            }
+        },
+        "sidebar": {
+            "id_label": "Index",
+            "note_label": "Opmerking",
+            "note_text1": "Beschrijvende sectie: afbeeldingen staan in"
+        },
+        "trust_bar": {
+            "text": "KWALITEIT • TRADITIE • INNOVATIE",
+            "badge": "KOUD GEËXTRAHEERDE SELECTIE"
+        }
+    },
+    "StoriaPage": {
+        "header": {
+            "subtitle": "Geschiedenis",
+            "title_part1": "Onze ",
+            "title_italic": "geschiedenis",
+            "description": "Het bedrijf Del Pasqua werd in de jaren '60 opgericht door het werk van vader Sabatino. In de loop der jaren trad ook zoon Emanuele toe tot het familiebedrijf, met als doel de diversificatie te versterken, in te zetten op de kwaliteit van de producten en het bedrijf zo open te stellen voor nieuwe mogelijkheden en richtingen."
+        },
+        "section1": {
+            "subtitle": "Onze olijfgaarden",
+            "title_part1": "Traditie en innovatie ",
+            "title_italic": "in het groen",
+            "p1": "Onze olijfgaarden strekken zich uit over 4 hectare, verdeeld over de typerende cultivars van onze regio: leccino, frantoiane e moraiolo (o.a.).",
+            "p2": "Met respect voor traditionele teelt, maar volgens moderne en innovatieve technieken, zijn er nieuwe olijfbomen geplant waarvan de toestand voortdurend wordt gecontroleerd door het werk van de agronoom die de rijpheid van de olijven beoordeelt.",
+            "stats": {
+                "hectares": "Hectare",
+                "cultivars": "Cultivar",
+                "years": "Jaar"
+            }
+        },
+        "section2": {
+            "subtitle": "Onze oogst",
+            "title_part1": "Sinds oktober met ",
+            "title_italic": "passie",
+            "p1": "We wachten altijd tot oktober voor de oogst en we genieten van het werken met onze passies. Vandaag hebben we een grote mijlpaal bereikt: onze producten worden lokaal en internationaal gewaardeerd.",
+            "p2": "Sinds enkele jaren exporteert het bedrijf zijn producten stabiel naar de Verenigde Staten. De extra vierge olijfolie \"Il Magnifico\" krijgt steeds meer erkenning op de markt.",
+            "badge": "Export USA"
+        },
+        "philosophy": {
+            "subtitle": "Filosofie",
+            "title_part1": "Toscaanse smaken met respect ",
+            "title_italic": "voor het milieu",
+            "description": "Een familiegeschiedenis, geduldig werk en constante zorg: kwaliteit komt voort uit de som van kleine gebaren, die elk jaar goed worden herhaald.",
+            "tags": {
+                "tradition": "Traditie",
+                "innovation": "Innovatie",
+                "quality": "Kwaliteit"
+            }
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "label": "Contact",
+            "title_part1": "Wij zijn ",
+            "title_italic": "hier",
+            "description": "Voor zakelijke aanvragen, productinformatie of samenwerkingen kunt u ons schrijven of bellen.",
+            "pills": {
+                "response": "SNELLE REACTIE",
+                "support": "BESTELONDERSTEUNING",
+                "b2b": "B2B AANVRAGEN"
+            }
+        },
+        "info": {
+            "company_label": "Bedrijf",
+            "address_label": "Adres",
+            "phone_label": "Telefoon",
+            "mobile_label": "Mobiel",
+            "email_label": "E-mail",
+            "docs_label": "Documenten",
+            "docs_gender": "Gelijkheidbeleid",
+            "docs_privacy": "Privacybeleid",
+            "social_label": "Sociale media"
+        },
+        "form": {
+            "label": "Schrijf ons",
+            "title": "Stuur een bericht",
+            "subtitle": "Vul het formulier in: we antwoorden zo snel mogelijk.",
+            "name_label": "Naam",
+            "name_placeholder": "Uw naam",
+            "email_label": "E-mail",
+            "subject_label": "Onderwerp",
+            "subject_placeholder": "Bijv. Productinfo / Bestelling / B2B",
+            "message_label": "Bericht",
+            "message_placeholder": "Schrijf hier...",
+            "privacy_consent": "Ik ga akkoord met de verwerking van mijn gegevens en verklaar het privacybeleid te hebben gelezen",
+            "success_msg": "Bericht verzonden. We antwoorden zo snel mogelijk.",
+            "error_prefix": "Fout",
+            "error_fallback": "Verzenden mislukt.",
+            "button_idle": "BERICHT VERZENDEN",
+            "button_sending": "VERZENDEN..."
+        },
+        "map": {
+            "label": "Waar we zijn",
+            "button": "Open in Maps"
+        }
+    }
+}

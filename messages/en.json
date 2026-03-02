@@ -1,0 +1,739 @@
+{
+    "TastingsPage": {
+        "metadata": {
+            "title": "Extra Virgin Olive Oil Tasting in Tuscany | Frantoio del Pasqua Arezzo",
+            "description": "Discover the true flavors of Tuscan EVO oil. Book a tasting of extra virgin olive oil at Frantoio del Pasqua in Monte San Savino, Arezzo.",
+            "keywords": "olive oil tasting tuscany, olive oil tasting arezzo, olive oil mill arezzo, tuscan extra virgin olive oil, olive oil mill tour tuscany, extra virgin olive oil tasting"
+        },
+        "hero": {
+            "subtitle": "Tours & tastings",
+            "title_part1": "Book a ",
+            "title_italic": "tasting",
+            "title_part2": " at the mill",
+            "description": "A guided sensory journey to learn how to recognize the aromas and notes of extra virgin olive oil, discover our cultivars, and experience the mill up close.",
+            "duration": "min",
+            "from": "Starting from",
+            "types": {
+                "classica": {
+                    "title": "Classic Tasting",
+                    "subtitle": "Introduction to Delpasqua oils with guided tasting.",
+                    "includes": [
+                        "Tasting of 3 oils",
+                        "Bread & water",
+                        "Cultivars and pressing process"
+                    ]
+                },
+                "premium": {
+                    "title": "Premium Tasting",
+                    "subtitle": "Complete journey with food pairings and sensory notes.",
+                    "includes": [
+                        "Tasting of 5 oils",
+                        "Pairings (bread / tomato / cheeses)",
+                        "Mini mill tour (if available)"
+                    ]
+                },
+                "privata": {
+                    "title": "Private Tasting",
+                    "subtitle": "Customized experience for groups and special occasions.",
+                    "includes": [
+                        "Personalized path",
+                        "Aperitif option",
+                        "Gift / event option"
+                    ]
+                }
+            }
+        },
+        "calendar": {
+            "subtitle": "Calendar",
+            "title_part1": "Book your ",
+            "title_italic": "slot",
+            "description": "Select an available slot and complete your request. You will receive a confirmation from the administrators.",
+            "badge": "Cold pressed"
+        },
+        "seo": {
+            "subtitle": "Discover more",
+            "title_part1": "Tasting ",
+            "title_italic": "experience",
+            "title_part2": " in Tuscany",
+            "description": "Live a unique experience in the heart of the Arezzo province. Frantoio del Pasqua welcomes you in Monte San Savino to reveal the secrets of Tuscan extra virgin olive oil. An authentic journey from cold pressing to sensory analysis."
+        },
+        "features": {
+            "f1_title": "Arezzo, Tuscany",
+            "f1_desc": "Immersed in the typical and evocative Tuscan landscape.",
+            "f2_title": "Authentic EVO Oil",
+            "f2_desc": "Cold pressed in the machinery of our mill.",
+            "f3_title": "Sensory Analysis",
+            "f3_desc": "Learn to recognize the aromas and flavors of the cultivars."
+        },
+        "image_alt": "Professional Extra Virgin Olive Oil tasting at Frantoio del Pasqua, Monte San Savino, Arezzo, Tuscany",
+        "image_badge": "[Tasting Image]",
+        "faq": {
+            "q1": "Where do the tastings take place?",
+            "a1": "The tours and tastings take place right inside our Frantoio del Pasqua, located in Loc. Infernaccio 510/B, Monte San Savino (in the province of Arezzo). You will discover how our oil is born surrounded by the extraction machinery.",
+            "q2": "What does the analysis in the mill consist of?",
+            "a2": "We will guide you to discover our cultivars. You will learn to recognize the fruity, bitter, and spicy notes that characterize a true high-quality Tuscan extra virgin olive oil.",
+            "q3": "How long does the experience last and what does it include?",
+            "a3": "The experience lasts from 30 to 90 minutes. It includes an illustration of the continuous cycle pressing process and technical tasting, often enriched by refined gastronomic pairings.",
+            "q4": "Is it possible to purchase oil at the end?",
+            "a4": "Certainly. You can buy our cold-pressed evo oil directly in our farm shop. A perfect and exclusive souvenir of Arezzo's excellence."
+        }
+    },
+    "TastingsCalendar": {
+        "loading": "Loading...",
+        "today": "TODAY",
+        "no_slots": "No slots",
+        "booked": "Booked",
+        "free": "Free",
+        "empty_state": {
+            "title": "No slots available",
+            "desc": "Try selecting another week"
+        },
+        "modal": {
+            "title": "Book a Tasting",
+            "close": "Close",
+            "success": {
+                "title": "Request sent",
+                "desc": "We will contact you for confirmation",
+                "mail_sent": "✓ Notification sent",
+                "mail_skipped": "⚠ Notification skipped",
+                "mail_error": "⚠ Notification error"
+            },
+            "form": {
+                "selected_date": "Selected Date",
+                "type_label": "Tasting Type",
+                "people_label": "Number of People",
+                "time_label": "Preferred Time *",
+                "use_suggestion": "use {time}",
+                "name_label": "Full Name",
+                "name_placeholder": "John Doe",
+                "email_label": "Email",
+                "email_placeholder": "john@example.com",
+                "phone_label": "Phone",
+                "phone_placeholder": "+1 ...",
+                "notes_label": "Notes / Allergies",
+                "notes_placeholder": "Write here...",
+                "submit": "Submit Request",
+                "submitting": "Submitting..."
+            },
+            "errors": {
+                "morning_only": "Please select a morning time (e.g. 10:30).",
+                "afternoon_only": "Please select an afternoon time (e.g. 16:00).",
+                "conflict": "The time conflicts with a booking. Check the suggestion.",
+                "just_booked": "This slot was just booked. Please select another time.",
+                "generic": "Error during booking."
+            }
+        },
+        "shifts": {
+            "morning": "Morning",
+            "evening": "Evening"
+        }
+    },
+    "Common": {
+        "navbar": {
+            "storia": "History",
+            "frantoio": "Oil Mill",
+            "olio": "Olive Oil",
+            "degustazioni": "Tastings",
+            "shop": "Shop",
+            "contatti": "Contact",
+            "menu": "Menu",
+            "login": "Login / Register",
+            "cart": "Cart",
+            "open_menu": "Open menu",
+            "close_menu": "Close menu",
+            "location": "Italy",
+            "language": "Language",
+            "blog": "Blog"
+        },
+        "ticker": {
+            "shipping": "Fast shipping 24/48h in Italy",
+            "artisanal": "Artisanal EVO Oil • Family Mill",
+            "tastings": "Tastings available by reservation"
+        },
+        "footer": {
+            "brand": {
+                "description": "Agricultural tradition, quality, and artisanal care. We produce extra virgin olive oils with modern techniques and respect for the raw materials."
+            },
+            "contacts": {
+                "title": "CONTACTS",
+                "address": "Loc. Infernaccio 510/B, Monte San Savino – Arezzo",
+                "gender_policy": "Gender Equality Policy UNI PDR 125"
+            },
+            "info": {
+                "title": "INFORMATION",
+                "privacy": "Privacy Policy",
+                "cookie": "Cookie Policy",
+                "terms": "Terms and Conditions",
+                "shipping": "Shipping",
+                "returns": "Returns and Refunds",
+                "contacts": "Contacts"
+            },
+            "bottom": {
+                "rights": "© {year} Frantoio del Pasqua — All rights reserved.",
+                "back_to_top": "Back to top",
+                "powered_by": "Powered by Modern Tech",
+                "secure_payments": "Secure Payments"
+            }
+        }
+    },
+    "Products": {
+        "evo": {
+            "title": "Extra Virgin - EVO",
+            "subtitle": "Extra virgin olive oil",
+            "description": "The classic everyday EVO. Quality, elegance, and clean taste: a bottle that looks good in the kitchen and on the table.",
+            "badge": "EVO",
+            "variants": {
+                "750ml": "Bottle 750 ml",
+                "3lt": "Can 3 L",
+                "5lt": "Can 5 L"
+            }
+        },
+        "fruttato-leggero": {
+            "title": "Extra Virgin - Light Fruity",
+            "subtitle": "Extra virgin olive oil",
+            "description": "Delicate and harmonious profile, ideal for fish dishes and salads.",
+            "badge": "CLASSIC"
+        },
+        "fruttato-medio": {
+            "title": "Extra Virgin - Medium Fruity",
+            "subtitle": "Extra virgin olive oil",
+            "description": "Balanced blend, ideal raw and for cooking.",
+            "badge": "CLASSIC"
+        },
+        "fruttato-intenso": {
+            "title": "Extra Virgin - Intense Fruity",
+            "subtitle": "Extra virgin olive oil",
+            "description": "Strong flavor, with more present bitter and spicy notes.",
+            "badge": "CLASSIC"
+        },
+        "tartufo": {
+            "title": "Extra Virgin - Truffle",
+            "subtitle": "Flavored extra virgin",
+            "description": "Perfect on eggs, potatoes, carpaccio.",
+            "badge": "FLAVORED"
+        },
+        "peperoncino": {
+            "title": "Extra Virgin - Chili",
+            "subtitle": "Flavored extra virgin",
+            "description": "Clean spiciness, excellent on pizza and pasta.",
+            "badge": "FLAVORED"
+        },
+        "vino": {
+            "title": "Vino Vittoria",
+            "subtitle": "100% Sangiovese",
+            "description": "A red wine with character, an expression of our territory.",
+            "badge": "NEW"
+        }
+    },
+    "ShopPage": {
+        "header": {
+            "label": "Shop",
+            "title_part1": "All ",
+            "title_italic": "products",
+            "description": "Selection of our extra virgin olive oils, available in different sizes and packaging."
+        },
+        "categories": {
+            "all": "All",
+            "fruttato": "Fruity",
+            "igp": "PGI",
+            "bio": "Organic",
+            "aromatico": "Flavored"
+        },
+        "empty": {
+            "text": "No products found in this category.",
+            "reset": "Show all products"
+        },
+        "info": {
+            "shipping": "Free shipping for orders over €50",
+            "notes": "Prices are indicative and do not include VAT. Contact us for custom orders."
+        },
+        "filters": {
+            "from": "From "
+        }
+    },
+    "HomePage": {
+        "HeroCarousel": {
+            "sr_title": "Oil mill and production: history, products, and modern tradition",
+            "slides": {
+                "storia": {
+                    "title": "Our History",
+                    "excerpt": "Family roots, ancient gestures, and a contemporary vision: discover how our identity is born.",
+                    "cta": "Read More",
+                    "alt": "Olive trees at sunset and rural landscape"
+                },
+                "oli": {
+                    "title": "Our Oils",
+                    "excerpt": "A selection of our best oils, loved and awarded: quality, balance, and character.",
+                    "cta": "Discover",
+                    "alt": "Green olives in hand (harvesting)"
+                },
+                "tradizione": {
+                    "title": "Modern Tradition",
+                    "excerpt": "Modern techniques, respect for raw materials, and artisanal care: the future starts from the land.",
+                    "cta": "Learn More",
+                    "alt": "Detail of oil mill or artisanal processing"
+                }
+            },
+            "aria": {
+                "prev": "Previous slide",
+                "next": "Next slide",
+                "go_to": "Go to slide",
+                "main_sections": "Main hero sections",
+                "hero_highlight": "Featured Hero"
+            }
+        },
+        "HeroSplitEvo": {
+            "label": "EXTRA VIRGIN OLIVE OIL — EVO",
+            "title": "EVO, the right one for every day.",
+            "description": "The classic everyday EVO. Quality, elegance, and clean taste: a bottle that looks good in the kitchen and on the table.",
+            "buy_btn": "Buy EVO",
+            "explore_btn": "Explore Shop"
+        },
+        "ShopHighlights": {
+            "label": "Shop",
+            "title_part1": "The most ",
+            "title_italic": "popular",
+            "subtitle": "Best-selling products from our catalog.",
+            "cta": "Go to Shop",
+            "add": "ADD",
+            "from": "From ",
+            "iva": "+ VAT"
+        },
+        "BioMethod": {
+            "label": "BIO METHOD",
+            "title": "Small scale. Controlled quality.",
+            "description": "An artisanal oil is not born from an industrial line: it is born from the right timing, small batches, and constant attention.",
+            "points": {
+                "control": "Real control",
+                "control_text": " over every step",
+                "aroma": "Intact aromas",
+                "aroma_text": " thanks to delicate processing",
+                "stability": "Stability",
+                "stability_text": " with protected storage"
+            },
+            "cta_prod": "Discover Production",
+            "cta_oil": "Oil Qualities",
+            "card_header": {
+                "label": "PRODUCTION CHARTER",
+                "title": "BIO Method – Artisanal",
+                "subtitle": "Short supply chain quality, not industrial volumes."
+            },
+            "specs": {
+                "prod": "Production",
+                "prod_val": "Small batches",
+                "work": "Processing",
+                "work_val": "Temp. controlled",
+                "chain": "Process",
+                "chain_val": "Traceability",
+                "storage": "Storage",
+                "storage_val": "Steel • Dark"
+            },
+            "process": {
+                "label": "PROCESS",
+                "step1_title": "Selective Harvest",
+                "step1_text": "Care for the fruit and quick delivery",
+                "step2_title": "Cold Pressing",
+                "step2_text": "Precise processing to preserve aromas",
+                "step3_title": "Clean Separation",
+                "step3_text": "Control for a clear sensory profile",
+                "step4_title": "Protected Conservation",
+                "step4_text": "Steel and stable conditions"
+            },
+            "guarantees": {
+                "non_industrial": "Non-Industrial",
+                "non_industrial_text": "Quality before quantity",
+                "fresh": "Fresh and Clean",
+                "fresh_text": "Living and aromatic oil",
+                "control": "Total Control",
+                "control_text": "Every phase cared for"
+            },
+            "footer": "BIO • ARTISANAL PRODUCTION",
+            "details": "Details"
+        },
+        "Discover": {
+            "label": "Explore",
+            "title": "Discover Del Pasqua Mill",
+            "cards": {
+                "produzione": {
+                    "title": "FRANTOIO",
+                    "subtitle": "From field to mill"
+                },
+                "olio": {
+                    "title": "OUR OIL",
+                    "subtitle": "Extra Virgin Quality"
+                },
+                "contatti": {
+                    "title": "CONTACTS",
+                    "subtitle": "Come visit us"
+                }
+            }
+        },
+        "HeritageBridge": {
+            "label": "TRADITION & CONTROL",
+            "title_part1": "A visual bridge between ancient gestures",
+            "title_italic": "and modern precision.",
+            "subtitle": "Images that tell of craftsmanship, raw materials, and control.",
+            "cta": "History & Territory",
+            "tradition": {
+                "label": "TRADITION",
+                "title": "Human gesture, right timing",
+                "text": "Harvest, attention, care: quality is born before the mill.",
+                "tag1": "Short chain",
+                "tag2": "Small scale"
+            },
+            "control": {
+                "label": "CONTROL",
+                "title": "Precision without industrial",
+                "text": "Harvest, attention, care: quality is born before the mill.",
+                "tag1": "Preserved freshness",
+                "tag2": "Clean profile"
+            }
+        }
+    },
+    "StoriaPage": {
+        "header": {
+            "subtitle": "History",
+            "title_part1": "Our ",
+            "title_italic": "history",
+            "description": "The Del Pasqua company was born around the 1960s from the work of father Sabatino. Over the years, his son Emanuele also joined the family business, with the aim of strengthening diversification, focusing on the quality of products and thus opening the company to new outlets and directions."
+        },
+        "section1": {
+            "subtitle": "Our olive groves",
+            "title_part1": "Tradition and innovation ",
+            "title_italic": "in the green",
+            "p1": "Our olive groves extend over 4 hectares, divided among the typical cultivars of our area: leccino, frantoiane, and moraiolo.",
+            "p2": "In respect of traditional cultivation, but using modern and innovative techniques, new olive trees have been planted whose status is constantly monitored by the agronomist who evaluates the ripeness of the olives.",
+            "stats": {
+                "hectares": "Hectares",
+                "cultivars": "Cultivars",
+                "years": "Years"
+            }
+        },
+        "section2": {
+            "subtitle": "Our harvest",
+            "title_part1": "Since October with ",
+            "title_italic": "passion",
+            "p1": "We always wait for October for the harvest and we enjoy working with our passions. Today we have reached a great milestone: currently, our products are appreciated locally and internationally.",
+            "p2": "For some years the company has been stably exporting its products to the United States. The extra virgin olive oil \"Il Magnifico\" is receiving increasingly high approval from the market.",
+            "badge": "USA Export"
+        },
+        "philosophy": {
+            "subtitle": "Philosophy",
+            "title_part1": "Tuscan flavors with respect for ",
+            "title_italic": "the environment",
+            "description": "A family story, patient work, and constant care: quality is born from the sum of small gestures, repeated well, every year.",
+            "tags": {
+                "tradition": "Tradition",
+                "innovation": "Innovation",
+                "quality": "Quality"
+            }
+        }
+    },
+    "ProduzionePage": {
+        "hero": {
+            "label": "Mill",
+            "title_part1": "The heart of",
+            "title_italic": "our quality",
+            "description": "At the mill, every detail counts: from cleaning the olives to controlled malaxation, extraction, and storage. Here, technology and artisanal care work together to preserve freshness, aromas, and stability.",
+            "tag1": "Cold extraction",
+            "tag2": "IGP Certified",
+            "img_alt": "Frantoio del Pasqua - exterior"
+        },
+        "machines": {
+            "label": "Machines & Lines",
+            "title_part1": "Modern plants,",
+            "title_italic": "controlled process",
+            "subtitle": "Leaves removal, crushing, malaxation, extraction, separation, and filtration: every stage is designed to preserve aromas and stability.",
+            "defogliazione": {
+                "title": "Leaves removal",
+                "desc": "Removal of leaves and impurities, delicate washing."
+            },
+            "frangitura": {
+                "title": "Crushing",
+                "desc": "Rapid crushing to minimize heating and oxidation."
+            },
+            "gramolazione": {
+                "title": "Malaxation",
+                "desc": "Slow mixing to combine micro-drops of oil."
+            },
+            "estrazione": {
+                "title": "Extraction",
+                "desc": "Separation without thermal stress, monitored parameters."
+            },
+            "separazione": {
+                "title": "Separation",
+                "desc": "Refinement and clarification of the oil."
+            },
+            "filtrazione": {
+                "title": "Filtration",
+                "desc": "Stability over time and clean profile."
+            },
+            "divider_1": {
+                "label": "CARE AND CONSERVATION",
+                "title_part1": "From processing ",
+                "title_italic": "to the bottle",
+                "text": "Once extracted, we protect our oil from light and oxygen. Only this way do the mill's aromas arrive intact on your table."
+            },
+            "divider_2": {
+                "label": "GUARANTEED QUALITY",
+                "title_part1": "Control in ",
+                "title_italic": "every phase",
+                "text": "We leave nothing to chance: from the arrival of the olives to the checks on the final product."
+            }
+        },
+        "showcase": {
+            "trasporto": {
+                "kicker": "TRANSPORT",
+                "title": "Cleanliness and stability",
+                "text": "Inside the mill, the movement of the oil occurs exclusively through the use of steel containers. Plastic is strictly forbidden, as it imparts off-flavors to the oil, spoiling its taste and smell.",
+                "img_label": "IMAGE — FILTRATION"
+            },
+            "stoccaggio": {
+                "kicker": "Storage",
+                "title": "Storage under nitrogen",
+                "text": "Space to tell about storage in silos, temperature control, and protection from oxidation to preserve aromas and polyphenols.",
+                "img_label": "IMAGE — STORAGE"
+            },
+            "imbottigliamento": {
+                "kicker": "Bottling",
+                "title": "Filling and packaging line",
+                "text": "Space to describe the line, formats, labeling, and packaging. Ideal to add a wide photo of the line.",
+                "tag1": "Variable formats",
+                "tag2": "Precise labeling",
+                "img_label": "IMAGE — BOTTLING LINE"
+            },
+            "controllo": {
+                "kicker": "Control",
+                "title": "Quality and traceability",
+                "text": "Space to indicate controls, lot traceability, management of deliveries and (if present) a small laboratory/tasting corner.",
+                "list1": "Sensory analysis",
+                "list2": "Full traceability",
+                "list3": "Updated certifications",
+                "img_label": "IMAGE — QUALITY CONTROL / TRACEABILITY"
+            }
+        },
+        "technology": {
+            "label": "The Mill",
+            "title_part1": "Technology, care",
+            "title_italic": "and traceability",
+            "description": "In our mill, every phase is designed to protect aromas and polyphenols: rapid delivery, careful cleaning, cold extraction, and storage in controlled conditions.",
+            "checks": {
+                "chain": {
+                    "title": "Short chain",
+                    "desc": "From harvest to milling in rapid times."
+                },
+                "clean": {
+                    "title": "Cleaning and selection",
+                    "desc": "Leaves removal and washing to eliminate impurities."
+                },
+                "extraction": {
+                    "title": "Cold extraction",
+                    "desc": "Controlled process to preserve quality and aromas."
+                },
+                "storage": {
+                    "title": "Storage under nitrogen",
+                    "desc": "Protection from oxidation before bottling."
+                }
+            },
+            "cards": {
+                "molitura": {
+                    "title": "Milling for third parties",
+                    "text": "Milling and packaging processing with lot traceability.",
+                    "badge": "Services"
+                },
+                "conferimento": {
+                    "title": "Olive delivery",
+                    "text": "Reception and management with priority on freshness.",
+                    "badge": "Operations"
+                },
+                "controlli": {
+                    "title": "Quality controls",
+                    "text": "Monitoring of process and storage parameters.",
+                    "badge": "Quality"
+                },
+                "visite": {
+                    "title": "Visits and tastings",
+                    "text": "Moments of visit to discover the processing phases.",
+                    "badge": "Experience"
+                }
+            }
+        },
+        "steps_section": {
+            "label": "Production",
+            "title_part1": "From the field to the",
+            "title_italic": "mill",
+            "subtitle": "Harvest, processing, and certifications: the stages that guide the quality of our extra virgin olive oil."
+        },
+        "steps": {
+            "brucatura": {
+                "kicker": "HARVEST",
+                "title": "Hand picking",
+                "paragraphs": [
+                    "Even today in Tuscany, much of the olive harvest takes place traditionally, with hand picking; the olives transported to the mill are then processed within 24 hours to safeguard the integrity of the aromatic and phenolic components. The Del Pasqua Mill is equipped with a modern Alfalaval olive processing plant with cold extraction."
+                ],
+                "placeholder": "IMAGE — HARVEST"
+            },
+            "imbottigliamento": {
+                "kicker": "PLANT",
+                "title": "The bottling line",
+                "paragraphs": [
+                    "The plant is equipped with a line for bottling and packaging; and a nitrogen storage to guarantee the organoleptic characteristics of our 'Il Magnifico' oil while waiting for bottling.",
+                    "But we don't stop here: we perform milling and packaging processes for third parties."
+                ],
+                "placeholder": "IMAGE — LINE"
+            },
+            "evo": {
+                "kicker": "QUALITY",
+                "title": "Our EVO Oil",
+                "paragraphs": [
+                    "All these factors are an absolute guarantee for the production of extra virgin olive oil of the highest quality, capable of preserving the freshness and aromas that characterize freshly squeezed oil for longer."
+                ],
+                "placeholder": "IMAGE — EVO"
+            },
+            "igp_bio": {
+                "kicker": "CERTIFICATIONS",
+                "title": "IGP AND BIO",
+                "paragraphs": [
+                    "The Del Pasqua mill is certified Suolo e Salute for the transformation and production of Bio products and is registered with the Tuscan Oil Consortium for the production of IGP Toscano extra virgin olive oil."
+                ],
+                "placeholder": "IMAGE — IGP/BIO"
+            }
+        },
+        "shared": {
+            "machine": "Machine"
+        }
+    },
+    "OlioPage": {
+        "header": {
+            "label": "Our oil",
+            "title_part1": "Our",
+            "title_italic": "EVO oil"
+        },
+        "sections": {
+            "intro": {
+                "title": "Our EVO oil",
+                "body": [
+                    "Our Italian extra virgin olive oil is not only born from olives grown with respect for the environment; but all activities for its processing are subject to the control regime of recognized bodies to guarantee the end consumer a natural, controlled, and certified product."
+                ],
+                "placeholder": "IMAGE — INTRO"
+            },
+            "fruttato_leggero": {
+                "short_title": "Light Fruity",
+                "title": "Extra Virgin Olive Oil - Light Fruity 100% Italian",
+                "body": [
+                    "Delicate and harmonious profile: light bitterness and spiciness, with herbaceous sensations and soft notes.",
+                    "Ideal raw on light dishes, fish, vegetables, and salads."
+                ],
+                "formats": [
+                    "Bottle: 250/500/750",
+                    "Can: 1/3/5L"
+                ],
+                "placeholder": "IMAGE — LIGHT FRUITY"
+            },
+            "fruttato_intenso": {
+                "short_title": "Intense Fruity",
+                "title": "Extra Virgin Olive Oil - Intense Fruity 100% Italian",
+                "body": [
+                    "With a strong but balanced flavor, the bitterness and spiciness are at a medium-high level, with an aftertaste tending towards artichoke, bright green color.",
+                    "The harvest takes place in advance of complete maturation."
+                ],
+                "formats": [
+                    "Bottle: 250/500/750",
+                    "Can: 1/3/5L"
+                ],
+                "placeholder": "IMAGE — INTENSE FRUITY"
+            },
+            "fruttato_medio": {
+                "short_title": "Medium Fruity",
+                "title": "Extra Virgin Olive Oil - Medium Fruity 100% Italian",
+                "body": [
+                    "Blend of leccino, frantoio, and moraiolo olives; balanced in spiciness and bitterness, with hints of almond and a light sensation of grass.",
+                    "Green color with yellow veins."
+                ],
+                "formats": [
+                    "Bottle: 250/500/750/1000ml",
+                    "Can: 1/3/5L"
+                ],
+                "placeholder": "IMAGE — MEDIUM FRUITY"
+            },
+            "evo": {
+                "short_title": "EVO",
+                "title": "Extra Virgin Olive Oil - EVO",
+                "body": [
+                    "With the selection of the best olives, our 'EVO' oil is born, cold extracted according to the principles of tradition and with an eye on innovation. Bright green color and herbaceous scent with hints of almond."
+                ],
+                "formats": [
+                    "Bottle: 500ml"
+                ],
+                "placeholder": "IMAGE — EVO"
+            },
+            "aromatico": {
+                "short_title": "Aromatic",
+                "title": "Aromatic Oils - Extra Virgin Olive Oil",
+                "body": [
+                    "Our special selection of aromatized oils.",
+                    "Available versions: truffle, chili and lemon."
+                ],
+                "formats": [
+                    "Bottle: 250ml"
+                ],
+                "placeholder": "IMAGE — AROMATIC"
+            }
+        },
+        "sidebar": {
+            "id_label": "Index",
+            "note_label": "Note",
+            "note_text1": "Descriptive section: images are in"
+        },
+        "trust_bar": {
+            "text": "QUALITY • TRADITION • INNOVATION",
+            "badge": "COLD EXTRACTED SELECTION"
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "label": "Contact",
+            "title_part1": "We are",
+            "title_italic": "here",
+            "description": "For commercial requests, product information, or collaborations, write or call us.",
+            "pills": {
+                "response": "FAST RESPONSE",
+                "support": "ORDER SUPPORT",
+                "b2b": "B2B REQUESTS"
+            }
+        },
+        "info": {
+            "company_label": "Company",
+            "address_label": "Address",
+            "phone_label": "Phone",
+            "mobile_label": "Mobile",
+            "email_label": "Email",
+            "docs_label": "Documents",
+            "docs_gender": "Gender Equality Policy",
+            "docs_privacy": "Privacy",
+            "social_label": "Social"
+        },
+        "form": {
+            "label": "Write to us",
+            "title": "Send a message",
+            "subtitle": "Fill out the form: we will respond as soon as possible.",
+            "name_label": "Name",
+            "name_placeholder": "Your name",
+            "email_label": "Email",
+            "subject_label": "Subject",
+            "subject_placeholder": "E.g. product info / order / B2B",
+            "message_label": "Message",
+            "message_placeholder": "Write here...",
+            "privacy_consent": "I consent to the processing of my data and declare that I have read the privacy policy",
+            "success_msg": "Message sent. We will respond as soon as possible.",
+            "error_prefix": "Error",
+            "error_fallback": "Sending failed.",
+            "button_idle": "SEND MESSAGE",
+            "button_sending": "SENDING..."
+        },
+        "map": {
+            "label": "Where we are",
+            "button": "Open on Maps"
+        }
+    }
+}

@@ -2,12 +2,29 @@ import products from "@/db/products.json";
 import type { Product } from "@/lib/shopTypes";
 import { prisma } from "@/lib/server/prisma";
 import { calcVatCentsFromSubtotal, getVatRate } from "@/lib/server/vat";
+import type { Promotion } from "@/generated/prisma";
+
+// ─── Promotion cache (in-memory, TTL 60s) ──────────────────────────────────
+// Evita una query findUnique per ogni tentativo di checkout con codice promo.
+const PROMO_CACHE_TTL_MS = 60_000;
+interface PromoCacheEntry { promo: Promotion | null; cachedAt: number }
+const promoCache = new Map<string, PromoCacheEntry>();
+
+async function findPromotion(code: string): Promise<Promotion | null> {
+  const entry = promoCache.get(code);
+  if (entry && Date.now() - entry.cachedAt < PROMO_CACHE_TTL_MS) return entry.promo;
+  const promo = await prisma.promotion.findUnique({ where: { code } });
+  promoCache.set(code, { promo, cachedAt: Date.now() });
+  return promo;
+}
 
 export type PricingInputLine = {
   productId: string;
   variantId: string;
   qty: number;
 };
+
+type JsonObject = Record<string, unknown>;
 
 export type PricingResultItem = {
   productId: string;
@@ -29,8 +46,8 @@ export type PricingResultItem = {
 
   lineTotalCents: number;
 
-  productSnapshot: any;
-  pricingSnapshot: any;
+  productSnapshot: JsonObject;
+  pricingSnapshot: JsonObject;
 };
 
 export type PricingResult = {
@@ -83,14 +100,20 @@ function makeSku(productId: string, variantId: string) {
   return `${productId}:${variantId}`;
 }
 
+function getOptionalString(obj: unknown, key: string): string | null {
+  if (!obj || typeof obj !== "object") return null;
+  const v = (obj as Record<string, unknown>)[key];
+  return typeof v === "string" && v.length > 0 ? v : null;
+}
+
 export async function computeOrderPricing(args: {
   lines: PricingInputLine[];
   promotionCode?: string;
 }): Promise<PricingResult> {
-  const catalog = products as Product[];
+  const catalog = products as unknown as Product[];
 
   // 1) righe base (snapshot da catalogo)
-  const baseItems = args.lines.map((it) => {
+  const baseItems: PricingResultItem[] = args.lines.map((it) => {
     const p = catalog.find((x) => x.id === it.productId);
     if (!p) throw Object.assign(new Error("Product not found"), { status: 400 });
 
@@ -103,21 +126,21 @@ export async function computeOrderPricing(args: {
 
     const sku = makeSku(p.id, v.id);
 
-    // ✅ FIX: immagine variante -> fallback prodotto
-    const variantImageSrc = (v as any).imageSrc ?? null;
-    const productImageSrc = (p as any).imageSrc ?? null;
+    // ✅ FIX: immagine variante -> fallback prodotto (senza any)
+    const variantImageSrc = getOptionalString(v as unknown, "imageSrc");
+    const productImageSrc = getOptionalString(p as unknown, "imageSrc");
 
-    const productSnapshot = {
+    const productSnapshot: JsonObject = {
       productId: p.id,
       variantId: v.id,
       slug: p.slug,
-      category: (p as any).category ?? null,
+      category: getOptionalString(p as unknown, "category"),
       title: p.title,
-      subtitle: (p as any).subtitle ?? null,
-      badge: (p as any).badge ?? null,
+      subtitle: getOptionalString(p as unknown, "subtitle"),
+      badge: getOptionalString(p as unknown, "badge"),
 
       imageSrc: productImageSrc ?? null,
-      imageAlt: (p as any).imageAlt ?? null,
+      imageAlt: getOptionalString(p as unknown, "imageAlt"),
 
       // ✅ aggiungo anche la variante nello snapshot
       variantImageSrc: variantImageSrc ?? null,
@@ -159,7 +182,7 @@ export async function computeOrderPricing(args: {
 
   if (args.promotionCode) {
     const code = args.promotionCode.trim().toUpperCase();
-    const promo = await prisma.promotion.findUnique({ where: { code } });
+    const promo = await findPromotion(code);
 
     if (promo && promo.isActive) {
       const now = new Date();

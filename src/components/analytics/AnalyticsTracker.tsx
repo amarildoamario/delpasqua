@@ -99,7 +99,7 @@ function storeMetaOnce(pathWithQuery: string, utm: Record<string, string> | null
         firstSeenAt: new Date().toISOString(),
       })
     );
-  } catch {}
+  } catch { }
 }
 
 function send(events: TrackEvent[]) {
@@ -119,7 +119,7 @@ function send(events: TrackEvent[]) {
     headers: { "Content-Type": "application/json" },
     body: payload,
     keepalive: true,
-  }).catch(() => {});
+  }).catch(() => { });
 }
 
 type Ids = { visitorId: string; sessionId: string };
@@ -151,22 +151,24 @@ export default function AnalyticsTracker() {
   const sentLeaveRef = useRef(false);
 
   useEffect(() => {
-    const VISITOR = "v_id";
-    const SESSION = "s_id";
+    queueMicrotask(() => {
+      const VISITOR = "v_id";
+      const SESSION = "s_id";
 
-    let v = getCookie(VISITOR);
-    if (!v) {
-      v = uuid();
-      setCookie(VISITOR, v, 365 * 24 * 60 * 60);
-    }
+      let v = getCookie(VISITOR);
+      if (!v) {
+        v = uuid();
+        setCookie(VISITOR, v, 365 * 24 * 60 * 60);
+      }
 
-    let s = getCookie(SESSION);
-    if (!s) s = uuid();
+      let s = getCookie(SESSION);
+      if (!s) s = uuid();
 
-    // session 30 minuti (si rinnova ad ogni page view)
-    setCookie(SESSION, s, 30 * 60);
+      // session 30 minuti (si rinnova ad ogni page view)
+      setCookie(SESSION, s, 30 * 60);
 
-    setIds({ visitorId: v, sessionId: s });
+      setIds({ visitorId: v, sessionId: s });
+    });
   }, []);
 
   useEffect(() => {
@@ -283,7 +285,7 @@ export default function AnalyticsTracker() {
       // NOTA: non chiamiamo onLeave qui per evitare doppioni durante navigate
       // (il leave della pagina precedente lo gestiamo all'inizio dell'effetto successivo)
     };
-  }, [ids, pathWithQuery]);
+  }, [ids, pathWithQuery, env, internal, utm]);
 
   return null;
 }

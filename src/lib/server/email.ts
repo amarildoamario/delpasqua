@@ -1,8 +1,13 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/server/prisma";
-import type { TransactionalEmailType } from "@/generated/prisma/client";
+import type { TransactionalEmailType, Prisma } from "@/generated/prisma/client";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+/**
+ * NOTE:
+ * - Prima avevi: new Resend(process.env.RESEND_API_KEY!) => ok TS, ma rischi runtime.
+ * - Ora: resend può essere null e sendViaResend gestisce la mancanza di key.
+ */
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 function eur(cents: number) {
   return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
@@ -25,8 +30,6 @@ function supportEmail() {
   return process.env.EMAIL_SUPPORT || process.env.EMAIL_REPLY_TO || "";
 }
 
-
-
 function escapeHtml(s: string) {
   return s
     .replaceAll("&", "&amp;")
@@ -36,26 +39,104 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
-function formatShipping(o: any) {
-  const line2 = o.addressLine2 ? `, ${o.addressLine2}` : "";
-  const prov = o.province ? ` (${o.province})` : "";
-  const phone = o.phone ? ` • Tel: ${o.phone}` : "";
-  return `${o.fullName}\n${o.addressLine1}${line2}\n${o.postalCode} ${o.city}${prov}\n${o.countryCode}${phone}`;
+/** ----------- ERROR HELPERS (fix TS unknown) ----------- */
+
+type ErrLike = { message?: unknown; error?: { message?: unknown } };
+
+function getErrText(e: unknown, fallback = "Email send failed"): string {
+  if (typeof e === "string") return e;
+  if (e instanceof Error && e.message) return e.message;
+
+  if (typeof e === "object" && e !== null) {
+    const o = e as ErrLike;
+    const msg = o.message ?? o.error?.message;
+    if (typeof msg === "string" && msg.trim()) return msg;
+  }
+  return fallback;
 }
 
-function itemsToText(items: any[]) {
-  return items
-    .map((it) => `- ${it.title} (${it.variantLabel}) x${it.qty} — ${eur(it.unitPriceCents * it.qty)}`)
+/** ----------- SAFE GETTERS (NO any) ----------- */
+
+function getStr(o: unknown, key: string, fallback = ""): string {
+  if (!o || typeof o !== "object") return fallback;
+  const v = (o as Record<string, unknown>)[key];
+  return typeof v === "string" ? v : fallback;
+}
+
+function getOptStr(o: unknown, key: string): string {
+  return getStr(o, key, "");
+}
+
+function getNum(o: unknown, key: string, fallback = 0): number {
+  if (!o || typeof o !== "object") return fallback;
+  const v = (o as Record<string, unknown>)[key];
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/** ----------- ITEMS HELPERS (fix TS unknown[]) ----------- */
+
+type ItemLike = {
+  title?: unknown;
+  variantLabel?: unknown;
+  qty?: unknown;
+  unitPriceCents?: unknown;
+};
+
+function asItemLike(x: unknown): ItemLike {
+  return (typeof x === "object" && x !== null ? (x as ItemLike) : {}) as ItemLike;
+}
+
+function normalizeItems(items: unknown): ItemLike[] {
+  if (!Array.isArray(items)) return [];
+  return items.map(asItemLike);
+}
+
+/** ----------- TEXT HELPERS ----------- */
+
+function formatShipping(o: unknown) {
+  const fullName = getStr(o, "fullName");
+  const addressLine1 = getStr(o, "addressLine1");
+  const addressLine2 = getOptStr(o, "addressLine2");
+  const postalCode = getStr(o, "postalCode");
+  const city = getStr(o, "city");
+  const province = getOptStr(o, "province");
+  const countryCode = getStr(o, "countryCode");
+  const phone = getOptStr(o, "phone");
+
+  const line2 = addressLine2 ? `, ${addressLine2}` : "";
+  const prov = province ? ` (${province})` : "";
+  const phoneTxt = phone ? ` • Tel: ${phone}` : "";
+  return `${fullName}\n${addressLine1}${line2}\n${postalCode} ${city}${prov}\n${countryCode}${phoneTxt}`;
+}
+
+function itemsToText(items: unknown) {
+  const list = normalizeItems(items);
+
+  return list
+    .map((it) => {
+      const title = String(it.title ?? "");
+      const variantLabel = String(it.variantLabel ?? "");
+      const qty = Number(it.qty ?? 0);
+      const unit = Number(it.unitPriceCents ?? 0);
+      return `- ${title} (${variantLabel}) x${qty} — ${eur(unit * qty)}`;
+    })
     .join("\n");
 }
 
-function totalsToText(o: any) {
+function totalsToText(o: unknown) {
   const rows: string[] = [];
-  rows.push(`Subtotale: ${eur(o.subtotalCents)}`);
-  if (o.discountCents) rows.push(`Sconto: -${eur(o.discountCents)}`);
-  rows.push(`Spedizione: ${eur(o.shippingCents)}`);
-  if (o.taxCents) rows.push(`Tasse: ${eur(o.taxCents)}`);
-  rows.push(`Totale: ${eur(o.totalCents)}`);
+  const subtotalCents = getNum(o, "subtotalCents");
+  const discountCents = getNum(o, "discountCents");
+  const shippingCents = getNum(o, "shippingCents");
+  const taxCents = getNum(o, "taxCents");
+  const totalCents = getNum(o, "totalCents");
+
+  rows.push(`Subtotale: ${eur(subtotalCents)}`);
+  if (discountCents) rows.push(`Sconto: -${eur(discountCents)}`);
+  rows.push(`Spedizione: ${eur(shippingCents)}`);
+  if (taxCents) rows.push(`Tasse: ${eur(taxCents)}`);
+  rows.push(`Totale: ${eur(totalCents)}`);
   return rows.join("\n");
 }
 
@@ -189,11 +270,11 @@ function htmlShell(args: {
   </html>`;
 }
 
-function orderSummaryCardHtml(o: any) {
-  const orderNumber = escapeHtml(String(o.orderNumber ?? o.id));
-  const total = escapeHtml(eur(o.totalCents));
-  const status = escapeHtml(String(o.status ?? ""));
-  const email = escapeHtml(String(o.email ?? ""));
+function orderSummaryCardHtml(o: unknown) {
+  const orderNumber = escapeHtml(String(getOptStr(o, "orderNumber") || getOptStr(o, "id")));
+  const total = escapeHtml(eur(getNum(o, "totalCents")));
+  const status = escapeHtml(getOptStr(o, "status"));
+  const email = escapeHtml(getOptStr(o, "email"));
 
   return `
     <div class="card">
@@ -221,7 +302,7 @@ function orderSummaryCardHtml(o: any) {
   `;
 }
 
-function shippingCardHtml(o: any) {
+function shippingCardHtml(o: unknown) {
   const ship = escapeHtml(formatShipping(o)).replaceAll("\n", "<br/>");
   return `
     <div class="card">
@@ -231,13 +312,16 @@ function shippingCardHtml(o: any) {
   `;
 }
 
-function itemsTableHtml(items: any[]) {
-  const rows = items
+function itemsTableHtml(items: unknown) {
+  const list = normalizeItems(items);
+
+  const rows = list
     .map((it) => {
-      const title = escapeHtml(String(it.title));
-      const varLabel = escapeHtml(String(it.variantLabel));
+      const title = escapeHtml(String(it.title ?? ""));
+      const varLabel = escapeHtml(String(it.variantLabel ?? ""));
       const qty = Number(it.qty ?? 0);
       const price = escapeHtml(eur(Number(it.unitPriceCents ?? 0) * qty));
+
       return `
         <tr>
           <td class="td">${title}<div class="muted" style="font-size:12px;margin-top:2px;">${varLabel}</div></td>
@@ -266,13 +350,19 @@ function itemsTableHtml(items: any[]) {
   `;
 }
 
-function totalsCardHtml(o: any) {
+function totalsCardHtml(o: unknown) {
+  const subtotalCents = getNum(o, "subtotalCents");
+  const discountCents = getNum(o, "discountCents");
+  const shippingCents = getNum(o, "shippingCents");
+  const taxCents = getNum(o, "taxCents");
+  const totalCents = getNum(o, "totalCents");
+
   const rows: Array<{ k: string; v: string; strong?: boolean }> = [
-    { k: "Subtotale", v: eur(o.subtotalCents) },
-    ...(o.discountCents ? [{ k: "Sconto", v: `-${eur(o.discountCents)}` }] : []),
-    { k: "Spedizione", v: eur(o.shippingCents) },
-    ...(o.taxCents ? [{ k: "Tasse", v: eur(o.taxCents) }] : []),
-    { k: "Totale", v: eur(o.totalCents), strong: true },
+    { k: "Subtotale", v: eur(subtotalCents) },
+    ...(discountCents ? [{ k: "Sconto", v: `-${eur(discountCents)}` }] : []),
+    { k: "Spedizione", v: eur(shippingCents) },
+    ...(taxCents ? [{ k: "Tasse", v: eur(taxCents) }] : []),
+    { k: "Totale", v: eur(totalCents), strong: true },
   ];
 
   const htmlRows = rows
@@ -300,9 +390,14 @@ function totalsCardHtml(o: any) {
 
 /** ---------- BUILD EMAILS (HTML + TEXT) ---------- **/
 
-function buildEmail(type: TransactionalEmailType, o: any) {
+type OrderEmailPayload = Prisma.OrderGetPayload<{
+  include: {
+    items: { select: { title: true; variantLabel: true; qty: true; unitPriceCents: true } };
+  };
+}>;
+
+function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
   const orderNumber = String(o.orderNumber ?? o.id);
-  
   const url = baseUrl();
 
   const itemsText = itemsToText(o.items ?? []);
@@ -342,12 +437,14 @@ function buildEmail(type: TransactionalEmailType, o: any) {
       "Spedizione a:",
       shippingText,
       policiesFooterText(),
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     return { subject, html, text };
   }
 
-    if (type === "ORDER_SHIPPED") {
+  if (type === "ORDER_SHIPPED") {
     const subject = `PACCO SPEDITO • ${orderNumber}`;
     const title = "Il tuo pacco è stato spedito 🚚";
     const intro = "Il tuo ordine è stato spedito. Qui trovi i dettagli e l’indirizzo di consegna.";
@@ -379,7 +476,6 @@ function buildEmail(type: TransactionalEmailType, o: any) {
     return { subject, html, text };
   }
 
-
   if (type === "ORDER_REFUNDED") {
     const subject = `Rimborso effettuato • ${orderNumber}`;
     const title = "Rimborso effettuato 💸";
@@ -404,7 +500,9 @@ function buildEmail(type: TransactionalEmailType, o: any) {
       "",
       "Nota: i tempi di accredito dipendono dal metodo di pagamento.",
       policiesFooterText(),
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     return { subject, html, text };
   }
@@ -427,14 +525,17 @@ function buildEmail(type: TransactionalEmailType, o: any) {
 
 type SendResult = { ok: true; messageId?: string | null } | { ok: false; error: string };
 
-async function sendViaResend(args: {
-  to: string;
-  subject: string;
-  text: string;
-  html: string;
-}): Promise<SendResult> {
+type ResendSendResponseLike = { id?: unknown };
+function getResendMessageId(res: unknown): string | null {
+  if (!res || typeof res !== "object") return null;
+  const id = (res as ResendSendResponseLike).id;
+  return typeof id === "string" && id.length > 0 ? id : null;
+}
+
+async function sendViaResend(args: { to: string; subject: string; text: string; html: string }): Promise<SendResult> {
   const from = process.env.EMAIL_FROM;
   if (!from) return { ok: false, error: "Missing EMAIL_FROM" };
+  if (!resend) return { ok: false, error: "Missing RESEND_API_KEY" };
 
   try {
     const res = await resend.emails.send({
@@ -446,9 +547,9 @@ async function sendViaResend(args: {
       ...(process.env.EMAIL_REPLY_TO ? { replyTo: process.env.EMAIL_REPLY_TO } : {}),
     });
 
-    return { ok: true, messageId: (res as any)?.id ?? null };
-  } catch (e: any) {
-    return { ok: false, error: e?.message ?? "Email send failed" };
+    return { ok: true, messageId: getResendMessageId(res) };
+  } catch (e: unknown) {
+    return { ok: false, error: getErrText(e, "Email send failed") };
   }
 }
 

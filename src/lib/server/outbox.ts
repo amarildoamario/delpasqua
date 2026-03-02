@@ -3,6 +3,19 @@ import { sendTransactionalEmail } from "@/lib/server/email";
 
 const MAX_ATTEMPTS = 8;
 
+function getErrText(e: unknown, fallback = "Unknown outbox error"): string {
+  if (typeof e === "string") return e;
+  if (e instanceof Error && e.message) return e.message;
+
+  if (typeof e === "object" && e !== null) {
+    const maybe = e as { message?: unknown; error?: { message?: unknown } };
+    const msg = maybe.message ?? maybe.error?.message;
+    if (typeof msg === "string" && msg.trim()) return msg;
+  }
+
+  return fallback;
+}
+
 export async function processOutboxBatch(opts: { limit?: number } = {}) {
   const limit = Math.max(1, Math.min(50, opts.limit ?? 10));
   const now = new Date();
@@ -29,8 +42,15 @@ export async function processOutboxBatch(opts: { limit?: number } = {}) {
     if (locked.count !== 1) continue;
 
     try {
-      const payload = ev.payload as any;
-      const orderId = String(payload?.orderId ?? "").trim();
+          const payloadObj: Record<string, unknown> =
+      ev.payload && typeof ev.payload === "object" && !Array.isArray(ev.payload)
+        ? (ev.payload as Record<string, unknown>)
+        : {};
+
+    const rawOrderId = payloadObj.orderId;
+    const orderId =
+      typeof rawOrderId === "string" ? rawOrderId.trim() : String(rawOrderId ?? "").trim();
+      
 
       switch (ev.type) {
         case "ORDER_PAID":
@@ -54,7 +74,7 @@ export async function processOutboxBatch(opts: { limit?: number } = {}) {
         data: { status: "done", lastError: null },
       });
       processed++;
-    } catch (e: any) {
+    } catch (e: unknown) {
       const attempts = (ev.attempts ?? 0) + 1;
 
       // backoff semplice (minuti): 1, 5, 15, 60, poi 6h fisso
@@ -73,7 +93,7 @@ export async function processOutboxBatch(opts: { limit?: number } = {}) {
           // ✅ retry vero: finché attempts < MAX -> torna pending, sennò resta failed terminale
           status: attempts >= MAX_ATTEMPTS ? "failed" : "pending",
           attempts,
-          lastError: e?.message ?? "Unknown outbox error",
+          lastError: getErrText(e, "Unknown outbox error"),
           runAt: nextRun,
         },
       });

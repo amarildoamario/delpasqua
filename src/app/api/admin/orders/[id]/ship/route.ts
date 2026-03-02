@@ -17,9 +17,9 @@ async function enqueueShippedEmail(orderId: string, actor: string | null) {
       runAt: new Date(),
     },
   });
-
-  processOutboxBatch({ limit: 10 }).catch((e) => {
-    console.error("❌ outbox auto-process failed (ship route):", e);
+  // Processa immediatamente — non aspetta il cron
+  processOutboxBatch({ limit: 5 }).catch((e) => {
+    console.error("❌ outbox inline failed (ship route):", e);
   });
 }
 

@@ -4,8 +4,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import productsRaw from "@/db/products.json";
-import ProductPurchaseBox from "@/app/shop/_components/ProductPurchaseBox.client";
+import ProductPurchaseBox from "@/app/[locale]/shop/_components/ProductPurchaseBox.client";
 
 type ProductVariant = {
   id: string;
@@ -29,9 +30,9 @@ type Product = {
 };
 
 function getProductsList(): Product[] {
-  const raw: any = productsRaw as any;
-  if (Array.isArray(raw)) return raw as Product[];
-  if (raw?.products && Array.isArray(raw.products)) return raw.products as Product[];
+  const raw = productsRaw as unknown as Product[] | { products: Product[] };
+  if (Array.isArray(raw)) return raw;
+  if (raw && "products" in raw && Array.isArray(raw.products)) return raw.products;
   return [];
 }
 
@@ -43,20 +44,23 @@ function Stars({ rating = 4.9, count = 312 }: { rating?: number; count?: number 
           <svg key={i} viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true">
             <path
               d="M10 1.6l2.4 5.3 5.8.5-4.4 3.8 1.3 5.6L10 14.7 4.9 16.8l1.3-5.6L1.8 7.4l5.8-.5L10 1.6z"
-              className="fill-zinc-900 dark:fill-white"
+              className="fill-zinc-900"
             />
           </svg>
         ))}
       </div>
-      <div className="text-xs tracking-[0.18em] text-zinc-600 dark:text-zinc-300">
-        <span className="font-semibold text-zinc-900 dark:text-white">{rating.toFixed(1)}</span>{" "}
-        <span className="text-zinc-500 dark:text-zinc-400">({count})</span>
+      <div className="text-xs tracking-[0.18em] text-zinc-600">
+        <span className="font-semibold text-zinc-900">{rating.toFixed(1)}</span>{" "}
+        <span className="text-zinc-500">({count})</span>
       </div>
     </div>
   );
 }
 
 export default function HeroSplitEvo() {
+  const t = useTranslations("HomePage.HeroSplitEvo");
+  const tp = useTranslations("Products");
+
   const evo = useMemo(() => {
     const list = getProductsList();
     return (
@@ -81,43 +85,38 @@ export default function HeroSplitEvo() {
   const heroAlt = selectedVariant?.imageAlt || evo.imageAlt;
 
   return (
-    <section className="relative bg-white dark:bg-black">
+    <section className="relative bg-white">
       <div className="relative mx-auto max-w-6xl px-4 py-12 md:py-16">
-        {/*
-          Mobile:  testo -> immagine -> acquisto
-          Desktop: immagine + acquisto (come product page), poi testo sotto
-        */}
         <div className="grid items-start gap-6 lg:grid-cols-2 lg:gap-8">
           {/* TEXT (mobile first, desktop bottom full width) */}
           <div className="order-1 lg:order-3 lg:col-span-2 lg:mt-2">
             <div className="mx-auto max-w-4xl text-center">
-              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-2 text-[11px] tracking-[0.20em] text-zinc-700 backdrop-blur dark:border-white/10 dark:bg-black/40 dark:text-zinc-200">
+              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-2 text-[11px] tracking-[0.20em] text-zinc-700 backdrop-blur">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
-                OLIO EXTRAVERGINE — EVO
+                {t("label")}
               </div>
 
-              <h1 className="mt-5 font-serif text-4xl leading-[1.05] tracking-[0.04em] text-zinc-900 dark:text-white md:text-5xl">
-                EVO, quello giusto per ogni giorno.
+              <h1 className="mt-5 font-serif text-4xl leading-[1.05] tracking-[0.04em] text-zinc-900 md:text-5xl">
+                {t("title")}
               </h1>
 
-              <p className="mt-5 text-base leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-lg">
-                {evo.description ?? "Il classico EVO da tutti i giorni."} Qualità, eleganza e gusto
-                pulito: una bottiglia che sta bene in cucina e in tavola.
+              <p className="mt-5 text-base leading-relaxed text-zinc-600 md:text-lg">
+                {tp(`${evo.id}.description`) || t("description")}
               </p>
 
               <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href={`/shop/${encodeURIComponent(evo.slug)}`}
-                  className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+                  className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm tracking-[0.10em] text-white hover:bg-zinc-800"
                 >
-                  Compra EVO
+                  {t("buy_btn")}
                 </Link>
 
                 <Link
                   href="/shop"
-                  className="inline-flex h-11 items-center justify-center rounded-full border border-black/10 bg-white px-6 text-sm tracking-[0.10em] text-zinc-900 hover:bg-zinc-50 dark:border-white/10 dark:bg-black dark:text-white dark:hover:bg-zinc-900"
+                  className="inline-flex h-11 items-center justify-center rounded-full border border-black/10 bg-white px-6 text-sm tracking-[0.10em] text-zinc-900 hover:bg-zinc-50"
                 >
-                  Esplora lo shop
+                  {t("explore_btn")}
                 </Link>
               </div>
 
@@ -129,7 +128,7 @@ export default function HeroSplitEvo() {
 
           {/* IMAGE (mobile second, desktop left) */}
           <div className="order-2 lg:order-1">
-            <div className="relative aspect-square overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
+            <div className="relative aspect-square overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50">
               <Image
                 key={heroSrc} // ✅ forza update quando cambia src
                 src={heroSrc}

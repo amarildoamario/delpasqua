@@ -7,7 +7,9 @@ export default function ThemeToggle() {
   const { isDark, toggle } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+  queueMicrotask(() => setMounted(true));
+}, []);
 
   // IMPORTANTISSIMO: niente markup in SSR e niente markup al primo render client
   if (!mounted) return null;
@@ -19,7 +21,7 @@ export default function ThemeToggle() {
       className={[
         "relative h-7 w-[58px] rounded-full p-[3px]",
         "bg-gray-100 hover:bg-gray-200",
-        "dark:bg-white/10 dark:hover:bg-white/15",
+        "",
         "transition-colors",
       ].join(" ")}
       aria-label="Toggle dark mode"

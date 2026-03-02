@@ -26,7 +26,7 @@ function StockLine({ available }: { available: number }) {
         className={`h-2.5 w-2.5 rounded-full ${ok ? "bg-emerald-500" : "bg-red-500"}`}
         aria-hidden="true"
       />
-      <span className={ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}>
+      <span className={ok ? "text-emerald-600" : "text-red-600"}>
         {ok ? "DISPONIBILE" : "ESAURITO"}
       </span>
     </div>
@@ -110,10 +110,10 @@ export default function ProductPurchaseDetails({ product, availabilityByVariantI
   return (
     <div className="mt-8">
       <div className="flex items-baseline gap-4">
-        <div className="font-serif text-3xl tracking-[0.06em] text-zinc-900 dark:text-white">
+        <div className="font-serif text-3xl tracking-[0.06em] text-zinc-900">
           {variant ? formatEUR(variant.priceCents) : ""}
         </div>
-        <div className="text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">+ IVA</div>
+        <div className="text-xs tracking-[0.18em] text-zinc-500">+ IVA</div>
       </div>
 
       {/* ✅ SOLO QUI: pallino + scritta verde/rossa */}

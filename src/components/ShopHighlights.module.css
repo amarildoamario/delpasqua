@@ -1,17 +1,13 @@
-/* ===== FULL BLEED (vero) ===== */
+/* ===== FULL BLEED ===== */
 .mobileFullBleed {
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   overflow: visible;
 
-  --card-w: 340px;
-  --gap: 16px;
+  --card-w: 260px;
+  --gap: 12px;
   --side: calc((100vw - var(--card-w)) / 2);
-
-  /* ✅ tweak rapidi */
-  --card-h: 520px;
-  --img-h: 320px; /* <-- aumenta/diminuisci qui (es. 330) */
 }
 
 @supports (width: 100dvw) {
@@ -30,12 +26,9 @@
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   touch-action: pan-x pan-y;
-
-  padding: 20px 0;
-
+  padding: 16px 0;
   scroll-padding-left: calc(var(--side) + env(safe-area-inset-left));
   scroll-padding-right: calc(var(--side) + env(safe-area-inset-right));
-
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -44,7 +37,7 @@
   display: none;
 }
 
-/* ===== TRACK con SPACERS ===== */
+/* ===== TRACK ===== */
 .mobileTrack {
   display: flex;
   gap: var(--gap);
@@ -73,232 +66,15 @@
 
 .mobileCardWrap {
   width: 100%;
+  height: 100%;
 }
 
 .mobileCardLink {
   display: block;
   width: 100%;
+  height: 100%;
   -webkit-user-drag: none;
   user-select: none;
-}
-
-/* ===== CARD ===== */
-.mobileCard {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: var(--card-h);
-
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 16px;
-  overflow: hidden;
-
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.mobileCard:active {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-  transform: scale(0.98);
-}
-
-:global(.dark) .mobileCard {
-  background: #18181b;
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-}
-
-:global(.dark) .mobileCard:active {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-}
-
-/* ===== IMMAGINE (più alta) ===== */
-.mobileImageSection {
-  position: relative;
-  width: 100%;
-  height: var(--img-h);
-  flex-shrink: 0;
-  background: #f4f4f5;
-  overflow: hidden;
-}
-
-:global(.dark) .mobileImageSection {
-  background: #27272a;
-}
-
-/* ===== BADGE ===== */
-.mobileBadge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 2;
-
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: rgba(16, 185, 129, 0.95);
-
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: #ffffff;
-  text-transform: uppercase;
-}
-
-/* ===== LABEL TOP RIGHT ===== */
-.mobileLabelTopRight {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-  text-transform: uppercase;
-}
-
-:global(.dark) .mobileLabelTopRight {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-/* ===== CONTENT (condensato) ===== */
-.mobileContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  padding: 16px; /* prima 20px */
-  gap: 0;
-}
-
-/* Riga 1: Categoria (più bassa) */
-.mobileRowSubtitle {
-  height: 22px; /* prima 28px */
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.mobileSubtitle {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: #71717a;
-  text-transform: uppercase;
-  margin: 0;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  line-height: 22px; /* prima 28px */
-}
-
-:global(.dark) .mobileSubtitle {
-  color: #a1a1aa;
-}
-
-/* Riga 2: Titolo (più compatto) */
-.mobileRowTitle {
-  height: 48px; /* prima 56px */
-  display: flex;
-  align-items: flex-start;
-  flex-shrink: 0;
-  padding-top: 2px; /* prima 4px */
-}
-
-.mobileTitle {
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  font-size: 18px; /* prima 19px */
-  line-height: 1.25; /* prima 1.3 */
-  font-weight: 500;
-  color: #18181b;
-  margin: 0;
-
-  display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-:global(.dark) .mobileTitle {
-  color: #fafafa;
-}
-
-/* Riga 3: Prezzo (meno aria) */
-.mobilePriceRow {
-  height: 34px; /* prima 40px */
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-
-  margin-top: 6px; /* prima 8px */
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  padding-top: 6px; /* prima 8px */
-}
-
-:global(.dark) .mobilePriceRow {
-  border-top-color: rgba(255, 255, 255, 0.08);
-}
-
-.mobilePrice {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #18181b;
-  line-height: 1;
-}
-
-:global(.dark) .mobilePrice {
-  color: #fafafa;
-}
-
-/* Riga 4: Bottone */
-.mobileCtaRow {
-  height: 40px; /* prima 44px */
-  display: flex;
-  align-items: flex-end;
-  flex-shrink: 0;
-  margin-top: auto;
-}
-
-.mobileCta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 9px 18px; /* prima 10px 20px */
-  border-radius: 999px;
-  background: #18181b;
-
-  font-size: 12.5px; /* prima 13px */
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: #ffffff;
-
-  transition: all 0.2s ease;
-}
-
-.mobileCard:active .mobileCta {
-  background: #10b981;
-}
-
-:global(.dark) .mobileCta {
-  background: #fafafa;
-  color: #18181b;
-}
-
-:global(.dark) .mobileCard:active .mobileCta {
-  background: #10b981;
-  color: #ffffff;
 }
 
 /* ===== DOTS ===== */
@@ -306,7 +82,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 20px;
 }
 
@@ -315,13 +91,13 @@
   height: 6px;
   border-radius: 999px;
   border: 0;
-  background: rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .mobileDotBtn:hover {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
   transform: scale(1.2);
 }
 
@@ -330,19 +106,7 @@
   height: 6px;
   border-radius: 999px;
   border: 0;
-  background: #10b981;
-  transition: all 0.2s ease;
+  background: #3D5A3D;
+  transition: all 0.3s ease;
   cursor: pointer;
-}
-
-:global(.dark) .mobileDotBtn {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-:global(.dark) .mobileDotBtn:hover {
-  background: rgba(255, 255, 255, 0.45);
-}
-
-:global(.dark) .mobileDotActive {
-  background: #10b981;
 }

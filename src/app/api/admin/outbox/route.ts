@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   const status = parsed.success ? parsed.data.status : undefined;
 
   const rows = await prisma.outboxEvent.findMany({
-    where: status ? { status: status as any } : {},
+    where: status ? { status: status as "failed" | "pending" | "processing" | "done" } : {},
     orderBy: [{ status: "asc" }, { runAt: "asc" }],
     take,
   });

@@ -24,14 +24,14 @@ function QtyHint({ available }: { available: number }) {
 
   if (max <= 0) {
     return (
-      <div className="mt-2 text-[10px] tracking-[0.20em] text-red-600 dark:text-red-400">
+      <div className="mt-2 text-[10px] tracking-[0.20em] text-red-600">
         ESAURITO
       </div>
     );
   }
 
   return (
-    <div className="mt-2 text-[10px] tracking-[0.20em] text-zinc-500 dark:text-zinc-400">
+    <div className="mt-2 text-[10px] tracking-[0.20em] text-zinc-500">
       MAX {max}
     </div>
   );
@@ -59,23 +59,23 @@ function ToggleMessage({
   return (
     <div className="fixed inset-x-0 top-4 z-[9999] px-4">
       <div className="mx-auto w-full max-w-3xl">
-        <div className="rounded-2xl border border-emerald-300 bg-emerald-100 px-5 py-4 shadow-lg dark:border-emerald-900 dark:bg-emerald-950/60">
+        <div className="rounded-2xl border border-emerald-300 bg-emerald-100 px-5 py-4 shadow-lg">
           <div className="flex items-start gap-3">
             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald-600 text-white">
               <span className="text-lg leading-none">✓</span>
             </div>
 
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-emerald-950 dark:text-emerald-200">
+              <div className="text-sm font-semibold text-emerald-950">
                 Aggiunto al carrello
               </div>
-              <div className="mt-1 text-sm text-emerald-900/90 dark:text-emerald-200/90">{message}</div>
+              <div className="mt-1 text-sm text-emerald-900/90">{message}</div>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="ml-auto rounded-lg px-2 py-1 text-emerald-900/70 hover:bg-emerald-200 hover:text-emerald-950 dark:text-emerald-200/70 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-100"
+              className="ml-auto rounded-lg px-2 py-1 text-emerald-900/70 hover:bg-emerald-200 hover:text-emerald-950"
               aria-label="Chiudi"
               title="Chiudi"
             >
@@ -119,11 +119,13 @@ export default function AddToCartPanel({
   const [qty, setQty] = useState<number>(() => (maxQty > 0 ? 1 : 0));
 
   useEffect(() => {
-    setQty((q) => {
-      if (maxQty <= 0) return 0;
-      if (q < 1) return 1;
-      if (q > maxQty) return maxQty;
-      return q;
+    queueMicrotask(() => {
+      setQty((q) => {
+        if (maxQty <= 0) return 0;
+        if (q < 1) return 1;
+        if (q > maxQty) return maxQty;
+        return q;
+      });
     });
   }, [maxQty, variantId]);
 
@@ -171,9 +173,9 @@ export default function AddToCartPanel({
     <>
       <ToggleMessage open={toastOpen} message={toastMsg} onClose={() => setToastOpen(false)} />
 
-      <div className="rounded-[14px] border border-black/10 p-4 dark:border-white/10">
+      <div className="rounded-[14px] border border-black/10 p-4">
         <div className="flex flex-col gap-3">
-          <div className="text-sm tracking-[0.12em] text-zinc-700 dark:text-zinc-200">FORMATO BOTTIGLIA</div>
+          <div className="text-sm tracking-[0.12em] text-zinc-700">FORMATO BOTTIGLIA</div>
 
           <select
             value={variantId}
@@ -207,7 +209,7 @@ export default function AddToCartPanel({
 
               setVariantId(next);
             }}
-            className="h-11 w-full rounded-[10px] border border-black/10 bg-white px-3 text-sm dark:border-white/10 dark:bg-zinc-950"
+            className="h-11 w-full rounded-[10px] border border-black/10 bg-white px-3 text-sm"
             aria-label="Seleziona formato bottiglia"
             data-testid="variant-select"
           >
@@ -220,7 +222,7 @@ export default function AddToCartPanel({
 
           <div className="grid grid-cols-[110px_1fr] items-start gap-3">
             <div className="flex flex-col">
-              <div className="text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">QUANTITÀ</div>
+              <div className="text-xs tracking-[0.18em] text-zinc-500">QUANTITÀ</div>
 
               <input
                 type="number"
@@ -237,7 +239,7 @@ export default function AddToCartPanel({
                   }
                   setQty(clampInt(next || 1, 1, maxQty));
                 }}
-                className="mt-2 h-11 w-full rounded-[10px] border border-black/10 bg-white px-3 text-sm disabled:opacity-50 dark:border-white/10 dark:bg-zinc-950"
+                className="mt-2 h-11 w-full rounded-[10px] border border-black/10 bg-white px-3 text-sm disabled:opacity-50"
               />
 
               {/* ✅ SOLO NUMERO ORDINI MASSIMI */}
@@ -249,16 +251,16 @@ export default function AddToCartPanel({
               onClick={onAdd}
               disabled={maxQty <= 0 || qty <= 0}
               data-testid="add-to-cart"
-              className="mt-[22px] inline-flex h-11 w-full items-center justify-center rounded-full bg-zinc-900 px-4 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+              className="mt-[22px] inline-flex h-11 w-full items-center justify-center rounded-full bg-zinc-900 px-4 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {maxQty <= 0 ? "Esaurito" : "Aggiungi al carrello"}
             </button>
           </div>
 
           {variant?.label ? (
-            <div className="text-xs text-zinc-500 dark:text-zinc-400">
+            <div className="text-xs text-zinc-500">
               Formato selezionato:{" "}
-              <span className="text-zinc-700 dark:text-zinc-200">{variant.label}</span>
+              <span className="text-zinc-700">{variant.label}</span>
             </div>
           ) : null}
         </div>

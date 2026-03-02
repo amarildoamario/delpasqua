@@ -23,14 +23,14 @@ export default function ShopButton({
         className={[
           "relative inline-flex items-center justify-center rounded-full",
           "border border-black/10 bg-white hover:bg-zinc-50",
-          "dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-zinc-900",
+          "",
           "h-10 w-10",
           className,
         ].join(" ")}
         aria-label="Vai allo shop"
         title="Shop"
       >
-        <Store className="h-5 w-5 text-gray-700 dark:text-gray-200" strokeWidth={1.5} />
+        <Store className="h-5 w-5 text-gray-700" strokeWidth={1.5} />
       </Link>
     </div>
   );

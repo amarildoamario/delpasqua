@@ -21,7 +21,10 @@ export async function GET(req: Request) {
   if (isNaN(from.getTime()) || isNaN(to.getTime())) return new Response("Bad dates", { status: 400 });
 
   const rows = await prisma.order.findMany({
-    where: { createdAt: { gte: from, lt: to } },
+    where: {
+      createdAt: { gte: from, lt: to },
+      orderNumber: { not: null }
+    },
     orderBy: { createdAt: "asc" },
     include: { items: true },
   });

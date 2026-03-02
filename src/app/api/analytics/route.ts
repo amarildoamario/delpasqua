@@ -58,9 +58,9 @@ function asStr(v: unknown) {
   return typeof v === "string" ? v : null;
 }
 
-function asObj(v: unknown): Record<string, any> | null {
+function asObj(v: unknown): Record<string, unknown> | null {
   if (!v || typeof v !== "object" || Array.isArray(v)) return null;
-  return v as Record<string, any>;
+  return v as Record<string, unknown>;
 }
 
 function normalizeData({
@@ -111,6 +111,13 @@ function normalizeData({
 }
 
 export async function POST(req: Request) {
+  // OTTIMIZZAZIONE: se ANALYTICS_DB_ENABLED non è "true", risponde OK senza
+  // toccare il DB. Il frontend usa GA4 tramite track.ts, non questa route.
+  // Per riabilitare la scrittura analitica su DB: ANALYTICS_DB_ENABLED=true
+  if (process.env.ANALYTICS_DB_ENABLED !== "true") {
+    return new Response("OK", { status: 200 });
+  }
+
   const ua = req.headers.get("user-agent") ?? "";
   const device = deviceFromUA(ua);
 
@@ -169,7 +176,7 @@ export async function POST(req: Request) {
           data,
         };
       })
-      .filter(Boolean) as any[];
+      .filter((row): row is NonNullable<typeof row> => Boolean(row));
 
     if (!rows.length) return new Response("No events", { status: 200 });
 
@@ -178,18 +185,22 @@ export async function POST(req: Request) {
     const others = rows.filter((r) => !(r.type === "page_leave" && r.pageId));
 
     if (leaves.length) {
-      const pageIds = Array.from(new Set(leaves.map((r) => r.pageId).filter(Boolean)));
+      const pageIds = Array.from(new Set(leaves.map((r) => r.pageId).filter(Boolean))) as string[];
       const existing = await prisma.analyticsEvent.findMany({
         where: { type: "page_leave", pageId: { in: pageIds } },
         select: { pageId: true },
       });
       const existingSet = new Set(existing.map((x) => x.pageId).filter(Boolean) as string[]);
-      const filteredLeaves = leaves.filter((r) => !existingSet.has(r.pageId));
+      const filteredLeaves = leaves.filter((r) => r.pageId && !existingSet.has(r.pageId));
 
       const data = [...others, ...filteredLeaves];
-      if (data.length) await prisma.analyticsEvent.createMany({ data });
+      if (data.length) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await prisma.analyticsEvent.createMany({ data: data as any });
+      }
     } else {
-      await prisma.analyticsEvent.createMany({ data: rows });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await prisma.analyticsEvent.createMany({ data: rows as any });
     }
 
     return new Response("OK", { status: 200 });

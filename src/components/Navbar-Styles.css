@@ -1,0 +1,154 @@
+/* navbar-styles.css - Stili specifici per la navbar mobile */
+
+:root {
+  --sat: env(safe-area-inset-top);
+  --sab: env(safe-area-inset-bottom);
+  --sar: env(safe-area-inset-right);
+  --sal: env(safe-area-inset-left);
+}
+
+/* Altezze dinamiche per lo spacer */
+.navbar-spacer {
+  transition: height 0.3s ease-out;
+}
+
+.navbar-spacer.scrolled {
+  height: calc(92px + env(safe-area-inset-top));
+}
+
+.navbar-spacer:not(.scrolled) {
+  height: calc(140px + env(safe-area-inset-top));
+}
+
+@media (min-width: 768px) {
+  .navbar-spacer.scrolled {
+    height: calc(88px + env(safe-area-inset-top));
+  }
+  
+  .navbar-spacer:not(.scrolled) {
+    height: calc(136px + env(safe-area-inset-top));
+  }
+}
+
+/* Header fisso */
+.navbar-header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  padding-top: env(safe-area-inset-top);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.navbar-header.scrolled {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Topbar */
+.topbar {
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease-out;
+}
+
+.topbar.hidden {
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.topbar.visible {
+  height: 48px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mobile Bottom Bar - Soluzione definitiva */
+.mobile-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 55;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  transform: translateY(0);
+  transition: transform 0.3s ease-out;
+  will-change: transform;
+}
+
+.mobile-bottom-bar.hidden {
+  transform: translateY(100%);
+}
+
+/* Spacer per compensare la bottom bar */
+.mobile-bottom-spacer {
+  height: calc(64px + max(12px, env(safe-area-inset-bottom)));
+}
+
+/* Drawer mobile */
+.mobile-drawer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  height: 100dvh; /* Dynamic viewport height */
+  width: 86%;
+  max-width: 360px;
+  background: white;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease-out;
+  z-index: 60;
+}
+
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+/* Overlay */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.mobile-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Fix per iOS Safari e viewport instabile */
+@supports (-webkit-touch-callout: none) {
+  /* CSS specifico per iOS */
+  .mobile-bottom-bar {
+    /* Forza il posizionamento anche con toolbar nascosta */
+    position: fixed;
+    bottom: 0;
+    bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
+    bottom: env(safe-area-inset-bottom); /* iOS 11.2+ */
+  }
+}
+
+/* Desktop transform fix */
+@media (min-width: 768px) {
+  .navbar-header {
+    transform: translateY(var(--vv-top, 0));
+    will-change: transform;
+  }
+}

@@ -6,8 +6,9 @@
  */
 
 import "dotenv/config";
-import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient, Prisma } from "../src/generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 
 function assertNotProduction() {
   const env = process.env.NODE_ENV;
@@ -18,15 +19,32 @@ function assertNotProduction() {
   }
 }
 
-const adapter = new PrismaBetterSqlite3({
-  // 🔥 IDENTICO a src/lib/server/prisma.ts
-  url: process.env.DATABASE_URL || "file:./dev.db",
-});
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+const adapter = new PrismaPg({ connectionString });
 
 const prisma = new PrismaClient({
   adapter,
   log: ["error", "warn"],
 });
+
+type ResetResult = { model: string; deleted?: number; skipped?: boolean };
+
+type DeleteManyResult = { count?: number };
+type DeleteManyCapable = {
+  deleteMany: (args: Record<string, never>) => Promise<DeleteManyResult>;
+};
+
+function isDeleteManyCapable(value: unknown): value is DeleteManyCapable {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "deleteMany" in value &&
+    typeof (value as { deleteMany?: unknown }).deleteMany === "function"
+  );
+}
 
 async function main() {
   assertNotProduction();
@@ -34,9 +52,10 @@ async function main() {
   console.log("🧹 HARD reset — starting...");
   console.log("DATABASE_URL =", process.env.DATABASE_URL || "(fallback) file:./dev.db");
 
-  const results: Array<{ model: string; deleted?: number; skipped?: boolean }> = [];
+  const results: ResetResult[] = [];
 
   const deleteOrder = [
+    "tastingBooking", // ✅ AGGIUNTO: cancella prenotazioni degustazioni
     "orderItem",
     "order",
     "analyticsEvent",
@@ -45,18 +64,18 @@ async function main() {
     "promotion",
     "productMerch",
     "setting",
-  ] as const;
+  ] as const satisfies ReadonlyArray<keyof Prisma.TransactionClient>;
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     for (const modelName of deleteOrder) {
-      const model: any = (tx as any)[modelName];
+      const delegate = (tx as unknown as Record<string, unknown>)[modelName];
 
-      if (!model?.deleteMany) {
+      if (!isDeleteManyCapable(delegate)) {
         results.push({ model: modelName, skipped: true });
         continue;
       }
 
-      const res = await model.deleteMany({});
+      const res = await delegate.deleteMany({});
       results.push({ model: modelName, deleted: res.count ?? 0 });
     }
   });
@@ -70,7 +89,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch((e: unknown) => {
     console.error("❌ Reset failed:", e);
     process.exit(1);
   })

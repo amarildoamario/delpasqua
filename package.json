@@ -13,13 +13,21 @@
     "inventory:init": "tsx tools/init-inventory.ts",
     "inventory:zero": "tsx tools/zero-inventory.ts",
     "sync:product-images": "node tools/sync-product-images.mjs",
-    "typecheck": "tsc --noEmit"
+    "remove-dark": "node tools/remove-dark.mjs",
+    "check-no-dark": "node tools/check-no-dark.mjs",
+    "typecheck": "tsc --noEmit",
+    "verify:migration": "node scripts/verify-migration.mjs",
+    "migrate:prod": "prisma migrate deploy"
   },
   "dependencies": {
-    "@prisma/client": "^7.3.0",
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "@types/pg": "^8.18.0",
     "better-sqlite3": "^12.6.2",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
+    "next-intl": "^4.8.3",
+    "pg": "^8.19.0",
     "prisma": "^7.3.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -28,7 +36,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

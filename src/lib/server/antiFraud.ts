@@ -10,6 +10,7 @@ type Args = {
   email: string | null;
   totalCents: number;
   items: Item[];
+  phase?: "pre" | "post"; // ✅ nuovo
 };
 
 const DISPOSABLE_DOMAINS = new Set([
@@ -21,11 +22,17 @@ const DISPOSABLE_DOMAINS = new Set([
   "trashmail.com",
 ]);
 
+// ─── IP velocity cache (TTL 5 min) ──────────────────────────────────
+// Elimina 2 query COUNT per ogni tentativo di ordine.
+// TTL breve (5min) per non perdere rilevanza anti-frode.
+const IP_VELOCITY_TTL_MS = 5 * 60 * 1000;
+interface VelocityEntry { count10m: number; count1h: number; cachedAt: number }
+const ipVelocityCache = new Map<string, VelocityEntry>();
+
 function normalizeIp(ip: string | null) {
   if (!ip) return "";
   const s = ip.trim();
   if (!s || s.toLowerCase() === "unknown") return "";
-  // se arriva "1.2.3.4, 5.6.7.8" prendiamo il primo
   return s.split(",")[0].trim();
 }
 
@@ -38,6 +45,7 @@ export async function computeRiskScore(args: Args) {
   const reasons: string[] = [];
   let score = 0;
 
+  const phase = args.phase ?? "pre";
   const ip = normalizeIp(args.ipAddress);
   const ua = (args.userAgent ?? "").trim();
   const email = (args.email ?? "").trim().toLowerCase();
@@ -51,9 +59,13 @@ export async function computeRiskScore(args: Args) {
     score += 5;
     reasons.push("missing_user_agent");
   }
+
+  // ✅ email: in PRE checkout è normale che manchi (Stripe-first)
   if (!email) {
-    score += 10;
-    reasons.push("missing_email");
+    if (phase === "post") {
+      score += 10;
+      reasons.push("missing_email");
+    }
   } else {
     const dom = emailDomain(email);
     if (dom && DISPOSABLE_DOMAINS.has(dom)) {
@@ -78,26 +90,28 @@ export async function computeRiskScore(args: Args) {
     reasons.push("very_high_total");
   }
 
-  // velocity semplice (anti-bot / spam)
+  // velocity semplice
   if (ip) {
-    const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000);
-    const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    // Controlla cache prima di andare al DB
+    const cached = ipVelocityCache.get(ip);
+    const cacheValid = cached && Date.now() - cached.cachedAt < IP_VELOCITY_TTL_MS;
 
-    const recent10m = await args.prisma.order.count({
-      where: { ipAddress: ip, createdAt: { gte: tenMinAgo } },
-    });
-    if (recent10m >= 3) {
-      score += 30;
-      reasons.push("ip_velocity_10min");
+    const count10m = cacheValid ? cached.count10m : await (async () => {
+      const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000);
+      return args.prisma.order.count({ where: { ipAddress: ip, createdAt: { gte: tenMinAgo } } });
+    })();
+
+    const count1h = cacheValid ? cached.count1h : await (async () => {
+      const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      return args.prisma.order.count({ where: { ipAddress: ip, createdAt: { gte: hourAgo } } });
+    })();
+
+    if (!cacheValid) {
+      ipVelocityCache.set(ip, { count10m, count1h, cachedAt: Date.now() });
     }
 
-    const recent1h = await args.prisma.order.count({
-      where: { ipAddress: ip, createdAt: { gte: hourAgo } },
-    });
-    if (recent1h >= 6) {
-      score += 25;
-      reasons.push("ip_velocity_1h");
-    }
+    if (count10m >= 3) { score += 30; reasons.push("ip_velocity_10min"); }
+    if (count1h >= 6) { score += 25; reasons.push("ip_velocity_1h"); }
   }
 
   score = Math.max(0, Math.min(100, score));

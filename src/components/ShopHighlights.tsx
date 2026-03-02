@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import styles from "./ShopHighlights.module.css";
 import productsData from "@/db/products.json";
 import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
+
 
 type HighlightProduct = {
   id: string;
@@ -15,7 +17,6 @@ type HighlightProduct = {
   price: string;
   href: string;
   badge?: string;
-  labelTopRight?: string;
   imageSrc: string;
   imageAlt: string;
 };
@@ -34,18 +35,21 @@ function buildHighlight(p: DbProduct): HighlightProduct {
     id: p.id,
     title: p.title,
     subtitle: p.subtitle,
-    price: `${hasMany ? "Da " : ""}${formatEur(minPriceCents)} + IVA`,
+    price: `${hasMany ? "Da " : ""}${formatEur(minPriceCents)}`,
     href: `/shop/${encodeURIComponent(p.slug)}`,
     badge: p.badge,
-    labelTopRight: p.labelTopRight,
     imageSrc: p.imageSrc,
     imageAlt: p.imageAlt,
   };
 }
 
 export default function ShopHighlights() {
+  const t = useTranslations("HomePage.ShopHighlights");
+  const tp = useTranslations("Products");
+  const locale = useLocale();
+
   const products: HighlightProduct[] = useMemo(() => {
-    const all = (productsData as DbProduct[]) ?? [];
+    const all = (productsData as unknown as DbProduct[]) ?? [];
     const bySlug = new Map(all.map((p) => [p.slug, p] as const));
 
     const picked: DbProduct[] = FEATURED_SLUGS.map((s) => bySlug.get(s)).filter(
@@ -62,8 +66,28 @@ export default function ShopHighlights() {
       }
     }
 
-    return picked.slice(0, 4).map(buildHighlight);
-  }, []);
+    return picked.slice(0, 4).map((p) => {
+      const minPriceCents = Math.min(...(p.variants?.map((v) => v.priceCents) ?? [0]));
+      const hasMany = (p.variants?.length ?? 0) > 1;
+      const fmt = new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
+        style: "currency",
+        currency: "EUR",
+      }).format(minPriceCents / 100);
+
+      return {
+        id: p.id,
+        title: tp(`${p.id}.title`) || p.title,
+        subtitle: tp(`${p.id}.subtitle`) || p.subtitle,
+        price: `${hasMany ? t("from") : ""}${fmt}`,
+        href: `/shop/${encodeURIComponent(p.slug)}`,
+        badge: tp(`${p.id}.badge`) || p.badge,
+        imageSrc: p.imageSrc,
+        imageAlt: p.imageAlt,
+      };
+    });
+  }, [t, tp, locale]);
+
+
 
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -74,7 +98,6 @@ export default function ShopHighlights() {
 
   const updateActiveFromViewport = useCallback(() => {
     const scroller = scrollerRef.current;
-
     const viewportCenterX = scroller
       ? scroller.getBoundingClientRect().left + scroller.clientWidth / 2
       : window.innerWidth / 2;
@@ -109,7 +132,7 @@ export default function ShopHighlights() {
   }, []);
 
   useEffect(() => {
-    updateActiveFromViewport();
+    queueMicrotask(() => updateActiveFromViewport());
     const onResize = () => updateActiveFromViewport();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -142,8 +165,8 @@ export default function ShopHighlights() {
   }, []);
 
   return (
-    <section className="bg-white dark:bg-black">
-      <div className="mx-auto max-w-6xl px-6 pt-20 pb-14 md:pt-24 md:pb-18">
+    <section className="bg-[#fcfbf4]">
+      <div className="mx-auto max-w-7xl px-6 pt-20 pb-10 lg:pt-28 lg:pb-16">
         <Header />
 
         {/* MOBILE */}
@@ -178,44 +201,7 @@ export default function ShopHighlights() {
                         onClickCapture={onLinkClickCapture}
                         draggable={false}
                       >
-                        <article className={styles.mobileCard}>
-                          <div className={styles.mobileImageSection}>
-                            {p.badge && (
-                              <div className={styles.mobileBadge}>
-                                <span>{p.badge}</span>
-                              </div>
-                            )}
-                            {p.labelTopRight && (
-                              <div className={styles.mobileLabelTopRight}>{p.labelTopRight}</div>
-                            )}
-                            <Image
-                              src={p.imageSrc}
-                              alt={p.imageAlt}
-                              fill
-                              sizes="340px"
-                              className="object-cover"
-                              priority
-                            />
-                          </div>
-
-                          <div className={styles.mobileContent}>
-                            <div className={styles.mobileRowSubtitle}>
-                              <p className={styles.mobileSubtitle}>{p.subtitle}</p>
-                            </div>
-                            <div className={styles.mobileRowTitle}>
-                              <h3 className={styles.mobileTitle}>{p.title}</h3>
-                            </div>
-                            <div className={styles.mobilePriceRow}>
-                              <span className={styles.mobilePrice}>{p.price}</span>
-                            </div>
-                            <div className={styles.mobileCtaRow}>
-                              <div className={styles.mobileCta}>
-                                <span>Scopri</span>
-                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
-                              </div>
-                            </div>
-                          </div>
-                        </article>
+                        <ProductCardMobile product={p} />
                       </Link>
                     </div>
                   </div>
@@ -251,79 +237,168 @@ export default function ShopHighlights() {
 }
 
 function Header() {
+  const t = useTranslations("HomePage.ShopHighlights");
   return (
     <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
       <div>
-        <div className="text-xs tracking-[0.22em] text-zinc-500 dark:text-zinc-400">SHOP</div>
-        <h2 className="mt-2 font-serif text-3xl tracking-[0.06em] text-zinc-900 dark:text-white md:text-4xl">
-          I più acquistati
+        <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+          <span className="h-px w-6 bg-[#8B7355]" />
+          {t("label")}
+        </div>
+        <h2 className="mt-4 font-serif text-3xl font-light tracking-tight text-[#1C1917] md:text-4xl lg:text-5xl">
+          {t("title_part1")}<span className="italic text-[#3D5A3D]">{t("title_italic")}</span>
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-          Dal nostro catalogo i prodotti best sellers.
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#57534E]">
+          {t("subtitle")}
         </p>
       </div>
       <Link
         href="/shop"
-        className="hidden md:inline-flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-colors"
+        className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#1C1917] px-6 py-3 text-xs font-medium tracking-[0.2em] text-white hover:bg-[#3D5A3D] transition-colors"
       >
-        Vai allo shop <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
+        {t("cta")} <ArrowRight className="h-4 w-4" strokeWidth={2} />
       </Link>
     </div>
   );
 }
 
+// Card compatta per MOBILE
+function ProductCardMobile({ product }: { product: HighlightProduct }) {
+  return (
+    <article className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[#E7E5E4] bg-white shadow-sm">
+      {/* Image container - PIÙ COMPATTA */}
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F5F5F4]">
+        <Image
+          src={product.imageSrc}
+          alt={product.imageAlt}
+          fill
+          sizes="240px"
+          className="object-cover"
+          priority
+        />
+
+        {/* Badge */}
+        {product.badge && (
+          <div className="absolute left-3 top-3">
+            <span className="inline-flex items-center rounded-full bg-[#B8860B] px-2 py-1 text-[8px] font-medium tracking-wider text-white uppercase">
+              {product.badge}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Content - COMPATTO */}
+      <div className="flex flex-col p-3">
+        {/* Subtitle */}
+        <div className="text-[8px] font-medium tracking-[0.15em] text-[#8B7355] uppercase">
+          {product.subtitle || "Olio EVO"}
+        </div>
+
+        {/* Title - più piccolo */}
+        <h3 className="mt-1 font-serif text-sm font-light leading-tight tracking-tight text-[#1C1917] line-clamp-2">
+          {product.title}
+        </h3>
+
+        {/* Price row */}
+        <div className="mt-2 flex items-center justify-between">
+          <div className="flex items-baseline gap-1">
+            <span className="font-serif text-base font-light text-[#1C1917]">
+              {product.price}
+            </span>
+            <span className="text-[9px] text-[#8B7355]">+IVA</span>
+          </div>
+
+          {/* Arrow icon */}
+          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#E7E5E4] text-[#57534E]">
+            <ArrowRight className="h-3 w-3" />
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// Card per DESKTOP
+function ProductCardDesktop({ product }: { product: HighlightProduct }) {
+  return (
+    <article className="group relative flex h-full w-full flex-col overflow-hidden rounded-3xl border border-[#E7E5E4] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#3D5A3D]/20 hover:shadow-xl hover:shadow-[#3D5A3D]/5">
+      {/* Image container */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#F5F5F4]">
+        <Image
+          src={product.imageSrc}
+          alt={product.imageAlt}
+          fill
+          sizes="25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+        {/* Badge */}
+        {product.badge && (
+          <div className="absolute left-4 top-4">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#B8860B] px-3 py-1.5 text-[10px] font-medium tracking-wider text-white uppercase shadow-lg">
+              {product.badge}
+            </span>
+          </div>
+        )}
+
+        {/* Quick add */}
+        <div className="absolute bottom-4 left-4 right-4 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3 text-xs font-medium tracking-wider text-[#1C1917] shadow-lg transition hover:bg-[#3D5A3D] hover:text-white"
+          >
+            <IconPlus className="h-4 w-4" />
+            {useTranslations("HomePage.ShopHighlights")("add")}
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-1 flex-col p-5">
+        {/* Subtitle */}
+        <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+          {product.subtitle || "Olio EVO"}
+        </div>
+
+        {/* Title */}
+        <h3 className="mt-2 font-serif text-lg font-light leading-tight tracking-tight text-[#1C1917] line-clamp-2 transition-colors group-hover:text-[#3D5A3D]">
+          {product.title}
+        </h3>
+
+        {/* Price */}
+        <div className="mt-auto pt-4">
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-xl font-light text-[#1C1917]">
+              {product.price}
+            </span>
+            <span className="text-xs text-[#8B7355]">+ IVA</span>
+          </div>
+
+          {/* Decorative line */}
+          <div className="mt-3 h-px w-10 bg-[#E7E5E4] transition-all duration-300 group-hover:w-20 group-hover:bg-[#3D5A3D]" />
+        </div>
+      </div>
+
+      {/* Bottom accent line */}
+      <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-[#3D5A3D] to-[#B8860B] transition-all duration-300 group-hover:w-full" />
+    </article>
+  );
+}
+
 function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
-  const titleRef = useRef<HTMLHeadingElement | null>(null);
   const cardsRef = useRef<Array<HTMLElement | null>>([]);
 
   useLayoutEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduce.matches) return;
 
-    const titleEl = titleRef.current;
-
-    if (titleEl) {
-      titleEl.getAnimations?.().forEach((a) => a.cancel());
-      titleEl.style.opacity = "0";
-      titleEl.style.transform = "translate3d(-22px,0,0)";
-      titleEl.style.filter = "blur(8px)";
-      titleEl.style.willChange = "transform, opacity, filter";
-    }
-
-    cardsRef.current.forEach((el) => {
-      if (!el) return;
-      el.getAnimations?.().forEach((a) => a.cancel());
-      el.style.opacity = "0";
-      el.style.transform = "translate3d(0, 26px, 0) scale(0.99)";
-      el.style.filter = "blur(8px)";
-      el.style.willChange = "transform, opacity, filter";
-    });
-
     const played = new WeakSet<Element>();
-    let titleIO: IntersectionObserver | null = null;
-
-    if (titleEl) {
-      titleIO = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) return;
-          if (played.has(titleEl)) return;
-          played.add(titleEl);
-
-          titleEl.animate(
-            [
-              { opacity: 0, transform: "translate3d(-22px,0,0)", filter: "blur(8px)" },
-              { opacity: 1, transform: "translate3d(0,0,0)", filter: "blur(0px)" },
-            ],
-            { duration: 900, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
-          );
-
-          titleIO?.disconnect();
-        },
-        { threshold: 0.35, rootMargin: "0px 0px -12% 0px" }
-      );
-
-      titleIO.observe(titleEl);
-    }
 
     const cardsIO = new IntersectionObserver(
       (entries) => {
@@ -335,79 +410,56 @@ function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
           played.add(el);
 
           const idx = Number(el.getAttribute("data-index") ?? "0");
-          const delay = idx * 90;
+          const delay = idx * 100;
 
           el.animate(
             [
-              { opacity: 0, transform: "translate3d(0,26px,0) scale(0.99)", filter: "blur(9px)" },
-              { opacity: 1, transform: "translate3d(0,0,0) scale(1)", filter: "blur(0px)" },
+              { opacity: 0, transform: "translate3d(0,30px,0)", filter: "blur(8px)" },
+              { opacity: 1, transform: "translate3d(0,0,0)", filter: "blur(0px)" },
             ],
-            { duration: 900, delay, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+            { duration: 800, delay, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
           );
 
           cardsIO.unobserve(el);
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -10% 0px" }
     );
 
     cardsRef.current.forEach((el, idx) => {
       if (!el) return;
+      el.style.opacity = "0";
       el.setAttribute("data-index", String(idx));
       cardsIO.observe(el);
     });
 
     return () => {
-      titleIO?.disconnect();
       cardsIO.disconnect();
     };
   }, []);
 
   return (
-    <div className="grid grid-cols-4 gap-5">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr">
       {products.map((p, i) => (
-        <article
+        <div
           key={p.id}
-          ref={(el) => {
-            cardsRef.current[i] = el;
-          }}
-          className="group overflow-hidden rounded-[12px] border border-black/5 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-950"
+          ref={(el) => { cardsRef.current[i] = el; }}
+          className="flex h-full"
         >
-          <Link href={p.href} aria-label={p.title} className="block">
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-              <Image
-                src={p.imageSrc}
-                alt={p.imageAlt}
-                fill
-                sizes="25vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-              <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
-              {p.badge ? (
-                <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] tracking-[0.16em] text-zinc-800 backdrop-blur dark:bg-black/60 dark:text-white">
-                  {p.badge}
-                </div>
-              ) : null}
-            </div>
-
-            <div className="px-4 pb-4 pt-4">
-              <div className="font-serif text-base tracking-[0.06em] text-zinc-900 dark:text-white">
-                {p.title}
-              </div>
-              <div className="mt-1 text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-                {p.subtitle}
-              </div>
-              <div className="mt-3 flex items-center justify-between">
-                <div className="text-sm tracking-[0.10em] text-zinc-900 dark:text-white">{p.price}</div>
-                <span className="inline-flex items-center gap-2 text-sm tracking-[0.10em] text-zinc-700 group-hover:text-zinc-900 dark:text-zinc-300 dark:group-hover:text-white transition-colors">
-                  Vedi <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
-                </span>
-              </div>
-              <div className="mt-3 h-px w-10 bg-zinc-200 transition-all duration-300 group-hover:w-20 dark:bg-white/15" />
-            </div>
+          <Link href={p.href} className="flex h-full w-full">
+            <ProductCardDesktop product={p} />
           </Link>
-        </article>
+        </div>
       ))}
     </div>
+  );
+}
+
+function IconPlus({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
   );
 }

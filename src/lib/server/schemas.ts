@@ -25,6 +25,7 @@ export const CartLineSchema = z.object({
 
 export const CheckoutSchema = z.object({
   items: z.array(CartLineSchema).min(1).max(50),
+  promotionCode: z.string().trim().min(2).max(40).optional(),
 });
 
 // ✅ customer non più obbligatorio (Stripe Checkout lo raccoglie)
@@ -265,7 +266,7 @@ export const AdminSalesPatchSchema = z
     }
   });
 
-  
+
 /**
  * Report CSV query (aggiunta)
  * - per GET /api/admin/report.csv?start=...&end=...

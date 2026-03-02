@@ -7,7 +7,6 @@ import { prisma } from "@/lib/server/prisma";
 import { CreateOrderSchema } from "@/lib/server/schemas";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
-import { allocateOrderNumber } from "@/lib/server/orderNumber";
 import { createOrderEvent } from "@/lib/server/orderEvents";
 import { computeOrderPricing } from "@/lib/server/pricing";
 import { getVatRate } from "@/lib/server/vat";
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
     const existing = await prisma.order.findUnique({ where: { idempotencyKey: idemKey } });
     if (existing?.stripeCheckoutSessionId) {
       const sessionResp = await stripe.checkout.sessions.retrieve(existing.stripeCheckoutSessionId);
-      const session = (sessionResp as any).data ?? sessionResp;
+      const session = "data" in sessionResp ? (sessionResp as { data: Stripe.Checkout.Session }).data : sessionResp;
 
       if (!session.url) return new Response("Stripe session URL missing", { status: 500 });
       return Response.json({ orderId: existing.id, checkoutUrl: session.url }, { status: 200 });
@@ -57,7 +56,6 @@ export async function POST(req: Request) {
     });
 
     // meta
-    const orderNumber = await allocateOrderNumber(prisma);
     const orderPublicToken = randomUUID().replace(/-/g, "");
     const ipAddress =
       (req.headers.get("x-forwarded-for")?.split(",")[0] ?? "").trim() ||
@@ -72,6 +70,7 @@ export async function POST(req: Request) {
       email: customer?.email ?? "",
       totalCents: pricing.totalCents,
       items: pricing.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+      phase: "pre", // ✅ nuovo
     });
 
     // create order + items + reserve stock (P0.06)
@@ -138,12 +137,11 @@ export async function POST(req: Request) {
               lineVatCents: it.lineVatCents,
               lineTaxCents: it.lineTaxCents,
 
-              productSnapshot: it.productSnapshot,
-              pricingSnapshot: it.pricingSnapshot,
+              productSnapshot: it.productSnapshot as NonNullable<unknown>,
+              pricingSnapshot: it.pricingSnapshot as NonNullable<unknown>,
             })),
           },
 
-          orderNumber,
           orderPublicToken,
           ipAddress,
           userAgent,
@@ -182,7 +180,7 @@ export async function POST(req: Request) {
           product_data: {
             name: it.title,
             description: it.variantLabel,
-          },
+          } as Stripe.Checkout.SessionCreateParams.LineItem.PriceData.ProductData, // Explicit type casting
         },
       })),
     ];
@@ -204,12 +202,31 @@ export async function POST(req: Request) {
 
     const traceId = randomUUID();
 
+    // ✅ Se c'è uno sconto, crea un coupon Stripe al volo e aggiungilo alla sessione
+    let stripeCouponId: string | undefined;
+    if (pricing.discountCents > 0 && pricing.promotionApplied) {
+      const coupon = await stripe.coupons.create({
+        amount_off: pricing.discountCents,
+        currency: "eur",
+        duration: "once",
+        name: `Sconto ${pricing.promotionApplied.code}`,
+        metadata: {
+          orderId: order.id,
+          promotionCode: pricing.promotionApplied.code,
+        },
+      });
+      stripeCouponId = coupon.id;
+    }
+
     const sessionResp = await stripe.checkout.sessions.create({
       mode: "payment",
       ...(order.email ? { customer_email: order.email } : {}),
       shipping_address_collection: { allowed_countries: ["IT"] },
       phone_number_collection: { enabled: true },
       line_items: lineItems,
+      ...(stripeCouponId
+        ? { discounts: [{ coupon: stripeCouponId }] }
+        : {}),
       shipping_options: [
         {
           shipping_rate_data: {
@@ -229,13 +246,13 @@ export async function POST(req: Request) {
       },
     });
 
-    const session = (sessionResp as any).data ?? sessionResp;
+    const session = "data" in sessionResp ? (sessionResp as { data: Stripe.Checkout.Session }).data : sessionResp;
 
     // log sicuro (no PII)
     console.log("✅ SESSION ID:", session.id);
     console.log("✅ payment_status:", session.payment_status);
     console.log("✅ has_customer_email:", Boolean(session.customer_email));
-    console.log("✅ has_shipping_details:", Boolean((session as any).shipping_details));
+    console.log("✅ has_shipping_details:", Boolean((session as { shipping_details?: unknown }).shipping_details));
 
     if (!session.url) return new Response("Stripe session URL missing", { status: 500 });
 

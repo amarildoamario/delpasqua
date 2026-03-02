@@ -1,0 +1,302 @@
+[
+  {
+    "id": "nuovo-prodotto-1772128738842",
+    "slug": "nuovo-prodotto-1772128738842",
+    "title": "Vittoria - SanGiovese in purezza",
+    "variants": [
+      {
+        "id": "Vari",
+        "label": "750 ml",
+        "priceCents": 1500,
+        "sku": "V-750-ml",
+        "imageSrc": "",
+        "imageAlt": ""
+      }
+    ],
+    "category": "Vino",
+    "subtitle": "100% San giovese in purezza",
+    "badge": "",
+    "imageSrc": "",
+    "imageAlt": "",
+    "description": "questo è un vino importante....",
+    "specs": {}
+  },
+  {
+    "id": "fruttato-medio",
+    "slug": "fruttato-medio",
+    "category": "Olio",
+    "title": "EXTRAVERGINE - FRUTTATO MEDIO",
+    "subtitle": "Olio Extravergine di oliva 100% italiano",
+    "badge": "CLASSICO",
+    "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
+    "imageAlt": "Olio extravergine - fruttato medio",
+    "description": "Blend equilibrato, ideale a crudo e in cucina.",
+    "specs": {
+      "Harvest": "—",
+      "Certification": "—"
+    },
+    "variants": [
+      {
+        "id": "500ml",
+        "label": "Bottiglia 500 ml",
+        "priceCents": 1800,
+        "sku": "FM-B-500ML",
+        "imageSrc": "/products/fruttato-medio-bottiglia-500ml.jpg",
+        "imageAlt": "Fruttato medio bottiglia 500 ml",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "750ml",
+        "label": "Bottiglia 750 ml",
+        "priceCents": 2400,
+        "sku": "FM-B-750ML",
+        "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
+        "imageAlt": "Fruttato medio bottiglia 750 ml",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "1lt",
+        "label": "Bottiglia 1 L",
+        "priceCents": 3000,
+        "sku": "FM-B-1LT",
+        "imageSrc": "/products/fruttato-medio-bottiglia-1lt.jpg",
+        "imageAlt": "Fruttato medio bottiglia 1 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 12000,
+        "sku": "FM-5LT",
+        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+        "imageAlt": "Fruttato medio latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "100  ml",
+        "label": "Bottiglia 100 ml",
+        "priceCents": 300,
+        "sku": "FM-A-50-ML",
+        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+        "imageAlt": "assaggio"
+      }
+    ]
+  },
+  {
+    "id": "fruttato-intenso",
+    "slug": "fruttato-intenso",
+    "category": "Olio",
+    "title": "EXTRAVERGINE - FRUTTATO INTENSO",
+    "subtitle": "Olio Extravergine di oliva 100% italiano",
+    "badge": "CLASSICO",
+    "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
+    "imageAlt": "Olio extravergine - fruttato intenso",
+    "description": "Sapore deciso, amaro e piccante più presenti.",
+    "specs": {
+      "Harvest": "—",
+      "Certification": "—"
+    },
+    "variants": [
+      {
+        "id": "500ml",
+        "label": "Bottiglia 500 ml",
+        "priceCents": 1800,
+        "sku": "FI-B-500ML",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-500ml.jpg",
+        "imageAlt": "Fruttato intenso bottiglia 500 ml",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "750ml",
+        "label": "Bottiglia 750 ml",
+        "priceCents": 2400,
+        "sku": "FI-B-750ML",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
+        "imageAlt": "Fruttato intenso bottiglia 750 ml",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "1lt",
+        "label": "Bottiglia 1 L",
+        "priceCents": 3000,
+        "sku": "FI-B-1LT",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
+        "imageAlt": "Fruttato intenso bottiglia 1 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 12000,
+        "sku": "FI-5LT",
+        "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
+        "imageAlt": "Fruttato intenso latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      }
+    ]
+  },
+  {
+    "id": "evo",
+    "slug": "evo",
+    "category": "Olio",
+    "title": "EXTRAVERGINE - EVO",
+    "subtitle": "Extravergine • EVO",
+    "badge": "EVO",
+    "imageSrc": "/products/EVO-750-ml.png",
+    "imageAlt": "Olio extravergine di oliva EVO",
+    "description": "Il classico EVO da tutti i giorni.",
+    "specs": {
+      "Harvest": "—",
+      "Certification": "—"
+    },
+    "variants": [
+      {
+        "id": "750ml",
+        "label": "Bottiglia 750 ml",
+        "priceCents": 1800,
+        "sku": "EVO-B-750ML",
+        "imageSrc": "/products/EVO-750-ml.png",
+        "imageAlt": "EVO bottiglia 750 ml",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "3lt",
+        "label": "Latta 3 L",
+        "priceCents": 8000,
+        "sku": "EVO-3LT",
+        "imageSrc": "/products/EVO-latta-3lt.png",
+        "imageAlt": "EVO latta 3 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 12000,
+        "sku": "EVO-5LT",
+        "imageSrc": "/products/EVO-latta-5lt.png",
+        "imageAlt": "EVO latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tartufo",
+    "slug": "tartufo",
+    "category": "Olio",
+    "title": "EXTRAVERGINE - AROMATIZZATO AL TARTUFO",
+    "subtitle": "100% tartufo italiano",
+    "badge": "AROMATIZZATO",
+    "imageSrc": "/products/tartufo.jpg",
+    "imageAlt": "Olio aromatico al tartufo",
+    "description": "Perfetto su uova, patate, carpacci.",
+    "specs": {
+      "Harvest": "—",
+      "Certification": "—"
+    },
+    "variants": [
+      {
+        "id": "bottiglia",
+        "label": "Bottiglia",
+        "priceCents": 1200,
+        "sku": "TRUF-STD",
+        "imageSrc": "/products/tartufo.jpg",
+        "imageAlt": "Olio al tartufo bottiglia",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      }
+    ]
+  },
+  {
+    "id": "peperoncino",
+    "slug": "peperoncino",
+    "category": "Olio",
+    "title": "EXTRAVERGINE - AROMATIZZATO AL PEPERONCINO",
+    "subtitle": "Con peperoncini calabresi",
+    "badge": "AROMATIZZATO",
+    "imageSrc": "/products/peperoncino.jpg",
+    "imageAlt": "Olio aromatico al peperoncino",
+    "description": "Piccantezza pulita, ottimo su pizza e primi.",
+    "specs": {
+      "Harvest": "—",
+      "Certification": "—"
+    },
+    "variants": [
+      {
+        "id": "bottiglia",
+        "label": "Bottiglia",
+        "priceCents": 1200,
+        "sku": "PEP-STD",
+        "imageSrc": "/products/peperoncino.jpg",
+        "imageAlt": "Olio al peperoncino bottiglia",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      }
+    ]
+  },
+  {
+    "id": "limone",
+    "slug": "limone",
+    "category": "Olio",
+    "title": "EXTRAVERGINE - AROMATIZZATO AL LIMONE",
+    "subtitle": "con limoni di Sicilia",
+    "badge": "AROMATIZZATO",
+    "imageSrc": "/products/limone.jpg",
+    "imageAlt": "Olio aromatico al limone",
+    "description": "Top su pesce, insalate e verdure.",
+    "specs": {
+      "Harvest": "—",
+      "Certification": "—"
+    },
+    "variants": [
+      {
+        "id": "bottiglia",
+        "label": "Bottiglia",
+        "priceCents": 1000,
+        "sku": "LIM-STD",
+        "imageSrc": "/products/limone.jpg",
+        "imageAlt": "Olio al limone bottiglia",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        }
+      }
+    ]
+  }
+]

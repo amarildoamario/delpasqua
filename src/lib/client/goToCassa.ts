@@ -35,7 +35,10 @@ function safeUuid(): string {
   return `id_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
 }
 
-export async function goToCassa(lines: CartLine[]): Promise<GoToCassaResult> {
+export async function goToCassa(
+  lines: CartLine[],
+  options?: { promotionCode?: string }
+): Promise<GoToCassaResult> {
   if (!lines?.length) return { ok: false, message: "Il carrello è vuoto." };
 
   try {
@@ -45,13 +48,18 @@ export async function goToCassa(lines: CartLine[]): Promise<GoToCassaResult> {
     track({ type: "begin_checkout", cartId, data: { linesCount: lines.length } });
     track({ type: "checkout_click", cartId, data: { itemsCount: lines.length } });
 
+    const body: Record<string, unknown> = { items: lines, cartId };
+    if (options?.promotionCode) {
+      body.promotionCode = options.promotionCode.trim().toUpperCase();
+    }
+
     const res = await fetch("/api/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Idempotency-Key": idempotencyKey,
       },
-      body: JSON.stringify({ items: lines, cartId }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {
@@ -59,7 +67,7 @@ export async function goToCassa(lines: CartLine[]): Promise<GoToCassaResult> {
       try {
         const j = await res.json();
         serverMsg = typeof j?.message === "string" ? j.message : "";
-      } catch {}
+      } catch { }
 
       if (res.status === 409) {
         return { ok: false, message: serverMsg || "Prodotto non disponibile.", status: 409 };
@@ -80,9 +88,9 @@ export async function goToCassa(lines: CartLine[]): Promise<GoToCassaResult> {
 
     window.location.href = data.checkoutUrl;
     return { ok: true };
-  } catch (e: any) {
-    // opzionale: per debug temporaneo
-    // alert(String(e?.message ?? e));
+  } catch {
     return { ok: false, message: "Errore di rete." };
   }
+
 }
+

@@ -18,11 +18,20 @@ import {
   ShoppingBag,
   ArrowRight,
   PackageOpen,
+  Tag,
+  CheckCircle2,
 } from "lucide-react";
 
 const VAT_RATE = 0.04;
 const FREE_SHIPPING_THRESHOLD_CENTS = 6900;
 const SHIPPING_CENTS = 590;
+
+type PromoResult = {
+  code: string;
+  discountCents: number;
+  percent: number | null;
+  freeShipping: boolean;
+};
 
 export default function CartDrawer({
   open,
@@ -32,14 +41,20 @@ export default function CartDrawer({
   onClose: () => void;
 }) {
   const { lines, remove, setQty, clear } = useCart();
-  const catalog = products as Product[];
+  const catalog = products as unknown as Product[];
 
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
 
+  // Promo code state
+  const [promoInput, setPromoInput] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoApplied, setPromoApplied] = useState<PromoResult | null>(null);
+
   // ✅ Portal mount
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => { queueMicrotask(() => setMounted(true)); }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -73,7 +88,44 @@ export default function CartDrawer({
   const vat = Math.round(subtotal * VAT_RATE);
 
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_CENTS - subtotal);
-  const shippingPreview = subtotal >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : SHIPPING_CENTS;
+  const shippingPreview =
+    promoApplied?.freeShipping || subtotal >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : SHIPPING_CENTS;
+
+  const discountCents = promoApplied?.discountCents ?? 0;
+  const totalWithDiscount = subtotal + vat + shippingPreview - discountCents;
+
+  async function handleApplyPromo() {
+    const code = promoInput.trim();
+    if (!code) return;
+    setPromoLoading(true);
+    setPromoError(null);
+    setPromoApplied(null);
+
+    try {
+      const res = await fetch("/api/promotions/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, subtotalCents: subtotal }),
+      });
+      const data = await res.json();
+
+      if (data.valid) {
+        setPromoApplied({
+          code: data.code,
+          discountCents: data.discountCents,
+          percent: data.percent,
+          freeShipping: data.freeShipping,
+        });
+        setPromoInput("");
+      } else {
+        setPromoError(data.reason ?? "Codice non valido.");
+      }
+    } catch {
+      setPromoError("Errore di rete. Riprova.");
+    } finally {
+      setPromoLoading(false);
+    }
+  }
 
   const ui = (
     <div
@@ -101,23 +153,23 @@ export default function CartDrawer({
         className={[
           "fixed right-0 top-0 h-[100dvh] max-h-[100dvh]",
           "w-[min(98vw,820px)] sm:w-[640px] lg:w-[820px]",
-          "bg-white dark:bg-zinc-950",
+          "bg-white",
           "shadow-2xl",
-          "border-l border-black/10 dark:border-white/10",
+          "border-l border-black/10",
           "transition-transform duration-[250ms] ease-out",
           open ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-black/10 px-6 py-5 dark:border-white/10">
+          <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="h-6 w-6 text-zinc-700 dark:text-zinc-300" strokeWidth={1.5} />
+              <ShoppingBag className="h-6 w-6 text-zinc-700" strokeWidth={1.5} />
               <div>
-                <div className="text-[10px] tracking-[0.22em] text-zinc-500 dark:text-zinc-400">
+                <div className="text-[10px] tracking-[0.22em] text-zinc-500">
                   CARRELLO
                 </div>
-                <div className="mt-1 font-serif text-2xl tracking-[0.06em] text-zinc-900 dark:text-white">
+                <div className="mt-1 font-serif text-2xl tracking-[0.06em] text-zinc-900">
                   I tuoi prodotti
                 </div>
               </div>
@@ -126,7 +178,7 @@ export default function CartDrawer({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-zinc-700 hover:bg-black/5 dark:text-zinc-200 dark:hover:bg-white/10"
+              className="rounded-full p-2 text-zinc-700 hover:bg-black/5"
               aria-label="Chiudi"
               title="Chiudi"
             >
@@ -136,24 +188,24 @@ export default function CartDrawer({
 
           {/* Info spedizione */}
           {lines.length > 0 && (
-            <div className="border-b border-black/5 px-6 py-3 dark:border-white/5">
-              <div className="text-xs text-zinc-600 dark:text-zinc-300">
+            <div className="border-b border-black/5 px-6 py-3">
+              <div className="text-xs text-zinc-600">
                 {remainingForFreeShipping > 0 ? (
                   <div className="flex items-center gap-2">
                     <PackageOpen className="h-4 w-4 text-zinc-500" strokeWidth={1.5} />
                     <span>
                       Spedizione gratis sopra{" "}
-                      <span className="font-medium text-zinc-900 dark:text-white">
+                      <span className="font-medium text-zinc-900">
                         {formatEUR(FREE_SHIPPING_THRESHOLD_CENTS)}
                       </span>
                       . Ti mancano{" "}
-                      <span className="font-medium text-zinc-900 dark:text-white">
+                      <span className="font-medium text-zinc-900">
                         {formatEUR(remainingForFreeShipping)}
                       </span>
                     </span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                  <div className="flex items-center gap-2 text-emerald-600">
                     <PackageOpen className="h-4 w-4" strokeWidth={1.5} />
                     <span className="font-medium">Spedizione gratis attiva!</span>
                   </div>
@@ -164,7 +216,7 @@ export default function CartDrawer({
 
           {/* Actions */}
           <div className="flex items-center justify-between px-6 py-3">
-            <div className="text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
+            <div className="text-xs tracking-[0.18em] text-zinc-500">
               {lines.length > 0 ? `${lines.length} ${lines.length === 1 ? "PRODOTTO" : "PRODOTTI"}` : "VUOTO"}
             </div>
 
@@ -172,7 +224,7 @@ export default function CartDrawer({
               <button
                 type="button"
                 onClick={clear}
-                className="flex items-center gap-2 text-xs tracking-[0.18em] text-zinc-600 hover:text-red-600 transition-colors dark:text-zinc-300 dark:hover:text-red-400"
+                className="flex items-center gap-2 text-xs tracking-[0.18em] text-zinc-600 hover:text-red-600 transition-colors"
               >
                 <Trash2 className="h-4 w-4" strokeWidth={1.5} />
                 SVUOTA
@@ -181,16 +233,16 @@ export default function CartDrawer({
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto border-t border-black/5 px-6 py-5 dark:border-white/10">
+          <div className="flex-1 overflow-y-auto border-t border-black/5 px-6 py-5">
             {lines.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <ShoppingBag className="h-16 w-16 text-zinc-300 dark:text-zinc-600 mb-4" strokeWidth={1.5} />
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <ShoppingBag className="h-16 w-16 text-zinc-300 mb-4" strokeWidth={1.5} />
+                <p className="text-sm text-zinc-500">
                   Il carrello è vuoto.
                 </p>
                 <button
                   onClick={onClose}
-                  className="mt-4 text-sm text-zinc-900 hover:text-zinc-600 dark:text-white dark:hover:text-zinc-300 underline underline-offset-4"
+                  className="mt-4 text-sm text-zinc-900 hover:text-zinc-600 underline underline-offset-4"
                 >
                   Continua lo shopping
                 </button>
@@ -211,7 +263,6 @@ export default function CartDrawer({
                       className={[
                         "rounded-[18px] border border-black/10 bg-white",
                         "shadow-sm overflow-hidden",
-                        "dark:border-white/10 dark:bg-black/20",
                       ].join(" ")}
                     >
                       <div className="flex items-stretch">
@@ -227,7 +278,7 @@ export default function CartDrawer({
                                 className="object-cover"
                               />
                             ) : (
-                              <div className="h-full w-full bg-zinc-100 dark:bg-white/5 flex items-center justify-center">
+                              <div className="h-full w-full bg-zinc-100 flex items-center justify-center">
                                 <ShoppingBag className="h-8 w-8 text-zinc-300" strokeWidth={1.5} />
                               </div>
                             )}
@@ -237,10 +288,10 @@ export default function CartDrawer({
                         <div className="flex-1 p-4 sm:p-5">
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <div className="truncate font-serif text-lg text-zinc-900 dark:text-white">
+                              <div className="truncate font-serif text-lg text-zinc-900">
                                 {product?.title ?? line.productId}
                               </div>
-                              <div className="mt-1 truncate text-xs tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
+                              <div className="mt-1 truncate text-xs tracking-[0.18em] text-zinc-500">
                                 {variant?.label ?? line.variantId}
                               </div>
                             </div>
@@ -254,7 +305,6 @@ export default function CartDrawer({
                                 "rounded-full border px-3 py-2",
                                 "text-xs tracking-[0.12em]",
                                 "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
-                                "dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60",
                                 "transition-colors",
                               ].join(" ")}
                               aria-label="Rimuovi prodotto"
@@ -265,10 +315,10 @@ export default function CartDrawer({
                           </div>
 
                           <div className="mt-3 flex items-center justify-between gap-4">
-                            <div className="text-sm text-zinc-600 dark:text-zinc-300">
+                            <div className="text-sm text-zinc-600">
                               {variant ? `${formatEUR(unit)} / cad.` : "—"}
                             </div>
-                            <div className="text-sm font-medium tracking-[0.08em] text-zinc-900 dark:text-white">
+                            <div className="text-sm font-medium tracking-[0.08em] text-zinc-900">
                               {formatEUR(lineTotal)}
                             </div>
                           </div>
@@ -283,7 +333,7 @@ export default function CartDrawer({
                               />
                             </div>
 
-                            <div className="text-[11px] tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                            <div className="text-[11px] tracking-[0.14em] text-zinc-500">
                               Totale + IVA
                             </div>
                           </div>
@@ -297,33 +347,100 @@ export default function CartDrawer({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-black/10 bg-white/95 px-6 pt-6 pb-[calc(34px+env(safe-area-inset-bottom))] backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
+          <div className="border-t border-black/10 bg-white/95 px-6 pt-5 pb-[calc(34px+env(safe-area-inset-bottom))] backdrop-blur">
+
+            {/* Codice sconto */}
+            {lines.length > 0 && (
+              <div className="mb-4">
+                {promoApplied ? (
+                  <div className="flex items-center justify-between rounded-[12px] bg-emerald-50 border border-emerald-200 px-4 py-2.5">
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                      <span className="text-sm font-medium">{promoApplied.code}</span>
+                      {promoApplied.percent && (
+                        <span className="text-xs text-emerald-600">–{promoApplied.percent}%</span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPromoApplied(null)}
+                      className="text-xs text-emerald-700 hover:text-red-600 transition-colors underline underline-offset-2"
+                    >
+                      Rimuovi
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" strokeWidth={1.5} />
+                      <input
+                        type="text"
+                        value={promoInput}
+                        onChange={(e) => {
+                          setPromoInput(e.target.value.toUpperCase());
+                          setPromoError(null);
+                        }}
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
+                        placeholder="Codice sconto"
+                        className="h-10 w-full rounded-[10px] border border-black/10 bg-white pl-9 pr-3 text-base text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400"
+                        disabled={promoLoading}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleApplyPromo}
+                      disabled={promoLoading || !promoInput.trim()}
+                      className="h-10 rounded-[10px] bg-zinc-900 px-4 text-xs tracking-[0.12em] text-white hover:bg-zinc-700 disabled:opacity-40 transition-colors whitespace-nowrap"
+                    >
+                      {promoLoading ? "…" : "Applica"}
+                    </button>
+                  </div>
+                )}
+                {promoError && (
+                  <p className="mt-1.5 text-xs text-red-600">{promoError}</p>
+                )}
+              </div>
+            )}
+
+            {/* Totali */}
             <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
+              <div className="flex items-center justify-between text-zinc-600">
                 <span>Subtotale</span>
-                <span className="text-zinc-900 dark:text-white">{formatEUR(subtotal)}</span>
+                <span className="text-zinc-900">{formatEUR(subtotal)}</span>
               </div>
-              <div className="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
+              {discountCents > 0 && (
+                <div className="flex items-center justify-between text-emerald-700">
+                  <span>Sconto ({promoApplied?.code})</span>
+                  <span className="font-medium">–{formatEUR(discountCents)}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-zinc-600">
                 <span>IVA 4% (stima)</span>
-                <span className="text-zinc-900 dark:text-white">{formatEUR(vat)}</span>
+                <span className="text-zinc-900">{formatEUR(vat)}</span>
               </div>
-              <div className="flex items-center justify-between text-zinc-600 dark:text-zinc-300">
+              <div className="flex items-center justify-between text-zinc-600">
                 <span>Spedizione (stima)</span>
                 <span
                   className={
                     shippingPreview === 0
-                      ? "text-emerald-600 dark:text-emerald-400 font-medium"
-                      : "text-zinc-900 dark:text-white"
+                      ? "text-emerald-600 font-medium"
+                      : "text-zinc-900"
                   }
                 >
                   {shippingPreview === 0 ? "Gratis" : formatEUR(shippingPreview)}
                 </span>
               </div>
+              {discountCents > 0 && (
+                <div className="flex items-center justify-between border-t border-black/10 pt-2 font-medium text-zinc-900">
+                  <span>Totale scontato</span>
+                  <span>{formatEUR(totalWithDiscount)}</span>
+                </div>
+              )}
             </div>
 
             <div className="mt-7 grid gap-3">
               {payError && (
-                <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400" data-testid="drawer-pay-error">
+                <div className="flex items-center gap-2 text-sm text-red-600" data-testid="drawer-pay-error">
                   <X className="h-4 w-4" strokeWidth={1.5} />
                   {payError}
                 </div>
@@ -337,7 +454,9 @@ export default function CartDrawer({
                   setPayError(null);
                   setPayLoading(true);
 
-                  const res = await goToCassa(lines);
+                  const res = await goToCassa(lines, {
+                    promotionCode: promoApplied?.code,
+                  });
                   if (!res.ok) {
                     setPayError(res.message);
                     setPayLoading(false);
@@ -348,7 +467,7 @@ export default function CartDrawer({
                   // Il carrello si azzera SOLO a pagamento riuscito (/checkout/success).
                   onClose();
                 }}
-                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 text-sm tracking-[0.10em] text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition-colors"
+                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 text-sm tracking-[0.10em] text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition-colors"
                 data-testid="drawer-go-to-cassa"
               >
                 {payLoading ? (
@@ -367,13 +486,13 @@ export default function CartDrawer({
               <Link
                 href="/cart"
                 onClick={onClose}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white px-4 text-sm tracking-[0.10em] text-zinc-900 shadow-sm hover:bg-zinc-50 dark:border-white/10 dark:bg-black/20 dark:text-white dark:hover:bg-white/10 transition-colors"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white px-4 text-sm tracking-[0.10em] text-zinc-900 shadow-sm hover:bg-zinc-50 transition-colors"
               >
                 Visualizza carrello
               </Link>
             </div>
 
-            <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-4 text-xs text-zinc-500">
               Il totale finale (IVA + spedizione) viene validato dal server prima del pagamento.
             </p>
           </div>
@@ -398,12 +517,12 @@ function QtyStepper({
   onChange: (next: number) => void;
 }) {
   return (
-    <div className="flex h-10 items-center overflow-hidden rounded-[12px] border border-black/10 bg-white dark:border-white/10 dark:bg-zinc-950">
+    <div className="flex h-10 items-center overflow-hidden rounded-[12px] border border-black/10 bg-white">
       <button
         type="button"
         onClick={onDec}
         disabled={qty <= 1}
-        className="h-10 w-10 flex items-center justify-center text-zinc-700 hover:bg-black/5 disabled:opacity-30 dark:text-zinc-200 dark:hover:bg-white/10 transition-colors"
+        className="h-10 w-10 flex items-center justify-center text-zinc-700 hover:bg-black/5 disabled:opacity-30 transition-colors"
         aria-label="Diminuisci quantità"
         data-testid="qty-dec"
       >
@@ -419,7 +538,7 @@ function QtyStepper({
           const v = Number(e.target.value);
           onChange(Number.isFinite(v) ? Math.min(99, Math.max(1, v)) : 1);
         }}
-        className="h-10 w-14 bg-transparent text-center text-sm text-zinc-900 focus:outline-none dark:text-zinc-100"
+        className="h-10 w-14 bg-transparent text-center text-sm text-zinc-900 focus:outline-none"
         aria-label="Quantità"
       />
 
@@ -427,7 +546,7 @@ function QtyStepper({
         type="button"
         onClick={onInc}
         disabled={qty >= 99}
-        className="h-10 w-10 flex items-center justify-center text-zinc-700 hover:bg-black/5 disabled:opacity-30 dark:text-zinc-200 dark:hover:bg-white/10 transition-colors"
+        className="h-10 w-10 flex items-center justify-center text-zinc-700 hover:bg-black/5 disabled:opacity-30 transition-colors"
         aria-label="Aumenta quantità"
         data-testid="qty-inc"
       >

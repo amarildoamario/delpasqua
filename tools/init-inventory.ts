@@ -7,7 +7,7 @@ function makeSku(productId: string, variantId: string) {
 }
 
 async function main() {
-  const catalog = products as Product[];
+  const catalog = products as unknown as Product[];
 
   // ✅ sempre 50, senza input/env
   const safeDefault = 50;
@@ -17,7 +17,7 @@ async function main() {
 
   const existing = await prisma.inventoryItem.findMany({
     where: { sku: { in: skus } },
-    select: { sku: true, stock: true, reserved: true },
+    select: { sku: true, stock: true },
   });
 
   const existingMap = new Map(existing.map((x) => [x.sku, x] as const));
@@ -32,7 +32,7 @@ async function main() {
   // 1) crea mancanti
   if (missing.length > 0) {
     await prisma.inventoryItem.createMany({
-      data: missing.map((sku) => ({ sku, stock: safeDefault, reserved: 0 })),
+      data: missing.map((sku) => ({ sku, stock: safeDefault })),
     });
   }
 

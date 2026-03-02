@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/server/prisma";
-import { commitReservedToSoldOrThrow, releaseReserved } from "@/lib/server/inventory";
+import { releaseReserved, commitReservedToSoldOrThrow } from "@/lib/server/inventory";
 import { processOutboxBatch } from "@/lib/server/outbox";
 import { allocateInvoiceNumberTx } from "@/lib/server/invoiceNumber";
+import { allocateOrderNumberTx } from "@/lib/server/orderNumber";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,6 +45,117 @@ function isValidAddress(addr: Stripe.Address | null) {
   return Boolean(addr.line1 && addr.city && addr.postal_code && addr.country);
 }
 
+/** -------------------- PAYMENT METHOD (REAL USED) -------------------- **/
+
+function titleCase(s: string) {
+  return s
+    .replace(/_/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function formatPaymentMethodLabelFromStripe(paymentIntent: unknown): string | null {
+  // Prova PaymentMethod espanso su PI
+  const pi = paymentIntent as {
+    payment_method?: { type?: string; card?: { brand?: string; last4?: string }; paypal?: unknown; link?: unknown; sepa_debit?: { last4?: string }; us_bank_account?: { bank_name?: string; last4?: string } };
+    latest_charge?: { payment_method_details?: { type?: string; card?: { brand?: string; last4?: string }; paypal?: unknown; link?: unknown; sepa_debit?: { last4?: string }; us_bank_account?: { bank_name?: string; last4?: string } } };
+  };
+  const pm = pi?.payment_method;
+
+  // Fallback: latest_charge.payment_method_details
+  const pmd = pi?.latest_charge?.payment_method_details;
+
+  // ---- CARD
+  if (pm?.type === "card") {
+    const brand = pm.card?.brand ? titleCase(pm.card.brand) : "Carta";
+    const last4 = pm.card?.last4 ? `•••• ${pm.card.last4}` : "";
+    return `${brand} ${last4}`.trim();
+  }
+  if (pmd?.type === "card") {
+    const brand = pmd.card?.brand ? titleCase(pmd.card.brand) : "Carta";
+    const last4 = pmd.card?.last4 ? `•••• ${pmd.card.last4}` : "";
+    return `${brand} ${last4}`.trim();
+  }
+
+  // ---- PAYPAL
+  if (pm?.type === "paypal" || pmd?.type === "paypal") return "PayPal";
+
+  // ---- LINK
+  if (pm?.type === "link" || pmd?.type === "link") return "Link";
+
+  // ---- SEPA DEBIT
+  if (pm?.type === "sepa_debit") {
+    const last4 = pm.sepa_debit?.last4 ? `•••• ${pm.sepa_debit.last4}` : "";
+    return `Addebito SEPA ${last4}`.trim();
+  }
+  if (pmd?.type === "sepa_debit") {
+    const last4 = pmd.sepa_debit?.last4 ? `•••• ${pmd.sepa_debit.last4}` : "";
+    return `Addebito SEPA ${last4}`.trim();
+  }
+
+  // ---- US BANK ACCOUNT (ACH ecc.)
+  if (pm?.type === "us_bank_account") {
+    const bank = pm.us_bank_account?.bank_name ? pm.us_bank_account.bank_name : "Bank account";
+    const last4 = pm.us_bank_account?.last4 ? `•••• ${pm.us_bank_account.last4}` : "";
+    return `${bank} ${last4}`.trim();
+  }
+  if (pmd?.type === "us_bank_account") {
+    const bank = pmd.us_bank_account?.bank_name ? pmd.us_bank_account.bank_name : "Bank account";
+    const last4 = pmd.us_bank_account?.last4 ? `•••• ${pmd.us_bank_account.last4}` : "";
+    return `${bank} ${last4}`.trim();
+  }
+
+  // ---- Local methods / BNPL / wallets
+  const map: Record<string, string> = {
+    ideal: "iDEAL",
+    bancontact: "Bancontact",
+    giropay: "Giropay",
+    eps: "EPS",
+    sofort: "Sofort",
+    klarna: "Klarna",
+    afterpay_clearpay: "Afterpay / Clearpay",
+    affirm: "Affirm",
+    alipay: "Alipay",
+    wechat_pay: "WeChat Pay",
+    revolut_pay: "Revolut Pay",
+    blik: "BLIK",
+    p24: "Przelewy24",
+    boleto: "Boleto",
+    oxxo: "OXXO",
+    pix: "Pix",
+    grabpay: "GrabPay",
+    paynow: "PayNow",
+    promptpay: "PromptPay",
+    customer_balance: "Bonifico / Bank transfer",
+    bank_transfer: "Bonifico / Bank transfer",
+  };
+
+  const typeFromPm: string | undefined = pm?.type;
+  if (typeFromPm) return map[typeFromPm] ?? titleCase(typeFromPm);
+
+  const typeFromPmd: string | undefined = pmd?.type;
+  if (typeFromPmd) return map[typeFromPmd] ?? titleCase(typeFromPmd);
+
+  return null;
+}
+
+async function getRealPaymentMethodLabelFromPaymentIntent(paymentIntentId: string | null) {
+  if (!paymentIntentId) return null;
+
+  try {
+    const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
+      expand: ["payment_method", "latest_charge"],
+    });
+    return formatPaymentMethodLabelFromStripe(pi);
+  } catch {
+    return null;
+  }
+}
+
+/** ------------------------------------------------------------------- **/
+
 export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature");
   if (!sig) return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
@@ -53,8 +165,9 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET!);
-  } catch (err: any) {
+  } catch (err: unknown) {
     try {
+      const e = err as { message?: string };
       const surrogateId = `sigfail_${Date.now()}_${Math.random().toString(16).slice(2)}`;
       await prisma.stripeWebhookEvent.create({
         data: {
@@ -64,12 +177,12 @@ export async function POST(req: NextRequest) {
           created: Math.floor(Date.now() / 1000),
           outcome: "failed_signature",
           attempts: 1,
-          errorMessage: err?.message ?? "signature verification failed",
+          errorMessage: e?.message ?? "signature verification failed",
           payloadSnippet: safeSnippet(rawBody),
           processedAt: new Date(),
         },
       });
-    } catch {}
+    } catch { }
     return NextResponse.json({ error: "Webhook signature verification failed" }, { status: 400 });
   }
 
@@ -121,6 +234,17 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ received: true }, { status: 200 });
         }
 
+        // ✅ METODO DI PAGAMENTO USATO (REAL)
+        // lo calcolo QUI prima della tx (chiamata esterna a Stripe)
+        let paymentMethodLabel = await getRealPaymentMethodLabelFromPaymentIntent(paymentIntentId);
+
+        // fallback minimo (non “usato”, ma meglio di vuoto)
+        if (!paymentMethodLabel) {
+          const types = (session.payment_method_types ?? []) as string[];
+          if (types.length === 1) paymentMethodLabel = titleCase(types[0]);
+          else if (types.length > 1) paymentMethodLabel = types.map(titleCase).join(", ");
+        }
+
         // Validazione address+name
         if (!name || !isValidAddress(addr)) {
           await prisma.$transaction(async (tx) => {
@@ -135,6 +259,8 @@ export async function POST(req: NextRequest) {
                 status: "FAILED",
                 isFlagged: true,
                 notes: "Invalid/missing address from Stripe customer_details",
+                // opzionale: salvi comunque il metodo se vuoi diagnostica
+                ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
               },
             });
 
@@ -165,6 +291,11 @@ export async function POST(req: NextRequest) {
 
         // Commit inventario + update ordine + enqueue ORDER_PAID
         await prisma.$transaction(async (tx) => {
+          let currentOrderNumber = order.orderNumber;
+          if (!currentOrderNumber) {
+            currentOrderNumber = await allocateOrderNumberTx(tx);
+          }
+
           await commitReservedToSoldOrThrow(
             tx,
             order.items.map((it) => ({ sku: it.sku, qty: it.qty }))
@@ -174,8 +305,12 @@ export async function POST(req: NextRequest) {
             where: { id: order.id },
             data: {
               status: "PAID",
+              orderNumber: currentOrderNumber,
               paidAt: new Date(),
               stripePaymentIntentId: paymentIntentId ?? null,
+
+              // ✅ SALVA METODO DI PAGAMENTO USATO
+              ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
 
               // ✅ fondamentale: salva email Stripe
               ...(email ? { email } : {}),
@@ -195,31 +330,30 @@ export async function POST(req: NextRequest) {
             },
           });
 
-
           // ✅ assegna progressivo fattura al pagamento (idempotente)
-const alreadyAssigned = await tx.orderEvent.findFirst({
-  where: { orderId: order.id, type: "INVOICE_ASSIGNED" },
-  select: { id: true },
-});
+          const alreadyAssigned = await tx.orderEvent.findFirst({
+            where: { orderId: order.id, type: "INVOICE_ASSIGNED" },
+            select: { id: true },
+          });
 
-if (!alreadyAssigned) {
-  const invoiceNumber = await allocateInvoiceNumberTx(tx);
+          if (!alreadyAssigned) {
+            const invoiceNumber = await allocateInvoiceNumberTx(tx);
 
-  await tx.orderEvent.create({
-    data: {
-      orderId: order.id,
-      type: "INVOICE_ASSIGNED",
-      message: `Invoice assigned: ${invoiceNumber}`,
-      metaJson: JSON.stringify({
-        invoiceNumber,
-        invoiceYear: new Date().getFullYear(),
-        assignedAt: new Date().toISOString(),
-        stripeSessionId: sessionId,
-        stripeEventId: event.id,
-      }),
-    },
-  });
-}
+            await tx.orderEvent.create({
+              data: {
+                orderId: order.id,
+                type: "INVOICE_ASSIGNED",
+                message: `Invoice assigned: ${invoiceNumber}`,
+                metaJson: JSON.stringify({
+                  invoiceNumber,
+                  invoiceYear: new Date().getFullYear(),
+                  assignedAt: new Date().toISOString(),
+                  stripeSessionId: sessionId,
+                  stripeEventId: event.id,
+                }),
+              },
+            });
+          }
 
           await tx.outboxEvent.create({
             data: {
@@ -229,6 +363,7 @@ if (!alreadyAssigned) {
                 stripeEventId: event.id,
                 stripeSessionId: sessionId,
                 paymentIntentId,
+                paymentMethod: paymentMethodLabel ?? null,
                 at: new Date().toISOString(),
               },
               runAt: new Date(),
@@ -240,9 +375,22 @@ if (!alreadyAssigned) {
               orderId: order.id,
               type: "STRIPE_CHECKOUT_COMPLETED",
               message: "Processed checkout.session.completed",
-              metaJson: JSON.stringify({ sessionId, paymentIntentId }),
+              metaJson: JSON.stringify({
+                sessionId,
+                paymentIntentId,
+                paymentMethod: paymentMethodLabel ?? null,
+              }),
             },
           });
+
+          // ✅ Incrementa usedCount promozione (dentro tx = atomico con il PAID)
+          const promoCode = (session.metadata?.promotionCode ?? "").trim().toUpperCase();
+          if (promoCode) {
+            await tx.promotion.updateMany({
+              where: { code: promoCode },
+              data: { usedCount: { increment: 1 } },
+            });
+          }
         });
 
         await prisma.stripeWebhookEvent.update({
@@ -256,9 +404,10 @@ if (!alreadyAssigned) {
           },
         });
 
-        // ✅ AUTO: processa subito l’outbox (best-effort)
-        processOutboxBatch({ limit: 10 }).catch((e) => {
-          console.error("❌ outbox auto-process failed (stripe webhook):", e);
+        // Processa subito l'outbox (best-effort) per inviare la conferma ordine
+        // immediatamente invece di aspettare il cron. Il cron resta come backup.
+        processOutboxBatch({ limit: 5 }).catch((e: unknown) => {
+          console.error("❌ outbox inline failed (stripe webhook):", e);
         });
 
         return NextResponse.json({ received: true }, { status: 200 });
@@ -309,14 +458,15 @@ if (!alreadyAssigned) {
         return NextResponse.json({ received: true }, { status: 200 });
       }
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const e = err as { message?: string };
     // ✅ usa un outcome valido del tuo enum
     await prisma.stripeWebhookEvent.update({
       where: { eventId: event.id },
       data: {
         outcome: "review",
         processedAt: new Date(),
-        errorMessage: err?.message ?? "runtime error",
+        errorMessage: e?.message ?? "runtime error",
       },
     });
     return NextResponse.json({ received: true }, { status: 200 });

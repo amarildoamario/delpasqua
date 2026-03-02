@@ -31,14 +31,19 @@ export async function GET(req: Request) {
 
   const rows = await prisma.inventoryItem.findMany({
     where: { sku: { in: skus } },
-    select: { sku: true, stock: true, reserved: true },
+    select: { sku: true, stock: true },
   });
 
   for (const r of rows) {
     const stock = Number(r.stock ?? 0);
-    const reserved = Number(r.reserved ?? 0);
-    availability[r.sku] = Math.max(0, stock - reserved);
+    availability[r.sku] = Math.max(0, stock);
   }
 
-  return NextResponse.json({ availability });
+  return NextResponse.json({ availability }, {
+    headers: {
+      // CDN (Vercel Edge) cache per 30s, poi serve stale mentre rigenera (60s).
+      // Lo stock cambia raramente: evita una query DB per ogni visita al negozio.
+      "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+    },
+  });
 }

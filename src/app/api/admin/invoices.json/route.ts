@@ -90,7 +90,7 @@ export async function GET(req: Request) {
   endExclusive.setDate(end.getDate() + 1);
 
   // ✅ WHERE: diverso per shipping vs range
-  const where: any = {};
+  const where: Record<string, unknown> = {};
 
   if (mode === "shipping") {
     // ✅ Operatività: SOLO PAID non spediti + pagati davvero + no cancel/refund
@@ -122,10 +122,8 @@ export async function GET(req: Request) {
     }
   }
 
-  const orderBy =
-    mode === "shipping"
-      ? [{ paidAt: "asc" as const }, { createdAt: "asc" as const }]
-      : [{ createdAt: "desc" as const }];
+  // ✅ ORDER BY
+  const orderBy: Record<string, unknown> = mode === "shipping" ? { paidAt: "asc" } : { createdAt: "asc" };
 
   const orders = await prisma.order.findMany({
     where,
@@ -145,8 +143,21 @@ export async function GET(req: Request) {
 
   const exportedAt = new Date();
 
+  type InvoiceExportRow = {
+    invoiceNumber: string;
+    invoiceYear: number;
+    invoiceDate: string;
+    exportedAt: string;
+    billing: Record<string, unknown>;
+    vatSummary: VatRow[];
+    totalsComputed: { taxableCents: number; vatCents: number; grossCents: number };
+    discountSummary: { promotionCode: string | null; discountCentsFromLines: number };
+    linesNormalized: Record<string, unknown>[];
+    order: Record<string, unknown>;
+  };
+
   const invoices = await prisma.$transaction(async (tx) => {
-    const out: any[] = [];
+    const out: InvoiceExportRow[] = [];
 
     for (const o of orders) {
       // ✅ invoiceNumber stabile: usa INVOICE_ASSIGNED, se manca backfill
@@ -184,16 +195,18 @@ export async function GET(req: Request) {
         filters:
           mode === "range"
             ? {
-                start: startParam ?? null,
-                end: endParam ?? null,
-                status: statusParam ?? null,
-                shipped: shippedParam ?? null,
-                q: qParam ?? null,
-              }
-            : null,
+              start: startParam ?? null,
+              end: endParam ?? null,
+              status: statusParam ?? null,
+              shipped: shippedParam ?? null,
+              q: qParam ?? null,
+            }
+            : {
+              shippingQueue: true,
+            },
       };
 
-      if (lastExport) {
+      if (lastExport?.id) {
         await tx.orderEvent.update({
           where: { id: lastExport.id },
           data: {
@@ -223,23 +236,22 @@ export async function GET(req: Request) {
       let promoCode: string | null = null;
       let discountCentsFromLines = 0;
 
-      const linesNormalized = (o.items as any[]).map((it) => {
-        const ps = it.pricingSnapshot ?? {};
+      const linesNormalized = o.items.map((it) => {
+        const ps = ((it as { pricingSnapshot?: unknown }).pricingSnapshot as Record<string, unknown>) || {};
 
-        const rateBps = Number(ps.vatRateBps ?? 0);
+        const grossLineCents = Number(ps.lineTotalCents ?? (it as { lineTotalCents?: number }).lineTotalCents ?? 0);
 
-        // net = imponibile
-        const netCents = Number(ps.lineNetCents ?? ps.lineSubtotalCents ?? 0);
-        const vatLineCents = Number(ps.lineVatCents ?? 0);
-        const grossLineCents = Number(ps.lineTotalCents ?? it.lineTotalCents ?? 0);
-
-        const qty = Number(it.qty ?? ps.qty ?? 1);
-        const unitPriceCents = Number(it.unitPriceCents ?? ps.unitPriceCents ?? 0);
+        const qty = Number((it as { qty?: number }).qty ?? ps.qty ?? 1);
+        const unitPriceCents = Number((it as { unitPriceCents?: number }).unitPriceCents ?? ps.unitPriceCents ?? 0);
 
         const lineDiscount = Number(ps.lineDiscountCents ?? 0);
         discountCentsFromLines += lineDiscount;
 
         if (!promoCode && ps.promotionCode) promoCode = String(ps.promotionCode);
+
+        const netCents = Number(ps.netCents ?? grossLineCents);
+        const vatLineCents = Number(ps.vatLineCents ?? 0);
+        const rateBps = Number(ps.rateBps ?? 2200);
 
         taxableCents += netCents;
         vatCents += vatLineCents;
@@ -248,8 +260,8 @@ export async function GET(req: Request) {
         addVatRow(vatMap, rateBps, netCents, vatLineCents);
 
         return {
-          sku: it.sku ?? null,
-          description: [it.title, it.variantLabel].filter(Boolean).join(" - "),
+          sku: (it as { sku?: string }).sku ?? null,
+          description: [(it as { title?: string }).title, (it as { variantLabel?: string }).variantLabel].filter(Boolean).join(" - "),
           qty,
           unitPriceCents,
           netCents,
@@ -263,17 +275,16 @@ export async function GET(req: Request) {
 
       const vatSummary = Array.from(vatMap.values()).sort((a, b) => a.rateBps - b.rateBps);
 
-      // billing = shipping (default). Niente email qui (come richiesto).
       const billing = {
-        name: (o as any).fullName ?? null,
-        phone: (o as any).phone ?? null,
+        name: (o as { fullName?: string }).fullName ?? null,
+        phone: (o as { phone?: string }).phone ?? null,
 
-        addressLine1: (o as any).addressLine1 ?? (o as any).address ?? null,
-        addressLine2: (o as any).addressLine2 ?? null,
-        city: (o as any).city ?? null,
-        province: (o as any).province ?? null,
-        postalCode: (o as any).postalCode ?? (o as any).zip ?? null,
-        countryCode: (o as any).countryCode ?? null,
+        addressLine1: (o as { addressLine1?: string }).addressLine1 ?? (o as { address?: string }).address ?? null,
+        addressLine2: (o as { addressLine2?: string }).addressLine2 ?? null,
+        city: (o as { city?: string }).city ?? null,
+        province: (o as { province?: string }).province ?? null,
+        postalCode: (o as { postalCode?: string }).postalCode ?? (o as { zip?: string }).zip ?? null,
+        countryCode: (o as { countryCode?: string }).countryCode ?? null,
 
         // fiscali (per futuro)
         vatNumber: null,
@@ -305,7 +316,7 @@ export async function GET(req: Request) {
         // --- raw order (come prima) ---
         order: {
           id: o.id,
-          orderNumber: (o as any).orderNumber ?? null,
+          orderNumber: (o as { orderNumber?: string }).orderNumber ?? null,
           status: o.status,
           currency: o.currency,
 
@@ -314,50 +325,50 @@ export async function GET(req: Request) {
           shippedAt: o.shippedAt,
 
           totals: {
-            subtotalCents: (o as any).subtotalCents ?? null,
-            discountCents: (o as any).discountCents ?? null,
-            shippingCents: (o as any).shippingCents ?? null,
-            vatCents: (o as any).vatCents ?? null,
-            taxCents: (o as any).taxCents ?? null,
-            totalCents: (o as any).totalCents ?? null,
+            subtotalCents: (o as { subtotalCents?: number }).subtotalCents ?? null,
+            discountCents: (o as { discountCents?: number }).discountCents ?? null,
+            shippingCents: (o as { shippingCents?: number }).shippingCents ?? null,
+            vatCents: (o as { vatCents?: number }).vatCents ?? null,
+            taxCents: (o as { taxCents?: number }).taxCents ?? null,
+            totalCents: (o as { totalCents?: number }).totalCents ?? null,
           },
 
           payment: {
-            provider: (o as any).paymentProvider ?? null,
-            method: (o as any).paymentMethod ?? null,
-            stripeCheckoutSessionId: (o as any).stripeCheckoutSessionId ?? null,
-            stripePaymentIntentId: (o as any).stripePaymentIntentId ?? null,
+            provider: (o as { paymentProvider?: string }).paymentProvider ?? null,
+            method: (o as { paymentMethod?: string }).paymentMethod ?? null,
+            stripeCheckoutSessionId: (o as { stripeCheckoutSessionId?: string }).stripeCheckoutSessionId ?? null,
+            stripePaymentIntentId: (o as { stripePaymentIntentId?: string }).stripePaymentIntentId ?? null,
           },
 
           customer: {
-            fullName: (o as any).fullName ?? null,
-            email: (o as any).email ?? null,
-            phone: (o as any).phone ?? null,
+            fullName: (o as { fullName?: string }).fullName ?? null,
+            email: (o as { email?: string }).email ?? null,
+            phone: (o as { phone?: string }).phone ?? null,
           },
 
           shippingAddress: {
-            addressLine1: (o as any).addressLine1 ?? null,
-            addressLine2: (o as any).addressLine2 ?? null,
-            city: (o as any).city ?? null,
-            province: (o as any).province ?? null,
-            postalCode: (o as any).postalCode ?? (o as any).zip ?? null,
-            countryCode: (o as any).countryCode ?? null,
-            address: (o as any).address ?? null,
-            zip: (o as any).zip ?? null,
+            addressLine1: (o as { addressLine1?: string }).addressLine1 ?? null,
+            addressLine2: (o as { addressLine2?: string }).addressLine2 ?? null,
+            city: (o as { city?: string }).city ?? null,
+            province: (o as { province?: string }).province ?? null,
+            postalCode: (o as { postalCode?: string }).postalCode ?? (o as { zip?: string }).zip ?? null,
+            countryCode: (o as { countryCode?: string }).countryCode ?? null,
+            address: (o as { address?: string }).address ?? null,
+            zip: (o as { zip?: string }).zip ?? null,
           },
 
-          notes: (o as any).notes ?? null,
+          notes: (o as { notes?: string }).notes ?? null,
 
-          items: (o.items as any[]).map((it) => ({
-            id: it.id,
-            sku: it.sku,
-            title: it.title,
-            variantLabel: it.variantLabel ?? null,
-            qty: it.qty,
-            unitPriceCents: it.unitPriceCents ?? null,
-            lineTotalCents: it.lineTotalCents ?? null,
-            productSnapshot: it.productSnapshot ?? null,
-            pricingSnapshot: it.pricingSnapshot ?? null,
+          items: o.items.map((it) => ({
+            id: (it as { id?: string }).id,
+            sku: (it as { sku?: string }).sku,
+            title: (it as { title?: string }).title,
+            variantLabel: (it as { variantLabel?: string }).variantLabel ?? null,
+            qty: (it as { qty?: number }).qty,
+            unitPriceCents: (it as { unitPriceCents?: number }).unitPriceCents ?? null,
+            lineTotalCents: (it as { lineTotalCents?: number }).lineTotalCents ?? null,
+            productSnapshot: typeof (it as { productSnapshot?: unknown }).productSnapshot === "object" ? (it as { productSnapshot?: unknown }).productSnapshot : null,
+            pricingSnapshot: typeof (it as { pricingSnapshot?: unknown }).pricingSnapshot === "object" ? (it as { pricingSnapshot?: unknown }).pricingSnapshot : null,
           })),
         },
       });
@@ -366,40 +377,19 @@ export async function GET(req: Request) {
     return out;
   });
 
-  const payload = {
-    generatedAt: exportedAt.toISOString(),
-    mode,
-    count: invoices.length,
-    invoices,
-  };
+  // filename “fatture_YYYY-MM-DD__YYYY-MM-DD.json” o “fatture_shipping_queue.json”
+  const filename =
+    mode === "shipping"
+      ? `fatture_shipping_queue_${toISODate(exportedAt)}.json`
+      : `fatture_${sanitizeFilenamePart(toISODate(start))}__${sanitizeFilenamePart(toISODate(end))}.json`;
 
-  // ✅ filename basato sui filtri
-  const day = exportedAt.toISOString().slice(0, 10);
-
-  let filename = `fatture_${day}.json`;
-
-  if (mode === "shipping") {
-    filename = `fatture_paid_non_spediti_${day}.json`;
-  } else {
-    const startLabel = startParam && isISODateOnly(startParam) ? startParam : "start";
-    const endLabel = endParam && isISODateOnly(endParam) ? endParam : "end";
-
-    const st = statusParam && statusParam.trim() ? sanitizeFilenamePart(statusParam) : "all";
-    const sh =
-      shippedParam === "yes" ? "spediti" : shippedParam === "no" ? "non_spediti" : "tutte_spedizioni";
-    const qLabel = qParam && qParam.trim() ? `_q-${sanitizeFilenamePart(qParam)}` : "";
-
-    filename = `fatture_${startLabel}_${endLabel}_st-${st}_${sh}${qLabel}.json`;
-  }
-
-  const res = new NextResponse(JSON.stringify(payload, null, 2), {
-    status: 200,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "content-disposition": `attachment; filename="${filename}"`,
-      "cache-control": "no-store",
-    },
-  });
-
-  return guard.attach(res);
+  return guard.attach(
+    new NextResponse(JSON.stringify({ ok: true, count: invoices.length, invoices }), {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "content-disposition": `attachment; filename="${filename}"`,
+        "cache-control": "no-store",
+      },
+    })
+  );
 }

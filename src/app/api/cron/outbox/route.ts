@@ -7,12 +7,17 @@ import { CronLimitQuerySchema } from "@/lib/server/schemas";
 
 export async function POST(req: NextRequest) {
   // In dev lasciamo aperto.
-  // In prod proteggi con CRON_SECRET.
+  // In prod: accetta sia "Authorization: Bearer <secret>" (standard Vercel cron)
+  // che il vecchio header "x-cron-secret" per retrocompatibilità.
   const secret = process.env.CRON_SECRET;
-  const provided = req.headers.get("x-cron-secret");
 
   if (process.env.NODE_ENV === "production") {
-    if (!secret || provided !== secret) {
+    const authHeader = req.headers.get("authorization") ?? "";
+    const xCronSecret = req.headers.get("x-cron-secret") ?? "";
+    const bearerOk = secret && authHeader === `Bearer ${secret}`;
+    const legacyOk = secret && xCronSecret === secret;
+
+    if (!bearerOk && !legacyOk) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }

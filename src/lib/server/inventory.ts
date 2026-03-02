@@ -54,24 +54,16 @@ export async function reserveStockOrThrow(tx: Tx, lines: StockLine[]) {
   for (const l of norm) {
     const r = bySku.get(l.sku);
     if (!r) throw new OutOfStockError(`SKU ${l.sku} non configurata in magazzino (stock=0)`);
-
-    const available = r.stock - r.reserved;
-    if (available < l.qty) {
-      throw new OutOfStockError(`SKU ${l.sku} non disponibile (disp. ${available}, richiesti ${l.qty})`);
+    if (r.stock < l.qty) {
+      throw new OutOfStockError(`SKU ${l.sku} non disponibile (disp. ${r.stock}, richiesti ${l.qty})`);
     }
   }
 
-  for (const l of norm) {
-    await tx.inventoryItem.update({
-      where: { sku: l.sku },
-      data: { reserved: { increment: l.qty } },
-    });
-  }
+  // No longer reserving stock; just checked availability.
 }
 
 /**
- * Converte reserved -> sold: stock -= qty e reserved -= qty.
- * Chiamala quando l'ordine passa a PAID.
+ * Decrements stock (converts to sold). Call this when order becomes PAID.
  */
 export async function commitReservedToSoldOrThrow(tx: Tx, lines: StockLine[]) {
   if (!isInventoryEnabled()) return;
@@ -87,41 +79,24 @@ export async function commitReservedToSoldOrThrow(tx: Tx, lines: StockLine[]) {
   for (const l of norm) {
     const r = bySku.get(l.sku);
     if (!r) throw new Error(`Inventory inconsistency: missing SKU ${l.sku}`);
-    if (r.reserved < l.qty) throw new Error(`Inventory inconsistency: reserved < qty for ${l.sku}`);
     if (r.stock < l.qty) throw new Error(`Inventory inconsistency: stock < qty for ${l.sku}`);
   }
 
-  for (const l of norm) {
-    await tx.inventoryItem.update({
-      where: { sku: l.sku },
-      data: { reserved: { decrement: l.qty }, stock: { decrement: l.qty } },
-    });
-  }
+  // Batch update: singola query UPDATE con CASE WHEN invece di N update separati.
+  // Per un ordine con N prodotti: da N query a 1 query.
+  const caseExpr = norm
+    .map((l) => `WHEN sku = ${JSON.stringify(l.sku)} THEN stock - ${l.qty}`)
+    .join(" ");
+  const skuList = norm.map((l) => JSON.stringify(l.sku)).join(", ");
+
+  await tx.$executeRawUnsafe(
+    `UPDATE "InventoryItem" SET stock = CASE ${caseExpr} ELSE stock END WHERE sku IN (${skuList})`
+  );
 }
 
-/** Rilascia prenotazioni (reserved -= qty). Chiamala su EXPIRED/CANCELED/FAILED. */
 export async function releaseReserved(tx: Tx, lines: StockLine[]) {
-  if (!isInventoryEnabled()) return;
-
-  const norm = normalizeLines(lines);
-  if (norm.length === 0) return;
-
-  const rows = await tx.inventoryItem.findMany({
-    where: { sku: { in: norm.map((x) => x.sku) } },
-  });
-  const bySku = new Map(rows.map((r) => [r.sku, r] as const));
-
-  for (const l of norm) {
-    const r = bySku.get(l.sku);
-    if (!r) continue;
-    const dec = Math.min(r.reserved, l.qty);
-    if (dec <= 0) continue;
-
-    await tx.inventoryItem.update({
-      where: { sku: l.sku },
-      data: { reserved: { decrement: dec } },
-    });
-  }
+  // No-op because we no longer allocate a "reserved" state
+  return Promise.resolve();
 }
 
 /** Helper comodo fuori da tx */

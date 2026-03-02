@@ -10,11 +10,4 @@
   );
 }
 
-:global(.dark) .section {
-  background: linear-gradient(
-    to bottom,
-    #090b0c 0%,
-    rgba(4, 47, 46, 0.10) 50%,
-    #090b0c 100%
-  );
-}
+

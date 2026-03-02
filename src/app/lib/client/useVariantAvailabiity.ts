@@ -19,7 +19,7 @@ export function useVariantAvailability(productId: string, variantIds: string[]) 
     let alive = true;
     if (!productId || skus.length === 0) return;
 
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`)
       .then((r) => r.json())
       .then((j) => {
@@ -38,7 +38,7 @@ export function useVariantAvailability(productId: string, variantIds: string[]) 
     return () => {
       alive = false;
     };
-  }, [productId, skus.join(",")]); // ok: lista piccola
+  }, [productId, skus]);
 
   return { availability, loading };
 }

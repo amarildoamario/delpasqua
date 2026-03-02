@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
   const grouped = await prisma.order.groupBy({
     by: ["email"],
-    where: { status: "PAID" },
+    where: { paidAt: { not: null } },
     _count: { _all: true },
     _sum: { totalCents: true },
   });

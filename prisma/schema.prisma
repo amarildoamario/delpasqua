@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Order {
@@ -322,7 +323,6 @@ model AnalyticsEvent {
 model InventoryItem {
   sku      String @id
   stock    Int
-  reserved Int    @default(0)
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -354,7 +354,7 @@ model AdminSession {
 model RateLimitCounter {
   id          String   @id @default(cuid())
   key         String
-  windowStart Int
+  windowStart BigInt
   count       Int      @default(0)
   updatedAt   DateTime @updatedAt
 
@@ -395,4 +395,39 @@ model TransactionalEmailLog {
   @@unique([orderId, type])
   @@index([type, createdAt])
   @@index([status, createdAt])
+}
+
+
+// -----------------
+// Degustazioni
+// -----------------
+
+enum TastingBookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
+
+model TastingBooking {
+  id String @id @default(cuid())
+
+  status TastingBookingStatus @default(PENDING)
+
+  slotStart DateTime
+  slotEnd   DateTime
+
+  tastingType String
+  people      Int
+
+  fullName String
+  email    String
+  phone    String
+  notes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slotStart])
+  @@index([status, slotStart])
+  @@unique([slotStart, slotEnd])
 }

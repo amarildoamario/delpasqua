@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Slide = {
   id: string;
@@ -15,40 +16,39 @@ type Slide = {
 };
 
 export default function HeroCarousel() {
+  const t = useTranslations("HomePage.HeroCarousel");
+
   const slides: Slide[] = useMemo(
     () => [
       {
         id: "storia",
-        title: "La nostra Storia",
-        excerpt:
-          "Radici familiari, gesti antichi e una visione contemporanea: scopri come nasce la nostra identità.",
-        cta: "Leggi",
+        title: t("slides.storia.title"),
+        excerpt: t("slides.storia.excerpt"),
+        cta: t("slides.storia.cta"),
         href: "/storia",
         imageSrc: "/hero/storia.jpg",
-        imageAlt: "Ulivi al tramonto e paesaggio rurale",
+        imageAlt: t("slides.storia.alt"),
       },
       {
         id: "oli",
-        title: "I Nostri Oli",
-        excerpt:
-          "Una selezione dei nostri migliori oli, amati e premiati: qualità, equilibrio e carattere.",
-        cta: "Scopri",
+        title: t("slides.oli.title"),
+        excerpt: t("slides.oli.excerpt"),
+        cta: t("slides.oli.cta"),
         href: "/olio",
         imageSrc: "/hero/oli.jpg",
-        imageAlt: "Olive verdi in mano (raccolta)",
+        imageAlt: t("slides.oli.alt"),
       },
       {
         id: "tradizione",
-        title: "Moderna tradizione",
-        excerpt:
-          "Tecniche moderne, rispetto della materia prima e cura artigianale: il futuro parte dalla terra.",
-        cta: "Approfondisci",
+        title: t("slides.tradizione.title"),
+        excerpt: t("slides.tradizione.excerpt"),
+        cta: t("slides.tradizione.cta"),
         href: "/produzione",
         imageSrc: "/hero/tradizione.jpg",
-        imageAlt: "Dettaglio di frantoio o lavorazione artigianale",
+        imageAlt: t("slides.tradizione.alt"),
       },
     ],
-    []
+    [t]
   );
 
   const [index, setIndex] = useState(0);
@@ -93,18 +93,18 @@ export default function HeroCarousel() {
 
   return (
     <section
-  className="relative w-full"
-  aria-label="Hero in evidenza"
-  onMouseEnter={() => setIsPaused(true)}
-  onMouseLeave={() => setIsPaused(false)}
-  onFocusCapture={() => setIsPaused(true)}
-  onBlurCapture={() => setIsPaused(false)}
-  onKeyDown={onKeyDown}
-  tabIndex={0}
->
-      {/* SEO: un H1 globale (una sola volta in pagina). Se in homepage hai già un H1, cambia in H2 o rimuovi. */}
+      className="relative w-full"
+      aria-label={t("aria.hero_highlight")}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
+      onKeyDown={onKeyDown}
+      tabIndex={0}
+    >
+      {/* SEO: un H1 globale (una sola volta in pagina). */}
       <h1 className="sr-only">
-        Frantoio e produzione di olio: storia, prodotti e tradizione moderna
+        {t("sr_title")}
       </h1>
 
       {/* ✅ HERO più alta */}
@@ -137,27 +137,27 @@ export default function HeroCarousel() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/20 to-transparent" />
 
               <figcaption className="absolute inset-0 flex items-center justify-center px-6">
-  <header className="mx-auto w-full max-w-3xl text-center">
-    <div className="mx-auto w-full max-w-[320px] sm:max-w-[520px] md:max-w-none">
-                  <h2 className="font-serif text-4xl tracking-[0.02em] text-white sm:tracking-[0.04em] md:text-6xl md:tracking-[0.06em]">
+                <header className="mx-auto w-full max-w-3xl text-center">
+                  <div className="mx-auto w-full max-w-[320px] sm:max-w-[520px] md:max-w-none">
+                    <h2 className="font-serif text-4xl tracking-[0.02em] text-white sm:tracking-[0.04em] md:text-6xl md:tracking-[0.06em]">
 
-                    {s.title}
-                  </h2>
-                  <p className="mx-auto mt-4 max-w-[34ch] text-sm leading-6 text-white/85 sm:max-w-[46ch] md:max-w-2xl md:text-base md:leading-relaxed">
+                      {s.title}
+                    </h2>
+                    <p className="mx-auto mt-4 max-w-[34ch] text-sm leading-6 text-white/85 sm:max-w-[46ch] md:max-w-2xl md:text-base md:leading-relaxed">
 
-                    {s.excerpt}
-                  </p>
+                      {s.excerpt}
+                    </p>
 
-                  <div className="mt-6 flex items-center justify-center">
-                    <Link
-                      href={s.href}
+                    <div className="mt-6 flex items-center justify-center">
+                      <Link
+                        href={s.href}
                         className="inline-flex items-center gap-2 border-b border-white/60 pb-1 text-sm tracking-[0.06em] text-white hover:border-white sm:tracking-[0.10em]"
-                      aria-label={`${s.cta}: ${s.title}`}
-                    >
-                      {s.cta}
-                      <span aria-hidden="true">→</span>
-                    </Link>
-                  </div>
+                        aria-label={`${s.cta}: ${s.title}`}
+                      >
+                        {s.cta}
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                    </div>
                   </div>
                 </header>
               </figcaption>
@@ -175,7 +175,7 @@ export default function HeroCarousel() {
             "backdrop-blur hover:bg-white/15",
             "focus:outline-none focus:ring-2 focus:ring-white/60",
           ].join(" ")}
-          aria-label="Slide precedente"
+          aria-label={t("aria.prev")}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -189,7 +189,7 @@ export default function HeroCarousel() {
             "backdrop-blur hover:bg-white/15",
             "focus:outline-none focus:ring-2 focus:ring-white/60",
           ].join(" ")}
-          aria-label="Slide successiva"
+          aria-label={t("aria.next")}
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -207,7 +207,7 @@ export default function HeroCarousel() {
                   "h-2.5 w-2.5 rounded-full transition-all",
                   active ? "bg-white" : "bg-white/40 hover:bg-white/70",
                 ].join(" ")}
-                aria-label={`Vai alla slide: ${s.title}`}
+                aria-label={`${t("aria.go_to")}: ${s.title}`}
                 aria-current={active ? "true" : "false"}
               />
             );
@@ -216,7 +216,7 @@ export default function HeroCarousel() {
       </div>
 
       {/* SEO fallback */}
-      <nav className="sr-only" aria-label="Sezioni principali hero">
+      <nav className="sr-only" aria-label={t("aria.main_sections")}>
         <ul>
           {slides.map((s) => (
             <li key={s.id}>

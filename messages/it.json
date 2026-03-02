@@ -1,0 +1,739 @@
+{
+    "TastingsPage": {
+        "metadata": {
+            "title": "Degustazione Olio Extra Vergine in Toscana | Frantoio del Pasqua Arezzo",
+            "description": "Scopri i veri sapori dell'olio EVO toscano. Prenota una degustazione di olio extra vergine di oliva presso il Frantoio del Pasqua a Monte San Savino, Arezzo.",
+            "keywords": "degustazione olio toscana, degustazione olio arezzo, frantoio arezzo, olio extra vergine toscana, visita frantoio toscana, degustazione olio extra vergine"
+        },
+        "hero": {
+            "subtitle": "Visite & degustazioni",
+            "title_part1": "Prenota una ",
+            "title_italic": "degustazione",
+            "title_part2": " al frantoio",
+            "description": "Un percorso sensoriale guidato per imparare a riconoscere profumi e note dell'extravergine, conoscere le nostre cultivar e vivere il frantoio da vicino.",
+            "duration": "min",
+            "from": "A partire da",
+            "types": {
+                "classica": {
+                    "title": "Degustazione Classica",
+                    "subtitle": "Introduzione agli oli Delpasqua con assaggio guidato.",
+                    "includes": [
+                        "Assaggio di 3 oli",
+                        "Pane & acqua",
+                        "Cultivar e frangitura"
+                    ]
+                },
+                "premium": {
+                    "title": "Degustazione Premium",
+                    "subtitle": "Percorso completo con abbinamenti e note sensoriali.",
+                    "includes": [
+                        "Assaggio di 5 oli",
+                        "Abbinamenti (pane / pomodoro / formaggi)",
+                        "Mini tour del frantoio (se disponibile)"
+                    ]
+                },
+                "privata": {
+                    "title": "Degustazione Privata",
+                    "subtitle": "Esperienza su misura per gruppi e occasioni speciali.",
+                    "includes": [
+                        "Percorso personalizzato",
+                        "Opzione aperitivo",
+                        "Opzione regalo / evento"
+                    ]
+                }
+            }
+        },
+        "calendar": {
+            "subtitle": "Calendario",
+            "title_part1": "Prenota il tuo ",
+            "title_italic": "slot",
+            "description": "Seleziona uno slot disponibile e completa la richiesta. Riceverai conferma dagli amministratori.",
+            "badge": "Estratto a freddo"
+        },
+        "seo": {
+            "subtitle": "Scopri di più",
+            "title_part1": "Esperienza di ",
+            "title_italic": "degustazione",
+            "title_part2": " in Toscana",
+            "description": "Vivi un'esperienza unica nel cuore della provincia di Arezzo. Il Frantoio del Pasqua ti accoglie a Monte San Savino per svelarti i segreti dell'olio extra vergine di oliva toscano. Un viaggio autentico dalla frangitura a freddo all'analisi sensoriale."
+        },
+        "features": {
+            "f1_title": "Arezzo, Toscana",
+            "f1_desc": "Immersi nel tipico e suggestivo paesaggio toscano.",
+            "f2_title": "Olio EVO Autentico",
+            "f2_desc": "Estratto a freddo nei macchinari del nostro frantoio.",
+            "f3_title": "Analisi Sensoriale",
+            "f3_desc": "Impara a riconoscere odori e sapori delle cultivar."
+        },
+        "image_alt": "Degustazione professionale di Olio Extra Vergine di Oliva al Frantoio del Pasqua, Monte San Savino, Arezzo, Toscana",
+        "image_badge": "[Immagine Degustazione]",
+        "faq": {
+            "q1": "Dove si svolgono le degustazioni?",
+            "a1": "Le visite si tengono all'interno del nostro Frantoio del Pasqua, situato in Loc. Infernaccio 510/B, Monte San Savino (in provincia di Arezzo). Scoprirai come nasce il nostro olio circondato dai macchinari di estrazione.",
+            "q2": "In cosa consiste l'analisi in frantoio?",
+            "a2": "Ti guideremo alla scoperta delle nostre cultivar. Imparerai a riconoscere le note di fruttato, l'amaro e il piccante che caratterizzano un vero olio extra vergine di oliva toscano di alta qualità.",
+            "q3": "Quanto dura l'esperienza e cosa include?",
+            "a3": "L'esperienza dura dai 30 ai 90 minuti. Include l'illustrazione del processo di frangitura a ciclo continuo e la degustazione tecnica, spesso arricchita da ricercati abbinamenti gastronomici.",
+            "q4": "È possibile acquistare l'olio al termine?",
+            "a4": "Certamente. Potrai acquistare il nostro olio evo estratto a freddo direttamente nel punto vendita. Un ricordo perfetto ed esclusivo delle eccellenze di Arezzo."
+        }
+    },
+    "TastingsCalendar": {
+        "loading": "Caricamento...",
+        "today": "OGGI",
+        "no_slots": "Nessuno slot",
+        "booked": "Prenotato",
+        "free": "Libero",
+        "empty_state": {
+            "title": "Nessuno slot disponibile",
+            "desc": "Prova a selezionare un'altra settimana"
+        },
+        "modal": {
+            "title": "Prenotazione degustazione",
+            "close": "Chiudi",
+            "success": {
+                "title": "Richiesta inviata",
+                "desc": "Ti contatteremo per la conferma",
+                "mail_sent": "✓ Notifica inviata",
+                "mail_skipped": "⚠ Notifica non inviata",
+                "mail_error": "⚠ Errore notifica"
+            },
+            "form": {
+                "selected_date": "Data selezionata",
+                "type_label": "Tipo degustazione",
+                "people_label": "Numero persone",
+                "time_label": "Orario di preferenza *",
+                "use_suggestion": "usa {time}",
+                "name_label": "Nome e cognome",
+                "name_placeholder": "Mario Rossi",
+                "email_label": "Email",
+                "email_placeholder": "mario@esempio.it",
+                "phone_label": "Telefono",
+                "phone_placeholder": "+39 ...",
+                "notes_label": "Note / Intolleranze",
+                "notes_placeholder": "Scrivi qui...",
+                "submit": "Invia Richiesta",
+                "submitting": "Invio in corso..."
+            },
+            "errors": {
+                "morning_only": "Seleziona un orario al mattino (es. 10:30).",
+                "afternoon_only": "Seleziona un orario al pomeriggio (es. 16:00).",
+                "conflict": "L'orario si accavalla con una prenotazione. Verifica il suggerimento.",
+                "just_booked": "Questo slot è stato appena prenotato. Seleziona un altro orario.",
+                "generic": "Errore durante la prenotazione."
+            }
+        },
+        "shifts": {
+            "morning": "Mattina",
+            "evening": "Sera"
+        }
+    },
+    "Common": {
+        "navbar": {
+            "storia": "Storia",
+            "frantoio": "Frantoio",
+            "olio": "Olio",
+            "degustazioni": "Degustazioni",
+            "shop": "Shop",
+            "contatti": "Contatti",
+            "menu": "Menu",
+            "login": "Accedi / Registrati",
+            "cart": "Carrello",
+            "open_menu": "Apri menu",
+            "close_menu": "Chiudi menu",
+            "location": "Italia",
+            "language": "Lingua",
+            "blog": "Blog"
+        },
+        "ticker": {
+            "shipping": "Spedizione rapida 24/48h in Italia",
+            "artisanal": "Olio EVO artigianale • Frantoio di famiglia",
+            "tastings": "Degustazioni disponibili su prenotazione"
+        },
+        "footer": {
+            "brand": {
+                "description": "Tradizione agricola, qualità e cura artigianale. Produciamo oli extravergini con tecniche moderne e rispetto della materia prima."
+            },
+            "contacts": {
+                "title": "CONTATTI",
+                "address": "Loc. Infernaccio 510/B, Monte San Savino – Arezzo",
+                "gender_policy": "Politica Parità di Genere UNI PDR 125"
+            },
+            "info": {
+                "title": "INFORMAZIONI",
+                "privacy": "Privacy Policy",
+                "cookie": "Cookie Policy",
+                "terms": "Termini e Condizioni",
+                "shipping": "Spedizioni",
+                "returns": "Resi e rimborsi",
+                "contacts": "Contatti"
+            },
+            "bottom": {
+                "rights": "© {year} Frantoio del Pasqua — Tutti i diritti riservati.",
+                "back_to_top": "Torna su",
+                "powered_by": "Powered by Modern Tech",
+                "secure_payments": "Pagamenti Sicuri"
+            }
+        }
+    },
+    "Products": {
+        "evo": {
+            "title": "Extravergine - EVO",
+            "subtitle": "Olio extravergine di oliva",
+            "description": "Il classico EVO da tutti i giorni. Qualità, eleganza e gusto pulito: una bottiglia che sta bene in cucina e in tavola.",
+            "badge": "EVO",
+            "variants": {
+                "750ml": "Bottiglia 750 ml",
+                "3lt": "Latta 3 L",
+                "5lt": "Latta 5 L"
+            }
+        },
+        "fruttato-leggero": {
+            "title": "Extravergine - Fruttato Leggero",
+            "subtitle": "Olio extravergine di oliva",
+            "description": "Profilo delicato e armonico, ideale per piatti di pesce e insalate.",
+            "badge": "CLASSICO"
+        },
+        "fruttato-medio": {
+            "title": "Extravergine - Fruttato Medio",
+            "subtitle": "Olio Extravergine di oliva",
+            "description": "Blend equilibrato, ideale a crudo e in cucina.",
+            "badge": "CLASSICO"
+        },
+        "fruttato-intenso": {
+            "title": "Extravergine - Fruttato Intenso",
+            "subtitle": "Olio Extravergine di oliva",
+            "description": "Sapore deciso, amaro e piccante più presenti.",
+            "badge": "CLASSICO"
+        },
+        "tartufo": {
+            "title": "Extravergine - Tartufo",
+            "subtitle": "Extravergine aromatizzato",
+            "description": "Perfetto su uova, patate, carpacci.",
+            "badge": "AROMATIZZATO"
+        },
+        "peperoncino": {
+            "title": "Extravergine - Peperoncino",
+            "subtitle": "Extravergine aromatizzato",
+            "description": "Piccantezza pulita, ottimo su pizza e primi.",
+            "badge": "AROMATIZZATO"
+        },
+        "vino": {
+            "title": "Vino Vittoria",
+            "subtitle": "100% Sangiovese",
+            "description": "Un rosso di carattere, espressione del nostro territorio.",
+            "badge": "NOVITÀ"
+        }
+    },
+    "ShopPage": {
+        "header": {
+            "label": "Shop",
+            "title_part1": "Tutti i ",
+            "title_italic": "prodotti",
+            "description": "Selezione dei nostri oli extravergini, disponibili in diversi formati e confezioni."
+        },
+        "categories": {
+            "all": "Tutti",
+            "fruttato": "Fruttati",
+            "igp": "IGP",
+            "bio": "Bio",
+            "aromatico": "Aromatici"
+        },
+        "empty": {
+            "text": "Nessun prodotto trovato in questa categoria.",
+            "reset": "Mostra tutti i prodotti"
+        },
+        "info": {
+            "shipping": "Spedizione gratuita per ordini superiori a €50",
+            "notes": "I prezzi sono indicativi e non includono IVA. Contattaci per ordini personalizzati."
+        },
+        "filters": {
+            "from": "Da "
+        }
+    },
+    "HomePage": {
+        "HeroCarousel": {
+            "sr_title": "Frantoio e produzione di olio: storia, prodotti e tradizione moderna",
+            "slides": {
+                "storia": {
+                    "title": "La nostra Storia",
+                    "excerpt": "Radici familiari, gesti antichi e una visione contemporanea: scopri come nasce la nostra identità.",
+                    "cta": "Leggi",
+                    "alt": "Ulivi al tramonto e paesaggio rurale"
+                },
+                "oli": {
+                    "title": "I Nostri Oli",
+                    "excerpt": "Una selezione dei nostri migliori oli, amati e premiati: qualità, equilibrio e carattere.",
+                    "cta": "Scopri",
+                    "alt": "Olive verdi in mano (raccolta)"
+                },
+                "tradizione": {
+                    "title": "Moderna tradizione",
+                    "excerpt": "Tecniche moderne, rispetto della materia prima e cura artigianale: il futuro parte dalla terra.",
+                    "cta": "Approfondisci",
+                    "alt": "Dettaglio di frantoio o lavorazione artigianale"
+                }
+            },
+            "aria": {
+                "prev": "Slide precedente",
+                "next": "Slide successiva",
+                "go_to": "Vai alla slide",
+                "main_sections": "Sezioni principali hero",
+                "hero_highlight": "Hero in evidenza"
+            }
+        },
+        "HeroSplitEvo": {
+            "label": "OLIO EXTRAVERGINE — EVO",
+            "title": "EVO, quello giusto per ogni giorno.",
+            "description": "Il classico EVO da tutti i giorni. Qualità, eleganza e gusto pulito: una bottiglia che sta bene in cucina e in tavola.",
+            "buy_btn": "Compra EVO",
+            "explore_btn": "Esplora lo shop"
+        },
+        "ShopHighlights": {
+            "label": "Shop",
+            "title_part1": "I più ",
+            "title_italic": "acquistati",
+            "subtitle": "Dal nostro catalogo i prodotti best sellers.",
+            "cta": "Vai allo shop",
+            "add": "AGGIUNGI",
+            "from": "Da ",
+            "iva": "+ IVA"
+        },
+        "BioMethod": {
+            "label": "METODO BIO",
+            "title": "Piccola scala. Qualità controllata.",
+            "description": "Un olio artigianale non nasce da una linea industriale: nasce da tempi corretti, lotti piccoli e attenzione costante.",
+            "points": {
+                "control": "Controllo reale",
+                "control_text": " su ogni passaggio",
+                "aroma": "Aromi integri",
+                "aroma_text": " grazie a lavorazioni delicate",
+                "stability": "Stabilità",
+                "stability_text": " con stoccaggio protetto"
+            },
+            "cta_prod": "Scopri la produzione",
+            "cta_oil": "Le qualità dell'olio",
+            "card_header": {
+                "label": "CARTA DI PRODUZIONE",
+                "title": "Metodo BIO – Artigianale",
+                "subtitle": "Qualità da filiera corta, non da volumi industriali."
+            },
+            "specs": {
+                "prod": "Produzione",
+                "prod_val": "Piccoli lotti",
+                "work": "Lavorazione",
+                "work_val": "Temp. controllata",
+                "chain": "Filiera",
+                "chain_val": "Tracciabilità",
+                "storage": "Stoccaggio",
+                "storage_val": "Acciaio • Buio"
+            },
+            "process": {
+                "label": "PROCESSO",
+                "step1_title": "Raccolta selettiva",
+                "step1_text": "Cura del frutto e conferimento rapido",
+                "step2_title": "Frangitura a freddo",
+                "step2_text": "Lavorazione precisa per preservare profumi",
+                "step3_title": "Separazione pulita",
+                "step3_text": "Controllo per profilo sensoriale nitido",
+                "step4_title": "Conservazione protetta",
+                "step4_text": "Acciaio e condizioni stabili"
+            },
+            "guarantees": {
+                "non_industrial": "Non industriale",
+                "non_industrial_text": "Qualità prima della quantità",
+                "fresh": "Fresco e pulito",
+                "fresh_text": "Olio vivo e aromatico",
+                "control": "Controllo totale",
+                "control_text": "Ogni fase curata"
+            },
+            "footer": "PRODUZIONE BIO • ARTIGIANALE",
+            "details": "Dettagli"
+        },
+        "Discover": {
+            "label": "Esplora",
+            "title": "Scopri il Frantoio Del Pasqua",
+            "cards": {
+                "produzione": {
+                    "title": "FRANTOIO",
+                    "subtitle": "Dal campo al frantoio"
+                },
+                "olio": {
+                    "title": "IL NOSTRO OLIO",
+                    "subtitle": "Qualità extravergine"
+                },
+                "contatti": {
+                    "title": "CONTATTI",
+                    "subtitle": "Vieni a trovarci"
+                }
+            }
+        },
+        "HeritageBridge": {
+            "label": "TRADIZIONE & CONTROLLO",
+            "title_part1": "Un ponte visivo tra il gesto antico",
+            "title_italic": "e la precisione moderna.",
+            "subtitle": "Immagini che raccontano artigianalità, materia prima e controllo.",
+            "cta": "Storia & territorio",
+            "tradition": {
+                "label": "TRADIZIONE",
+                "title": "Gesto umano, tempi giusti",
+                "text": "Raccolta, attenzione, cura: la qualità nasce prima del frantoio.",
+                "tag1": "Filiera corta",
+                "tag2": "Piccola scala"
+            },
+            "control": {
+                "label": "CONTROLLO",
+                "title": "Precisione senza industriale",
+                "text": "Raccolta, attenzione, cura: la qualità nasce prima del frantoio.",
+                "tag1": "Freschezza preservata",
+                "tag2": "Profilo pulito"
+            }
+        }
+    },
+    "StoriaPage": {
+        "header": {
+            "subtitle": "Storia",
+            "title_part1": "La nostra ",
+            "title_italic": "storia",
+            "description": "L'azienda Del Pasqua nasce intorno agli anni '60 dal lavoro del padre Sabatino. Con gli anni, si unisce all'azienda di famiglia anche il figlio Emanuele, con l'obiettivo di fare forza sulla diversificazione, puntando sulla qualità dei prodotti e aprendo così l'azienda a nuovi sbocchi e direzioni."
+        },
+        "section1": {
+            "subtitle": "I nostri oliveti",
+            "title_part1": "Tradizione e innovazione ",
+            "title_italic": "nel verde",
+            "p1": "I nostri oliveti si estendono per 4 ettari, suddivisi tra le cultivar tipiche delle nostre zone: leccino, frantoiane e moraiolo.",
+            "p2": "Nel rispetto delle coltivazioni tradizionali, ma secondo tecniche moderne e innovative, sono stati piantati nuovi olivi il cui stato viene costantemente monitorato dal lavoro dell'agronomo che valuta lo stato di maturità delle olive.",
+            "stats": {
+                "hectares": "Ettari",
+                "cultivars": "Cultivar",
+                "years": "Anni"
+            }
+        },
+        "section2": {
+            "subtitle": "La nostra raccolta",
+            "title_part1": "Da Ottobre con ",
+            "title_italic": "passione",
+            "p1": "Aspettiamo sempre Ottobre per la raccolta e ci divertiamo lavorando con le nostre passioni. Oggi abbiamo raggiunto un grande traguardo: attualmente i nostri prodotti sono apprezzati a livello locale e internazionale.",
+            "p2": "Da qualche anno l'azienda esporta stabilmente i propri prodotti negli Stati Uniti. L'olio extravergine di oliva \"Il Magnifico\" riscuote una sempre più alta approvazione da parte del mercato.",
+            "badge": "Esportazione USA"
+        },
+        "philosophy": {
+            "subtitle": "Filosofia",
+            "title_part1": "Sapori toscani nel rispetto ",
+            "title_italic": "dell'ambiente",
+            "description": "Una storia di famiglia, un lavoro paziente e una cura costante: la qualità nasce dalla somma di piccoli gesti, ripetuti bene, ogni anno.",
+            "tags": {
+                "tradition": "Tradizione",
+                "innovation": "Innovazione",
+                "quality": "Qualità"
+            }
+        }
+    },
+    "ProduzionePage": {
+        "hero": {
+            "label": "Frantoio",
+            "title_part1": "Il cuore della",
+            "title_italic": "nostra qualità",
+            "description": "Nel frantoio ogni dettaglio conta: dalla pulizia delle olive, alla gramolazione controllata, fino all'estrazione e alla conservazione. Qui tecnologia e cura artigianale lavorano insieme per preservare freschezza, profumi e stabilità.",
+            "tag1": "Estrazione a freddo",
+            "tag2": "Certificato IGP",
+            "img_alt": "Frantoio del Pasqua - esterno"
+        },
+        "machines": {
+            "label": "Macchine & Linee",
+            "title_part1": "Impianti moderni,",
+            "title_italic": "processo controllato",
+            "subtitle": "Defogliazione, frangitura, gramolazione, estrazione, separazione e filtrazione: ogni fase è pensata per preservare profumi e stabilità.",
+            "defogliazione": {
+                "title": "Defogliazione",
+                "desc": "Rimozione foglie e impurità, lavaggio delicato."
+            },
+            "frangitura": {
+                "title": "Frangitura",
+                "desc": "Frangitura rapida per minimizzare il riscaldamento e l'ossidazione."
+            },
+            "gramolazione": {
+                "title": "Gramolazione",
+                "desc": "Miscelazione lenta per unire le micro-gocce d'olio."
+            },
+            "estrazione": {
+                "title": "Estrazione",
+                "desc": "Separazione senza stress termici, parametri monitorati."
+            },
+            "separazione": {
+                "title": "Separazione",
+                "desc": "Rifinitura e chiarifica dell'olio."
+            },
+            "filtrazione": {
+                "title": "Filtrazione",
+                "desc": "Stabilità nel tempo e profilo pulito."
+            },
+            "divider_1": {
+                "label": "CURA E CONSERVAZIONE",
+                "title_part1": "Dalla lavorazione ",
+                "title_italic": "alla bottiglia",
+                "text": "Una volta estratto, proteggiamo il nostro olio da luce e ossigeno. Solo così i profumi del frantoio arrivano intatti sulla tavola."
+            },
+            "divider_2": {
+                "label": "QUALITÀ GARANTITA",
+                "title_part1": "Controllo in ",
+                "title_italic": "ogni fase",
+                "text": "Non lasciamo nulla al caso: dall'ingresso delle olive fino alle verifiche sul prodotto finale."
+            }
+        },
+        "showcase": {
+            "trasporto": {
+                "kicker": "TRASPORTO",
+                "title": "Pulizia e stabilità",
+                "text": "All'interno del frantoio lo spostamento dell'olio avviene esclusivamente mediante l'utilizzo di contenitori di acciaio. La plastica è assolutamente vietata, in quanto converisce off-flavours all'olio rovinandone il gusto e l'odore",
+                "img_label": "IMMAGINE — FILTRAZIONE"
+            },
+            "stoccaggio": {
+                "kicker": "Stoccaggio",
+                "title": "Conservazione sotto azoto",
+                "text": "Spazio per raccontare lo stoccaggio in silos, controllo temperatura e protezione dall'ossidazione per preservare aromi e polifenoli.",
+                "img_label": "IMMAGINE — CONSERVAZIONE"
+            },
+            "imbottigliamento": {
+                "kicker": "Imbottigliamento",
+                "title": "Linea di riempimento e confezionamento",
+                "text": "Spazio per descrivere la linea, i formati, l'etichettatura e il confezionamento. Ideale aggiungere una foto ampia della linea.",
+                "tag1": "Formati variabili",
+                "tag2": "Etichettatura precisa",
+                "img_label": "IMMAGINE — LINEA IMBOTTIGLIAMENTO"
+            },
+            "controllo": {
+                "kicker": "Controllo",
+                "title": "Qualità e tracciabilità",
+                "text": "Spazio per indicare controlli, tracciabilità lotti, gestione conferimenti e (se presente) un piccolo angolo laboratorio/degustazione.",
+                "list1": "Analisi sensoriale",
+                "list2": "Tracciabilità completa",
+                "list3": "Certificazioni aggiornate",
+                "img_label": "IMMAGINE — CONTROLLO QUALITÀ / TRACCIABILITÀ"
+            }
+        },
+        "technology": {
+            "label": "Il Frantoio",
+            "title_part1": "Tecnologia, cura",
+            "title_italic": "e tracciabilità",
+            "description": "Nel nostro frantoio ogni fase è progettata per proteggere aromi e polifenoli: conferimento rapido, pulizia accurata, estrazione a freddo e stoccaggio in condizioni controllate.",
+            "checks": {
+                "chain": {
+                    "title": "Filiera corta",
+                    "desc": "Dalla raccolta alla molitura in tempi rapidi."
+                },
+                "clean": {
+                    "title": "Pulizia e selezione",
+                    "desc": "Defogliazione e lavaggio per eliminare impurità."
+                },
+                "extraction": {
+                    "title": "Estrazione a freddo",
+                    "desc": "Processo controllato per preservare qualità e profumi."
+                },
+                "storage": {
+                    "title": "Stoccaggio sotto azoto",
+                    "desc": "Protezione dall'ossidazione prima dell'imbottigliamento."
+                }
+            },
+            "cards": {
+                "molitura": {
+                    "title": "Molitura per conto terzi",
+                    "text": "Lavorazioni di molitura e confezionamento con tracciabilità dei lotti.",
+                    "badge": "Servizi"
+                },
+                "conferimento": {
+                    "title": "Conferimento olive",
+                    "text": "Ricezione e gestione con priorità alla freschezza.",
+                    "badge": "Operatività"
+                },
+                "controlli": {
+                    "title": "Controlli qualità",
+                    "text": "Monitoraggio parametri di processo e conservazione.",
+                    "badge": "Qualità"
+                },
+                "visite": {
+                    "title": "Visite e degustazioni",
+                    "text": "Momenti di visita per scoprire le fasi di lavorazione.",
+                    "badge": "Esperienza"
+                }
+            }
+        },
+        "steps_section": {
+            "label": "Produzione",
+            "title_part1": "Dal campo al",
+            "title_italic": "frantoio",
+            "subtitle": "Raccolta, lavorazione e certificazioni: le fasi che guidano la qualità del nostro olio extravergine."
+        },
+        "steps": {
+            "brucatura": {
+                "kicker": "RACCOLTA",
+                "title": "La brucatura a mano",
+                "paragraphs": [
+                    "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell'arco delle 24 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche. Il Frantoio del Pasqua è dotato di un moderno impianto di lavorazione delle olive Alfalaval con estrazione a freddo."
+                ],
+                "placeholder": "IMMAGINE — RACCOLTA"
+            },
+            "imbottigliamento": {
+                "kicker": "IMPIANTO",
+                "title": "La linea per l'imbottigliamento",
+                "paragraphs": [
+                    "L'impianto è fornito di una linea per l'imbottigliamento e il confezionamento; e di uno stoccaggio sotto azoto per garantire le caratteristiche organolettiche del nostro olio 'Il Magnifico' in attesa dell'imbottigliamento.",
+                    "Ma non ci fermiamo qui: svolgiamo lavorazioni di molitura e confezionamento per conto di terzi."
+                ],
+                "placeholder": "IMMAGINE — LINEA"
+            },
+            "evo": {
+                "kicker": "QUALITÀ",
+                "title": "Il nostro Olio EVO",
+                "paragraphs": [
+                    "Tutti questi fattori sono un'assoluta garanzia per la produzione di olio extravergine d'oliva di altissima qualità, in grado di conservare più a lungo la freschezza e i profumi che caratterizzano l'olio appena spremuto."
+                ],
+                "placeholder": "IMMAGINE — EVO"
+            },
+            "igp_bio": {
+                "kicker": "CERTIFICAZIONI",
+                "title": "IGP E BIO",
+                "paragraphs": [
+                    "Il frantoio del Pasqua è certificato Suolo e Salute per la trasformazione e produzione di prodotti Bio ed è iscritto al Consorzio dell'olio Toscano, per la produzione di olio extravergine di oliva IGP Toscano."
+                ],
+                "placeholder": "IMMAGINE — IGP/BIO"
+            }
+        },
+        "shared": {
+            "machine": "Macchina"
+        }
+    },
+    "OlioPage": {
+        "header": {
+            "label": "Il nostro olio",
+            "title_part1": "Il nostro olio",
+            "title_italic": "EVO"
+        },
+        "sections": {
+            "intro": {
+                "title": "Il nostro olio EVO",
+                "body": [
+                    "Il nostro Olio extravergine di oliva italiano non nasce solamente da olive coltivate nel rispetto dell'ambiente; ma tutte le attività per la sua lavorazione sono assoggettate al regime di controllo di organismi riconosciuti per garantire al consumatore finale un prodotto naturale, controllato e certificato."
+                ],
+                "placeholder": "IMMAGINE — INTRO"
+            },
+            "fruttato_leggero": {
+                "short_title": "Fruttato leggero",
+                "title": "Olio Extravergine di oliva fruttato leggero 100% Italiano",
+                "body": [
+                    "Profilo delicato e armonico: amaro e piccante leggeri, con sensazioni erbacee e note morbide.",
+                    "Ideale a crudo su piatti leggeri, pesce, verdure e insalate."
+                ],
+                "formats": [
+                    "Bottiglia: 250/500/750",
+                    "Lattina: 1/3/5L"
+                ],
+                "placeholder": "IMMAGINE — FRUTTATO LEGGERO"
+            },
+            "fruttato_intenso": {
+                "short_title": "Fruttato intenso",
+                "title": "Olio Extravergine di oliva fruttato intenso 100% Italiano",
+                "body": [
+                    "Dal sapore deciso ma equilibrato, l'amaro e il piccante si collocano a un livello medio alto, con un retrogusto tendente al carciofo, colore verde brillante.",
+                    "La raccolta avviene in anticipo rispetto alla completa maturazione."
+                ],
+                "formats": [
+                    "Bottiglia: 250/500/750",
+                    "Lattina: 1/3/5L"
+                ],
+                "placeholder": "IMMAGINE — FRUTTATO INTENSO"
+            },
+            "fruttato_medio": {
+                "short_title": "Fruttato medio",
+                "title": "Olio Extravergine di oliva fruttato medio 100% Italiano",
+                "body": [
+                    "Blend di olive leccino frantoio e moraiolo; equilibrato nel piccante e nell'amaro, con sentori di mandorla e leggera sensazione di erba.",
+                    "Colore verde con venature gialle."
+                ],
+                "formats": [
+                    "Bottiglia: 250/500/750/1000ml",
+                    "Lattina: 1/3/5L"
+                ],
+                "placeholder": "IMMAGINE — FRUTTATO MEDIO"
+            },
+            "evo": {
+                "short_title": "EVO",
+                "title": "Olio Extravergine di oliva del Pasqua",
+                "body": [
+                    "Con la selezione delle olive migliori nasce il nostro olio 'EVO', estratto a freddo secondo i principi della tradizione e con uno sguardo all'innovazione. Dal colore verde brillante e il profumo erbaceo con sentori di mandorla."
+                ],
+                "formats": [
+                    "Bottiglia: 500ml"
+                ],
+                "placeholder": "IMMAGINE — EVO"
+            },
+            "aromatico": {
+                "short_title": "Aromatico",
+                "title": "Gli Aromatici",
+                "body": [
+                    "La nostra selezione speciale di aromatizzati.",
+                    "Versioni disponibili: tartufo, peperoncino e limone."
+                ],
+                "formats": [
+                    "Bottiglia: 250ml"
+                ],
+                "placeholder": "IMMAGINE — AROMATICI"
+            }
+        },
+        "sidebar": {
+            "id_label": "Indice",
+            "note_label": "Nota",
+            "note_text1": "Sezione descrittiva: le immagini sono in"
+        },
+        "trust_bar": {
+            "text": "QUALITÀ • TRADIZIONE • INNOVAZIONE",
+            "badge": "SELEZIONE ESTRATTA A FREDDO"
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "label": "Contatti",
+            "title_part1": "Siamo",
+            "title_italic": "qui",
+            "description": "Per richieste commerciali, informazioni sui prodotti o collaborazioni, scrivici o chiamaci.",
+            "pills": {
+                "response": "RISPOSTA RAPIDA",
+                "support": "SUPPORTO ORDINI",
+                "b2b": "RICHIESTE B2B"
+            }
+        },
+        "info": {
+            "company_label": "Azienda",
+            "address_label": "Indirizzo",
+            "phone_label": "Telefono",
+            "mobile_label": "Mobile",
+            "email_label": "Email",
+            "docs_label": "Documenti",
+            "docs_gender": "Politica Parità di Genere",
+            "docs_privacy": "Privacy",
+            "social_label": "Social"
+        },
+        "form": {
+            "label": "Scrivici",
+            "title": "Invia un messaggio",
+            "subtitle": "Compila il form: ti rispondiamo il prima possibile.",
+            "name_label": "Nome",
+            "name_placeholder": "Il tuo nome",
+            "email_label": "Email",
+            "subject_label": "Oggetto",
+            "subject_placeholder": "Es. informazioni prodotto / ordine / B2B",
+            "message_label": "Messaggio",
+            "message_placeholder": "Scrivi qui...",
+            "privacy_consent": "Acconsento al trattamento dei miei dati e dichiaro di aver preso visione della privacy policy",
+            "success_msg": "Messaggio inviato. Ti risponderemo il prima possibile.",
+            "error_prefix": "Errore",
+            "error_fallback": "Invio fallito.",
+            "button_idle": "INVIA MESSAGGIO",
+            "button_sending": "INVIO..."
+        },
+        "map": {
+            "label": "Dove siamo",
+            "button": "Apri su Maps"
+        }
+    }
+}

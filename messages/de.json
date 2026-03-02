@@ -1,0 +1,727 @@
+{
+    "TastingsPage": {
+        "metadata": {
+            "title": "Natives Olivenöl Extra Verkostung in der Toskana | Frantoio del Pasqua",
+            "description": "Entdecken Sie die wahren Aromen des toskanischen EVO-Öls. Buchen Sie eine Verkostung im Frantoio del Pasqua in Monte San Savino, Arezzo.",
+            "keywords": "olivenöl verkostung toskana, olivenöl verkostung arezzo, ölmühle arezzo, toskanisches natives olivenöl extra, besichtigung der ölmühle toskana"
+        },
+        "hero": {
+            "subtitle": "Touren & Verkostungen",
+            "title_part1": "Buchen Sie eine ",
+            "title_italic": "Verkostung",
+            "title_part2": " in der Ölmühle",
+            "description": "Eine geführte sensorische Reise, um die Aromen und Noten von nativem Olivenöl extra zu erkennen, unsere Sorten zu entdecken und die Mühle hautnah zu erleben.",
+            "duration": "Min",
+            "from": "Ab",
+            "types": {
+                "classica": {
+                    "title": "Klassische Verkostung",
+                    "subtitle": "Einführung in Delpasqua-Öle mit geführter Verkostung.",
+                    "includes": [
+                        "Verkostung von 3 Ölen",
+                        "Brot & Wasser",
+                        "Sorten und Pressung"
+                    ]
+                },
+                "premium": {
+                    "title": "Premium Verkostung",
+                    "subtitle": "Komplette Reise mit Essenskombinationen und sensorischen Noten.",
+                    "includes": [
+                        "Verkostung von 5 Ölen",
+                        "Kombinationen (Brot / Tomaten / Käse)",
+                        "Kleine Mühlenführung (falls verfügbar)"
+                    ]
+                },
+                "privata": {
+                    "title": "Private Verkostung",
+                    "subtitle": "Individuelles Erlebnis für Gruppen und besondere Anlässe.",
+                    "includes": [
+                        "Personalisierter Weg",
+                        "Aperitif-Option",
+                        "Geschenk- / Veranstaltungsoption"
+                    ]
+                }
+            }
+        },
+        "calendar": {
+            "subtitle": "Kalender",
+            "title_part1": "Buchen Sie Ihren ",
+            "title_italic": "Termin",
+            "description": "Wählen Sie einen verfügbaren Zeitraum und schließen Sie Ihre Anfrage ab. Sie erhalten eine Bestätigung von den Administratoren.",
+            "badge": "Kaltgepresst"
+        },
+        "seo": {
+            "subtitle": "Erfahren Sie mehr",
+            "title_part1": "Verkostungs-",
+            "title_italic": "erlebnis",
+            "title_part2": " in der Toskana",
+            "description": "Erleben Sie eine einzigartige Erfahrung im Herzen der Provinz Arezzo. Frantoio del Pasqua empfängt Sie in Monte San Savino, um Ihnen die Geheimnisse des toskanischen nativen Olivenöls extra zu enthüllen. Eine authentische Reise von der Kaltpressung bis zur sensorischen Analyse."
+        },
+        "features": {
+            "f1_title": "Arezzo, Toskana",
+            "f1_desc": "Eingebettet in die typische und eindrucksvolle toskanische Landschaft.",
+            "f2_title": "Authentisches EVO-Öl",
+            "f2_desc": "Kaltgepresst in den Anlagen unserer Ölmühle.",
+            "f3_title": "Sensorische Analyse",
+            "f3_desc": "Lernen Sie die Aromen und Geschmäcker der Sorten zu erkennen."
+        },
+        "image_alt": "Professionelle Verkostung von nativem Olivenöl extra im Frantoio del Pasqua, Monte San Savino, Arezzo, Toskana",
+        "image_badge": "[Verkostungsbild]",
+        "faq": {
+            "q1": "Wo finden die Verkostungen statt?",
+            "a1": "Die Besichtigungen und Verkostungen finden direkt in unserem Frantoio del Pasqua statt, gelegen in Loc. Infernaccio 510/B, Monte San Savino (in der Provinz Arezzo). Entdecken Sie, wie unser Öl entsteht, umgeben von Extraktionsmaschinen.",
+            "q2": "Woraus besteht die Analyse in der Mühle?",
+            "a2": "Wir werden Sie bei der Entdeckung unserer Sorten begleiten. Sie lernen, die fruchtigen, bitteren und scharfen Noten zu erkennen, die ein echtes, hochwertiges toskanisches natives Olivenöl extra charakterisieren.",
+            "q3": "Wie lange dauert das Erlebnis und was beinhaltet es?",
+            "a3": "Das Erlebnis dauert 30 bis 90 Minuten. Es beinhaltet eine Erklärung des kontinuierlichen Pressverfahrens und eine technische Verkostung, oft bereichert durch feine gastronomische Kombinationen.",
+            "q4": "Ist es möglich, das Öl am Ende zu kaufen?",
+            "a4": "Sicherlich. Sie können unser kaltgepresstes Evo-Öl direkt in unserem Hofladen kaufen. Ein perfektes und exklusives Souvenir der Spitzenqualität von Arezzo."
+        }
+    },
+    "TastingsCalendar": {
+        "loading": "Wird geladen...",
+        "today": "HEUTE",
+        "no_slots": "Keine Plätze",
+        "booked": "Gebucht",
+        "free": "Frei",
+        "empty_state": {
+            "title": "Keine Plätze verfügbar",
+            "desc": "Versuchen Sie, eine andere Woche auszuwählen"
+        },
+        "modal": {
+            "title": "Verkostung buchen",
+            "close": "Schließen",
+            "success": {
+                "title": "Anfrage gesendet",
+                "desc": "Wir werden Sie für die Bestätigung kontaktieren",
+                "mail_sent": "✓ Benachrichtigung gesendet",
+                "mail_skipped": "⚠ Benachrichtigung übersprungen",
+                "mail_error": "⚠ Benachrichtigungsfehler"
+            },
+            "form": {
+                "selected_date": "Ausgewähltes Datum",
+                "type_label": "Verkostungsart",
+                "people_label": "Anzahl der Personen",
+                "time_label": "Bevorzugte Zeit *",
+                "use_suggestion": "{time} verwenden",
+                "name_label": "Vor- und Nachname",
+                "name_placeholder": "Max Mustermann",
+                "email_label": "E-Mail",
+                "email_placeholder": "max@beispiel.de",
+                "phone_label": "Telefon",
+                "phone_placeholder": "+49 ...",
+                "notes_label": "Notizen / Allergien",
+                "notes_placeholder": "Hier schreiben...",
+                "submit": "Anfrage senden",
+                "submitting": "Wird gesendet..."
+            },
+            "errors": {
+                "morning_only": "Bitte wählen Sie eine Zeit am Vormittag (z.B. 10:30).",
+                "afternoon_only": "Bitte wählen Sie eine Zeit am Nachmittag (z.B. 16:00).",
+                "conflict": "Die Zeit überschneidet sich mit einer Buchung. Prüfen Sie den Vorschlag.",
+                "just_booked": "Dieser Platz wurde gerade gebucht. Bitte wählen Sie eine andere Zeit.",
+                "generic": "Fehler bei der Buchung."
+            }
+        },
+        "shifts": {
+            "morning": "Vormittag",
+            "evening": "Abend"
+        }
+    },
+    "Common": {
+        "navbar": {
+            "storia": "Geschichte",
+            "frantoio": "Ölmühle",
+            "olio": "Öl",
+            "degustazioni": "Verkostungen",
+            "shop": "Shop",
+            "contatti": "Kontakt",
+            "menu": "Menü",
+            "login": "Anmelden / Registrieren",
+            "cart": "Warenkorb",
+            "open_menu": "Menü öffnen",
+            "close_menu": "Menü schließen",
+            "location": "Italien",
+            "language": "Sprache",
+            "blog": "Blog"
+        },
+        "ticker": {
+            "shipping": "Schneller Versand 24/48 Std in Italien",
+            "artisanal": "Handwerklich hergestelltes EVO-Öl • Familienmühle",
+            "tastings": "Verkostungen nach Voranmeldung verfügbar"
+        },
+        "footer": {
+            "brand": {
+                "description": "Landwirtschaftliche Tradition, Qualität und handwerkliche Sorgfalt. Wir produzieren Olivenöle extra vergine mit modernen Techniken und Respekt vor dem Rohstoff."
+            },
+            "contacts": {
+                "title": "KONTAKT",
+                "address": "Loc. Infernaccio 510/B, Monte San Savino – Arezzo",
+                "gender_policy": "Gleichstellungspolitik UNI PDR 125"
+            },
+            "info": {
+                "title": "INFORMATIONEN",
+                "privacy": "Datenschutzerklärung",
+                "cookie": "Cookie-Richtlinie",
+                "terms": "Allgemeine Geschäftsbedingungen",
+                "shipping": "Versand",
+                "returns": "Rückgabe und Rückerstattung",
+                "contacts": "Kontakt"
+            },
+            "bottom": {
+                "rights": "© {year} Frantoio del Pasqua — Alle Rechte vorbehalten.",
+                "back_to_top": "Nach oben",
+                "powered_by": "Powered by Modern Tech",
+                "secure_payments": "Sichere Zahlungen"
+            }
+        }
+    },
+    "Products": {
+        "evo": {
+            "title": "Natives Olivenöl Extra - EVO",
+            "subtitle": "Natives Olivenöl Extra",
+            "description": "Das klassische EVO für jeden Tag. Qualität, Eleganz und reiner Geschmack: eine Flasche, die in der Küche und auf dem Tisch gut aussieht.",
+            "badge": "EVO",
+            "variants": {
+                "750ml": "Flasche 750 ml",
+                "3lt": "Kanister 3 L",
+                "5lt": "Kanister 5 L"
+            }
+        },
+        "fruttato-leggero": {
+            "title": "Natives Olivenöl Extra - Leichtfruchtig",
+            "subtitle": "Natives Olivenöl Extra",
+            "description": "Zartes und harmonisches Profil, ideal für Fischgerichte und Salate.",
+            "badge": "KLASSIKER"
+        },
+        "fruttato-medio": {
+            "title": "Natives Olivenöl Extra - Mittelfruchtig",
+            "subtitle": "Natives Olivenöl Extra",
+            "description": "Ausgewogene Mischung, ideal zum rohen Verzehr und zum Kochen.",
+            "badge": "KLASSIKER"
+        },
+        "fruttato-intenso": {
+            "title": "Natives Olivenöl Extra - Intensivfruchtig",
+            "subtitle": "Natives Olivenöl Extra",
+            "description": "Kräftiger Geschmack, mit präsenteren bitteren und scharfen Noten.",
+            "badge": "KLASSIKER"
+        },
+        "tartufo": {
+            "title": "Natives Olivenöl Extra - Trüffel",
+            "subtitle": "Aromatisiertes natives Olivenöl extra",
+            "description": "Perfekt zu Eiern, Kartoffeln, Carpaccio.",
+            "badge": "AROMATISIERT"
+        },
+        "peperoncino": {
+            "title": "Natives Olivenöl Extra - Chili",
+            "subtitle": "Aromatisiertes natives Olivenöl extra",
+            "description": "Saubere Schärfe, hervorragend auf Pizza und Pasta.",
+            "badge": "AROMATISIERT"
+        },
+        "vino": {
+            "title": "Vino Vittoria",
+            "subtitle": "100% Sangiovese",
+            "description": "Ein Rotwein mit Charakter, ein Ausdruck unseres Territoriums.",
+            "badge": "NEU"
+        }
+    },
+    "ShopPage": {
+        "header": {
+            "label": "Shop",
+            "title_part1": "Alle ",
+            "title_italic": "Produkte",
+            "description": "Auswahl unserer nativen Olivenöle extra, erhältlich in verschiedenen Größen und Verpackungen."
+        },
+        "categories": {
+            "all": "Alle",
+            "fruttato": "Fruchtig",
+            "igp": "g.g.A.",
+            "bio": "Bio",
+            "aromatico": "Aromatisiert"
+        },
+        "empty": {
+            "text": "Keine Produkte in dieser Kategorie gefunden.",
+            "reset": "Alle Produkte anzeigen"
+        },
+        "info": {
+            "shipping": "Kostenloser Versand ab einem Bestellwert von 50 €",
+            "notes": "Die Preise sind Richtwerte und enthalten keine Mehrwertsteuer. Kontaktieren Sie uns für individuelle Bestellungen."
+        },
+        "filters": {
+            "from": "Ab "
+        }
+    },
+    "HomePage": {
+        "HeroCarousel": {
+            "sr_title": "Ölmühle und Produktion: Geschichte, Produkte und moderne Tradition",
+            "slides": {
+                "storia": {
+                    "title": "Unsere Geschichte",
+                    "excerpt": "Familiäre Wurzeln, alte Gesten und eine zeitgemäße Vision: Entdecken Sie, wie unsere Identität entsteht.",
+                    "cta": "Mehr lesen",
+                    "alt": "Olivenbäume bei Sonnenuntergang und ländliche Landschaft"
+                },
+                "oli": {
+                    "title": "Unsere Öle",
+                    "excerpt": "Eine Auswahl unserer besten Öle, geliebt und ausgezeichnet: Qualität, Ausgewogenheit und Charakter.",
+                    "cta": "Entdecken",
+                    "alt": "Grüne Oliven in der Hand (Ernte)"
+                },
+                "tradizione": {
+                    "title": "Moderne Tradition",
+                    "excerpt": "Moderne Techniken, Respekt vor Rohstoffen und handwerkliche Sorgfalt: Die Zukunft beginnt auf dem Land.",
+                    "cta": "Mehr erfahren",
+                    "alt": "Detail einer Ölmühle oder handwerklichen Verarbeitung"
+                }
+            },
+            "aria": {
+                "prev": "Vorheriger Slide",
+                "next": "Nächster Slide",
+                "go_to": "Gehe zum Slide",
+                "main_sections": "Hauptbereiche Hero",
+                "hero_highlight": "Besonderes Hero"
+            }
+        },
+        "HeroSplitEvo": {
+            "label": "NATIVES OLIVENÖL EXTRA — EVO",
+            "title": "EVO, genau richtig für jeden Tag.",
+            "description": "Das klassische EVO für jeden Tag. Qualität, Eleganz und reiner Geschmack: eine Flasche, die in der Küche und auf dem Tisch gut aussieht.",
+            "buy_btn": "EVO kaufen",
+            "explore_btn": "Shop erkunden"
+        },
+        "ShopHighlights": {
+            "label": "Shop",
+            "title_part1": "Am meisten ",
+            "title_italic": "gekauft",
+            "subtitle": "Bestseller-Produkte aus unserem Katalog.",
+            "cta": "Zum Shop",
+            "add": "HINZUFÜGEN",
+            "from": "Ab ",
+            "iva": "+ MwSt."
+        },
+        "BioMethod": {
+            "label": "BIO-METHODE",
+            "title": "Kleiner Maßstab. Kontrollierte Qualität.",
+            "description": "Ein handwerkliches Öl entsteht nicht an einer industriellen Linie: Es entsteht durch das richtige Timing, kleine Chargen und konstante Aufmerksamkeit.",
+            "points": {
+                "control": "Echte Kontrolle",
+                "control_text": " über jeden Schritt",
+                "aroma": "Intakte Aromen",
+                "aroma_text": " dank schonender Verarbeitung",
+                "stability": "Stabilität",
+                "stability_text": " durch geschützte Lagerung"
+            },
+            "cta_prod": "Produktion entdecken",
+            "cta_oil": "Ölqualitäten",
+            "card_header": {
+                "label": "PRODUKTIONSCHARTA",
+                "title": "BIO-Methode – Handwerklich",
+                "subtitle": "Qualität aus kurzer Lieferkette, nicht aus industriellen Mengen."
+            },
+            "specs": {
+                "prod": "Produktion",
+                "prod_val": "Kleine Chargen",
+                "work": "Verarbeitung",
+                "work_val": "Temp. kontrolliert",
+                "chain": "Lieferkette",
+                "chain_val": "Rückverfolgbarkeit",
+                "storage": "Lagerung",
+                "storage_val": "Stahl • Dunkel"
+            },
+            "process": {
+                "label": "PROZESS",
+                "step1_title": "Selektive Ernte",
+                "step1_text": "Sorgfalt für die Frucht und schnelle Lieferung",
+                "step2_title": "Kaltpressung",
+                "step2_text": "Präzise Verarbeitung zur Schonung der Aromen",
+                "step3_title": "Saubere Trennung",
+                "step3_text": "Kontrolle für ein klares sensorisches Profil",
+                "step4_title": "Geschützte Konservierung",
+                "step4_text": "Stahl und stabile Bedingungen"
+            },
+            "guarantees": {
+                "non_industrial": "Nicht industriell",
+                "non_industrial_text": "Qualität vor Quantität",
+                "fresh": "Frisch und Rein",
+                "fresh_text": "Lebendiges und aromatisches Öl",
+                "control": "Totale Kontrolle",
+                "control_text": "Jede Phase sorgfältig gepflegt"
+            },
+            "footer": "BIO • HANDWERKLICHE PRODUKTION",
+            "details": "Details"
+        },
+        "Discover": {
+            "label": "Erkunden",
+            "title": "Entdecken Sie die Ölmühle Del Pasqua",
+            "cards": {
+                "produzione": {
+                    "title": "PRODUKTION",
+                    "subtitle": "Vom Feld zur Mühle"
+                },
+                "olio": {
+                    "title": "UNSER ÖL",
+                    "subtitle": "Native Qualität Extra"
+                },
+                "contatti": {
+                    "title": "KONTAKTE",
+                    "subtitle": "Besuchen Sie uns"
+                }
+            }
+        },
+        "HeritageBridge": {
+            "label": "TRADITION & KONTROLLE",
+            "title_part1": "Eine visuelle Brücke zwischen alten Gesten",
+            "title_italic": "und moderner Präzision.",
+            "subtitle": "Bilder, die von Handwerkskunst, Rohstoffen und Kontrolle erzählen.",
+            "cta": "Geschichte & Territorium",
+            "tradition": {
+                "label": "TRADITION",
+                "title": "Menschliche Geste, richtiges Timing",
+                "text": "Ernte, Aufmerksamkeit, Sorgfalt: Qualität entsteht vor der Mühle.",
+                "tag1": "Kurze Kette",
+                "tag2": "Kleiner Maßstab"
+            },
+            "control": {
+                "label": "KONTROLLE",
+                "title": "Präzision ohne Industrielles",
+                "text": "Ernte, Aufmerksamkeit, Sorgfalt: Qualität entsteht vor der Mühle.",
+                "tag1": "Erhalt Erhalt Frische",
+                "tag2": "Sauberes Profil"
+            }
+        }
+    },
+    "StoriaPage": {
+        "header": {
+            "subtitle": "Geschichte",
+            "title_part1": "Unsere ",
+            "title_italic": "Geschichte",
+            "description": "Das Unternehmen Del Pasqua entstand in den 1960er Jahren aus der Arbeit des Vaters Sabatino. Im Laufe der Jahre trat auch sein Sohn Emanuele in den Familienbetrieb ein, mit dem Ziel, die Diversifizierung zu stärken, auf die Qualität der Produkte zu setzen und so dem Unternehmen neue Absatzmärkte und Richtungen zu eröffnen."
+        },
+        "section1": {
+            "subtitle": "Unsere Olivenhaine",
+            "title_part1": "Tradition und Innovation ",
+            "title_italic": "im Grünen",
+            "p1": "Unsere Olivenhaine erstrecken sich über 4 Hektar, aufgeteilt auf die für unsere Gebiete typischen Sorten: Leccino, Frantoiane und Moraiolo.",
+            "p2": "Unter Beachtung des traditionellen Anbaus, aber mit modernen und innovativen Techniken, wurden nuove Olivenbäume gepflanzt, deren Zustand ständig von einem Agronomen überwacht wird, der den Reifegrad der Oliven bewertet.",
+            "stats": {
+                "hectares": "Hektar",
+                "cultivars": "Sorten",
+                "years": "Jahre"
+            }
+        },
+        "section2": {
+            "subtitle": "Unsere Ernte",
+            "title_part1": "Seit Oktober mit ",
+            "title_italic": "Leidenschaft",
+            "p1": "Wir warten immer auf den Oktober für die Ernte und haben Freude an unserer Arbeit. Heute haben wir ein großes Ziel erreicht: Unsere Produkte werden lokal und international geschätzt.",
+            "p2": "Seit einigen Jahren exportiert das Unternehmen seine Produkte stabil in die Vereinigten Staaten. Das Olivenöl extra vergine \"Il Magnifico\" genießt eine immer höhere Anerkennung auf dem Markt.",
+            "badge": "USA Export"
+        },
+        "philosophy": {
+            "subtitle": "Philosophie",
+            "title_part1": "Toskanische Aromen mit Respekt für ",
+            "title_italic": "die Umwelt",
+            "description": "Eine Familiengeschichte, geduldige Arbeit und ständige Sorgfalt: Qualität entsteht aus der Summe kleiner Gesten, die jedes Jahr gut wiederholt werden.",
+            "tags": {
+                "tradition": "Tradition",
+                "innovation": "Innovation",
+                "quality": "Qualität"
+            }
+        }
+    },
+    "ProduzionePage": {
+        "hero": {
+            "label": "Mühle",
+            "title_part1": "Das Herz",
+            "title_italic": "unserer Qualität",
+            "description": "In der Mühle zählt jedes Detail: von der Reinigung der Oliven über die kontrollierte Malaxation bis hin zur Extraktion und Lagerung. Hier arbeiten Technologie und handwerkliche Sorgfalt zusammen, um Frische, Aromen und Stabilität zu bewahren.",
+            "tag1": "Kaltextraktion",
+            "tag2": "IGP-zertifiziert",
+            "img_alt": "Frantoio del Pasqua - Außenansicht"
+        },
+        "machines": {
+            "label": "Maschinen & Linien",
+            "title_part1": "Moderne Anlagen,",
+            "title_italic": "kontrollierter Prozess",
+            "subtitle": "Blattentfernung, Mahlen, Kneten, Extraktion, Trennung und Filtration: Jede Phase ist darauf ausgelegt, Aromen und Stabilität zu bewahren.",
+            "defogliazione": {
+                "title": "Blattentfernung",
+                "desc": "Entfernung von Blättern und Verunreinigungen, schonende Waschung."
+            },
+            "frangitura": {
+                "title": "Mahlen",
+                "desc": "Schnelles Mahlen zur Minimierung von Erwärmung und Oxidation."
+            },
+            "gramolazione": {
+                "title": "Malaxation",
+                "desc": "Langsames Mischen, um Mikrotropfen Öl zu verbinden."
+            },
+            "estrazione": {
+                "title": "Extraktion",
+                "desc": "Trennung ohne thermischen Stress, überwachte Parameter."
+            },
+            "separazione": {
+                "title": "Trennung",
+                "desc": "Verfeinerung und Klärung des Öls."
+            },
+            "filtrazione": {
+                "title": "Filtration",
+                "desc": "Stabilität über die Zeit und sauberes Profil."
+            }
+        },
+        "showcase": {
+            "trasporto": {
+                "kicker": "TRANSPORT",
+                "title": "Sauberkeit und Stabilität",
+                "text": "Innerhalb der Mühle erfolgt der Transport des Öls ausschließlich in Edelstahlbehältern. Kunststoff ist streng verboten, da er dem Öl Beigeschmäcker verleiht und Geschmack sowie Geruch beeinträchtigt.",
+                "img_label": "BILD — FILTRATION"
+            },
+            "stoccaggio": {
+                "kicker": "Lagerung",
+                "title": "Lagerung unter Stickstoff",
+                "text": "Platz für Informationen zur Lagerung in Silos, Temperaturkontrolle und Schutz vor Oxidation zur Erhaltung von Aromen und Polyphenolen.",
+                "img_label": "BILD — LAGERUNG"
+            },
+            "imbottigliamento": {
+                "kicker": "Abfüllung",
+                "title": "Abfüll- und Verpackungslinie",
+                "text": "Beschreibung der Linie, Formate, Etikettierung und Verpackung. Ideal ist ein großes Foto der Linie.",
+                "tag1": "Variable Formate",
+                "tag2": "Präzise Etikettierung",
+                "img_label": "BILD — ABFÜLLLINIE"
+            },
+            "controllo": {
+                "kicker": "Kontrolle",
+                "title": "Qualität und Rückverfolgbarkeit",
+                "text": "Angaben zu Kontrollen, Chargenrückverfolgbarkeit, Liefermanagement und (falls vorhanden) eine kleine Labor-/Verkostungsecke.",
+                "list1": "Sensorische Analyse",
+                "list2": "Vollständige Rückverfolgbarkeit",
+                "list3": "Aktuelle Zertifizierungen",
+                "img_label": "BILD — QUALITÄTSKONTROLLE / RÜCKVERFOLGBARKEIT"
+            }
+        },
+        "technology": {
+            "label": "Die Mühle",
+            "title_part1": "Technologie, Sorgfalt",
+            "title_italic": "und Rückverfolgbarkeit",
+            "description": "In unserer Mühle ist jede Phase darauf ausgelegt, Aromen und Polyphenole zu schützen: schnelle Anlieferung, gründliche Reinigung, Kaltextraktion und Lagerung unter kontrollierten Bedingungen.",
+            "checks": {
+                "chain": {
+                    "title": "Kurze Kette",
+                    "desc": "Von der Ernte bis zum Mahlen in kürzester Zeit."
+                },
+                "clean": {
+                    "title": "Reinigung und Auswahl",
+                    "desc": "Blattentfernung und Waschen zur Beseitigung von Verunreinigungen."
+                },
+                "extraction": {
+                    "title": "Kaltextraktion",
+                    "desc": "Kontrollierter Prozess zur Bewahrung von Qualität und Aromen."
+                },
+                "storage": {
+                    "title": "Lagerung unter Stickstoff",
+                    "desc": "Schutz vor Oxidation vor der Abfüllung."
+                }
+            },
+            "cards": {
+                "molitura": {
+                    "title": "Lohnmahlung für Dritte",
+                    "text": "Mahlen und Verpacken mit Chargenrückverfolgbarkeit.",
+                    "badge": "Dienstleistungen"
+                },
+                "conferimento": {
+                    "title": "Olivenanlieferung",
+                    "text": "Annahme und Verwaltung mit Priorität auf Frische.",
+                    "badge": "Betrieb"
+                },
+                "controlli": {
+                    "title": "Qualitätskontrollen",
+                    "text": "Überwachung der Prozess- und Lagerparameter.",
+                    "badge": "Qualität"
+                },
+                "visite": {
+                    "title": "Besichtigungen & Verkostungen",
+                    "text": "Besuchstermine, um die Verarbeitungsphasen zu entdecken.",
+                    "badge": "Erlebnis"
+                }
+            }
+        },
+        "steps_section": {
+            "label": "Produktion",
+            "title_part1": "Vom Feld zur",
+            "title_italic": "Mühle",
+            "subtitle": "Ernte, Verarbeitung und Zertifizierungen: Die Phasen, die die Qualität unseres Olivenöls bestimmen."
+        },
+        "steps": {
+            "brucatura": {
+                "kicker": "ERNTE",
+                "title": "Handpflückung",
+                "paragraphs": [
+                    "Auch heute noch erfolgt in der Toskana ein Großteil der Olivenernte traditionell per Handpflückung. Die zur Mühle transportierten Oliven werden dann innerhalb von 24 Stunden verarbeitet, um die Integrität der aromatischen und phenolischen Komponenten zu bewahren. Das Frantoio del Pasqua ist mit einer modernen Alfalaval-Olivenverarbeitungsanlage mit Kaltextraktion ausgestattet."
+                ],
+                "placeholder": "BILD — ERNTE"
+            },
+            "imbottigliamento": {
+                "kicker": "ANLAGE",
+                "title": "Die Abfülllinie",
+                "paragraphs": [
+                    "Die Anlage ist mit einer Linie zum Abfüllen und Verpacken sowie einer Stickstofflagerung ausgestattet, um die organoleptischen Eigenschaften unseres Öls 'Il Magnifico' bis zur Abfüllung zu garantieren.",
+                    "Aber wir machen hier nicht halt: Wir führen auch Mahl- und Verpackungsprozesse für Dritte durch."
+                ],
+                "placeholder": "BILD — LINIE"
+            },
+            "evo": {
+                "kicker": "QUALITÄT",
+                "title": "Unser EVO-Öl",
+                "paragraphs": [
+                    "All diese Faktoren sind eine absolute Garantie für die Produktion von extra nativem Olivenöl höchster Qualität, das die Frische und Aromen von frisch gepresstem Öl länger bewahren kann."
+                ],
+                "placeholder": "BILD — EVO"
+            },
+            "igp_bio": {
+                "kicker": "ZERTIFIZIERUNGEN",
+                "title": "IGP UND BIO",
+                "paragraphs": [
+                    "Das Frantoio del Pasqua ist durch Suolo e Salute für die Verarbeitung und Produktion von Bio-Produkten zertifiziert und beim Konsortium für toskanisches Öl für die Produktion von nativem Olivenöl extra IGP Toscano registriert."
+                ],
+                "placeholder": "BILD — IGP/BIO"
+            }
+        },
+        "shared": {
+            "machine": "Maschine"
+        }
+    },
+    "OlioPage": {
+        "header": {
+            "label": "Unser Öl",
+            "title_part1": "Unser",
+            "title_italic": "EVO-Öl"
+        },
+        "sections": {
+            "intro": {
+                "title": "Unser EVO-Öl",
+                "body": [
+                    "Unser italienisches natives Olivenöl extra stammt nicht nur von Oliven, die unter Respekt für die Umwelt angebaut wurden, sondern alle Verarbeitungsschritte unterliegen dem Kontrollsystem anerkannter Stellen, um dem Endverbraucher ein natürliches, kontrolliertes und zertifiziertes Produkt zu garantieren."
+                ],
+                "placeholder": "BILD — INTRO"
+            },
+            "fruttato_leggero": {
+                "short_title": "Milde Fruchtigkeit",
+                "title": "Extra Natives Olivenöl - Mild-fruchtig",
+                "body": [
+                    "Zartes und harmonisches Profil: leichte Bitterkeit und Schärfe, mit grasigen Nuancen und weichen Noten.",
+                    "Ideal roh zu leichten Gerichten, Fisch, Gemüse und Salaten."
+                ],
+                "formats": [
+                    "Flasche: 250/500/750ml",
+                    "Kanister: 1/3/5L"
+                ],
+                "placeholder": "BILD — LEICHT FRUCHTIG"
+            },
+            "fruttato_intenso": {
+                "short_title": "Intensive Fruchtigkeit",
+                "title": "Extra Natives Olivenöl - Intensiv-fruchtig",
+                "body": [
+                    "Mit einem kräftigen, aber ausgewogenen Geschmack; Bitterkeit und Schärfe liegen auf einem mittelhohen Niveau, mit einem Nachgeschmack von Artischocke, leuchtend grüne Farbe.",
+                    "Die Ernte erfolgt vor der vollständigen Reifung."
+                ],
+                "formats": [
+                    "Flasche: 250/500/750ml",
+                    "Kanister: 1/3/5L"
+                ],
+                "placeholder": "BILD — INTENSIV FRUCHTIG"
+            },
+            "fruttato_medio": {
+                "short_title": "Mittlere Fruchtigkeit",
+                "title": "Extra Natives Olivenöl - Mittelfruchtig",
+                "body": [
+                    "Mischung aus Leccino-, Frantoio- und Moraiolo-Oliven; ausgewogen in Schärfe und Bitterkeit, mit Noten von Mandel und einem leichten Grasgeschmack.",
+                    "Grüne Farbe mit gelben Adern."
+                ],
+                "formats": [
+                    "Flasche: 250/500/750/1000ml",
+                    "Kanister: 1/3/5L"
+                ],
+                "placeholder": "BILD — MITTEL FRUCHTIG"
+            },
+            "evo": {
+                "short_title": "EVO",
+                "title": "Extra Natives Olivenöl - EVO",
+                "body": [
+                    "Aus der Auswahl der besten Oliven entsteht unser 'EVO'-Öl, kalt extrahiert nach traditionellen Prinzipien und mit Blick auf Innovation. Leuchtend grüne Farbe und grasiger Duft mit Mandelnoten."
+                ],
+                "formats": [
+                    "Flasche: 500ml"
+                ],
+                "placeholder": "BILD — EVO"
+            },
+            "aromatico": {
+                "short_title": "Aromatisiert",
+                "title": "Aromatisierte Öle",
+                "body": [
+                    "Unsere spezielle Auswahl an aromatisierten Ölen.",
+                    "Verfügbare Varianten: Trüffel, Chili und Zitrone."
+                ],
+                "formats": [
+                    "Flasche: 250ml"
+                ],
+                "placeholder": "BILD — AROMATISIERT"
+            }
+        },
+        "sidebar": {
+            "id_label": "Index",
+            "note_label": "Hinweis",
+            "note_text1": "Beschreibender Abschnitt: Bilder befinden sich in"
+        },
+        "trust_bar": {
+            "text": "QUALITÄT • TRADITION • INNOVATION",
+            "badge": "KALT EXTRAHIERTE AUSWAHL"
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "label": "Kontakt",
+            "title_part1": "Wir sind ",
+            "title_italic": "hier",
+            "description": "Für geschäftliche Anfragen, Produktinformationen oder Kooperationen schreiben Sie uns oder rufen Sie uns an.",
+            "pills": {
+                "response": "SCHNELLE ANTWORT",
+                "support": "BESTELLUNGS-SUPPORT",
+                "b2b": "B2B-ANFRAGEN"
+            }
+        },
+        "info": {
+            "company_label": "Unternehmen",
+            "address_label": "Adresse",
+            "phone_label": "Telefon",
+            "mobile_label": "Mobil",
+            "email_label": "E-Mail",
+            "docs_label": "Dokumente",
+            "docs_gender": "Gleichstellungspolitik",
+            "docs_privacy": "Datenschutz",
+            "social_label": "Soziale Medien"
+        },
+        "form": {
+            "label": "Schreiben Sie uns",
+            "title": "Nachricht senden",
+            "subtitle": "Füllen Sie das Formular aus: wir antworten so schnell wie möglich.",
+            "name_label": "Name",
+            "name_placeholder": "Ihr Name",
+            "email_label": "E-Mail",
+            "subject_label": "Betreff",
+            "subject_placeholder": "Z.B. Produktinfo / Bestellung / B2B",
+            "message_label": "Nachricht",
+            "message_placeholder": "Schreiben Sie hier...",
+            "privacy_consent": "Ich stimme der Verarbeitung meiner Daten zu und erkläre, die Datenschutzbestimmungen gelesen zu haben",
+            "success_msg": "Nachricht gesendet. Wir antworten Ihnen so schnell wie möglich.",
+            "error_prefix": "Fehler",
+            "error_fallback": "Senden fehlgeschlagen.",
+            "button_idle": "NACHRICHT SENDEN",
+            "button_sending": "SENDEN..."
+        },
+        "map": {
+            "label": "Wo wir sind",
+            "button": "In Maps öffnen"
+        }
+    }
+}

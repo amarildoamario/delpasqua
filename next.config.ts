@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const isProd = process.env.NODE_ENV === "production";
 
 const securityHeaders = [
@@ -64,6 +66,23 @@ const nextConfig: NextConfig = {
   // toglie "X-Powered-By: Next.js"
   poweredByHeader: false,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+    ],
+  },
+
   async headers() {
     return [
       // Applica headers a tutto (pagine + api)
@@ -75,4 +94,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

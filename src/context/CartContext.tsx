@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import type { CartLine } from "@/lib/shopTypes";
 
 type CartState = {
@@ -21,12 +28,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   // ✅ Carica dal localStorage SOLO dopo mount (client)
+  // Fix lint: evita setState sincrono nel body dell'effect
   useEffect(() => {
-    setHydrated(true);
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw) setLines(JSON.parse(raw) as CartLine[]);
-    } catch {}
+    queueMicrotask(() => {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) {
+          setLines(JSON.parse(raw) as CartLine[]);
+        }
+      } catch { }
+      setHydrated(true);
+    });
   }, []);
 
   // ✅ Salva SOLO dopo che abbiamo idratato (evita sovrascrivere subito con [])
@@ -34,10 +46,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!hydrated) return;
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(lines));
-    } catch {}
+    } catch { }
   }, [hydrated, lines]);
 
-  const add = (line: CartLine) => {
+  const add = useCallback((line: CartLine) => {
     setLines((prev) => {
       const idx = prev.findIndex(
         (l) => l.productId === line.productId && l.variantId === line.variantId
@@ -49,29 +61,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, line];
     });
-  };
+  }, []);
 
-  const remove = (productId: string, variantId: string) => {
+  const remove = useCallback((productId: string, variantId: string) => {
     setLines((prev) =>
       prev.filter((l) => !(l.productId === productId && l.variantId === variantId))
     );
-  };
+  }, []);
 
-  const setQty = (productId: string, variantId: string, qty: number) => {
+  const setQty = useCallback((productId: string, variantId: string, qty: number) => {
     const q = Math.max(1, Math.min(99, qty));
     setLines((prev) =>
       prev.map((l) =>
         l.productId === productId && l.variantId === variantId ? { ...l, qty: q } : l
       )
     );
-  };
+  }, []);
 
-  const clear = () => {
-  setLines([]);
-  try {
-    localStorage.removeItem(LS_KEY);
-  } catch {}
-};
+  const clear = useCallback(() => {
+    setLines([]);
+    try {
+      localStorage.removeItem(LS_KEY);
+    } catch { }
+  }, []);
 
   // ✅ count coerente con l'hydration: finché non hydrated, count = 0
   const count = useMemo(
@@ -89,7 +101,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clear,
       count,
     }),
-    [hydrated, lines, count]
+    [hydrated, lines, count, add, remove, setQty, clear]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

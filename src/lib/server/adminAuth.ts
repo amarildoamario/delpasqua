@@ -3,6 +3,35 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
+import type { AdminSession } from "@/generated/prisma";
+
+// ─── Session cache (in-memory, TTL 30s) ──────────────────────────────────────
+// Elimina 2-3 query DB per ogni richiesta admin nella finestra di cache.
+interface SessionCacheEntry {
+  session: AdminSession;
+  cachedAt: number;
+}
+
+const SESSION_CACHE_TTL_MS = 30_000; // 30 secondi
+const sessionCache = new Map<string, SessionCacheEntry>();
+
+function sessionCacheGet(tokenHash: string): AdminSession | null {
+  const entry = sessionCache.get(tokenHash);
+  if (!entry) return null;
+  if (Date.now() - entry.cachedAt > SESSION_CACHE_TTL_MS) {
+    sessionCache.delete(tokenHash);
+    return null;
+  }
+  return entry.session;
+}
+
+function sessionCacheSet(tokenHash: string, session: AdminSession) {
+  sessionCache.set(tokenHash, { session, cachedAt: Date.now() });
+}
+
+function sessionCacheInvalidate(tokenHash: string) {
+  sessionCache.delete(tokenHash);
+}
 
 /**
  * P0.07/P0.07b
@@ -65,10 +94,16 @@ function csrfCookieOptions() {
   };
 }
 
-export async function createAdminSession(params: {
-  ipAddress?: string;
-  userAgent?: string;
-}) {
+/** ✅ helper: evita TS2339 su errori unknown */
+type ErrWithStatus = { status?: unknown; statusCode?: unknown };
+function getErrStatus(e: unknown, fallback = 403) {
+  if (typeof e !== "object" || e === null) return fallback;
+  const o = e as ErrWithStatus;
+  const s = o.status ?? o.statusCode;
+  return typeof s === "number" ? s : fallback;
+}
+
+export async function createAdminSession(params: { ipAddress?: string; userAgent?: string }) {
   const token = randomToken(48);
   const csrf = randomToken(32);
   const now = new Date();
@@ -91,6 +126,8 @@ export async function createAdminSession(params: {
 
 export async function revokeAdminSessionByToken(rawToken: string) {
   const tokenHash = sha256Hex(rawToken);
+  // Invalida subito la cache al logout
+  sessionCacheInvalidate(tokenHash);
   await prisma.adminSession.updateMany({
     where: { tokenHash, revokedAt: null },
     data: { revokedAt: new Date() },
@@ -99,6 +136,11 @@ export async function revokeAdminSessionByToken(rawToken: string) {
 
 export async function validateAdminSessionByToken(rawToken: string) {
   const tokenHash = sha256Hex(rawToken);
+
+  // Controlla la cache prima di andare al DB
+  const cached = sessionCacheGet(tokenHash);
+  if (cached) return cached;
+
   const now = new Date();
   const session = await prisma.adminSession.findFirst({
     where: {
@@ -107,31 +149,31 @@ export async function validateAdminSessionByToken(rawToken: string) {
       expiresAt: { gt: now },
     },
   });
+
+  if (session) sessionCacheSet(tokenHash, session);
   return session;
 }
 
-async function rotateSessionIfNeeded(sessionId: string) {
-  const session = await prisma.adminSession.findUnique({ where: { id: sessionId } });
-  if (!session || session.revokedAt) return null;
-
+async function rotateSessionIfNeeded(session: AdminSession) {
   const now = new Date();
   const rotatedAt = session.rotatedAt ?? session.createdAt;
   const ageSeconds = Math.floor((now.getTime() - rotatedAt.getTime()) / 1000);
 
   if (ageSeconds < ROTATE_EVERY_SECONDS) {
-    await prisma.adminSession.update({
-      where: { id: sessionId },
-      data: { lastUsedAt: now },
-    });
+    // Aggiorna lastUsedAt solo se la cache è scaduta (max 1 query ogni 30s)
+    // Nessuna query se la sessione è in cache
     return null;
   }
+
+  // Invalida la vecchia cache prima di ruotare
+  sessionCacheInvalidate(session.tokenHash);
 
   const newToken = randomToken(48);
   const newCsrf = randomToken(32);
   const expiresAt = new Date(now.getTime() + SESSION_TTL_SECONDS * 1000);
 
   await prisma.adminSession.update({
-    where: { id: sessionId },
+    where: { id: session.id },
     data: {
       tokenHash: sha256Hex(newToken),
       csrfHash: sha256Hex(newCsrf),
@@ -175,13 +217,10 @@ export function enforceAdminCsrf(req: Request) {
   }
 }
 
-
-export async function requireAdminApi(
-  req: Request,
-  opts?: { csrf?: boolean }
-) {
+export async function requireAdminApi(req: Request, opts?: { csrf?: boolean }) {
   const cookieHeader = req.headers.get("cookie") || "";
   const sessionToken = parseCookie(cookieHeader, ADMIN_SESSION_COOKIE);
+
   if (!sessionToken) {
     return {
       ok: false as const,
@@ -198,38 +237,38 @@ export async function requireAdminApi(
   }
 
   // CSRF check (double submit)
- // CSRF check (double submit)
-if (opts?.csrf !== false) {
-  try {
-    enforceAdminCsrf(req);
-  } catch (e: any) {
-    const status = typeof e?.status === "number" ? e.status : 403;
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Forbidden" }, { status }),
-    };
-  }
+  if (opts?.csrf !== false) {
+    try {
+      enforceAdminCsrf(req);
+    } catch (e: unknown) {
+      const status = getErrStatus(e, 403);
+      return {
+        ok: false as const,
+        response: NextResponse.json({ error: "Forbidden" }, { status }),
+      };
+    }
 
-  const cookieHeader = req.headers.get("cookie") || "";
-  const csrfCookie = parseCookie(cookieHeader, ADMIN_CSRF_COOKIE);
-  const csrfHeader = req.headers.get("x-csrf-token") || "";
-  if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
-    };
-  }
-  if (sha256Hex(csrfCookie) !== session.csrfHash) {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
-    };
-  }
-}
+    const cookieHeader2 = req.headers.get("cookie") || "";
+    const csrfCookie = parseCookie(cookieHeader2, ADMIN_CSRF_COOKIE);
+    const csrfHeader = req.headers.get("x-csrf-token") || "";
 
+    if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+      return {
+        ok: false as const,
+        response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
+      };
+    }
+
+    if (sha256Hex(csrfCookie) !== session.csrfHash) {
+      return {
+        ok: false as const,
+        response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
+      };
+    }
+  }
 
   // rotation
-  const rotated = await rotateSessionIfNeeded(session.id);
+  const rotated = await rotateSessionIfNeeded(session);
 
   const attach = (res: NextResponse) => {
     if (rotated) {
@@ -251,6 +290,7 @@ if (opts?.csrf !== false) {
 export async function requireAdminPage(_nextPathWithSearch: string) {
   // ✅ FIX TS: cookies() può essere Promise in base alla versione di Next typings
   const c = await cookies();
+  void _nextPathWithSearch;
 
   const token = c.get(ADMIN_SESSION_COOKIE)?.value || "";
   if (!token) return { ok: false as const };
@@ -258,7 +298,7 @@ export async function requireAdminPage(_nextPathWithSearch: string) {
   const session = await validateAdminSessionByToken(token);
   if (!session) return { ok: false as const };
 
-  const rotated = await rotateSessionIfNeeded(session.id);
+  const rotated = await rotateSessionIfNeeded(session);
   if (rotated) {
     c.set(ADMIN_SESSION_COOKIE, rotated.token, {
       ...cookieOptions(),
@@ -294,5 +334,6 @@ export const ADMIN_COOKIE = ADMIN_SESSION_COOKIE;
  * We no longer authenticate in edge middleware.
  */
 export function isAdminAuthed(_req: NextRequest) {
+  void _req;
   return false;
 }

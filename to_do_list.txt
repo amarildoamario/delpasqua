@@ -77,3 +77,11 @@ NEXT TASK (consigliata)
 4) P1.06 — security headers in prod
 5) P1.06b — rate limit distribuito (Redis/Upstash)
 6) P1.03 — refund flow completo Stripe
+
+
+
+secondo la bianca, come secondo la mi mamma, 
+nella pagina shop la navbar è bianca, lo sfondo della pagina è bianca e il footer è
+bianco. ci vuole qualche colore diverso. in più i bottoni nella home sistemare
+con il verde della bianca rgb(63, 99, 18) 50%, PRODOTTIsistemare anche il bottone 
+per selezionare la lingua che va dietro. 
