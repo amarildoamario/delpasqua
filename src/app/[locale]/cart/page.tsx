@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { track } from "@/lib/analytics/track";
 import { Tag, CheckCircle2 } from "lucide-react";
+import PaymentMethodsBadges from "@/components/PaymentMethodsBadges";
 
 // ✅ catalog per immagini/prezzi
 import products from "@/db/products.json";
@@ -556,7 +557,9 @@ export default function CartPage() {
                 >
                   {payLoading ? "Apertura checkout…" : "Vai al checkout"}
                 </button>
-
+                
+                <PaymentMethodsBadges className="mt-4" />
+                
                 <p className="mt-4 text-center text-[11px] text-zinc-400">
                   Pagamento sicuro tramite Stripe.<br />Riceverai conferma via email.
                 </p>

@@ -69,11 +69,12 @@ export default async function AdminExportsPage({
           cta="Scarica customers.csv"
         />
 
+
         <Card
-          title="Fatture (periodo)"
-          desc="PDF unico con una pagina per ordine (placeholder: struttura da definire)."
-          href={`/api/admin/invoices.pdf?mode=range&start=${startISO}&end=${endISO}`}
-          cta="Scarica fatture.pdf"
+          title="Fatture (periodo) — XML"
+          desc="Export XML (stessa logica già presente in admin: assegna numero fattura e marca INVOICE_EXPORTED)."
+          href={`/api/admin/invoices.xml?mode=range&start=${startISO}&end=${endISO}`}
+          cta="Scarica fatture.xml"
         />
 
         <Card
