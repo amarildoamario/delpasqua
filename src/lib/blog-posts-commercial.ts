@@ -10,7 +10,7 @@ export const postsCommerciali: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/fruttato-leggero-abbinamenti.jpg",
         category: "Consigli di acquisto",
         content: `## Sfatiamo un mito sull'olio buono
 
@@ -70,7 +70,7 @@ Un estratto delicato, perfetto per il pesce crudo, insalate fresche o per sforna
         updateDate: "2026-03-01",
         readingTime: "6 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/fruttato-intenso-quando-usarlo.jpg",
         category: "Consigli di acquisto",
         content: `## Come e quando usare l'Olio EVO Fruttato Intenso
 
@@ -143,7 +143,7 @@ Un fruttato intenso buono lo riconosci subito: profumo verde, gusto pieno, final
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Emanuele Del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1609763951640-c0d7bd98b257?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-nuovo-cose-e-quanto-dura.jpg",
         category: "Consigli di acquisto",
         content: `## Cos'è esattamente l'Olio Nuovo? 
 
@@ -194,7 +194,7 @@ Le bottiglie di olio appena franto sono limitate e disponibili solo per poche se
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Redazione Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1601055903647-8f1ea7ee3d51?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/tracciabilita-lotto-analisi-qualita.jpg",
         category: "Consigli di acquisto",
         content: `## Una Babele frastornante di sigle e acronimi
 
@@ -244,3 +244,5 @@ Dal nostro campo in Toscana al nostro frantoio a freddo. Tutto al passo corretto
     },
 
 ];
+
+

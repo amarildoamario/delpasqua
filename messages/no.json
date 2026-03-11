@@ -750,5 +750,80 @@
             "label": "Hvor vi er",
             "button": "Åpne i Maps"
         }
+    },
+    "Cart": {
+        "common": {
+            "product_fallback": "Produkt",
+            "discount_code_placeholder": "Rabattkode",
+            "apply": "Bruk",
+            "remove": "Fjern",
+            "subtotal": "Delsum",
+            "discount_with_code": "Rabatt ({code})",
+            "vat": "Mva.",
+            "vat_estimate": "Mva. 4 % (estimat)",
+            "shipping": "Frakt",
+            "shipping_estimate": "Frakt (estimat)",
+            "free": "Gratis",
+            "total": "Totalt",
+            "line_total": "Linjesum",
+            "per_item_with_price": "{price} / stk.",
+            "continue_shopping": "Fortsett å handle",
+            "quantity": "Antall"
+        },
+        "actions": {
+            "remove_product": "Fjern produkt",
+            "decrease_quantity": "Reduser antall",
+            "increase_quantity": "Øk antall"
+        },
+        "drawer": {
+            "eyebrow": "Handlekurv",
+            "title": "Produktene dine",
+            "close_cart": "Lukk handlekurv",
+            "close": "Lukk",
+            "free_shipping_above": "Gratis frakt over",
+            "free_shipping_missing": "Du mangler",
+            "free_shipping_active": "Gratis frakt aktiv!",
+            "items_count": "{count, plural, =0 {TOM} one {# PRODUKT} other {# PRODUKTER}}",
+            "clear": "Tøm",
+            "empty": "Handlekurven din er tom.",
+            "shipping_from": "Frakt fra {amount}",
+            "discounted_total": "Pris etter rabatt",
+            "redirecting": "Videresender...",
+            "go_to_checkout": "Gå til checkout",
+            "view_cart": "Se handlekurv",
+            "server_note": "Sluttsummen (mva. + frakt) blir kontrollert av serveren før betaling."
+        },
+        "page": {
+            "eyebrow": "Handlekurv",
+            "title": "Handlekurven din",
+            "back_to_shop": "Tilbake til shoppen",
+            "empty_state": "Handlekurven din er tom. Gå til <shop>shoppen</shop>.",
+            "open_product": "Åpne {title}",
+            "remove_from_cart_aria": "Fjern fra handlekurv",
+            "invalid_line": "Ugyldig linje: produkt eller variant ble ikke funnet i katalogen.",
+            "clear_cart": "Tøm handlekurv",
+            "summary": "Oversikt",
+            "opening_checkout": "Åpner checkout...",
+            "go_to_checkout": "Gå til checkout",
+            "secure_payment": "Sikker betaling via Stripe.",
+            "email_confirmation": "Du vil motta bekreftelse på e-post."
+        },
+        "errors": {
+            "promo_invalid": "Ugyldig kode.",
+            "promo_not_active": "Rabattkoden ble ikke funnet eller er ikke aktiv.",
+            "promo_invalid_discount": "Ugyldig rabattkode.",
+            "network_retry": "Nettverksfeil. Prøv igjen.",
+            "network": "Nettverksfeil.",
+            "empty_cart": "Handlekurven er tom.",
+            "invalid_products": "Det finnes ugyldige produkter i handlekurven. Tøm handlekurven og prøv igjen.",
+            "product_unavailable": "Produktet er ikke tilgjengelig.",
+            "too_many_requests": "For mange forespørsler. Prøv igjen om litt.",
+            "invalid_cart": "Ugyldig handlekurv.",
+            "order_creation": "Feil ved opprettelse av ordre.",
+            "invalid_server_response": "Ugyldig serversvar.",
+            "checkout_unavailable": "Checkout er ikke tilgjengelig.",
+            "missing_checkout_url": "Checkout-URL mangler.",
+            "checkout_generic": "Checkout-feil."
+        }
     }
 }

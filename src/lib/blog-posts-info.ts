@@ -10,7 +10,7 @@ export const postsInformativi: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1594391673891-9e8c467a57fa?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/polifenoli-e-perossidi.jpg",
         category: "Informazioni sull'olio EVO",
         content: `## Il malinteso più diffuso sull'olio EVO
 
@@ -82,7 +82,7 @@ references: [
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1579728036069-7c8add0ea1a9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/quanto-dura-olio-evo-moderna.png",
         category: "Conservazione",
         content: `## Perché l'olio si rovina
 
@@ -132,7 +132,7 @@ L'olio non deve stare *vicino ai fornelli*. Molte famiglie lasciano l'oliera pro
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/rancido-cause-prevenzione.jpg",
         category: "Difetti dell'olio EVO",
         content: 
         
@@ -207,7 +207,7 @@ references: [
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/colore-olio-verde-migliore.jpg",
         category: "Informazioni sull'olio EVO",
         content: `## Il mito del verde
 
@@ -273,7 +273,7 @@ references: [
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/crudo-vs-cottura-quando-usare-evo.jpg",
         category: "Consumo corretto",
         content: 
         
@@ -336,7 +336,7 @@ references: [
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Redazione Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/calorie-olio-evo-porzioni.jpg",
         category: "Salute & Benessere",
         content: `## Sì, l'olio fa calorie. E allora?
 
@@ -414,7 +414,7 @@ Un cucchiaio di olio EVO sull'insalata vale circa 100 kcal. Nello stesso tempo, 
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-evo-salute-scienza-polifenoli.jpg",
         category: "Salute & Benessere",
         content: `## L'oro liquido che fa bene al cuore
 
@@ -474,7 +474,7 @@ Ma c'è una fregatura, ed è enorme. Questa magia avviene **solo se l'olio è ve
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1579728036069-7c8add0ea1a9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/quanto-dura-olio-evo-moderna.png",
         category: "Conservazione",
         content: `## Errore 1: l'oliera accanto ai fornelli
 
@@ -521,7 +521,7 @@ Tenere un olio "di riserva" da 2 anni fa, pensandolo ancora buono. Verificate se
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/crudo-vs-cottura-quando-usare-evo.jpg",
         category: "Consumo corretto",
         content: 
         
@@ -573,3 +573,5 @@ Un EVO fresco e pulito cambia una zuppa, una verdura, un pane.
 ]
 },
 ];
+
+

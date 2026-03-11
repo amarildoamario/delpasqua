@@ -735,5 +735,80 @@
             "label": "Dove siamo",
             "button": "Apri su Maps"
         }
+    },
+    "Cart": {
+        "common": {
+            "product_fallback": "Prodotto",
+            "discount_code_placeholder": "Codice sconto",
+            "apply": "Applica",
+            "remove": "Rimuovi",
+            "subtotal": "Subtotale",
+            "discount_with_code": "Sconto ({code})",
+            "vat": "IVA",
+            "vat_estimate": "IVA 4% (stima)",
+            "shipping": "Spedizione",
+            "shipping_estimate": "Spedizione (stima)",
+            "free": "Gratis",
+            "total": "Totale",
+            "line_total": "Totale riga",
+            "per_item_with_price": "{price} / cad.",
+            "continue_shopping": "Continua lo shopping",
+            "quantity": "Quantità"
+        },
+        "actions": {
+            "remove_product": "Rimuovi prodotto",
+            "decrease_quantity": "Diminuisci quantità",
+            "increase_quantity": "Aumenta quantità"
+        },
+        "drawer": {
+            "eyebrow": "Carrello",
+            "title": "I tuoi prodotti",
+            "close_cart": "Chiudi carrello",
+            "close": "Chiudi",
+            "free_shipping_above": "Spedizione gratis sopra",
+            "free_shipping_missing": "Ti mancano",
+            "free_shipping_active": "Spedizione gratis attiva!",
+            "items_count": "{count, plural, =0 {VUOTO} one {# PRODOTTO} other {# PRODOTTI}}",
+            "clear": "Svuota",
+            "empty": "Il carrello è vuoto.",
+            "shipping_from": "Spedizione a partire da {amount}",
+            "discounted_total": "Totale scontato",
+            "redirecting": "Reindirizzo...",
+            "go_to_checkout": "Vai alla cassa",
+            "view_cart": "Visualizza carrello",
+            "server_note": "Il totale finale (IVA + spedizione) viene validato dal server prima del pagamento."
+        },
+        "page": {
+            "eyebrow": "Carrello",
+            "title": "Il tuo carrello",
+            "back_to_shop": "Torna allo shop",
+            "empty_state": "Il tuo carrello è vuoto. Vai allo <shop>shop</shop>.",
+            "open_product": "Apri {title}",
+            "remove_from_cart_aria": "Rimuovi dal carrello",
+            "invalid_line": "Riga non valida: prodotto o variante non trovati a catalogo.",
+            "clear_cart": "Svuota carrello",
+            "summary": "Riepilogo",
+            "opening_checkout": "Apertura checkout...",
+            "go_to_checkout": "Vai al checkout",
+            "secure_payment": "Pagamento sicuro tramite Stripe.",
+            "email_confirmation": "Riceverai conferma via email."
+        },
+        "errors": {
+            "promo_invalid": "Codice non valido.",
+            "promo_not_active": "Codice sconto non trovato o non attivo.",
+            "promo_invalid_discount": "Codice sconto non valido.",
+            "network_retry": "Errore di rete. Riprova.",
+            "network": "Errore di rete.",
+            "empty_cart": "Il carrello è vuoto.",
+            "invalid_products": "Nel carrello ci sono prodotti non validi. Svuota il carrello e riprova.",
+            "product_unavailable": "Prodotto non disponibile.",
+            "too_many_requests": "Troppe richieste. Riprova tra poco.",
+            "invalid_cart": "Carrello non valido.",
+            "order_creation": "Errore durante la creazione dell'ordine.",
+            "invalid_server_response": "Risposta server non valida.",
+            "checkout_unavailable": "Checkout non disponibile.",
+            "missing_checkout_url": "URL checkout mancante.",
+            "checkout_generic": "Errore checkout."
+        }
     }
 }

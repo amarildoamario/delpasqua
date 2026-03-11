@@ -735,5 +735,80 @@
             "label": "Where we are",
             "button": "Open on Maps"
         }
+    },
+    "Cart": {
+        "common": {
+            "product_fallback": "Product",
+            "discount_code_placeholder": "Discount code",
+            "apply": "Apply",
+            "remove": "Remove",
+            "subtotal": "Subtotal",
+            "discount_with_code": "Discount ({code})",
+            "vat": "VAT",
+            "vat_estimate": "VAT 4% (estimate)",
+            "shipping": "Shipping",
+            "shipping_estimate": "Shipping (estimate)",
+            "free": "Free",
+            "total": "Total",
+            "line_total": "Line total",
+            "per_item_with_price": "{price} / each",
+            "continue_shopping": "Continue shopping",
+            "quantity": "Quantity"
+        },
+        "actions": {
+            "remove_product": "Remove product",
+            "decrease_quantity": "Decrease quantity",
+            "increase_quantity": "Increase quantity"
+        },
+        "drawer": {
+            "eyebrow": "Cart",
+            "title": "Your products",
+            "close_cart": "Close cart",
+            "close": "Close",
+            "free_shipping_above": "Free shipping over",
+            "free_shipping_missing": "You need",
+            "free_shipping_active": "Free shipping active!",
+            "items_count": "{count, plural, =0 {EMPTY} one {# PRODUCT} other {# PRODUCTS}}",
+            "clear": "Clear",
+            "empty": "Your cart is empty.",
+            "shipping_from": "Shipping from {amount}",
+            "discounted_total": "Discounted total",
+            "redirecting": "Redirecting...",
+            "go_to_checkout": "Go to checkout",
+            "view_cart": "View cart",
+            "server_note": "The final total (VAT + shipping) is validated by the server before payment."
+        },
+        "page": {
+            "eyebrow": "Cart",
+            "title": "Your cart",
+            "back_to_shop": "Back to shop",
+            "empty_state": "Your cart is empty. Go to the <shop>shop</shop>.",
+            "open_product": "Open {title}",
+            "remove_from_cart_aria": "Remove from cart",
+            "invalid_line": "Invalid line: product or variant not found in the catalog.",
+            "clear_cart": "Clear cart",
+            "summary": "Summary",
+            "opening_checkout": "Opening checkout...",
+            "go_to_checkout": "Go to checkout",
+            "secure_payment": "Secure payment via Stripe.",
+            "email_confirmation": "You will receive confirmation by email."
+        },
+        "errors": {
+            "promo_invalid": "Invalid code.",
+            "promo_not_active": "Discount code not found or inactive.",
+            "promo_invalid_discount": "Invalid discount code.",
+            "network_retry": "Network error. Please try again.",
+            "network": "Network error.",
+            "empty_cart": "Cart is empty.",
+            "invalid_products": "There are invalid products in the cart. Clear the cart and try again.",
+            "product_unavailable": "Product unavailable.",
+            "too_many_requests": "Too many requests. Try again shortly.",
+            "invalid_cart": "Invalid cart.",
+            "order_creation": "Error while creating the order.",
+            "invalid_server_response": "Invalid server response.",
+            "checkout_unavailable": "Checkout unavailable.",
+            "missing_checkout_url": "Missing checkout URL.",
+            "checkout_generic": "Checkout error."
+        }
     }
 }

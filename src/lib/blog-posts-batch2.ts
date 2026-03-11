@@ -11,7 +11,7 @@ export const postsBatch2: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/acidi-grassi.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## I tre acidi grassi principali dell'EVO
 
@@ -61,7 +61,7 @@ Il profilo degli acidi grassi dipende da:
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1594391673891-9e8c467a57fa?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/polifenoli-e-perossidi.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Cos'è un perossido
 
@@ -106,7 +106,7 @@ Per questo il NP va sempre letto insieme ai **coefficienti K232 e K270** (che mi
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/k232.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Cosa sono i coefficienti di estinzione UV
 
@@ -161,7 +161,7 @@ Misura la curvatura dello spettro UV intorno a 270 nm. Un valore anomalo di ΔK 
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/gramolazione-aroma.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Cos'è la gramolazione
 
@@ -213,7 +213,7 @@ Il mastro oleario deve bilanciare due esigenze opposte:
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1579728036069-7c8add0ea1a9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/filtraggio-olio.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Cosa contiene un olio non filtrato
 
@@ -263,7 +263,7 @@ Un olio non filtrato **consumato nelle prime 4–6 settimane** dalla frangitura 
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/difetto-1.jpg",
         category: "Difetti dell'olio EVO",
         content: 
         
@@ -351,7 +351,7 @@ references: [
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/difetto-2.jpg",
         category: "Difetti dell'olio EVO",
         content: 
         
@@ -427,7 +427,7 @@ references: [
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/carpaccio.jpg",
         category: "Ricette e abbinamenti",
         content: `## Il pesce crudo non perdona
 
@@ -472,7 +472,7 @@ Il nostro fruttato leggero — ideale per i crudi di mare
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1542614050-61844b242eeb?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/carne-griglia.jpg",
         category: "Ricette e abbinamenti",
         content: `## Il contrasto che funziona
 
@@ -523,7 +523,7 @@ Il nostro fruttato intenso — la scelta della griglia
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-pizza.jpg",
         category: "Ricette e abbinamenti",
         content: `## L'olio nella pizza: due momenti diversi
 
@@ -561,7 +561,7 @@ Non abbiate paura di usarne: **un giro generoso** sul cornicione e sulla superfi
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Emanuele Del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/tracciabilita-prodotto.jpg",
         category: "Il nostro frantoio",
         content: `## La tracciabilità non è un optional
 
@@ -617,7 +617,7 @@ Le olive provengono esclusivamente dai nostri oliveti in Toscana. Non acquistiam
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Emanuele Del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-cambiamento.avif",
         category: "Il nostro frantoio",
         content: `## L'olio è un prodotto agricolo, non industriale
 
@@ -666,7 +666,7 @@ Anche a parità di olive, raccogliere a ottobre o a novembre cambia tutto: le ol
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/degustazione-olio.avif",
         category: "Il nostro frantoio",
         content: `## Cos'è l'oleoturismo
 
@@ -722,7 +722,7 @@ Disponibile tutto l'anno — con esperienza di raccolta in ottobre/novembre.
         updateDate: "2026-03-01",
         readingTime: "6 min",
         author: "Redazione Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1542614050-61844b242eeb?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/FAQ.jpg",
         category: "Informazioni sull'olio EVO",
         content: `## Sul gusto
 
@@ -813,3 +813,5 @@ references: [
     },
 
 ];
+
+

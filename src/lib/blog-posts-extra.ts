@@ -10,7 +10,7 @@ export const postsDifetti: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "6 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1594391673891-9e8c467a57fa?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/rancido-cause-prevenzione.jpg",
         category: "Difetti dell'olio EVO",
         content: `## Come si valutano i difetti
 
@@ -88,7 +88,7 @@ In un olio prodotto bene — olive sane, raccolte al momento giusto, molite in t
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/rancido-cause-prevenzione.jpg",
         category: "Difetti dell'olio EVO",
         content: 
         
@@ -168,7 +168,7 @@ export const postsChimica: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "7 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/composizione-chimica-olio-evo.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## La struttura di base: i trigliceridi
 
@@ -239,7 +239,7 @@ Ogni lotto ha analisi di laboratorio disponibili: polifenoli totali, acidità, p
         updateDate: "2026-03-01",
         readingTime: "6 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1594391673891-9e8c467a57fa?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/composizione-chimica-olio-evo.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Cosa sono i polifenoli
 
@@ -303,7 +303,7 @@ export const postsFiducia: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Emanuele Del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/come-nasce-nostro-olio.jpg",
         category: "Il nostro frantoio",
         content: `## La filosofia: la qualità si costruisce prima della raccolta
 
@@ -384,7 +384,7 @@ Forniamo analisi chimiche complete su richiesta per ogni lotto prodotto.
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/oleoturismo-degustazioni-frantoio.jpg",
         category: "Il nostro frantoio",
         content: `## Cosa serve (e cosa non serve)
 
@@ -461,7 +461,7 @@ export const postsGlossario: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "8 min",
         author: "Redazione Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/glossario-olio-evo.jpg",
         category: "Informazioni sull'olio EVO",
         content: `## A
 
@@ -608,3 +608,5 @@ references: [
 
 
 ];
+
+

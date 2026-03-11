@@ -18,6 +18,52 @@ type ApiProduct = {
   category?: string | null;
 };
 
+type ShopFilterId = "all" | "fruttato" | "aromatico" | "evo" | "vino" | "box";
+
+type ShopProduct = ProductCardProduct & {
+  category?: string;
+  filterTags: ShopFilterId[];
+};
+
+function normalizeFilterText(value: string | null | undefined) {
+  return (value ?? "").trim().toLowerCase();
+}
+
+function inferFilterTags(product: ApiProduct): ShopFilterId[] {
+  const haystack = [
+    product.id,
+    product.slug,
+    product.title,
+    product.subtitle,
+    product.category,
+    product.badge,
+  ]
+    .map(normalizeFilterText)
+    .join(" ");
+
+  const tags = new Set<ShopFilterId>();
+
+  if (haystack.includes("fruttato")) tags.add("fruttato");
+  if (haystack.includes("aromat") || haystack.includes("tartufo") || haystack.includes("peperoncino")) {
+    tags.add("aromatico");
+  }
+  if (
+    product.id === "evo" ||
+    normalizeFilterText(product.slug) === "evo" ||
+    normalizeFilterText(product.badge) === "evo"
+  ) {
+    tags.add("evo");
+  }
+  if (haystack.includes("vino") || haystack.includes("chianti") || haystack.includes("sangiovese")) {
+    tags.add("vino");
+  }
+  if (haystack.includes("box") || haystack.includes("cofanetto") || haystack.includes("gift")) {
+    tags.add("box");
+  }
+
+  return Array.from(tags);
+}
+
 function isApiProduct(x: unknown): x is ApiProduct {
   if (!x || typeof x !== "object") return false;
   const p = x as Record<string, unknown>;
@@ -30,16 +76,17 @@ export default function ShopPage() {
   const locale = useLocale();
 
   const CATEGORIES = useMemo(() => [
-    { id: "all", label: t("categories.all") },
-    { id: "fruttato", label: t("categories.fruttato") },
-    { id: "igp", label: t("categories.igp") },
-    { id: "bio", label: t("categories.bio") },
-    { id: "aromatico", label: t("categories.aromatico") },
+    { id: "all" as ShopFilterId, label: t("categories.all") },
+    { id: "fruttato" as ShopFilterId, label: t("categories.fruttato") },
+    { id: "aromatico" as ShopFilterId, label: t("categories.aromatico") },
+    { id: "evo" as ShopFilterId, label: "EVO" },
+    { id: "vino" as ShopFilterId, label: "Vino" },
+    { id: "box" as ShopFilterId, label: "Box" },
   ], [t]);
 
-  const [products, setProducts] = useState<ProductCardProduct[] | null>(null);
-  const [filteredProducts, setFilteredProducts] = useState<ProductCardProduct[] | null>(null);
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [products, setProducts] = useState<ShopProduct[] | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<ShopProduct[] | null>(null);
+  const [activeCategory, setActiveCategory] = useState<ShopFilterId>("all");
   const sentListRef = useRef(false);
 
   useEffect(() => {
@@ -61,10 +108,15 @@ export default function ShopPage() {
         });
       }
 
-      const mappedProducts = data.map((p) => {
+      const mappedProducts: ShopProduct[] = data.map((p) => {
         const title = tp(`${p.id}.title`) || p.title;
         const subtitle = tp(`${p.id}.subtitle`) || p.subtitle || "";
         const badge = tp(`${p.id}.badge`) || p.badge || "";
+        const prices = (p.variants ?? [])
+          .map((variant) => variant?.priceCents)
+          .filter((price): price is number => typeof price === "number");
+        const minPriceCents = prices.length > 0 ? Math.min(...prices) : null;
+        const hasManyVariants = prices.length > 1;
 
         return {
           id: p.id,
@@ -75,13 +127,17 @@ export default function ShopPage() {
           imageSrc: p.imageSrc ?? "",
           imageAlt: p.imageAlt ?? "",
           priceLabel:
-            p.variants?.[0] && typeof p.variants[0].priceCents === "number"
+            typeof minPriceCents === "number"
               ? `${new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
                 style: "currency",
                 currency: "EUR",
-              }).format(p.variants[0].priceCents / 100)}`
+              }).format(minPriceCents / 100)}`
               : "",
+          priceCaption: hasManyVariants ? "A partire da" : "Prezzo",
+          priceCents: typeof minPriceCents === "number" ? minPriceCents : undefined,
+          defaultVariantId: p.variants?.[0]?.id,
           category: p.category ?? "all",
+          filterTags: inferFilterTags(p),
         };
       });
 
@@ -90,18 +146,14 @@ export default function ShopPage() {
     })();
   }, [locale, tp]);
 
-  const handleFilter = useCallback((categoryId: string) => {
+  const handleFilter = useCallback((categoryId: ShopFilterId) => {
     setActiveCategory(categoryId);
     if (!products) return;
 
     const next =
       categoryId === "all"
         ? products
-        : products.filter((p: ProductCardProduct & { category?: string }) =>
-          p.category?.toLowerCase().includes(categoryId.toLowerCase()) ||
-          p.title.toLowerCase().includes(categoryId.toLowerCase()) ||
-          p.subtitle.toLowerCase().includes(categoryId.toLowerCase())
-        );
+        : products.filter((product) => product.filterTags.includes(categoryId));
 
     setFilteredProducts(next);
 
@@ -129,19 +181,19 @@ export default function ShopPage() {
 
   return (
     <>
-      <section className="bg-[#FDFCF8] min-h-screen">
+      <section className="min-h-screen bg-[linear-gradient(180deg,#f8f4ed_0%,#f6f1e8_36%,#f3ede3_100%)]">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
           {/* Header */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-                <span className="h-px w-6 bg-[#8B7355]" />
+              <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8a7258] uppercase">
+                <span className="h-px w-6 bg-[#8a7258]" />
                 {t("header.label")}
               </div>
-              <h1 className="mt-4 font-serif text-4xl font-light leading-[1.1] tracking-tight text-[#1C1917] lg:text-5xl">
-                {t("header.title_part1")} <span className="italic text-[#3D5A3D]">{t("header.title_italic")}</span>
+              <h1 className="mt-4 font-serif text-4xl font-light leading-[1.1] tracking-tight text-[#1f1a17] lg:text-5xl">
+                {t("header.title_part1")} <span className="italic text-[#8f6d4c]">{t("header.title_italic")}</span>
               </h1>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#57534E] lg:text-base">
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#5f554c] lg:text-base">
                 {t("header.description")}
               </p>
             </div>
@@ -166,10 +218,10 @@ export default function ShopPage() {
               ? // Skeleton loading
               Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="flex flex-col">
-                  <div className="aspect-[4/5] animate-pulse rounded-3xl bg-[#E7E5E4]" />
+                  <div className="aspect-[4/5] animate-pulse rounded-3xl bg-[#e8dfd2]" />
                   <div className="mt-4 space-y-2 px-2">
-                    <div className="h-4 w-3/4 animate-pulse rounded bg-[#E7E5E4]" />
-                    <div className="h-3 w-1/2 animate-pulse rounded bg-[#E7E5E4]" />
+                    <div className="h-4 w-3/4 animate-pulse rounded bg-[#e8dfd2]" />
+                    <div className="h-3 w-1/2 animate-pulse rounded bg-[#e8dfd2]" />
                   </div>
                 </div>
               ))
@@ -188,10 +240,10 @@ export default function ShopPage() {
           {/* Empty state */}
           {filteredProducts && filteredProducts.length === 0 && (
             <div className="mt-16 text-center">
-              <p className="text-[#57534E]">{t("empty.text")}</p>
+              <p className="text-[#5f554c]">{t("empty.text")}</p>
               <button
                 onClick={() => handleFilter("all")}
-                className="mt-4 text-sm text-[#3D5A3D] hover:underline"
+                className="mt-4 text-sm text-[#8f6d4c] hover:underline"
               >
                 {t("empty.reset")}
               </button>
@@ -200,11 +252,11 @@ export default function ShopPage() {
 
           {/* Bottom info */}
           <div className="mt-16 flex flex-col items-center justify-center gap-4 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#3D5A3D]/10 px-4 py-2 text-xs font-medium text-[#3D5A3D]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#d7cbbb] bg-white/72 px-4 py-2 text-xs font-medium text-[#5f554c] shadow-sm shadow-[#1f1a17]/5">
               <IconTruck className="h-4 w-4" />
               {t("info.shipping")}
             </div>
-            <p className="text-xs text-[#8B7355]">
+            <p className="text-xs text-[#8a7258]">
               {t("info.notes")}
             </p>
           </div>
@@ -228,9 +280,9 @@ function FilterPill({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-4 py-2 text-xs font-medium transition ${active
-        ? "bg-[#1C1917] text-white"
-        : "border border-[#E7E5E4] bg-white text-[#57534E] hover:border-[#3D5A3D]/30"
+      className={`rounded-full border px-4 py-2 text-xs font-medium transition ${active
+        ? "border-[#1f1a17] bg-[#1f1a17] text-[#fbf6ef] shadow-sm shadow-[#1f1a17]/10"
+        : "border-[#ddd3c6] bg-white/75 text-[#5f554c] hover:border-[#bda589] hover:bg-white"
         }`}
     >
       {children}

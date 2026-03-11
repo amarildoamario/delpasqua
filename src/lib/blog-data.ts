@@ -76,7 +76,7 @@ Coltivati con amore, franti in giornata per mantenere intatti tutti i polifenoli
         updateDate: "2026-03-02",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/benefici-olio-evo-salute.jpg",
         category: "Salute & Benessere"
     },
     {
@@ -99,7 +99,7 @@ L'acidità misura lo stato di degradazione del frutto: un'oliva sana, staccata d
         updateDate: "2026-02-28",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1594391673891-9e8c467a57fa?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/acidita-olio-oliva.png",
         category: "Chimica dell'olio di oliva"
     },
     {
@@ -129,7 +129,7 @@ Sono il vero tesoro dell'olio EVO: contrastano l'ossidazione e mantengono basso 
         updateDate: "2026-02-27",
         readingTime: "5 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/polifenoli-e-perossidi.jpg",
         category: "Chimica dell'olio di oliva"
     },
 
@@ -179,7 +179,7 @@ Salta la grande distribuzione e regalati il puro succo d'oliva toscano.
         updateDate: "2026-02-20",
         readingTime: "5 min",
         author: "Emanuele Del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1542614050-61844b242eeb?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/come-nasce-nostro-olio.jpg", 
         category: "Consigli di acquisto"
     },
     {
@@ -239,7 +239,7 @@ Se avete comprato un ottimo olio e l'avete tenuto al riparo da questi tre nemici
         updateDate: "2026-02-18",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "/blog/quanto-dura-olio-evo-moderna.png",
+        imageUrl: "/blog/quanto-dura-olio-evo.jpg",
         category: "Conservazione"
     },
     {
@@ -323,7 +323,7 @@ Olio EVO del Frantoio del Pasqua, campagna olearia indicata, conservazione ottim
         updateDate: "2026-02-12",
         readingTime: "5 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "/blog/lattina-bottiglie-confronto.png",
+        imageUrl: "/blog/lattina-bottiglie-confronto.jpg",
         category: "Conservazione"
     },
     {
@@ -381,7 +381,7 @@ references: [
         updateDate: "2026-02-05",
         readingTime: "3 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/frittura.jpg",
         category: "Consumo corretto"
     },
     {
@@ -437,7 +437,7 @@ references: [
         updateDate: "2026-02-02",
         readingTime: "4 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://plus.unsplash.com/premium_photo-1675842861219-4afdbacc98a4?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-nuovo-cose-e-quanto-dura.jpg",
         category: "Consumo corretto"
     }
 ];
@@ -462,3 +462,6 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
     return mockBlogPosts.find(post => post.slug === slug) || null;
 }
+
+
+

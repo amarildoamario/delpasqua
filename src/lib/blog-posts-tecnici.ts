@@ -13,7 +13,7 @@ export const postsTecnici: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "12 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/nmr-olio-oliva-analisi.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Introduzione: perché la NMR è rivoluzionaria nell'analisi degli oli
 
@@ -149,7 +149,7 @@ Richiedete il certificato di analisi del vostro lotto — inclusa spettroscopia 
         updateDate: "2026-03-01",
         readingTime: "10 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/spettrometria-massa-olio-oliva-gcms-lcms.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Principio della spettrometria di massa applicata agli oli
 
@@ -319,7 +319,7 @@ La tecnica GC-IRMS-CSIA è attualmente la più avanzata disponibile per la certi
         updateDate: "2026-03-01",
         readingTime: "12 min",
         author: "Dipartimento Qualità",
-        imageUrl: "https://images.unsplash.com/photo-1628595351029-c2bf17511435?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/metodi-iso-analisi-olio-oliva.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Contesto normativo: ISO e regolamenti UE
 
@@ -533,3 +533,4 @@ Il metodo ISO/TS 18363-4 (variante GC-MS in modalità MRM su triplo quadrupolo) 
 > La batteria completa dei metodi ISO applicati all'olio EVO — acidità, perossidi, K-values, acidi grassi, steroli, cere, 3-MCPD — costituisce il "profilo analitico completo" richiesto per la certificazione DOP e per la difesa in contenziosi commerciali.`,
     },
 ];
+

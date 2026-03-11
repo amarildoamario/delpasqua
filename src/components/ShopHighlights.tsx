@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
@@ -8,18 +7,9 @@ import styles from "./ShopHighlights.module.css";
 import productsData from "@/db/products.json";
 import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
+import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
 
-
-type HighlightProduct = {
-  id: string;
-  title: string;
-  subtitle: string;
-  price: string;
-  href: string;
-  badge?: string;
-  imageSrc: string;
-  imageAlt: string;
-};
+type HighlightProduct = ProductCardProduct;
 
 const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
 
@@ -28,7 +18,6 @@ const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "
 
 
 export default function ShopHighlights() {
-  const t = useTranslations("HomePage.ShopHighlights");
   const tp = useTranslations("Products");
   const locale = useLocale();
 
@@ -60,16 +49,19 @@ export default function ShopHighlights() {
 
       return {
         id: p.id,
+        slug: p.slug,
         title: tp(`${p.id}.title`) || p.title,
-        subtitle: tp(`${p.id}.subtitle`) || p.subtitle,
-        price: `${hasMany ? t("from") : ""}${fmt}`,
-        href: `/shop/${encodeURIComponent(p.slug)}`,
+        subtitle: tp(`${p.id}.subtitle`) || p.subtitle || "",
+        priceLabel: fmt,
+        priceCaption: hasMany ? "A partire da" : "Prezzo",
+        priceCents: minPriceCents,
+        defaultVariantId: p.variants?.[0]?.id,
         badge: tp(`${p.id}.badge`) || p.badge,
         imageSrc: p.imageSrc,
         imageAlt: p.imageAlt,
       };
     });
-  }, [t, tp, locale]);
+  }, [tp, locale]);
 
 
 
@@ -149,8 +141,8 @@ export default function ShopHighlights() {
   }, []);
 
   return (
-    <section className="bg-[#fcfbf4]">
-      <div className="mx-auto max-w-7xl px-6 pt-20 pb-10 lg:pt-28 lg:pb-16">
+    <section className="bg-[linear-gradient(180deg,#f8f4ed_0%,#f3ede3_100%)]">
+      <div className="mx-auto max-w-7xl px-6 pb-12 pt-20 lg:pb-16 lg:pt-28">
         <Header />
 
         {/* MOBILE */}
@@ -177,16 +169,9 @@ export default function ShopHighlights() {
                       onPointerMove={onPointerMove}
                       onPointerUp={onPointerUp}
                       onPointerCancel={onPointerUp}
+                      onClickCapture={onLinkClickCapture}
                     >
-                      <Link
-                        href={p.href}
-                        aria-label={p.title}
-                        className={styles.mobileCardLink}
-                        onClickCapture={onLinkClickCapture}
-                        draggable={false}
-                      >
-                        <ProductCardMobile product={p} />
-                      </Link>
+                      <ProductCardMobile product={p} />
                     </div>
                   </div>
                 ))}
@@ -225,20 +210,20 @@ function Header() {
   return (
     <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
       <div>
-        <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-          <span className="h-px w-6 bg-[#8B7355]" />
+        <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8a7258] uppercase">
+          <span className="h-px w-6 bg-[#8a7258]" />
           {t("label")}
         </div>
-        <h2 className="mt-4 font-serif text-3xl font-light tracking-tight text-[#1C1917] md:text-4xl lg:text-5xl">
-          {t("title_part1")}<span className="italic text-[#3D5A3D]">{t("title_italic")}</span>
+        <h2 className="mt-4 font-serif text-3xl font-light tracking-tight text-[#1f1a17] md:text-4xl lg:text-5xl">
+          {t("title_part1")}<span className="italic text-[#8f6d4c]">{t("title_italic")}</span>
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#57534E]">
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#5f554c]">
           {t("subtitle")}
         </p>
       </div>
       <Link
         href="/shop"
-        className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#1C1917] px-6 py-3 text-xs font-medium tracking-[0.2em] text-white hover:bg-[#3D5A3D] transition-colors"
+        className="hidden md:inline-flex items-center gap-2 rounded-full border border-[#d7ccbc] bg-white/78 px-6 py-3 text-xs font-medium tracking-[0.2em] text-[#1f1a17] shadow-sm shadow-[#1f1a17]/5 transition-all hover:border-[#bda589] hover:bg-[#1f1a17] hover:text-[#fbf6ef]"
       >
         {t("cta")} <ArrowRight className="h-4 w-4" strokeWidth={2} />
       </Link>
@@ -246,133 +231,12 @@ function Header() {
   );
 }
 
-// Card compatta per MOBILE
 function ProductCardMobile({ product }: { product: HighlightProduct }) {
-  return (
-    <article className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[#E7E5E4] bg-white shadow-sm">
-      {/* Image container - PIÙ COMPATTA */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#F5F5F4]">
-        <Image
-          src={product.imageSrc}
-          alt={product.imageAlt}
-          fill
-          sizes="240px"
-          className="object-cover"
-          priority
-        />
-
-        {/* Badge */}
-        {product.badge && (
-          <div className="absolute left-3 top-3">
-            <span className="inline-flex items-center rounded-full bg-[#B8860B] px-2 py-1 text-[8px] font-medium tracking-wider text-white uppercase">
-              {product.badge}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Content - COMPATTO */}
-      <div className="flex flex-col p-3">
-        {/* Subtitle */}
-        <div className="text-[8px] font-medium tracking-[0.15em] text-[#8B7355] uppercase">
-          {product.subtitle || "Olio EVO"}
-        </div>
-
-        {/* Title - più piccolo */}
-        <h3 className="mt-1 font-serif text-sm font-light leading-tight tracking-tight text-[#1C1917] line-clamp-2">
-          {product.title}
-        </h3>
-
-        {/* Price row */}
-        <div className="mt-2 flex items-center justify-between">
-          <div className="flex items-baseline gap-1">
-            <span className="font-serif text-base font-light text-[#1C1917]">
-              {product.price}
-            </span>
-            <span className="text-[9px] text-[#8B7355]">+IVA</span>
-          </div>
-
-          {/* Arrow icon */}
-          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#E7E5E4] text-[#57534E]">
-            <ArrowRight className="h-3 w-3" />
-          </span>
-        </div>
-      </div>
-    </article>
-  );
+  return <ProductCard product={product} />;
 }
 
-// Card per DESKTOP
 function ProductCardDesktop({ product }: { product: HighlightProduct }) {
-  return (
-    <article className="group relative flex h-full w-full flex-col overflow-hidden rounded-3xl border border-[#E7E5E4] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#3D5A3D]/20 hover:shadow-xl hover:shadow-[#3D5A3D]/5">
-      {/* Image container */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#F5F5F4]">
-        <Image
-          src={product.imageSrc}
-          alt={product.imageAlt}
-          fill
-          sizes="25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-        {/* Badge */}
-        {product.badge && (
-          <div className="absolute left-4 top-4">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#B8860B] px-3 py-1.5 text-[10px] font-medium tracking-wider text-white uppercase shadow-lg">
-              {product.badge}
-            </span>
-          </div>
-        )}
-
-        {/* Quick add */}
-        <div className="absolute bottom-4 left-4 right-4 translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3 text-xs font-medium tracking-wider text-[#1C1917] shadow-lg transition hover:bg-[#3D5A3D] hover:text-white"
-          >
-            <IconPlus className="h-4 w-4" />
-            {useTranslations("HomePage.ShopHighlights")("add")}
-          </button>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-5">
-        {/* Subtitle */}
-        <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-          {product.subtitle || "Olio EVO"}
-        </div>
-
-        {/* Title */}
-        <h3 className="mt-2 font-serif text-lg font-light leading-tight tracking-tight text-[#1C1917] line-clamp-2 transition-colors group-hover:text-[#3D5A3D]">
-          {product.title}
-        </h3>
-
-        {/* Price */}
-        <div className="mt-auto pt-4">
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-xl font-light text-[#1C1917]">
-              {product.price}
-            </span>
-            <span className="text-xs text-[#8B7355]">+ IVA</span>
-          </div>
-
-          {/* Decorative line */}
-          <div className="mt-3 h-px w-10 bg-[#E7E5E4] transition-all duration-300 group-hover:w-20 group-hover:bg-[#3D5A3D]" />
-        </div>
-      </div>
-
-      {/* Bottom accent line */}
-      <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-[#3D5A3D] to-[#B8860B] transition-all duration-300 group-hover:w-full" />
-    </article>
-  );
+  return <ProductCard product={product} />;
 }
 
 function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
@@ -430,20 +294,9 @@ function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
           ref={(el) => { cardsRef.current[i] = el; }}
           className="flex h-full"
         >
-          <Link href={p.href} className="flex h-full w-full">
-            <ProductCardDesktop product={p} />
-          </Link>
+          <ProductCardDesktop product={p} />
         </div>
       ))}
     </div>
-  );
-}
-
-function IconPlus({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
   );
 }

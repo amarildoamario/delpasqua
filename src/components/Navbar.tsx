@@ -239,7 +239,7 @@ export default function Navbar() {
     return (
       <>
         <div className="h-[98px] md:h-[118px]" aria-hidden="true" />
-        <header className="fixed top-0 left-0 w-full z-50 bg-white">
+        <header className="fixed top-0 left-0 w-full z-50 bg-white font-sans">
           <div className="w-full bg-stone-950 text-stone-100">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="flex h-7 md:h-8 items-center justify-center">
@@ -306,7 +306,7 @@ export default function Navbar() {
       {/* HEADER UNIFICATO */}
       <header
         className={[
-          "fixed top-0 left-0 w-full z-50",
+          "fixed top-0 left-0 w-full z-50 font-sans",
           "transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
           hidden
             ? "md:-translate-y-[calc(100%+20px)] translate-y-0"
@@ -761,7 +761,7 @@ function NavLink({
   return (
     <LocaleLink
       href={href}
-      className="group relative py-2 text-[13px] font-medium tracking-[0.1em] text-stone-600 hover:text-stone-900 transition-colors duration-300 uppercase"
+      className="group relative py-2 font-sans text-[13px] font-[560] tracking-[0.08em] text-stone-600 uppercase transition-colors duration-300 hover:text-stone-900"
     >
       {children}
       <span className="absolute bottom-0 left-0 w-full h-[2px] bg-green-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
@@ -781,7 +781,7 @@ function MobileBottomButton({
   return (
     <LocaleLink
       href={href}
-      className="flex flex-col items-center gap-1 px-2 py-1 text-stone-600 hover:text-green-700 transition-colors active:scale-95"
+      className="flex flex-col items-center gap-1 px-2 py-1 font-sans text-stone-600 transition-colors active:scale-95 hover:text-green-700"
     >
       {icon}
       <span className="text-[10px] font-medium tracking-wider uppercase">

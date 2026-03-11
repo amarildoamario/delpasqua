@@ -750,5 +750,80 @@
             "label": "Hvor vi er",
             "button": "Åbn i Maps"
         }
+    },
+    "Cart": {
+        "common": {
+            "product_fallback": "Produkt",
+            "discount_code_placeholder": "Rabatkode",
+            "apply": "Anvend",
+            "remove": "Fjern",
+            "subtotal": "Subtotal",
+            "discount_with_code": "Rabat ({code})",
+            "vat": "Moms",
+            "vat_estimate": "Moms 4 % (estimat)",
+            "shipping": "Fragt",
+            "shipping_estimate": "Fragt (estimat)",
+            "free": "Gratis",
+            "total": "Total",
+            "line_total": "Linjetotal",
+            "per_item_with_price": "{price} / stk.",
+            "continue_shopping": "Fortsæt med at handle",
+            "quantity": "Antal"
+        },
+        "actions": {
+            "remove_product": "Fjern produkt",
+            "decrease_quantity": "Sænk antal",
+            "increase_quantity": "Øg antal"
+        },
+        "drawer": {
+            "eyebrow": "Indkøbskurv",
+            "title": "Dine produkter",
+            "close_cart": "Luk indkøbskurv",
+            "close": "Luk",
+            "free_shipping_above": "Gratis fragt over",
+            "free_shipping_missing": "Du mangler",
+            "free_shipping_active": "Gratis fragt aktiv!",
+            "items_count": "{count, plural, =0 {TOM} one {# PRODUKT} other {# PRODUKTER}}",
+            "clear": "Tøm",
+            "empty": "Din indkøbskurv er tom.",
+            "shipping_from": "Fragt fra {amount}",
+            "discounted_total": "Pris efter rabat",
+            "redirecting": "Viderestiller...",
+            "go_to_checkout": "Gå til checkout",
+            "view_cart": "Se indkøbskurv",
+            "server_note": "Det endelige beløb (moms + fragt) valideres af serveren før betaling."
+        },
+        "page": {
+            "eyebrow": "Indkøbskurv",
+            "title": "Din indkøbskurv",
+            "back_to_shop": "Tilbage til shoppen",
+            "empty_state": "Din indkøbskurv er tom. Gå til <shop>shoppen</shop>.",
+            "open_product": "Åbn {title}",
+            "remove_from_cart_aria": "Fjern fra indkøbskurv",
+            "invalid_line": "Ugyldig linje: produkt eller variant blev ikke fundet i kataloget.",
+            "clear_cart": "Tøm indkøbskurv",
+            "summary": "Oversigt",
+            "opening_checkout": "Åbner checkout...",
+            "go_to_checkout": "Gå til checkout",
+            "secure_payment": "Sikker betaling via Stripe.",
+            "email_confirmation": "Du modtager en bekræftelse via e-mail."
+        },
+        "errors": {
+            "promo_invalid": "Ugyldig kode.",
+            "promo_not_active": "Rabatkoden blev ikke fundet eller er ikke aktiv.",
+            "promo_invalid_discount": "Ugyldig rabatkode.",
+            "network_retry": "Netværksfejl. Prøv igen.",
+            "network": "Netværksfejl.",
+            "empty_cart": "Indkøbskurven er tom.",
+            "invalid_products": "Der er ugyldige produkter i indkøbskurven. Tøm kurven og prøv igen.",
+            "product_unavailable": "Produktet er ikke tilgængeligt.",
+            "too_many_requests": "For mange forespørgsler. Prøv igen om lidt.",
+            "invalid_cart": "Ugyldig indkøbskurv.",
+            "order_creation": "Fejl under oprettelse af ordre.",
+            "invalid_server_response": "Ugyldigt serversvar.",
+            "checkout_unavailable": "Checkout er ikke tilgængelig.",
+            "missing_checkout_url": "Checkout-URL mangler.",
+            "checkout_generic": "Checkout-fejl."
+        }
     }
 }

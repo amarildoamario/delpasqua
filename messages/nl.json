@@ -723,5 +723,80 @@
             "label": "Waar we zijn",
             "button": "Open in Maps"
         }
+    },
+    "Cart": {
+        "common": {
+            "product_fallback": "Product",
+            "discount_code_placeholder": "Kortingscode",
+            "apply": "Toepassen",
+            "remove": "Verwijderen",
+            "subtotal": "Subtotaal",
+            "discount_with_code": "Korting ({code})",
+            "vat": "Btw",
+            "vat_estimate": "Btw 4% (schatting)",
+            "shipping": "Verzending",
+            "shipping_estimate": "Verzending (schatting)",
+            "free": "Gratis",
+            "total": "Totaal",
+            "line_total": "Regeltotaal",
+            "per_item_with_price": "{price} / stuk",
+            "continue_shopping": "Verder winkelen",
+            "quantity": "Aantal"
+        },
+        "actions": {
+            "remove_product": "Product verwijderen",
+            "decrease_quantity": "Aantal verlagen",
+            "increase_quantity": "Aantal verhogen"
+        },
+        "drawer": {
+            "eyebrow": "Winkelwagen",
+            "title": "Jouw producten",
+            "close_cart": "Winkelwagen sluiten",
+            "close": "Sluiten",
+            "free_shipping_above": "Gratis verzending boven",
+            "free_shipping_missing": "Je mist nog",
+            "free_shipping_active": "Gratis verzending actief!",
+            "items_count": "{count, plural, =0 {LEEG} one {# PRODUCT} other {# PRODUCTEN}}",
+            "clear": "Legen",
+            "empty": "Je winkelwagen is leeg.",
+            "shipping_from": "Verzending vanaf {amount}",
+            "discounted_total": "Totaal na korting",
+            "redirecting": "Doorsturen...",
+            "go_to_checkout": "Ga naar checkout",
+            "view_cart": "Winkelwagen bekijken",
+            "server_note": "Het eindtotaal (btw + verzending) wordt door de server gecontroleerd vóór betaling."
+        },
+        "page": {
+            "eyebrow": "Winkelwagen",
+            "title": "Jouw winkelwagen",
+            "back_to_shop": "Terug naar de shop",
+            "empty_state": "Je winkelwagen is leeg. Ga naar de <shop>shop</shop>.",
+            "open_product": "{title} openen",
+            "remove_from_cart_aria": "Uit winkelwagen verwijderen",
+            "invalid_line": "Ongeldige regel: product of variant niet gevonden in de catalogus.",
+            "clear_cart": "Winkelwagen legen",
+            "summary": "Overzicht",
+            "opening_checkout": "Checkout wordt geopend...",
+            "go_to_checkout": "Ga naar checkout",
+            "secure_payment": "Veilige betaling via Stripe.",
+            "email_confirmation": "Je ontvangt een bevestiging per e-mail."
+        },
+        "errors": {
+            "promo_invalid": "Ongeldige code.",
+            "promo_not_active": "Kortingscode niet gevonden of niet actief.",
+            "promo_invalid_discount": "Ongeldige kortingscode.",
+            "network_retry": "Netwerkfout. Probeer opnieuw.",
+            "network": "Netwerkfout.",
+            "empty_cart": "De winkelwagen is leeg.",
+            "invalid_products": "Er staan ongeldige producten in de winkelwagen. Leeg de winkelwagen en probeer opnieuw.",
+            "product_unavailable": "Product niet beschikbaar.",
+            "too_many_requests": "Te veel verzoeken. Probeer het zo opnieuw.",
+            "invalid_cart": "Ongeldige winkelwagen.",
+            "order_creation": "Fout bij het aanmaken van de bestelling.",
+            "invalid_server_response": "Ongeldige serverreactie.",
+            "checkout_unavailable": "Checkout niet beschikbaar.",
+            "missing_checkout_url": "Checkout-URL ontbreekt.",
+            "checkout_generic": "Checkoutfout."
+        }
     }
 }

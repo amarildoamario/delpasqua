@@ -13,6 +13,7 @@
     "inventory:init": "tsx tools/init-inventory.ts",
     "inventory:zero": "tsx tools/zero-inventory.ts",
     "sync:product-images": "node tools/sync-product-images.mjs",
+    "sync:blog-images": "tsx tools/sync-blog-images.ts",
     "remove-dark": "node tools/remove-dark.mjs",
     "check-no-dark": "node tools/check-no-dark.mjs",
     "typecheck": "tsc --noEmit",

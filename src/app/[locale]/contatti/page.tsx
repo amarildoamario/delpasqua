@@ -4,6 +4,10 @@ import Image from "next/image";
 import ContactForm from "./ContactForm";
 import { useTranslations } from "next-intl";
 
+const CONTACT_ADDRESS = "Loc Infernaccio, 510/B, 52048 Monte San Savino AR, Italia";
+const CONTACT_LAT = 43.359873179952864;
+const CONTACT_LNG = 11.750198258066469;
+
 export default function ContattiPage() {
   const t = useTranslations("ContactPage");
   return (
@@ -164,13 +168,13 @@ export default function ContattiPage() {
                     {t("map.label")}
                   </div>
                   <div className="mt-2 text-sm text-[#1C1917]">
-                    Loc. Infernaccio 510/B, Monte San Savino - Arezzo
+                    {CONTACT_ADDRESS}
                   </div>
                 </div>
 
                 <a
                   className="inline-flex items-center gap-2 rounded-full border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs font-medium text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
-                  href="https://www.google.com/maps/search/?api=1&query=Loc.%20Infernaccio%20510%2FB%20Monte%20San%20Savino%20Arezzo"
+                  href={`https://www.google.com/maps/search/?api=1&query=${CONTACT_LAT},${CONTACT_LNG}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -180,7 +184,11 @@ export default function ContattiPage() {
               </div>
 
               <div className="mt-6">
-                <GoogleMapEmbed address="Loc. Infernaccio 510/B, Monte San Savino, Arezzo, Italia" />
+                <GoogleMapEmbed
+                  address={CONTACT_ADDRESS}
+                  latitude={CONTACT_LAT}
+                  longitude={CONTACT_LNG}
+                />
               </div>
             </div>
           </div>
@@ -214,8 +222,16 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
 
 
 
-function GoogleMapEmbed({ address }: { address: string }) {
-  const src = `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+function GoogleMapEmbed({
+  address,
+  latitude,
+  longitude,
+}: {
+  address: string;
+  latitude: number;
+  longitude: number;
+}) {
+  const src = `https://maps.google.com/maps?hl=it&q=${latitude},${longitude}&ll=${latitude},${longitude}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-[#E7E5E4] bg-[#F5F5F4]">

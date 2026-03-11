@@ -10,7 +10,7 @@ export const postsRicette: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-per-insalata.jpg",
         category: "Ricette e abbinamenti",
         content: `## La bruschetta come tela bianca
 
@@ -64,7 +64,7 @@ Raccolta anticipata, massimo contenuto di polifenoli.
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1474314005122-3c07c4df1224?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-per-insalata.jpg",
         category: "Ricette e abbinamenti",
         content: `## Non tutte le insalate sono uguali
 
@@ -109,7 +109,7 @@ Il nostro olio fruttato medio: versatile, equilibrato, per ogni insalata
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1542614050-61844b242eeb?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-per-pizza.jpg",
         category: "Ricette e abbinamenti",
         content: `## Il piatto più difficile della cucina italiana
 
@@ -153,7 +153,7 @@ Un fruttato leggero si perde; un fruttato lunghissimo e amaro può coprire l'agl
         updateDate: "2026-03-01",
         readingTime: "3 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/olio-per-legumi-zuppe.jpg",
         category: "Ricette e abbinamenti",
         content: `## Perché l'olio su zuppe e legumi è fondamentale
 
@@ -190,7 +190,7 @@ Il nostro olio fruttato intenso: ideale sulle zuppe invernali
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "https://images.unsplash.com/photo-1626200234551-78c78b4bd113?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/oleoturismo-degustazioni-frantoio.jpg",
         category: "Ricette e abbinamenti",
         content: `## L'arte della degustazione semplice
 
@@ -239,7 +239,7 @@ Tre oli, tre profili, con note guida incluse. Perfetto per serate con ospiti o r
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Chef del Frantoio",
-        imageUrl: "https://images.unsplash.com/photo-1596564639908-16eef35ad7ae?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/blog/fruttato-leggero-abbinamenti.jpg",
         category: "Ricette e abbinamenti",
         content: `## Una tradizione antica
 
@@ -266,3 +266,5 @@ Il risultato è un dolce con una **consistenza umida e morbida** che dura più a
 Come regola generale: **100g di burro = 75ml di olio EVO** (il burro contiene acqua e proteine oltre al grasso, quindi si usa meno olio in volume).`,
     },
 ];
+
+

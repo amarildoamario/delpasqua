@@ -3,11 +3,18 @@ import Navbar from "@/components/Navbar";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import GA4RouteTracker from "@/components/analytics/GA4RouteTracker";
+import { Manrope } from "next/font/google";
 
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+
+const uiSans = Manrope({
+  subsets: ["latin"],
+  variable: "--font-ui",
+  display: "swap",
+});
 
 export default async function RootLayout({
   children,
@@ -24,14 +31,14 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   return (
-    <html lang={locale}>
+    <html lang={locale} className={uiSans.variable}>
       <head>
         {/* Forza il browser a usare SOLO light UI */}
         <meta name="color-scheme" content="light" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </head>
 
-      <body className="bg-white text-zinc-900">
+      <body className={`${uiSans.className} bg-white text-zinc-900 antialiased font-sans`}>
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <GoogleAnalytics />

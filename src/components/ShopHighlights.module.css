@@ -91,13 +91,13 @@
   height: 6px;
   border-radius: 999px;
   border: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(120, 97, 74, 0.24);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .mobileDotBtn:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(120, 97, 74, 0.42);
   transform: scale(1.2);
 }
 
@@ -106,7 +106,7 @@
   height: 6px;
   border-radius: 999px;
   border: 0;
-  background: #3D5A3D;
+  background: #8f6d4c;
   transition: all 0.3s ease;
   cursor: pointer;
 }

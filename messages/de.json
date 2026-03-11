@@ -723,5 +723,80 @@
             "label": "Wo wir sind",
             "button": "In Maps öffnen"
         }
+    },
+    "Cart": {
+        "common": {
+            "product_fallback": "Produkt",
+            "discount_code_placeholder": "Rabattcode",
+            "apply": "Anwenden",
+            "remove": "Entfernen",
+            "subtotal": "Zwischensumme",
+            "discount_with_code": "Rabatt ({code})",
+            "vat": "MwSt.",
+            "vat_estimate": "MwSt. 4 % (Schätzung)",
+            "shipping": "Versand",
+            "shipping_estimate": "Versand (Schätzung)",
+            "free": "Kostenlos",
+            "total": "Gesamt",
+            "line_total": "Zeilensumme",
+            "per_item_with_price": "{price} / Stk.",
+            "continue_shopping": "Weiter einkaufen",
+            "quantity": "Menge"
+        },
+        "actions": {
+            "remove_product": "Produkt entfernen",
+            "decrease_quantity": "Menge verringern",
+            "increase_quantity": "Menge erhöhen"
+        },
+        "drawer": {
+            "eyebrow": "Warenkorb",
+            "title": "Ihre Produkte",
+            "close_cart": "Warenkorb schließen",
+            "close": "Schließen",
+            "free_shipping_above": "Kostenloser Versand ab",
+            "free_shipping_missing": "Es fehlen noch",
+            "free_shipping_active": "Kostenloser Versand aktiv!",
+            "items_count": "{count, plural, =0 {LEER} one {# PRODUKT} other {# PRODUKTE}}",
+            "clear": "Leeren",
+            "empty": "Ihr Warenkorb ist leer.",
+            "shipping_from": "Versand ab {amount}",
+            "discounted_total": "Preis nach Rabatt",
+            "redirecting": "Weiterleitung...",
+            "go_to_checkout": "Zum Checkout",
+            "view_cart": "Warenkorb ansehen",
+            "server_note": "Der Endbetrag (MwSt. + Versand) wird vor der Zahlung vom Server bestätigt."
+        },
+        "page": {
+            "eyebrow": "Warenkorb",
+            "title": "Ihr Warenkorb",
+            "back_to_shop": "Zurück zum Shop",
+            "empty_state": "Ihr Warenkorb ist leer. Gehen Sie zum <shop>Shop</shop>.",
+            "open_product": "{title} öffnen",
+            "remove_from_cart_aria": "Aus dem Warenkorb entfernen",
+            "invalid_line": "Ungültige Zeile: Produkt oder Variante nicht im Katalog gefunden.",
+            "clear_cart": "Warenkorb leeren",
+            "summary": "Zusammenfassung",
+            "opening_checkout": "Checkout wird geöffnet...",
+            "go_to_checkout": "Zum Checkout",
+            "secure_payment": "Sichere Zahlung über Stripe.",
+            "email_confirmation": "Sie erhalten eine Bestätigung per E-Mail."
+        },
+        "errors": {
+            "promo_invalid": "Ungültiger Code.",
+            "promo_not_active": "Rabattcode nicht gefunden oder nicht aktiv.",
+            "promo_invalid_discount": "Ungültiger Rabattcode.",
+            "network_retry": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+            "network": "Netzwerkfehler.",
+            "empty_cart": "Der Warenkorb ist leer.",
+            "invalid_products": "Im Warenkorb befinden sich ungültige Produkte. Leeren Sie den Warenkorb und versuchen Sie es erneut.",
+            "product_unavailable": "Produkt nicht verfügbar.",
+            "too_many_requests": "Zu viele Anfragen. Bitte versuchen Sie es in Kürze erneut.",
+            "invalid_cart": "Ungültiger Warenkorb.",
+            "order_creation": "Fehler beim Erstellen der Bestellung.",
+            "invalid_server_response": "Ungültige Serverantwort.",
+            "checkout_unavailable": "Checkout nicht verfügbar.",
+            "missing_checkout_url": "Checkout-URL fehlt.",
+            "checkout_generic": "Checkout-Fehler."
+        }
     }
 }

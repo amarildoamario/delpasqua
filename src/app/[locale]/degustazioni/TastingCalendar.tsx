@@ -13,6 +13,12 @@ import {
 } from "lucide-react";
 import type { TastingType } from "@/lib/tasting/slots";
 import { useTranslations, useLocale } from "next-intl";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type Slot = { start: string; end: string };
 type Booking = {
@@ -553,33 +559,36 @@ export default function TastingsCalendar(props: {
         </div>
       )}
 
-      {/* Modal - Staccato dal fondo */}
+      {/* Modal */}
       {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1917]/60 backdrop-blur-sm p-4 pb-20 sm:p-6 sm:pb-12">          <div className="w-full max-w-lg max-h-[80vh] sm:max-h-[75vh] flex flex-col rounded-3xl bg-[#FDFCF8] shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1917]/60 px-3 pb-24 pt-3 backdrop-blur-sm sm:p-6 sm:pb-12">
+          <div className="flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-[#FDFCF8] shadow-2xl sm:max-h-[75vh]">
           {/* Header */}
-          <div className="flex-shrink-0 flex items-center justify-between border-b border-[#E7E5E4] bg-white/80 backdrop-blur px-5 py-4 sm:px-6 sm:py-5">
+          <div className="flex-shrink-0 flex items-center justify-between border-b border-[#E7E5E4] bg-white/80 px-4 py-3.5 backdrop-blur sm:px-6 sm:py-5">
             <div>
               <div className="font-serif text-lg sm:text-xl font-light tracking-tight text-[#1C1917]">
                 {t("modal.title")}
               </div>
               {selected && selectedDay && (
-                <div className="mt-0.5 text-xs sm:text-sm text-[#8B7355]">
+                <div className="mt-0.5 text-[11px] sm:text-sm text-[#8B7355]">
                   {fmtDayFull(selectedDay)} • {fmtTime(selected.start)}
                 </div>
               )}
             </div>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="icon-sm"
               onClick={closeModal}
-              className="rounded-2xl border border-[#E7E5E4] bg-white p-2.5 text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917]"
+              className="rounded-2xl border-[#E7E5E4] bg-white text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
               aria-label="Chiudi"
             >
               <X className="h-4 w-4 sm:h-5 sm:w-5" />
-            </button>
+            </Button>
           </div>
 
           {/* Content - Scrollable */}
-          <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6 sm:py-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 sm:py-6">
             {success ? (
               <div className="space-y-4">
                 <div className="rounded-2xl border border-[#3D5A3D]/20 bg-[#3D5A3D]/5 px-5 py-6 text-center">
@@ -633,201 +642,205 @@ export default function TastingsCalendar(props: {
                   })()}
                 </div>
 
-                <button
+                <Button
                   type="button"
                   onClick={closeModal}
-                  className="w-full rounded-xl bg-[#3D5A3D] py-3 text-sm font-medium text-white hover:bg-[#2D4A2D] transition"
+                  className="h-11 w-full rounded-xl bg-[#3D5A3D] text-sm font-medium text-white hover:bg-[#2D4A2D]"
                 >
                   {t("modal.close")}
-                </button>
+                </Button>
               </div>
             ) : (
-              <div className="space-y-5">
-                {/* Selected Time Box */}
+              <div className="space-y-4 sm:space-y-5">
                 {selected && selectedDay && (
-                  <div className="rounded-xl bg-[#3D5A3D]/5 border border-[#3D5A3D]/10 px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-[#3D5A3D]/10">
-                        <CalendarCheck className="h-4 w-4 text-[#3D5A3D]" />
+                  <Card className="overflow-hidden rounded-[22px] border-[#d8e3d4] bg-[linear-gradient(180deg,rgba(245,249,243,0.96)_0%,rgba(239,246,236,0.94)_100%)] shadow-none">
+                    <CardContent className="flex items-center gap-3 p-3.5 sm:p-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#3D5A3D]/10 text-[#3D5A3D]">
+                        <CalendarCheck className="h-4 w-4" />
                       </div>
-                      <div>
-                        <div className="text-xs text-[#8B7355] uppercase tracking-wide">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#6f7f61]">
                           {t("modal.form.selected_date")}
                         </div>
-                        <div className="text-sm font-semibold text-[#1C1917]">
+                        <div className="mt-1 text-sm font-semibold text-[#1C1917] sm:text-[15px]">
                           {fmtDayFull(selectedDay)} • {fmtTime(selected.start)}
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 )}
 
-                {/* Tasting Type Selection */}
-                <div>
-                  <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase mb-3">
-                    {t("modal.form.type_label")}
-                  </div>
-                  <div className="grid gap-2">
-                    {props.tastingTypes.map((t, idx) => {
+                <div className="space-y-2.5">
+                  <Label>{t("modal.form.type_label")}</Label>
+                  <div role="radiogroup" aria-label={t("modal.form.type_label")} className="grid gap-2">
+                    {props.tastingTypes.map((tastingType, idx) => {
                       const accents = ["olive", "gold", "terracotta"] as const;
                       const accent = accents[idx % 3];
-                      const accentColor =
+                      const accentClass =
                         accent === "olive"
-                          ? "#3D5A3D"
+                          ? "border-[#d8e3d4] bg-[#f5f9f3] text-[#3D5A3D]"
                           : accent === "gold"
-                            ? "#B8860B"
-                            : "#8B7355";
-                      const isSelected = typeId === t.id;
+                            ? "border-[#ecdcb4] bg-[#fcf7eb] text-[#b17a10]"
+                            : "border-[#e5d7cc] bg-[#faf4ef] text-[#8B7355]";
+                      const isSelected = typeId === tastingType.id;
 
                       return (
-                        <label
-                          key={t.id}
+                        <Button
+                          key={tastingType.id}
+                          type="button"
+                          variant="outline"
+                          role="radio"
+                          aria-checked={isSelected}
+                          onClick={() => setTypeId(tastingType.id)}
                           className={[
-                            "flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition",
+                            "h-auto w-full justify-start rounded-[22px] border px-3.5 py-3 text-left shadow-none sm:px-4",
                             isSelected
-                              ? "border-[#3D5A3D]/30 bg-white shadow-sm"
-                              : "border-[#E7E5E4] bg-white hover:border-[#3D5A3D]/20",
+                              ? "border-[#3D5A3D]/35 bg-white ring-2 ring-[#3D5A3D]/8"
+                              : "border-[#E7E5E4] bg-white hover:border-[#d9d4cc] hover:bg-[#fffdf9]",
                           ].join(" ")}
                         >
-                          <input
-                            type="radio"
-                            name="tastingType"
-                            value={t.id}
-                            checked={isSelected}
-                            onChange={() => setTypeId(t.id)}
-                            className="mt-1 h-4 w-4 accent-[#3D5A3D]"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <div className="font-serif text-base font-light text-[#1C1917]">
-                              {t.title}
-                            </div>
-                            <div className="mt-0.5 text-xs text-[#57534E]">
-                              {t.subtitle}
-                            </div>
-                          </div>
-                          <div
-                            className="shrink-0 rounded-xl px-2.5 py-1.5 text-[10px] font-bold text-white"
-                            style={{ backgroundColor: accentColor }}
+                          <span className="flex min-w-0 flex-1 items-start gap-3">
+                            <span
+                              className={[
+                                "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition",
+                                isSelected ? "border-[#3D5A3D] bg-[#3D5A3D]" : "border-[#d6d3d1] bg-white",
+                              ].join(" ")}
+                              aria-hidden="true"
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block font-serif text-[15px] font-light text-[#1C1917] sm:text-base">
+                                {tastingType.title}
+                              </span>
+                              <span className="mt-1 block whitespace-normal text-[11px] leading-snug text-[#57534E] sm:text-xs">
+                                {tastingType.subtitle}
+                              </span>
+                            </span>
+                          </span>
+                          <Badge
+                            className={[
+                              "ml-3 shrink-0 rounded-xl border px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] shadow-none",
+                              accentClass,
+                            ].join(" ")}
                           >
-                            {t.durationMinutes} min
-                          </div>
-                        </label>
+                            {tastingType.durationMinutes} min
+                          </Badge>
+                        </Button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Numero Persone */}
-                <div>
-                  <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase mb-3">
-                    {t("modal.form.people_label")}
-                  </div>
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setPeople(Math.max(1, people - 1))}
-                      disabled={people <= 1}
-                      className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl border-2 border-[#E7E5E4] bg-white flex items-center justify-center text-[#57534E] hover:border-[#3D5A3D]/30 active:scale-95 transition disabled:opacity-50"
-                    >
-                      <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </button>
-                    <div className="flex-1 flex items-center justify-center gap-2 sm:gap-3 py-2.5 sm:py-3 rounded-xl border-2 border-[#E7E5E4] bg-white">
-                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-[#8B7355]" />
-                      <span className="text-xl sm:text-2xl font-semibold text-[#1C1917]">
-                        {people}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setPeople(Math.min(20, people + 1))}
-                      disabled={people >= 20}
-                      className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl border-2 border-[#E7E5E4] bg-white flex items-center justify-center text-[#57534E] hover:border-[#3D5A3D]/30 active:scale-95 transition disabled:opacity-50"
-                    >
-                      <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Form Fields */}
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <label className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase flex items-center justify-between">
-                      <span>{t("modal.form.time_label")}</span>
-                      {timeReqConflict && suggestedTime && (
-                        <button type="button" onClick={() => setTimeReq(suggestedTime)} className="text-[#3D5A3D] font-bold hover:underline lowercase">
-                          {t("modal.form.use_suggestion", { time: suggestedTime })}
-                        </button>
-                      )}
-                    </label>
-                    <input
-                      type="time"
-                      value={timeReq}
-                      onChange={(e) => setTimeReq(e.target.value)}
-                      style={{ fontSize: "16px" }}
-                      className={`mt-2 w-full rounded-xl border bg-white px-4 py-3 text-[#1C1917] outline-none transition focus:ring-1 ${timeReqConflict ? "border-red-300 focus:border-red-500 focus:ring-red-500" : "border-[#E7E5E4] focus:border-[#3D5A3D] focus:ring-[#3D5A3D]"}`}
-                    />
-                    {timeReqConflict && (
-                      <div className="mt-1.5 text-[11px] text-red-600 font-semibold leading-snug">
-                        {typeof timeReqConflict === "string" ? timeReqConflict : "Attenzione: sovrapposizione."}
+                <Card className="rounded-[22px] border-[#E7E5E4] bg-[linear-gradient(180deg,#fffdf9_0%,#faf7f2_100%)] shadow-none">
+                  <CardContent className="space-y-4 p-3.5 sm:p-4">
+                    <div className="space-y-2.5">
+                      <Label>{t("modal.form.people_label")}</Label>
+                      <div className="flex items-center gap-2.5">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setPeople(Math.max(1, people - 1))}
+                          disabled={people <= 1}
+                          className="h-11 w-11 rounded-xl border-[#E7E5E4] bg-white text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <div className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#E7E5E4] bg-white px-4">
+                          <Users className="h-4 w-4 text-[#8B7355]" />
+                          <span className="text-lg font-semibold text-[#1C1917]">{people}</span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setPeople(Math.min(20, people + 1))}
+                          disabled={people >= 20}
+                          className="h-11 w-11 rounded-xl border-[#E7E5E4] bg-white text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
                       </div>
-                    )}
-                  </div>
+                    </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-                      {t("modal.form.name_label")}
-                    </label>
-                    <input
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder={t("modal.form.name_placeholder")}
-                      style={{ fontSize: "16px" }}
-                      className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-white px-4 py-3 text-[#1C1917] outline-none transition focus:border-[#3D5A3D] focus:ring-1 focus:ring-[#3D5A3D]"
-                    />
-                  </div>
+                    <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+                      <div className="min-w-0 space-y-2 overflow-hidden sm:col-span-2">
+                        <div className="flex min-w-0 flex-col gap-1.5">
+                          <Label htmlFor="tasting-time">{t("modal.form.time_label")}</Label>
+                          {timeReqConflict && suggestedTime ? (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setTimeReq(suggestedTime)}
+                              className="h-auto min-w-0 justify-start whitespace-normal px-0 py-0 text-left text-[11px] font-semibold leading-tight text-[#3D5A3D] hover:bg-transparent hover:text-[#2D4A2D] sm:text-xs"
+                            >
+                              {t("modal.form.use_suggestion", { time: suggestedTime })}
+                            </Button>
+                          ) : null}
+                        </div>
+                        <Input
+                          id="tasting-time"
+                          type="time"
+                          value={timeReq}
+                          onChange={(e) => setTimeReq(e.target.value)}
+                          aria-invalid={!!timeReqConflict}
+                          className={timeReqConflict ? "max-w-full border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500/15" : "max-w-full"}
+                        />
+                        {timeReqConflict && (
+                          <div className="text-[11px] font-semibold leading-snug text-red-600">
+                            {typeof timeReqConflict === "string" ? timeReqConflict : "Attenzione: sovrapposizione."}
+                          </div>
+                        )}
+                      </div>
 
-                  <div>
-                    <label className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-                      {t("modal.form.email_label")}
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t("modal.form.email_placeholder")}
-                      style={{ fontSize: "16px" }}
-                      className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-white px-4 py-3 text-[#1C1917] outline-none transition focus:border-[#3D5A3D] focus:ring-1 focus:ring-[#3D5A3D]"
-                    />
-                  </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label htmlFor="tasting-name">{t("modal.form.name_label")}</Label>
+                        <Input
+                          id="tasting-name"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder={t("modal.form.name_placeholder")}
+                        />
+                      </div>
 
-                  <div>
-                    <label className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-                      {t("modal.form.phone_label")}
-                    </label>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder={t("modal.form.phone_placeholder")}
-                      style={{ fontSize: "16px" }}
-                      className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-white px-4 py-3 text-[#1C1917] outline-none transition focus:border-[#3D5A3D] focus:ring-1 focus:ring-[#3D5A3D]"
-                    />
-                  </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="tasting-email">{t("modal.form.email_label")}</Label>
+                        <Input
+                          id="tasting-email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder={t("modal.form.email_placeholder")}
+                        />
+                      </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-                      {t("modal.form.notes_label")}
-                    </label>
-                    <textarea
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder={t("modal.form.notes_placeholder")}
-                      rows={3}
-                      style={{ fontSize: "16px" }}
-                      className="mt-2 w-full resize-none rounded-xl border border-[#E7E5E4] bg-white px-4 py-3 text-[#1C1917] outline-none transition focus:border-[#3D5A3D] focus:ring-1 focus:ring-[#3D5A3D]"
-                    />
-                  </div>
-                </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="tasting-phone">{t("modal.form.phone_label")}</Label>
+                        <Input
+                          id="tasting-phone"
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder={t("modal.form.phone_placeholder")}
+                        />
+                      </div>
+
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label htmlFor="tasting-notes">{t("modal.form.notes_label")}</Label>
+                        <Textarea
+                          id="tasting-notes"
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          placeholder={t("modal.form.notes_placeholder")}
+                          rows={3}
+                          className="resize-none"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {submitError ? (
                   <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-800">
@@ -835,15 +848,16 @@ export default function TastingsCalendar(props: {
                   </div>
                 ) : null}
 
-                <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-                  <button
+                <div className="sticky bottom-0 -mx-4 mt-1 flex flex-col-reverse gap-3 border-t border-[#E7E5E4] bg-[#FDFCF8]/95 px-4 pb-1 pt-3 backdrop-blur sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-2 sm:flex-row sm:justify-end">
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={closeModal}
-                    className="rounded-2xl border border-[#E7E5E4] bg-white px-5 py-2.5 text-sm font-medium text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917]"
+                    className="rounded-2xl border-[#E7E5E4] bg-white px-5 text-sm font-medium text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
                   >
                     {t("modal.close")}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={submit}
                     disabled={
@@ -856,7 +870,7 @@ export default function TastingsCalendar(props: {
                       !!timeReqConflict
                     }
                     className={[
-                      "rounded-2xl bg-[#3D5A3D] px-5 py-2.5 text-sm font-medium text-white transition",
+                      "rounded-2xl bg-[#3D5A3D] px-5 text-sm font-medium text-white",
                       submitLoading ||
                         !selected ||
                         !fullName.trim() ||
@@ -869,7 +883,7 @@ export default function TastingsCalendar(props: {
                     ].join(" ")}
                   >
                     {submitLoading ? t("modal.form.submitting") : t("modal.form.submit")}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
