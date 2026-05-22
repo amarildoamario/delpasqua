@@ -22,15 +22,15 @@ export default function DiscoverSection() {
         title: t("cards.produzione.title"),
         subtitle: t("cards.produzione.subtitle"),
         href: "/produzione",
-        imageSrc: "/home/home_produzione.png",
-        imageAlt: "Olive appena raccolte in cassetta",
+        imageSrc: "/home_component_frantoio/home_frantoio.jpg",
+        imageAlt: "Macchinari di estrazione e frantoio",
       },
       {
-        title: t("cards.olio.title"),
-        subtitle: t("cards.olio.subtitle"),
-        href: "/il-nostro-olio",
-        imageSrc: "/home/home_olio.png",
-        imageAlt: "Bottiglia di olio extravergine in mano",
+        title: t("cards.degustazioni.title"),
+        subtitle: t("cards.degustazioni.subtitle"),
+        href: "/degustazioni",
+        imageSrc: "/home_component_degustazioni/home_degustazioni.jpg",
+        imageAlt: "Tavolo allestito per degustazione olio extravergine",
       },
       {
         title: t("cards.contatti.title"),
@@ -164,26 +164,29 @@ export default function DiscoverSection() {
   return (
     <section className="bg-[#F5F3EF]">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-        <header className="mb-14 text-center md:mb-20">
+        <header className="mb-12">
           <span className="mb-3 block text-xs font-medium tracking-[0.3em] text-[#6B7B4C] uppercase">
             {t("label")}
           </span>
-          <h2
-            ref={titleRef}
-            className="reveal-title font-serif text-3xl leading-tight tracking-[0.02em] text-[#2C2C2C] md:text-4xl lg:text-5xl"
-          >
-            {t("title").includes("Del Pasqua") ? (
-              <>
-                {t("title").split("Del Pasqua")[0]}
-                <span className="italic text-[#6B7B4C]">Del Pasqua</span>
-              </>
-            ) : (
-              t("title")
-            )}
-          </h2>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <h2
+              ref={titleRef}
+              className="reveal-title font-serif text-3xl font-light leading-tight text-[#1f1a17] md:text-4xl"
+            >
+              {t("title").includes("Del Pasqua") ? (
+                <>
+                  {t("title").split("Del Pasqua")[0]}
+                  <span className="italic text-[#6B7B4C]">Del Pasqua</span>
+                </>
+              ) : (
+                t("title")
+              )}
+            </h2>
+            <div className="hidden h-px w-24 bg-[#ede8e0] md:block" />
+          </div>
         </header>
 
-        <div className="grid gap-5 md:grid-cols-3 md:gap-6">
+        <div className="grid grid-cols-3 gap-2 md:gap-6">
           {cards.map((c, i) => (
             <Link
               key={c.title}
@@ -194,32 +197,31 @@ export default function DiscoverSection() {
               }}
               className="reveal-card group block"
             >
-              {/* Card con bordi super tondi e ombra soft */}
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-[#E8E4DC] shadow-sm transition-shadow duration-500 group-hover:shadow-2xl">
+              <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full overflow-hidden rounded-[5px] bg-[#E8E4DC] shadow-sm transition-shadow duration-500 group-hover:shadow-2xl">
                 <Image
                   src={c.imageSrc}
                   alt={c.imageAlt}
                   fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
+                  sizes="(min-width: 768px) 33vw, 33vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
 
                 {/* Overlay gradiente */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-95" />
 
                 {/* Contenuto in basso */}
-                <div className="absolute inset-x-0 bottom-0 p-6">
+                <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-6">
                   <div className="transform transition-transform duration-500 ease-out group-hover:-translate-y-1">
-                    <span className="mb-1 block text-[10px] font-semibold tracking-[0.25em] text-[#B8C4A7] uppercase">
+                    <span className="mb-0.5 sm:mb-1 block text-[7px] sm:text-[10px] font-semibold tracking-[0.15em] sm:tracking-[0.25em] text-[#B8C4A7] uppercase">
                       {c.subtitle}
                     </span>
-                    <h3 className="font-serif text-xl tracking-[0.05em] text-white md:text-2xl">
+                    <h3 className="font-serif text-xs sm:text-xl md:text-2xl tracking-normal sm:tracking-[0.05em] text-white">
                       {c.title}
                     </h3>
                   </div>
 
                   {/* Linea e freccia animata */}
-                  <div className="mt-3 flex items-center gap-2">
+                  <div className="hidden sm:flex mt-3 items-center gap-2">
                     <div className="h-[1px] w-8 bg-white/60 transition-all duration-500 group-hover:w-16" />
                     <ArrowUpRight
                       className="h-3 w-3 -translate-x-2 opacity-0 text-white transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100"
@@ -229,7 +231,7 @@ export default function DiscoverSection() {
                 </div>
 
                 {/* Bordo bianco interno che appare */}
-                <div className="absolute inset-3 rounded-2xl border border-white/0 transition-all duration-500 group-hover:border-white/40" />
+                <div className="absolute inset-1.5 sm:inset-3 rounded-[5px] border border-white/0 transition-all duration-500 group-hover:border-white/40" />
               </div>
             </Link>
           ))}

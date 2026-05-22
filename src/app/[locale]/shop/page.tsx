@@ -138,6 +138,7 @@ export default function ShopPage() {
           defaultVariantId: p.variants?.[0]?.id,
           category: p.category ?? "all",
           filterTags: inferFilterTags(p),
+          variantsCount: p.variants?.length ?? 1,
         };
       });
 
@@ -181,8 +182,8 @@ export default function ShopPage() {
 
   return (
     <>
-      <section className="min-h-screen bg-[linear-gradient(180deg,#f8f4ed_0%,#f6f1e8_36%,#f3ede3_100%)]">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
+      <section className="min-h-screen bg-[#fdfaf7]">
+        <div className="mx-auto max-w-[1440px] px-6 py-20 lg:py-28">
           {/* Header */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>

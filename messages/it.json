@@ -130,6 +130,8 @@
     },
     "Common": {
         "navbar": {
+            "home": "Home",
+            "about_us": "Chi siamo",
             "storia": "Storia",
             "frantoio": "Frantoio",
             "olio": "Olio",
@@ -146,8 +148,9 @@
             "blog": "Blog"
         },
         "ticker": {
-            "shipping": "Spedizione rapida 24/48h in Italia",
-            "artisanal": "Olio EVO artigianale • Frantoio di famiglia",
+            "shipping": "Spedizione rapida 24/48 ore",
+            "artisanal": "Olio EVO artigianale",
+            "family_mill": "Frantoio di famiglia",
             "tastings": "Degustazioni disponibili su prenotazione"
         },
         "footer": {
@@ -167,6 +170,9 @@
                 "shipping": "Spedizioni",
                 "returns": "Resi e rimborsi",
                 "contacts": "Contatti"
+            },
+            "navigation": {
+                "title": "NAVIGAZIONE"
             },
             "bottom": {
                 "rights": "© {year} Frantoio del Pasqua — Tutti i diritti riservati.",
@@ -358,9 +364,9 @@
                     "title": "FRANTOIO",
                     "subtitle": "Dal campo al frantoio"
                 },
-                "olio": {
-                    "title": "IL NOSTRO OLIO",
-                    "subtitle": "Qualità extravergine"
+                "degustazioni": {
+                    "title": "DEGUSTAZIONI",
+                    "subtitle": "Visite & degustazioni"
                 },
                 "contatti": {
                     "title": "CONTATTI",
@@ -387,6 +393,69 @@
                 "text": "Raccolta, attenzione, cura: la qualità nasce prima del frantoio.",
                 "tag1": "Freschezza preservata",
                 "tag2": "Profilo pulito"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "DEGUSTAZIONI",
+            "title": "Esperienze in Frantoio",
+            "description": "Vivi l'esperienza unica di una degustazione guidata nel nostro frantoio. Un viaggio sensoriale per scoprire la nostra passione, imparare l'arte dell'assaggio dell'olio extravergine di oliva biologico e IGP, e gustare abbinamenti culinari toscani autentici guidati dai nostri esperti.",
+            "cta": "SCOPRI LE DEGUSTAZIONI"
+        },
+        "HomeAboutTerritory": {
+            "label": "IL FRANTOIO",
+            "title": "Una Tradizione che continua",
+            "description": "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell'arco delle 24 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche...",
+            "cta": "SCOPRI DI PIU'"
+        },
+        "HomeUniqueness": {
+            "title": "Che cosa ci rende Unici",
+            "items": {
+                "tradition": {
+                    "title": "Tradizione agricola",
+                    "desc": "Da generazioni coltiviamo cereali, ulivi e vigneti nel rispetto della nostra terra"
+                },
+                "passion": {
+                    "title": "Passione familiare",
+                    "desc": "I valori tramandati guidano ancora oggi il nostro lavoro, con dedizione e continuità"
+                },
+                "innovation": {
+                    "title": "Innovazione consapevole",
+                    "desc": "Investiamo in nuove tecnologie senza rinunciare ai metodi tradizionali"
+                },
+                "quality": {
+                    "title": "Qualità autentica",
+                    "desc": "I nostri prodotti conservano il gusto naturale e l'aroma del tempo"
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "BOTTIGLIE & SELEZIONE",
+            "carouselLabel": "BOTTIGLIE IN SCENA",
+            "title": "Il carattere della nostra terra, in bottiglia",
+            "description": "Portiamo sulla tua tavola l'eccellenza del nostro olio extravergine in packaging curati nei minimi dettagli. Dal vetro scuro che preserva la freschezza dell'olio, alle lattine storiche per l'uso quotidiano in cucina: una selezione creata per arricchire ogni tuo piatto.",
+            "cta": "ENTRA NELLO SHOP",
+            "groups": {
+                "signature": {
+                    "label": "SELEZIONE DEL PASQUA",
+                    "title": "Olio, vino e identità della tenuta"
+                },
+                "table": {
+                    "label": "PER LA TAVOLA",
+                    "title": "Formati diversi, stessa firma"
+                },
+                "gift": {
+                    "label": "DA REGALARE",
+                    "title": "Bottiglie che si presentano da sole"
+                },
+                "daily": {
+                    "label": "LINEA QUOTIDIANA",
+                    "title": "Una presenza compatta e riconoscibile"
+                }
+            },
+            "products": {
+                "evo": "Bottiglia di olio EVO Del Pasqua",
+                "magnifico": "Bottiglia Magnifico Del Pasqua",
+                "vittoria": "Bottiglia di vino Vittoria Del Pasqua"
             }
         }
     },

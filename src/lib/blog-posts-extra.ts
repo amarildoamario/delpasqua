@@ -10,7 +10,7 @@ export const postsDifetti: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "6 min",
         author: "Dipartimento Qualità",
-        imageUrl: "/blog/rancido-cause-prevenzione.jpg",
+        imageUrl: "/blog/rancido.jpg",
         category: "Difetti dell'olio EVO",
         content: `## Come si valutano i difetti
 
@@ -88,8 +88,8 @@ In un olio prodotto bene — olive sane, raccolte al momento giusto, molite in t
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Dipartimento Qualità",
-        imageUrl: "/blog/rancido-cause-prevenzione.jpg",
-        category: "Difetti dell'olio EVO",
+        imageUrl: "/blog/rancido-cause.jpg",
+        category: "Difetti dell'olio EVO", 
         content: 
         
         `## Il meccanismo dell'ossidazione
@@ -168,7 +168,7 @@ export const postsChimica: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "7 min",
         author: "Dipartimento Qualità",
-        imageUrl: "/blog/composizione-chimica-olio-evo.jpg",
+        imageUrl: "/blog/composizione-chimica-olio.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## La struttura di base: i trigliceridi
 
@@ -239,7 +239,7 @@ Ogni lotto ha analisi di laboratorio disponibili: polifenoli totali, acidità, p
         updateDate: "2026-03-01",
         readingTime: "6 min",
         author: "Dipartimento Qualità",
-        imageUrl: "/blog/composizione-chimica-olio-evo.jpg",
+        imageUrl: "/blog/polifenoli-olio.jpg",
         category: "Chimica dell'olio di oliva",
         content: `## Cosa sono i polifenoli
 
@@ -303,7 +303,7 @@ export const postsFiducia: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "5 min",
         author: "Emanuele Del Pasqua",
-        imageUrl: "/blog/come-nasce-nostro-olio.jpg",
+        imageUrl: "/blog/come-nasce-il-nostro-olio.jpg",
         category: "Il nostro frantoio",
         content: `## La filosofia: la qualità si costruisce prima della raccolta
 
@@ -384,7 +384,7 @@ Forniamo analisi chimiche complete su richiesta per ogni lotto prodotto.
         updateDate: "2026-03-01",
         readingTime: "4 min",
         author: "Frantoio del Pasqua",
-        imageUrl: "/blog/oleoturismo-degustazioni-frantoio.jpg",
+        imageUrl: "/blog/oleoturismo.jpg",
         category: "Il nostro frantoio",
         content: `## Cosa serve (e cosa non serve)
 
@@ -461,7 +461,7 @@ export const postsGlossario: BlogPost[] = [
         updateDate: "2026-03-01",
         readingTime: "8 min",
         author: "Redazione Frantoio",
-        imageUrl: "/blog/glossario-olio-evo.jpg",
+        imageUrl: "/blog/glossario.jpg",
         category: "Informazioni sull'olio EVO",
         content: `## A
 

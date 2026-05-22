@@ -166,7 +166,7 @@
     "title": "EXTRAVERGINE - EVO",
     "subtitle": "Extravergine • EVO",
     "badge": "EVO",
-    "imageSrc": "/products/EVO-750-ml.png",
+    "imageSrc": "/products/EVO-750-ml-gpt.png",
     "imageAlt": "Olio extravergine di oliva EVO",
     "description": "Il classico EVO da tutti i giorni.",
     "specs": {
@@ -179,7 +179,7 @@
         "label": "Bottiglia 750 ml",
         "priceCents": 1800,
         "sku": "EVO-B-750ML",
-        "imageSrc": "/products/EVO-750-ml.png",
+        "imageSrc": "/products/EVO-750-ml-gpt.png",
         "imageAlt": "EVO bottiglia 750 ml",
         "specs": {
           "Weight": "—",

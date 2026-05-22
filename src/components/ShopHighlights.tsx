@@ -59,6 +59,7 @@ export default function ShopHighlights() {
         badge: tp(`${p.id}.badge`) || p.badge,
         imageSrc: p.imageSrc,
         imageAlt: p.imageAlt,
+        variantsCount: p.variants?.length ?? 1,
       };
     });
   }, [tp, locale]);
@@ -141,8 +142,8 @@ export default function ShopHighlights() {
   }, []);
 
   return (
-    <section className="bg-[linear-gradient(180deg,#f8f4ed_0%,#f3ede3_100%)]">
-      <div className="mx-auto max-w-7xl px-6 pb-12 pt-20 lg:pb-16 lg:pt-28">
+    <section className="bg-[#fdfaf7]">
+      <div className="mx-auto max-w-[1440px] px-8 py-20 lg:px-12 lg:py-28">
         <Header />
 
         {/* MOBILE */}
@@ -210,22 +211,16 @@ function Header() {
   return (
     <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
       <div>
-        <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8a7258] uppercase">
-          <span className="h-px w-6 bg-[#8a7258]" />
-          {t("label")}
-        </div>
-        <h2 className="mt-4 font-serif text-3xl font-light tracking-tight text-[#1f1a17] md:text-4xl lg:text-5xl">
+        <h2 className="font-serif text-3xl font-light tracking-tight text-[#1f1a17] md:text-4xl lg:text-5xl">
           {t("title_part1")}<span className="italic text-[#8f6d4c]">{t("title_italic")}</span>
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#5f554c]">
-          {t("subtitle")}
-        </p>
       </div>
       <Link
         href="/shop"
-        className="hidden md:inline-flex items-center gap-2 rounded-full border border-[#d7ccbc] bg-white/78 px-6 py-3 text-xs font-medium tracking-[0.2em] text-[#1f1a17] shadow-sm shadow-[#1f1a17]/5 transition-all hover:border-[#bda589] hover:bg-[#1f1a17] hover:text-[#fbf6ef]"
+        className="group hidden md:inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#8f6d4c] underline underline-offset-[6px] decoration-[1.5px] transition-colors duration-300 hover:text-[#1f1a17] hover:decoration-[#1f1a17]"
       >
-        {t("cta")} <ArrowRight className="h-4 w-4" strokeWidth={2} />
+        <span>{t("cta")}</span>
+        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.2} />
       </Link>
     </div>
   );
@@ -287,7 +282,7 @@ function ShopHighlightsDesktop({ products }: { products: HighlightProduct[] }) {
   }, []);
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr">
       {products.map((p, i) => (
         <div
           key={p.id}

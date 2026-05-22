@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import ProductPurchaseBox from "../_components/ProductPurchaseBox.client";
+import { resolveTransparentProductImage, shouldContainProductImage } from "@/lib/productImageFit";
 
 type Specs = Record<string, string>;
 
@@ -82,7 +83,10 @@ export default function ProductDetailsClient({
 
   const heroSrcRaw = selectedVariant?.imageSrc || product.imageSrc;
   const heroSrc = typeof heroSrcRaw === "string" ? heroSrcRaw.trim() : "";
+  const heroDisplaySrc = resolveTransparentProductImage(heroSrc);
   const heroAlt = selectedVariant?.imageAlt || product.imageAlt;
+  const usesContainedHero = shouldContainProductImage(heroSrc);
+  const usesTransparentHero = heroDisplaySrc !== heroSrc;
   const skuLabel = selectedVariant?.sku ?? "—";
 
   const specsRows = useMemo(() => buildSpecsRows(product, selectedVariant), [product, selectedVariant]);
@@ -90,13 +94,25 @@ export default function ProductDetailsClient({
   return (
     <div className="grid items-start gap-10 lg:grid-cols-2">
       <div>
-        <div className="relative aspect-square overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50">
-          {heroSrc ? (
+        <div
+          className={
+            usesTransparentHero
+              ? "relative aspect-square overflow-visible bg-transparent"
+              : "relative aspect-square overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50"
+          }
+        >
+          {heroDisplaySrc ? (
             <Image
-              src={heroSrc}
+              src={heroDisplaySrc}
               alt={heroAlt}
               fill
-              className="object-cover"
+              className={
+                usesTransparentHero
+                  ? "object-contain object-center scale-[1.08] md:scale-[1.14]"
+                  : usesContainedHero
+                    ? "object-contain p-6 md:p-10"
+                    : "object-cover"
+              }
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />

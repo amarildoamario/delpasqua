@@ -130,6 +130,8 @@
     },
     "Common": {
         "navbar": {
+            "home": "Hjem",
+            "about_us": "Om os",
             "storia": "Historie",
             "frantoio": "Mølle",
             "olio": "Olie",
@@ -146,8 +148,9 @@
             "blog": "Blog"
         },
         "ticker": {
-            "shipping": "Hurtig levering 24/48 timer i Italien",
-            "artisanal": "Håndværksmæssig EVO-olie • Familiemølle",
+            "shipping": "Hurtig levering 24/48 timer",
+            "artisanal": "Håndværksmæssig EVO-olie",
+            "family_mill": "Familiemølle",
             "tastings": "Smagninger tilgængelige efter reservation"
         },
         "footer": {
@@ -167,6 +170,9 @@
                 "shipping": "Forsendelse",
                 "returns": "Retur og refusion",
                 "contacts": "Kontakt"
+            },
+            "navigation": {
+                "title": "NAVIGERING"
             },
             "bottom": {
                 "rights": "© {year} Frantoio del Pasqua — Alle rettigheder forbeholdes.",
@@ -358,9 +364,9 @@
                     "title": "PRODUKTION",
                     "subtitle": "Fra mark til mølle"
                 },
-                "olio": {
-                    "title": "VORES OLIE",
-                    "subtitle": "Ekstra jomfru kvalitet"
+                "degustazioni": {
+                    "title": "SMAGNINGER",
+                    "subtitle": "Ture & Smagninger"
                 },
                 "contatti": {
                     "title": "KONTAKT",
@@ -387,6 +393,69 @@
                 "text": "Høst, opmærksomhed, pleje: kvalitet fødes før møllen.",
                 "tag1": "Bevaret friskhed",
                 "tag2": "Rent profil"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "SMAGNINGER",
+            "title": "Oplevelser på Møllen",
+            "description": "Oplev en unik guidet smagning på vores olivenmølle. En sanselig rejse for at opdage vores lidenskab, lære kunsten at smage økologisk og IGP ekstra jomfru olivenolie og nyde autentiske toscanske madparringer guidet af vores eksperter.",
+            "cta": "OPDAG SMAGNINGER"
+        },
+        "HomeAboutTerritory": {
+            "label": "MØLLEN",
+            "title": "En tradition der fortsætter",
+            "description": "Selv i dag i Toscana foregår en stor del af olivensmalingen traditionelt ved håndhøstning; olivenerne transporteres til møllen og behandles inden for 24 timer for at bevare de aromatiske og fenoliske komponenter...",
+            "cta": "LÆS MERE"
+        },
+        "HomeUniqueness": {
+            "title": "Hvad der gør os unikke",
+            "items": {
+                "tradition": {
+                    "title": "Landbrugstradition",
+                    "desc": "I generationer har vi dyrket korn, oliventræer og vinmarker med respekt for vores jord"
+                },
+                "passion": {
+                    "title": "Familielidenskab",
+                    "desc": "De overleverede værdier guider stadig vores arbejde i dag, med dedikation og kontinuitet"
+                },
+                "innovation": {
+                    "title": "Bevidst innovation",
+                    "desc": "Vi investerer i nye teknologier uden at give afkald på traditionelle metoder"
+                },
+                "quality": {
+                    "title": "Autentisk kvalitet",
+                    "desc": "Vores produkter bevarer den naturlige smag og duften af svundne tider"
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "FLASKER & UDVALG",
+            "carouselLabel": "FLASKER I SCENE",
+            "title": "Karakteren af vores land, på flaske",
+            "description": "Vi bringer den enestående kvalitet af vores ekstra jomfruolivenolie til dit bord i omhyggeligt designede emballager. Fra mørkt glas, der bevarer oliens friskhed, til klassiske dunke til daglig brug i køkkenet: et udvalg skabt til at berige enhver ret.",
+            "cta": "GA TIL SHOP",
+            "groups": {
+                "signature": {
+                    "label": "DEL PASQUA UDVALG",
+                    "title": "Olie, vin og godsets identitet"
+                },
+                "table": {
+                    "label": "TIL BORDET",
+                    "title": "Forskellige former, samme signatur"
+                },
+                "gift": {
+                    "label": "TIL GAVE",
+                    "title": "Flasker der praesenterer sig selv"
+                },
+                "daily": {
+                    "label": "HVERDAGSLINJE",
+                    "title": "En kompakt og genkendelig tilstedevaerelse"
+                }
+            },
+            "products": {
+                "evo": "Del Pasqua EVO-olieflaske",
+                "magnifico": "Del Pasqua Magnifico-flaske",
+                "vittoria": "Del Pasqua Vittoria-vinflaske"
             }
         }
     },
@@ -468,6 +537,18 @@
                 "title": "Filtrering",
                 "desc": "Passage gennem filtre for at fjerne rester og voks.",
                 "img_label": "BILLEDE — FILTRERING"
+            },
+            "divider_1": {
+                "label": "PLEJE OG OPBEVARING",
+                "title_part1": "Fra forarbejdning ",
+                "title_italic": "til flasken",
+                "text": "Efter udvinding beskytter vi vores olie mod lys og ilt. Kun pa den made nar mollens aromaer frem intakte til bordet."
+            },
+            "divider_2": {
+                "label": "GARANTERET KVALITET",
+                "title_part1": "Kontrol i ",
+                "title_italic": "hver fase",
+                "text": "Vi overlader intet til tilfaldighederne: fra olivenernes ankomst til kontrollen af det faerdige produkt."
             },
             "stoccaggio": {
                 "kicker": "Opbevaring",

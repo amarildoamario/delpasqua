@@ -41,6 +41,18 @@
                         "Cadeau- / evenementoptie"
                     ]
                 }
+            },
+            "divider_1": {
+                "label": "ZORG EN BEWARING",
+                "title_part1": "Van verwerking ",
+                "title_italic": "tot de fles",
+                "text": "Na de extractie beschermen we onze olie tegen licht en zuurstof. Alleen zo bereiken de aromas van de molen de tafel ongeschonden."
+            },
+            "divider_2": {
+                "label": "GEGARANDEERDE KWALITEIT",
+                "title_part1": "Controle in ",
+                "title_italic": "elke fase",
+                "text": "We laten niets aan het toeval over: van de aankomst van de olijven tot de controles op het eindproduct."
             }
         },
         "calendar": {
@@ -130,6 +142,8 @@
     },
     "Common": {
         "navbar": {
+            "home": "Home",
+            "about_us": "Over ons",
             "storia": "Geschiedenis",
             "frantoio": "Olijfpers",
             "olio": "Olie",
@@ -146,8 +160,9 @@
             "blog": "Blog"
         },
         "ticker": {
-            "shipping": "Snelle levering 24/48u in Italië",
-            "artisanal": "Ambachtelijke EVO-olie • Familiedrukkerij",
+            "shipping": "Snelle levering 24/48u",
+            "artisanal": "Ambachtelijke EVO-olie",
+            "family_mill": "Familie olijfmolen",
             "tastings": "Proeverijen beschikbaar op reservering"
         },
         "footer": {
@@ -167,6 +182,9 @@
                 "shipping": "Verzending",
                 "returns": "Retouren en terugbetalingen",
                 "contacts": "Contact"
+            },
+            "navigation": {
+                "title": "NAVIGATIE"
             },
             "bottom": {
                 "rights": "© {year} Frantoio del Pasqua — Alle rechten voorbehouden.",
@@ -358,9 +376,9 @@
                     "title": "PRODUCTIE",
                     "subtitle": "Van veld tot molen"
                 },
-                "olio": {
-                    "title": "ONZE OLIE",
-                    "subtitle": "Extra vierge kwaliteit"
+                "degustazioni": {
+                    "title": "PROEVERIJEN",
+                    "subtitle": "Rondleidingen & Proeverijen"
                 },
                 "contatti": {
                     "title": "CONTACTEN",
@@ -387,6 +405,69 @@
                 "text": "Oogst, aandacht, zorg: kwaliteit wordt geboren vóór de molen.",
                 "tag1": "Behoud van frisheid",
                 "tag2": "Schoon profiel"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "PROEVERIJEN",
+            "title": "Ervaringen bij de Pers",
+            "description": "Ervaar een unieke begeleide proeverij in onze olijfpers. Een zintuiglijke reis om onze passie te ontdekken, de kunst van het proeven van biologische en BGA extra vierge olijfolie te leren en te genieten van authentieke Toscaanse spijskoppelingen onder leiding van onze experts.",
+            "cta": "ONTDEK PROEVERIJEN"
+        },
+        "HomeAboutTerritory": {
+            "label": "DE MOLEN",
+            "title": "Een traditie die voortduurt",
+            "description": "Zelfs vandaag de dag vindt in Toscane een groot deel van de olijfoogst traditioneel met de hand plaats; de naar de molen getransporteerde olijven worden vervolgens binnen 24 uur verwerkt om de integriteit van de aromatische en fenolische componenten te waarborgen...",
+            "cta": "MEER LEZEN"
+        },
+        "HomeUniqueness": {
+            "title": "Wat ons uniek maakt",
+            "items": {
+                "tradition": {
+                    "title": "Landbouwtraditie",
+                    "desc": "Al generaties lang verbouwen we granen, olijfbomen en wijngaarden met respect voor ons land"
+                },
+                "passion": {
+                    "title": "Familiepassie",
+                    "desc": "De doorgegeven waarden sturen ook vandaag nog ons werk met toewijding en continuïteit"
+                },
+                "innovation": {
+                    "title": "Bewuste innovatie",
+                    "desc": "We investeren in nieuwe technologieën zonder traditionele methoden op te geven"
+                },
+                "quality": {
+                    "title": "Authentieke kwaliteit",
+                    "desc": "Onze producten behouden de natuurlijke smaak en het aroma van de tijd"
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "FLESSEN & SELECTIE",
+            "carouselLabel": "FLESSEN IN BEELD",
+            "title": "Het karakter van ons land, in een fles",
+            "description": "We brengen de uitmuntendheid van onze extra vierge olijfolie naar je tafel in zorgvuldig ontworpen verpakkingen. Van donker glas dat de versheid van de olie bewaart, tot klassieke blikken voor dagelijks gebruik in de keuken: een selectie gemaakt om elk gerecht te verrijken.",
+            "cta": "NAAR DE SHOP",
+            "groups": {
+                "signature": {
+                    "label": "DEL PASQUA SELECTIE",
+                    "title": "Olie, wijn en identiteit van het landgoed"
+                },
+                "table": {
+                    "label": "VOOR TAFEL",
+                    "title": "Verschillende vormen, dezelfde signatuur"
+                },
+                "gift": {
+                    "label": "OM TE GEVEN",
+                    "title": "Flessen die zichzelf presenteren"
+                },
+                "daily": {
+                    "label": "DAGELIJKSE LIJN",
+                    "title": "Een compacte en herkenbare aanwezigheid"
+                }
+            },
+            "products": {
+                "evo": "Del Pasqua EVO-oliefles",
+                "magnifico": "Del Pasqua Magnifico-fles",
+                "vittoria": "Del Pasqua Vittoria-wijnfles"
             }
         }
     },

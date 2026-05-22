@@ -130,6 +130,8 @@
     },
     "Common": {
         "navbar": {
+            "home": "Home",
+            "about_us": "About us",
             "storia": "History",
             "frantoio": "Oil Mill",
             "olio": "Olive Oil",
@@ -146,8 +148,9 @@
             "blog": "Blog"
         },
         "ticker": {
-            "shipping": "Fast shipping 24/48h in Italy",
-            "artisanal": "Artisanal EVO Oil • Family Mill",
+            "shipping": "Fast shipping 24/48 hours",
+            "artisanal": "Artisanal EVO Oil",
+            "family_mill": "Family Mill",
             "tastings": "Tastings available by reservation"
         },
         "footer": {
@@ -167,6 +170,9 @@
                 "shipping": "Shipping",
                 "returns": "Returns and Refunds",
                 "contacts": "Contacts"
+            },
+            "navigation": {
+                "title": "NAVIGATION"
             },
             "bottom": {
                 "rights": "© {year} Frantoio del Pasqua — All rights reserved.",
@@ -358,9 +364,9 @@
                     "title": "FRANTOIO",
                     "subtitle": "From field to mill"
                 },
-                "olio": {
-                    "title": "OUR OIL",
-                    "subtitle": "Extra Virgin Quality"
+                "degustazioni": {
+                    "title": "TASTINGS",
+                    "subtitle": "Tours & tastings"
                 },
                 "contatti": {
                     "title": "CONTACTS",
@@ -387,6 +393,69 @@
                 "text": "Harvest, attention, care: quality is born before the mill.",
                 "tag1": "Preserved freshness",
                 "tag2": "Clean profile"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "TASTINGS",
+            "title": "Experiences at the Mill",
+            "description": "Experience a unique guided tasting at our olive mill. A sensory journey to discover our passion, learn the art of tasting organic and PGI extra virgin olive oil, and enjoy authentic Tuscan food pairings guided by our experts.",
+            "cta": "DISCOVER TASTINGS"
+        },
+        "HomeAboutTerritory": {
+            "label": "THE MILL",
+            "title": "A Tradition that continues",
+            "description": "Even today in Tuscany, a large part of the olive harvest takes place traditionally, with hand picking; the olives transported to the mill are then processed within 24 hours to safeguard the integrity of the aromatic and phenolic components...",
+            "cta": "READ MORE"
+        },
+        "HomeUniqueness": {
+            "title": "What Makes Us Unique",
+            "items": {
+                "tradition": {
+                    "title": "Agricultural Tradition",
+                    "desc": "For generations we have cultivated cereals, olive trees and vineyards respecting our land"
+                },
+                "passion": {
+                    "title": "Family Passion",
+                    "desc": "The values passed down still guide our work today, with dedication and continuity"
+                },
+                "innovation": {
+                    "title": "Conscious Innovation",
+                    "desc": "We invest in new technologies without giving up traditional methods"
+                },
+                "quality": {
+                    "title": "Authentic Quality",
+                    "desc": "Our products preserve the natural taste and the aroma of time"
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "BOTTLES & SELECTION",
+            "carouselLabel": "BOTTLES ON STAGE",
+            "title": "The character of our land, in a bottle",
+            "description": "We bring the excellence of our extra virgin olive oil to your table in carefully crafted packaging. From dark glass that preserves the oil's freshness, to classic cans for daily kitchen use: a selection created to enrich every dish.",
+            "cta": "ENTER THE SHOP",
+            "groups": {
+                "signature": {
+                    "label": "DEL PASQUA SELECTION",
+                    "title": "Oil, wine and estate identity"
+                },
+                "table": {
+                    "label": "FOR THE TABLE",
+                    "title": "Different shapes, same signature"
+                },
+                "gift": {
+                    "label": "TO GIFT",
+                    "title": "Bottles that present themselves"
+                },
+                "daily": {
+                    "label": "EVERYDAY LINE",
+                    "title": "A compact and recognizable presence"
+                }
+            },
+            "products": {
+                "evo": "Del Pasqua EVO oil bottle",
+                "magnifico": "Del Pasqua Magnifico bottle",
+                "vittoria": "Del Pasqua Vittoria wine bottle"
             }
         }
     },

@@ -313,7 +313,7 @@ export default function ProductPurchaseBox({
 
   return (
     <>
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] backdrop-blur-sm md:sticky md:top-6">
+      <div style={{ borderRadius: '5px' }} className="border border-neutral-200 bg-white p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm md:sticky md:top-6">
         {/* Header: Prezzo e disponibilità */}
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -328,7 +328,7 @@ export default function ProductPurchaseBox({
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-full bg-neutral-50 px-3 py-1.5">
+          <div style={{ borderRadius: '5px' }} className="flex items-center gap-1.5 bg-neutral-50 px-3 py-1.5">
             <span
               className={`h-2 w-2 rounded-full ${loadingAvail ? "bg-neutral-300 animate-pulse" : isOut ? "bg-red-500" : "bg-emerald-500"
                 }`}
@@ -347,7 +347,7 @@ export default function ProductPurchaseBox({
             </label>
             <button
               onClick={() => setShowVariantDropdown(!showVariantDropdown)}
-              className="group w-full rounded-xl border border-neutral-200 bg-white px-4 py-3.5 text-left transition-all hover:border-neutral-300 focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-100"
+              style={{ borderRadius: '5px' }} className="group w-full border border-neutral-200 bg-white px-4 py-3.5 text-left transition-all hover:border-neutral-300 focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-100"
             >
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
@@ -367,7 +367,7 @@ export default function ProductPurchaseBox({
             </button>
 
             {showVariantDropdown && (
-              <div className="absolute z-20 mt-1 w-full rounded-xl border border-neutral-200 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+              <div style={{ borderRadius: '5px' }} className="absolute z-20 mt-1 w-full border border-neutral-200 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
                 {variants.map((variant) => {
                   const sku = makeSku(productId, variant.id);
                   const avail = availMap ? (availMap[sku] ?? 0) : null;
@@ -410,7 +410,7 @@ export default function ProductPurchaseBox({
             <label className="text-[11px] font-medium tracking-[0.15em] text-neutral-500 uppercase">Quantità</label>
             {!loadingAvail && maxQty > 0 && <span className="text-[11px] text-neutral-400">Max {maxQty}</span>}
           </div>
-          <div className="inline-flex items-center rounded-xl border border-neutral-200 bg-white">
+          <div style={{ borderRadius: '5px' }} className="inline-flex items-center border border-neutral-200 bg-white">
             <button
               onClick={() => setQty(Math.max(1, qty - 1))}
               disabled={qty <= 1}
@@ -435,7 +435,7 @@ export default function ProductPurchaseBox({
         <button
           onClick={handleAddToCart}
           disabled={isDisabled || isAdding}
-          className={`group relative w-full overflow-hidden rounded-xl py-4 text-sm font-semibold tracking-wide transition-all ${isDisabled || isAdding
+          style={{ borderRadius: '5px' }} className={`group relative w-full overflow-hidden py-4 text-sm font-semibold tracking-wide transition-all ${isDisabled || isAdding
             ? "bg-neutral-200 text-neutral-500 cursor-not-allowed"
             : "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.98] shadow-[0_8px_24px_rgba(16,185,129,0.25)] hover:shadow-[0_12px_28px_rgba(16,185,129,0.35)]"
             }`}
@@ -463,7 +463,7 @@ export default function ProductPurchaseBox({
         </button>
 
         {added && (
-          <div className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 py-3 text-sm text-emerald-700 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div style={{ borderRadius: '5px' }} className="mt-3 flex items-center justify-center gap-2 bg-emerald-50 py-3 text-sm text-emerald-700 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <Check className="h-4 w-4" />
             Aggiunto al carrello ({qty})
           </div>
@@ -471,14 +471,14 @@ export default function ProductPurchaseBox({
 
         {/* Trust badges */}
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="flex items-start gap-2 rounded-lg bg-neutral-50 p-3">
+          <div style={{ borderRadius: '5px' }} className="flex items-start gap-2 bg-neutral-50 p-3">
             <Truck className="h-4 w-4 shrink-0 text-neutral-400 mt-0.5" />
             <div>
               <p className="text-[11px] font-medium text-neutral-900">Spedizione gratis</p>
               <p className="text-[10px] text-neutral-500">Sopra i 50€</p>
             </div>
           </div>
-          <div className="flex items-start gap-2 rounded-lg bg-neutral-50 p-3">
+          <div style={{ borderRadius: '5px' }} className="flex items-start gap-2 bg-neutral-50 p-3">
             <ShieldCheck className="h-4 w-4 shrink-0 text-neutral-400 mt-0.5" />
             <div>
               <p className="text-[11px] font-medium text-neutral-900">Qualità garantita</p>
@@ -488,7 +488,7 @@ export default function ProductPurchaseBox({
         </div>
 
         {/* Metodi di Pagamento */}
-                <PaymentMethodsBadges className="mt-5 mb-2" />
+        <PaymentMethodsBadges className="mt-5 mb-2" collapsible />
 
         {/* Dettagli - Desktop */}
         <div className="mt-4 hidden md:block space-y-1">
@@ -506,7 +506,7 @@ export default function ProductPurchaseBox({
         {/* Bottone dettagli - Mobile */}
         <button
           onClick={() => setShowMobileDetails(true)}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 py-3 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-50 md:hidden"
+          style={{ borderRadius: '5px' }} className="mt-4 flex w-full items-center justify-center gap-2 border border-neutral-200 py-3 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-50 md:hidden"
         >
           <Info className="h-4 w-4" />
           Dettagli prodotto

@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import PaymentMethodsBadges from "@/components/PaymentMethodsBadges";
 import {
   ArrowUp,
   MapPin,
@@ -14,6 +15,17 @@ import {
 
 export default function Footer() {
   const t = useTranslations("Common.footer");
+  const tNav = useTranslations("Common.navbar");
+
+  const navLinks = [
+    { href: "/", label: tNav("home") },
+    { href: "/storia", label: tNav("about_us") },
+    { href: "/il-nostro-olio", label: tNav("olio") },
+    { href: "/produzione", label: tNav("frantoio") },
+    { href: "/degustazioni", label: tNav("degustazioni") },
+    { href: "/shop", label: tNav("shop") },
+    { href: "/blog", label: tNav("blog") },
+  ];
 
   return (
     <footer className="relative overflow-hidden bg-[#0a0a0a] text-stone-300">
@@ -24,10 +36,10 @@ export default function Footer() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-emerald-600/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
-        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
+      <div className="relative mx-auto max-w-[1360px] px-6 md:px-8 lg:px-12 py-16 md:py-20">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-16 lg:gap-24">
           {/* Brand */}
-          <div className="md:col-span-4">
+          <div className="md:col-span-3">
             <div className="font-serif text-2xl tracking-[0.12em] text-stone-100">
               FRANTOIO DEL PASQUA
             </div>
@@ -54,7 +66,7 @@ export default function Footer() {
           </div>
 
           {/* Contatti */}
-          <div className="md:col-span-5">
+          <div className="md:col-span-3">
             <div className="flex items-center gap-2 text-xs tracking-[0.16em] text-emerald-500 font-medium">
               <span className="h-px w-4 bg-emerald-500/50" />
               {t("contacts.title")}
@@ -65,7 +77,7 @@ export default function Footer() {
                 <div className="mt-0.5 p-1.5 rounded-lg bg-stone-900 border border-stone-800 text-emerald-500 group-hover:border-emerald-500/30 transition-colors">
                   <MapPin className="h-4 w-4" />
                 </div>
-                <span className="leading-relaxed text-stone-400 group-hover:text-stone-300 transition-colors">
+                <span className="leading-relaxed text-stone-400 group-hover:text-stone-300 transition-colors font-sans">
                   {t("contacts.address")}
                 </span>
               </li>
@@ -74,7 +86,7 @@ export default function Footer() {
                   <Phone className="h-4 w-4" />
                 </div>
                 <a
-                  className="text-stone-400 hover:text-emerald-400 transition-colors"
+                  className="text-stone-400 hover:text-emerald-400 transition-colors font-sans"
                   href="tel:+390575810065"
                   aria-label="Chiama"
                 >
@@ -86,7 +98,7 @@ export default function Footer() {
                   <Mail className="h-4 w-4" />
                 </div>
                 <a
-                  className="text-stone-400 hover:text-emerald-400 transition-colors"
+                  className="text-stone-400 hover:text-emerald-400 transition-colors font-sans"
                   href="mailto:info@delpasqua.com"
                   aria-label="Email"
                 >
@@ -99,7 +111,7 @@ export default function Footer() {
                 </div>
                 <Link
                   href="/parita-di-genere"
-                  className="text-stone-400 hover:text-emerald-400 transition-colors"
+                  className="text-stone-400 hover:text-emerald-400 transition-colors font-sans"
                 >
                   {t("contacts.gender_policy")}
                 </Link>
@@ -153,6 +165,28 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+
+          {/* Navigazione */}
+          <div className="md:col-span-3">
+            <div className="flex items-center gap-2 text-xs tracking-[0.16em] text-emerald-500 font-medium">
+              <span className="h-px w-4 bg-emerald-500/50" />
+              {t("navigation.title")}
+            </div>
+
+            <ul className="mt-6 space-y-3 text-sm">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    className="group flex items-center gap-2 text-stone-400 hover:text-emerald-400 transition-colors"
+                    href={link.href}
+                  >
+                    <span className="w-1 h-1 rounded-full bg-stone-700 group-hover:bg-emerald-500 transition-colors" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Divider con gradient */}
@@ -179,7 +213,12 @@ export default function Footer() {
 
       {/* TECH STACK BAR - Sezione più scura */}
       <div className="relative bg-[#050505] border-t border-stone-900">
-        <div className="mx-auto max-w-6xl px-6 py-6">
+        <div className="mx-auto max-w-[1360px] px-6 md:px-8 lg:px-12 pt-10 pb-6">
+          {/* Metodi di Pagamento Sicuri */}
+          <div className="mb-8 border-b border-stone-900 pb-8">
+            <PaymentMethodsBadges dark />
+          </div>
+
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
             {/* Label */}

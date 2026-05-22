@@ -7,7 +7,7 @@
         "label": "Bottiglia 750 ml",
         "priceCents": 2200,
         "sku": "EVO-B-750ML",
-        "imageSrc": "/products/EVO-750-ml.png",
+        "imageSrc": "/products/EVO-750-ml-gpt.png",
         "imageAlt": "EVO bottiglia 750 ml",
         "specs": {
           "Weight": "—",
@@ -44,7 +44,7 @@
     "title": "Extravergine - EVO",
     "subtitle": "Olio extravergine di oliva",
     "badge": "EVO",
-    "imageSrc": "/products/EVO-750-ml.png",
+    "imageSrc": "/products/EVO-750-ml-gpt.png",
     "imageAlt": "Olio extravergine di oliva EVO",
     "description": "Il classico EVO da tutti i giorni.",
     "specs": {}
@@ -57,7 +57,7 @@
         "label": "Variante 1",
         "priceCents": 1200,
         "sku": "FL-B-500ML",
-        "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "",
         "specs": {}
       }
@@ -67,7 +67,7 @@
     "category": "Olio",
     "subtitle": "Olio extravergine di oliva",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
+    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
     "imageAlt": "Olio extravergine - fruttato leggero",
     "description": "",
     "specs": {},
@@ -86,7 +86,7 @@
         "label": "Bottiglia 500 ml",
         "priceCents": 1200,
         "sku": "FM-B-500ML",
-        "imageSrc": "/products/fruttato-medio-bottiglia-500ml.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "Fruttato medio bottiglia 500 ml",
         "specs": {
           "Weight": "1.5 kg",
@@ -100,7 +100,7 @@
         "label": "Bottiglia 750 ml",
         "priceCents": 1800,
         "sku": "FM-B-750ML",
-        "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "Fruttato medio bottiglia 750 ml",
         "specs": {
           "Weight": "—",
@@ -112,7 +112,7 @@
         "label": "Bottiglia 1 L",
         "priceCents": 2200,
         "sku": "FM-B-1LT",
-        "imageSrc": "/products/fruttato-medio-bottiglia-1lt.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "Fruttato medio bottiglia 1 L",
         "specs": {
           "Weight": "—",
@@ -137,7 +137,7 @@
     "title": "Extravergine - Fruttato Medio",
     "subtitle": "Olio Extravergine di oliva",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
+    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
     "imageAlt": "Olio extravergine - fruttato medio",
     "description": "Blend equilibrato, ideale a crudo e in cucina.",
     "specs": {},
@@ -153,7 +153,7 @@
         "label": "Bottiglia 500 ml",
         "priceCents": 1200,
         "sku": "FI-B-500ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-500ml.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "Fruttato intenso bottiglia 500 ml",
         "specs": {
           "Weight": "—",
@@ -165,7 +165,7 @@
         "label": "Bottiglia 750 ml",
         "priceCents": 1800,
         "sku": "FI-B-750ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "Fruttato intenso bottiglia 750 ml",
         "specs": {
           "Weight": "—",
@@ -177,7 +177,7 @@
         "label": "Bottiglia 1 L",
         "priceCents": 2200,
         "sku": "FI-B-1LT",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "Fruttato intenso bottiglia 1 L",
         "specs": {
           "Weight": "—",
@@ -202,7 +202,7 @@
     "title": "Extravergine - Fruttato Intenso",
     "subtitle": "Olio Extravergine di oliva ",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
+    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
     "imageAlt": "Olio extravergine - fruttato intenso",
     "description": "Sapore deciso, amaro e piccante più presenti.",
     "specs": {
@@ -276,8 +276,8 @@
         "label": "500 ml ",
         "priceCents": 1200,
         "sku": "",
-        "imageSrc": "",
-        "imageAlt": "",
+        "imageSrc": "/products/vino-vittoria.png",
+        "imageAlt": "Vino Vittoria bottiglia",
         "specs": {
           "nuovo": "1"
         }
@@ -287,8 +287,8 @@
         "label": "1 lt",
         "priceCents": 2000,
         "sku": "",
-        "imageSrc": "",
-        "imageAlt": "",
+        "imageSrc": "/products/vino-vittoria.png",
+        "imageAlt": "Vino Vittoria bottiglia",
         "specs": {}
       }
     ],
@@ -297,8 +297,8 @@
     "title": "Vino Vittoria 100% San Giovese",
     "subtitle": "Chianti IGP Sangiovese  ",
     "badge": "",
-    "imageSrc": "",
-    "imageAlt": "",
+    "imageSrc": "/products/vino-vittoria.png",
+    "imageAlt": "Vino Vittoria",
     "description": "",
     "specs": {
       "nulla": "1231"

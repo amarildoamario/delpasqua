@@ -41,6 +41,18 @@
                         "Geschenk- / Veranstaltungsoption"
                     ]
                 }
+            },
+            "divider_1": {
+                "label": "PFLEGE UND KONSERVIERUNG",
+                "title_part1": "Von der Verarbeitung ",
+                "title_italic": "bis zur Flasche",
+                "text": "Nach der Extraktion schutzen wir unser Ol vor Licht und Sauerstoff. Nur so kommen die Aromen der Muhle unverandert auf den Tisch."
+            },
+            "divider_2": {
+                "label": "GARANTIERTE QUALITAT",
+                "title_part1": "Kontrolle in ",
+                "title_italic": "jeder Phase",
+                "text": "Wir uberlassen nichts dem Zufall: von der Anlieferung der Oliven bis zu den Kontrollen des Endprodukts."
             }
         },
         "calendar": {
@@ -130,6 +142,8 @@
     },
     "Common": {
         "navbar": {
+            "home": "Home",
+            "about_us": "Über uns",
             "storia": "Geschichte",
             "frantoio": "Ölmühle",
             "olio": "Öl",
@@ -146,8 +160,9 @@
             "blog": "Blog"
         },
         "ticker": {
-            "shipping": "Schneller Versand 24/48 Std in Italien",
-            "artisanal": "Handwerklich hergestelltes EVO-Öl • Familienmühle",
+            "shipping": "Schneller Versand 24/48 Std.",
+            "artisanal": "Handwerklich hergestelltes EVO-Öl",
+            "family_mill": "Familienmühle",
             "tastings": "Verkostungen nach Voranmeldung verfügbar"
         },
         "footer": {
@@ -167,6 +182,9 @@
                 "shipping": "Versand",
                 "returns": "Rückgabe und Rückerstattung",
                 "contacts": "Kontakt"
+            },
+            "navigation": {
+                "title": "NAVIGATION"
             },
             "bottom": {
                 "rights": "© {year} Frantoio del Pasqua — Alle Rechte vorbehalten.",
@@ -358,9 +376,9 @@
                     "title": "PRODUKTION",
                     "subtitle": "Vom Feld zur Mühle"
                 },
-                "olio": {
-                    "title": "UNSER ÖL",
-                    "subtitle": "Native Qualität Extra"
+                "degustazioni": {
+                    "title": "VERKOSTUNGEN",
+                    "subtitle": "Touren & Verkostungen"
                 },
                 "contatti": {
                     "title": "KONTAKTE",
@@ -387,6 +405,69 @@
                 "text": "Ernte, Aufmerksamkeit, Sorgfalt: Qualität entsteht vor der Mühle.",
                 "tag1": "Erhalt Erhalt Frische",
                 "tag2": "Sauberes Profil"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "VERKOSTUNGEN",
+            "title": "Erlebnisse in der Ölmühle",
+            "description": "Erleben Sie eine einzigartige geführte Verkostung in unserer Ölmühle. Eine sensorische Reise, um unsere Leidenschaft zu entdecken, die Kunst der Verkostung von biologischem und g.g.A. Olivenöl extra vergine zu erlernen und authentische toskanische kulinarische Kombinationen unter Anleitung unserer Experten zu genießen.",
+            "cta": "VERKOSTUNGEN ENTDECKEN"
+        },
+        "HomeAboutTerritory": {
+            "label": "DIE MÜHLE",
+            "title": "Eine Tradition, die fortbesteht",
+            "description": "Auch heute noch findet in der Toskana ein Großteil der Olivenernte traditionell per Handlese statt; die in die Mühle transportierten Oliven werden dann innerhalb von 24 Stunden verarbeitet, um die Integrität der aromatischen und phenolischen Komponenten zu bewahren...",
+            "cta": "MEHR ERFAHREN"
+        },
+        "HomeUniqueness": {
+            "title": "Was uns einzigartig macht",
+            "items": {
+                "tradition": {
+                    "title": "Landwirtschaftliche Tradition",
+                    "desc": "Seit Generationen bauen wir Getreide, Olivenbäume und Weinberge mit Respekt für unser Land an"
+                },
+                "passion": {
+                    "title": "Familiäre Leidenschaft",
+                    "desc": "Die überlieferten Werte leiten noch heute unsere Arbeit mit Hingabe und Kontinuität"
+                },
+                "innovation": {
+                    "title": "Bewusste Innovation",
+                    "desc": "Wir investieren in neue Technologien, ohne auf traditionelle Methoden zu verzichten"
+                },
+                "quality": {
+                    "title": "Authentische Qualität",
+                    "desc": "Unsere Produkte bewahren den natürlichen Geschmack und das Aroma der Zeit"
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "FLASCHEN & AUSWAHL",
+            "carouselLabel": "FLASCHEN IN SZENE",
+            "title": "Der Charakter unseres Landes, in der Flasche",
+            "description": "Wir bringen das hervorragende Aroma unseres nativen Olivenöls extra in sorgfältig gestalteten Verpackungen auf Ihren Tisch. Von dunklem Glas, das die Frische des Öls bewahrt, bis hin zu klassischen Kanistern für den täglichen Gebrauch in der Küche: eine Auswahl, die jedes Gericht bereichert.",
+            "cta": "ZUM SHOP",
+            "groups": {
+                "signature": {
+                    "label": "DEL PASQUA AUSWAHL",
+                    "title": "Öl, Wein und Identität des Guts"
+                },
+                "table": {
+                    "label": "FÜR DEN TISCH",
+                    "title": "Verschiedene Formen, gleiche Handschrift"
+                },
+                "gift": {
+                    "label": "ZUM VERSCHENKEN",
+                    "title": "Flaschen mit eigener Präsenz"
+                },
+                "daily": {
+                    "label": "ALLTAGSLINIE",
+                    "title": "Eine kompakte und erkennbare Präsenz"
+                }
+            },
+            "products": {
+                "evo": "Del-Pasqua-EVO-Ölflasche",
+                "magnifico": "Del-Pasqua-Magnifico-Flasche",
+                "vittoria": "Del-Pasqua-Vittoria-Weinflasche"
             }
         }
     },

@@ -1,24 +1,40 @@
 "use client";
 
-
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { Link as LocaleLink, usePathname, routing } from "@/i18n/routing";
+import { useLocale, useTranslations } from "next-intl";
+
+import "./Navbar-Styles.css";
+
 import CartButton from "@/components/CartButton";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLinkItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Link as LocaleLink, routing, usePathname } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
+import {
+  ArrowUpRight,
+  ChevronDown,
+  Facebook,
+  Home,
+  Instagram,
+  MapPin,
   Menu,
-  User,
   ShoppingBag,
   Store,
-  ChevronDown,
-  X,
-  ArrowUpRight,
-  Instagram,
-  Facebook,
-  MapPin,
-  Home,
   Droplets,
+  User,
 } from "lucide-react";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -56,7 +72,7 @@ const FlagIcon = ({ locale, className }: { locale: string; className?: string })
     ),
     en: (
       <svg viewBox="0 0 60 30" className={className}>
-        <clipPath id="s">
+        <clipPath id="nav-flag-en">
           <path d="M0,0 v30 h60 v-30 z" />
         </clipPath>
         <path d="M0,0 v30 h60 v-30 z" fill="#012169" />
@@ -69,32 +85,33 @@ const FlagIcon = ({ locale, className }: { locale: string; className?: string })
     de: (
       <svg viewBox="0 0 5 3" className={className}>
         <rect width="5" height="3" y="0" fill="#000" />
-        <rect width="5" height="2" y="1" fill="#D00" />
-        <rect width="5" height="1" y="2" fill="#FFCE00" />
+        <rect width="5" height="2" y="1" fill="#d00" />
+        <rect width="5" height="1" y="2" fill="#ffce00" />
       </svg>
     ),
     nl: (
       <svg viewBox="0 0 3 2" className={className}>
-        <rect width="3" height="2" fill="#AE1C28" />
-        <rect width="3" height="1.33" y="0.66" fill="#FFF" />
-        <rect width="3" height="0.66" y="1.33" fill="#21468B" />
+        <rect width="3" height="2" fill="#ae1c28" />
+        <rect width="3" height="1.33" y="0.66" fill="#fff" />
+        <rect width="3" height="0.66" y="1.33" fill="#21468b" />
       </svg>
     ),
     da: (
       <svg viewBox="0 0 37 28" className={className}>
-        <rect width="37" height="28" fill="#C8102E" />
-        <rect x="12" width="4" height="28" fill="#FFF" />
-        <rect y="12" width="37" height="4" fill="#FFF" />
+        <rect width="37" height="28" fill="#c8102e" />
+        <rect x="12" width="4" height="28" fill="#fff" />
+        <rect y="12" width="37" height="4" fill="#fff" />
       </svg>
     ),
     no: (
       <svg viewBox="0 0 22 16" className={className}>
-        <rect width="22" height="16" fill="#BA0C2F" />
+        <rect width="22" height="16" fill="#ba0c2f" />
         <path d="M0,8h22M8,0v16" stroke="#fff" strokeWidth="4" />
-        <path d="M0,8h22M8,0v16" stroke="#00205B" strokeWidth="2" />
+        <path d="M0,8h22M8,0v16" stroke="#00205b" strokeWidth="2" />
       </svg>
-    )
+    ),
   };
+
   return flags[locale] || null;
 };
 
@@ -103,67 +120,60 @@ export default function Navbar() {
   const locale = useLocale();
   const pathname = usePathname();
 
-  const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [tickerIndex, setTickerIndex] = useState(0);
-  const [isTicking, setIsTicking] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const lastScrollY = useRef(0);
-  const langRef = useRef<HTMLDivElement | null>(null);
-  const tickerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fix hydration - wait for mount
   useEffect(() => {
     queueMicrotask(() => setMounted(true));
   }, []);
 
-  // Top info ticker
   const tickerItems = [
     { id: "t1", text: t("ticker.shipping") },
     { id: "t2", text: t("ticker.artisanal") },
-    { id: "t3", text: t("ticker.tastings") },
+    { id: "t3", text: t("ticker.family_mill") },
+    { id: "t4", text: t("ticker.tastings") },
   ];
 
+  const repeatedTickerItems = Array(10).fill(tickerItems).flat();
+
+  const navLinks = [
+    { href: "/", label: t("navbar.home") },
+    { href: "/storia", label: t("navbar.about_us") },
+    { href: "/shop", label: t("navbar.shop") },
+    { href: "/produzione", label: t("navbar.frantoio") },
+    { href: "/degustazioni", label: t("navbar.degustazioni") },
+    { href: "/contatti", label: t("navbar.contatti") },
+  ];
+
+  const mobileLinks = [
+    { href: "/", label: t("navbar.home") },
+    { href: "/storia", label: t("navbar.about_us") },
+    { href: "/shop", label: t("navbar.shop") },
+    { href: "/produzione", label: t("navbar.frantoio") },
+    { href: "/degustazioni", label: t("navbar.degustazioni") },
+    { href: "/blog", label: t("navbar.blog") || "Blog" },
+    { href: "/contatti", label: t("navbar.contatti") },
+  ];
+
+
   useEffect(() => {
     if (!mounted) return;
 
-    const interval = window.setInterval(() => {
-      setIsTicking(true);
-      tickerTimeoutRef.current = setTimeout(() => {
-        setTickerIndex((i) => (i + 1) % tickerItems.length);
-        setIsTicking(false);
-      }, 400);
-    }, 4000);
-
-    return () => {
-      window.clearInterval(interval);
-      if (tickerTimeoutRef.current) clearTimeout(tickerTimeoutRef.current);
-    };
-  }, [mounted, tickerItems.length]);
-
-  // Smart scroll behavior
-  useEffect(() => {
-    if (!mounted) return;
-
-    let rafId: number;
-    let currentScrollY = 0;
+    let rafId = 0;
 
     const onScroll = () => {
       if (rafId) return;
 
       rafId = requestAnimationFrame(() => {
-        currentScrollY = window.scrollY;
+        const currentScrollY = window.scrollY;
         setScrolled(currentScrollY > 20);
 
         if (window.innerWidth >= 768) {
-          if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-            setHidden(true);
-          } else {
-            setHidden(false);
-          }
+          setHidden(currentScrollY > lastScrollY.current && currentScrollY > 100);
         } else {
           setHidden(false);
         }
@@ -174,118 +184,79 @@ export default function Navbar() {
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [mounted]);
 
-  // Close lang dropdown on outside click
-  useEffect(() => {
-    function onDocClick(e: MouseEvent) {
-      if (!langRef.current) return;
-      if (!langRef.current.contains(e.target as Node)) setLangOpen(false);
-    }
-    document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
-  }, []);
-
-  // Mobile drawer: esc + body/html lock
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setMobileOpen(false);
-    }
-
-    const html = document.documentElement;
-
-    if (mobileOpen) {
-      document.addEventListener("keydown", onKeyDown);
-
-      // Lock scroll on both body + html (more robust across browsers)
-      document.body.style.overflow = "hidden";
-      document.body.style.touchAction = "none";
-      html.style.overflow = "hidden";
-      html.style.touchAction = "none";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-      html.style.overflow = "";
-      html.style.touchAction = "";
-    }
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-      html.style.overflow = "";
-      html.style.touchAction = "";
-    };
-  }, [mobileOpen]);
-
-  const navLinks = [
-    { href: "/storia", label: t("navbar.storia") },
-    { href: "/produzione", label: t("navbar.frantoio") },
-    { href: "/il-nostro-olio", label: t("navbar.olio") },
-    { href: "/degustazioni", label: t("navbar.degustazioni") },
-  ];
-
-  const rightLinks = [
-    { href: "/shop", label: t("navbar.shop") },
-    { href: "/contatti", label: t("navbar.contatti") },
-  ];
-
-  // Prevent hydration mismatch by not rendering dynamic content until mounted
   if (!mounted) {
     return (
       <>
         <div className="h-[98px] md:h-[118px]" aria-hidden="true" />
-        <header className="fixed top-0 left-0 w-full z-50 bg-white font-sans">
-          <div className="w-full bg-stone-950 text-stone-100">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex h-7 md:h-8 items-center justify-center">
-                <span className="text-[11px] md:text-xs font-medium tracking-[0.2em] uppercase text-stone-300">
-                  {tickerItems[0].text}
-                </span>
+        <header className="fixed top-0 left-0 z-50 w-full bg-[#fdfaf7] font-sans">
+          <div className="w-full border-b border-[#0c1e13]/80 bg-[#132c1c] text-stone-100">
+            <div className="w-full">
+              <div className="relative flex h-7 items-center justify-center overflow-hidden md:h-8">
+                <div className="marquee-container">
+                  <div className="marquee-track">
+                    {repeatedTickerItems.map((item, idx) => (
+                      <span key={`${item.id}-${idx}`} className="marquee-item">
+                        {item.text}
+                        <span className="marquee-separator">|</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <nav className="flex items-center justify-between h-[70px] md:h-[86px]">
-              <div className="flex items-center gap-8 flex-1">
-                <div className="md:hidden w-6" />
-                <div className="hidden md:flex items-center gap-8 lg:gap-12">
-                  {navLinks.map((link) => (
-                    <span
-                      key={link.href}
-                      className="text-[13px] font-medium tracking-[0.1em] text-stone-600 uppercase"
-                    >
-                      {link.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex-shrink-0 px-4">
+          <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-4">
+            <nav className="flex h-[70px] items-center justify-between md:h-[86px]">
+              {/* LOGO (Far left) */}
+              <div className="flex-shrink-0 -ml-8 md:ml-0">
                 <div className="relative h-[40px] w-[140px] md:h-[50px] md:w-[180px] lg:h-[56px] lg:w-[200px]">
-                  <div className="bg-stone-200 rounded animate-pulse w-full h-full" />
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    fill
+                    priority
+                    className="object-contain"
+                    sizes="(max-width: 768px) 140px, (max-width: 1024px) 180px, 200px"
+                  />
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-6 flex-1">
-                <div className="hidden md:flex items-center gap-8 lg:gap-12">
-                  {rightLinks.map((link) => (
-                    <span
-                      key={link.href}
-                      className="text-[13px] font-medium tracking-[0.1em] text-stone-600 uppercase"
-                    >
-                      {link.label}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-1 md:gap-3">
-                  <div className="hidden md:block w-20" />
-                  <div className="h-4 w-px bg-stone-200 hidden md:block" />
-                  <div className="hidden md:block w-10 h-10" />
-                  <div className="md:hidden w-10 h-10" />
-                  <div className="hidden md:block w-10 h-10" />
+
+              {/* DESKTOP NAV LINKS (Centered/Left-aligned next to logo) */}
+              <div className="hidden flex-1 items-center gap-5 pl-4 md:flex lg:gap-6 xl:gap-7">
+                {navLinks.map((link) => (
+                  <span
+                    key={link.href}
+                    className="text-[13px] font-medium uppercase tracking-[0.1em] text-stone-600"
+                  >
+                    {link.label}
+                  </span>
+                ))}
+              </div>
+
+              {/* ACTIONS (Far right) */}
+              <div className="flex items-center gap-1 md:gap-3">
+                <div className="hidden w-20 md:block" />
+                <div className="hidden h-4 w-px bg-stone-200 md:block" />
+                <div className="hidden h-10 w-10 md:block" />
+                <div className="hidden h-10 w-10 md:block" />
+
+                {/* Mobile hamburger placeholder */}
+                <div className="group inline-flex items-center gap-2 p-2 pr-0 text-stone-800 md:hidden">
+                  <span className="flex w-6 flex-col gap-[5px]">
+                    <span className="block h-[2px] w-full bg-current" />
+                    <span className="block h-[2px] w-4 bg-current" />
+                    <span className="block h-[2px] w-full bg-current" />
+                  </span>
+                  <span className="hidden text-xs font-medium uppercase tracking-[0.2em] sm:block">
+                    {t("navbar.menu")}
+                  </span>
                 </div>
               </div>
             </nav>
@@ -296,96 +267,44 @@ export default function Navbar() {
   }
 
   return (
-    <>
-      {/* Spacer */}
-      <div
-        className="h-[98px] md:h-[118px] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
-        aria-hidden="true"
-      />
+    <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+      <div className="h-[98px] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:h-[118px]" aria-hidden="true" />
 
-      {/* HEADER UNIFICATO */}
       <header
-        className={[
-          "fixed top-0 left-0 w-full z-50 font-sans",
-          "transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          hidden
-            ? "md:-translate-y-[calc(100%+20px)] translate-y-0"
-            : "translate-y-0",
-        ].join(" ")}
+        className={cn(
+          "fixed top-0 left-0 z-50 w-full font-sans transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          hidden ? "translate-y-0 md:-translate-y-[calc(100%+20px)]" : "translate-y-0"
+        )}
       >
-        {/* TOP INFO BAR */}
-        <div className="w-full bg-stone-950 text-stone-100 border-b border-stone-800/50">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="relative flex h-7 md:h-8 items-center justify-center overflow-hidden">
-              {tickerItems.map((item, idx) => {
-                const isActive = idx === tickerIndex;
-                return (
-                  <div
-                    key={item.id}
-                    className={[
-                      "absolute inset-0 flex items-center justify-center",
-                      "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
-                      isActive && !isTicking
-                        ? "opacity-100 translate-y-0 scale-100"
-                        : isActive && isTicking
-                          ? "opacity-0 -translate-y-2 scale-95"
-                          : "opacity-0 translate-y-2 scale-95",
-                    ].join(" ")}
-                    aria-hidden={!isActive}
-                  >
-                    <span className="flex items-center gap-2 text-[11px] md:text-xs font-medium tracking-[0.2em] uppercase text-stone-300">
-                      <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+        <div className="w-full border-b border-[#0c1e13]/80 bg-[#132c1c] text-stone-100">
+          <div className="w-full">
+            <div className="relative flex h-7 items-center justify-center overflow-hidden md:h-8">
+              <div className="marquee-container">
+                <div className="marquee-track">
+                  {repeatedTickerItems.map((item, idx) => (
+                    <span key={`${item.id}-${idx}`} className="marquee-item">
                       {item.text}
+                      <span className="marquee-separator">|</span>
                     </span>
-                  </div>
-                );
-              })}
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* NAVBAR PRINCIPALE - Senza riga inferiore */}
         <div
-          className={[
+          className={cn(
             "w-full transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
-            scrolled
-              ? "bg-white/95 backdrop-blur-xl shadow-xl"
-              : "bg-white shadow-md",
-          ].join(" ")}
+            scrolled ? "bg-[#fdfaf7]/95 shadow-xl backdrop-blur-xl" : "bg-[#fdfaf7] shadow-md"
+          )}
         >
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <nav className="flex items-center justify-between h-[70px] md:h-[86px]">
-              {/* LEFT */}
-              <div className="flex items-center gap-8 flex-1">
-                <button
-                  type="button"
-                  onClick={() => setMobileOpen(true)}
-                  className="md:hidden group flex items-center gap-2 text-stone-800 hover:text-green-700 transition-all duration-300"
-                  aria-label={t("navbar.open_menu")}
-                >
-                  <div className="flex flex-col gap-[5px] w-6 relative">
-                    <span className="block h-[2px] w-full bg-current transition-all duration-300 ease-out group-hover:w-4 group-hover:translate-x-1" />
-                    <span className="block h-[2px] w-4 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-                    <span className="block h-[2px] w-full bg-current transition-all duration-300 ease-out group-hover:w-4 group-hover:translate-x-1" />
-                  </div>
-                  <span className="text-xs font-medium tracking-[0.2em] uppercase hidden sm:block">
-                    {t("navbar.menu")}
-                  </span>
-                </button>
-
-                <div className="hidden md:flex items-center gap-8 lg:gap-12">
-                  {navLinks.map((link) => (
-                    <NavLink key={link.href} href={link.href}>
-                      {link.label}
-                    </NavLink>
-                  ))}
-                </div>
-              </div>
-
-              {/* CENTER: Logo */}
-              <div className="flex-shrink-0 px-4">
-                <LocaleLink href="/" className="block relative group">
-                  <div className="relative h-[40px] w-[140px] md:h-[50px] md:w-[180px] lg:h-[56px] lg:w-[200px] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.03]">
+          <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-4">
+            <nav className="flex h-[70px] items-center justify-between md:h-[86px]">
+              {/* LOGO (Far left) */}
+              <div className="flex-shrink-0 -ml-8 md:ml-0">
+                <LocaleLink href="/" className="group block">
+                  <div className="relative h-[40px] w-[140px] transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.03] md:h-[50px] md:w-[180px] lg:h-[56px] lg:w-[200px]">
                     <Image
                       src="/logo.png"
                       alt="Logo"
@@ -398,304 +317,198 @@ export default function Navbar() {
                 </LocaleLink>
               </div>
 
-              {/* RIGHT */}
-              <div className="flex items-center justify-end gap-6 flex-1">
-                <div className="hidden md:flex items-center gap-8 lg:gap-12">
-                  {rightLinks.map((link) => (
-                    <NavLink key={link.href} href={link.href}>
-                      {link.label}
-                    </NavLink>
-                  ))}
+              {/* DESKTOP NAV LINKS (Left/Center-aligned next to logo) */}
+              <div className="hidden flex-1 items-center gap-5 pl-4 md:flex lg:gap-6 xl:gap-7">
+                {navLinks.map((link) => (
+                  <NavLink key={link.href} href={link.href}>
+                    {link.label}
+                  </NavLink>
+                ))}
+              </div>
+
+              {/* ACTIONS (Far right: language flag dropdown, BARRA, Cart icon, burger button on mobile) */}
+              <div className="flex items-center gap-1 md:gap-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium tracking-wider text-stone-600 transition-colors hover:bg-stone-50 hover:text-stone-900 md:flex">
+                    <FlagIcon locale={locale} className="h-3 w-5 rounded-[1px] shadow-sm" />
+                    <span className="uppercase tracking-[0.1em]">{locale}</span>
+                    <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-28 p-1.5">
+                    {routing.locales.map((l) => (
+                      <DropdownMenuLinkItem
+                        key={l}
+                        closeOnClick
+                        render={(props) => <LocaleLink {...props} href={pathname} locale={l} />}
+                        className={l === locale ? "bg-green-50 text-green-700" : undefined}
+                      >
+                        <FlagIcon locale={l} className="h-2.5 w-4 shrink-0 rounded-[1px] shadow-sm" />
+                        {l}
+                      </DropdownMenuLinkItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* BARRA */}
+                <div className="hidden h-4 w-px bg-stone-200 md:block" />
+
+                {/* Cart icon */}
+                <div className="hidden md:block">
+                  <CartButton
+                    icon={<ShoppingBag className="h-5 w-5" strokeWidth={1.5} />}
+                    className="h-10 w-10 rounded-full transition-all duration-300 hover:bg-stone-100"
+                    badgeColor="green"
+                  />
                 </div>
 
-                <div className="flex items-center gap-1 md:gap-3">
-                  <div className="hidden md:block relative" ref={langRef}>
-                    <button
-                      type="button"
-                      onClick={() => setLangOpen((v) => !v)}
-                      className={[
-                        "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium tracking-wider transition-all duration-300 rounded-full",
-                        langOpen
-                          ? "bg-stone-100 text-stone-900"
-                          : "text-stone-600 hover:text-stone-900 hover:bg-stone-50",
-                      ].join(" ")}
-                      aria-haspopup="menu"
-                      aria-expanded={langOpen}
-                    >
-                      <FlagIcon locale={locale} className="h-3 w-5 rounded-[1px] shadow-sm" />
-                      <span className="uppercase tracking-[0.1em]">{locale}</span>
-                      <ChevronDown
-                        className={[
-                          "h-3.5 w-3.5 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-                          langOpen ? "rotate-180" : "",
-                        ].join(" ")}
-                        strokeWidth={2}
-                      />
-                    </button>
+                {/* Desktop account */}
+                <LocaleLink
+                  href="/login"
+                  className="hidden h-10 w-10 items-center justify-center rounded-full text-stone-700 transition-all duration-300 hover:bg-stone-100 hover:text-stone-900 md:flex"
+                  aria-label="Account"
+                >
+                  <User className="h-5 w-5" strokeWidth={1.5} />
+                </LocaleLink>
 
-                    <div
-                      className={[
-                        "absolute right-0 top-full mt-2 w-28 rounded-xl border border-stone-100 bg-white/95 backdrop-blur-md py-2 shadow-xl",
-                        "origin-top-right transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                        langOpen
-                          ? "scale-100 opacity-100 translate-y-0"
-                          : "scale-95 opacity-0 -translate-y-2 pointer-events-none",
-                      ].join(" ")}
-                      role="menu"
-                    >
-                      {routing.locales.map((l, idx) => (
-                        <LocaleLink
-                          key={l}
-                          href={pathname}
-                          locale={l}
-                          className={[
-                            "flex items-center gap-3 w-full px-4 py-2.5 text-left text-xs font-medium tracking-wider transition-all duration-200 uppercase",
-                            l === locale
-                              ? "text-green-700 bg-green-50/80"
-                              : "text-stone-600 hover:bg-stone-50 hover:text-stone-900",
-                          ].join(" ")}
-                          onClick={() => setLangOpen(false)}
-                          style={{
-                            transitionDelay: langOpen ? `${idx * 50}ms` : "0ms",
-                          }}
-                        >
-                          <FlagIcon locale={l} className="h-2.5 w-4 rounded-[1px] shadow-sm shrink-0" />
-                          {l}
-                        </LocaleLink>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="h-4 w-px bg-stone-200 hidden md:block" />
-
-                  <div className="hidden md:block">
-                    <CartButton
-                      icon={
-                        <ShoppingBag
-                          className="w-[18px] h-[18px] md:w-5 md:h-5"
-                          strokeWidth={1.5}
-                        />
-                      }
-                      className="h-9 w-9 md:h-10 md:w-10 hover:bg-stone-100 rounded-full transition-all duration-300"
-                      badgeColor="green"
-                    />
-                  </div>
-
-                  <LocaleLink
-                    href="/login"
-                    className="md:hidden flex items-center justify-center h-10 w-10 text-stone-800 hover:text-green-700 hover:bg-stone-100 rounded-full transition-all duration-300"
-                    aria-label="Account"
-                  >
-                    <User className="h-6 w-6" strokeWidth={1.5} />
-                  </LocaleLink>
-
-                  <LocaleLink
-                    href="/login"
-                    className="hidden md:flex items-center justify-center h-9 w-9 md:h-10 md:w-10 text-stone-700 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-all duration-300"
-                    aria-label="Account"
-                  >
-                    <User
-                      className="h-[18px] w-[18px] md:h-5 md:w-5"
-                      strokeWidth={1.5}
-                    />
-                  </LocaleLink>
-                </div>
+                {/* Mobile hamburger menu (top right) */}
+                <SheetTrigger
+                  className="group inline-flex items-center gap-2 p-2 pr-0 text-stone-800 transition-colors hover:text-green-700 md:hidden"
+                  aria-label={t("navbar.open_menu")}
+                >
+                  <span className="flex w-6 flex-col gap-[5px]">
+                    <span className="block h-[2px] w-full bg-current transition-all duration-300 group-hover:w-4 group-hover:translate-x-1" />
+                    <span className="block h-[2px] w-4 bg-current transition-all duration-300 group-hover:w-full" />
+                    <span className="block h-[2px] w-full bg-current transition-all duration-300 group-hover:w-4 group-hover:translate-x-1" />
+                  </span>
+                  <span className="hidden text-xs font-medium uppercase tracking-[0.2em] sm:block">
+                    {t("navbar.menu")}
+                  </span>
+                </SheetTrigger>
               </div>
             </nav>
           </div>
         </div>
       </header>
 
-      {/* MOBILE DRAWER */}
-      <div
-        className={[
-          "fixed inset-0 z-[60] md:hidden",
-          mobileOpen ? "pointer-events-auto" : "pointer-events-none",
-        ].join(" ")}
-      >
-        <div
-          className={[
-            "absolute inset-0 bg-stone-900/30 backdrop-blur-sm transition-all duration-500",
-            mobileOpen ? "opacity-100" : "opacity-0",
-          ].join(" ")}
-          onClick={() => setMobileOpen(false)}
-        />
+      <SheetContent side="left" hideClose className="max-w-sm border-r border-stone-200">
+        <div className="flex h-[72px] items-center justify-between border-b border-stone-100 px-6">
+          <LocaleLink href="/" onClick={() => setMobileOpen(false)} className="relative h-10 w-32">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              fill
+              className="object-contain object-left"
+              sizes="128px"
+            />
+          </LocaleLink>
 
-        <div
-          className={[
-            "absolute inset-y-0 left-0 w-full max-w-sm bg-white shadow-2xl",
-            "transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            mobileOpen ? "translate-x-0" : "-translate-x-full",
-          ].join(" ")}
-        >
-          <div className="flex items-center justify-between px-6 h-[72px] border-b border-stone-100">
-            <LocaleLink
-              href="/"
-              onClick={() => setMobileOpen(false)}
-              className="relative h-10 w-32"
-            >
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                fill
-                className="object-contain object-left"
-                sizes="128px"
-              />
-            </LocaleLink>
+          <SheetClose
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-stone-100 text-stone-600 transition-colors hover:bg-stone-200 hover:text-stone-900"
+            aria-label={t("navbar.close_menu")}
+          >
+            <span className="sr-only">{t("navbar.close_menu")}</span>
+            <span className="relative block h-5 w-5">
+              <span className="absolute left-1/2 top-1/2 h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-current" />
+              <span className="absolute left-1/2 top-1/2 h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-current" />
+            </span>
+          </SheetClose>
+        </div>
 
-            <button
-              type="button"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center h-10 w-10 rounded-full bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900 transition-all duration-300"
-              aria-label={t("navbar.close_menu")}
-            >
-              <X className="h-5 w-5" strokeWidth={2} />
-            </button>
-          </div>
+        <SheetTitle className="sr-only">{t("navbar.menu")}</SheetTitle>
+        <SheetDescription className="sr-only">Mobile navigation drawer</SheetDescription>
 
-          {/* ✅ scroll attivo ma scrollbar nascosta */}
-          <div className="flex flex-col h-[calc(100%-72px)] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex-1 px-6 py-8">
-              <div className="space-y-1">
-                {[
-                  ...navLinks,
-                  { href: "/shop", label: t("navbar.shop") },
-                  { href: "/blog", label: t("navbar.blog") || "Blog" },
-                  { href: "/contatti", label: t("navbar.contatti") }
-                ].map((link, idx) => (
-                  <LocaleLink
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={[
-                      "group flex items-center justify-between py-4 border-b border-stone-100",
-                      "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                      mobileOpen
-                        ? "opacity-100 translate-x-0"
-                        : "opacity-0 -translate-x-8",
-                    ].join(" ")}
-                    style={{
-                      transitionDelay: mobileOpen ? `${100 + idx * 75}ms` : "0ms",
-                    }}
-                  >
-                    <span className="text-2xl font-light text-stone-800 group-hover:text-green-700 transition-colors duration-300">
-                      {link.label}
-                    </span>
-                    <ArrowUpRight
-                      className="h-5 w-5 text-stone-400 group-hover:text-green-600 transition-all duration-300"
-                      strokeWidth={1.5}
-                    />
-                  </LocaleLink>
-                ))}
-              </div>
-
-              <div
-                className={[
-                  "mt-8 space-y-3 transition-all duration-500",
-                  mobileOpen
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-4",
-                ].join(" ")}
-                style={{ transitionDelay: mobileOpen ? "500ms" : "0ms" }}
-              >
+        <div className="flex flex-1 flex-col overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex-1 px-6 py-8">
+            <div className="space-y-1">
+              {mobileLinks.map((link) => (
                 <LocaleLink
-                  href="/login"
+                  key={link.href}
+                  href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-stone-50 text-stone-700 hover:bg-stone-100 transition-all duration-300"
+                  className="group flex items-center justify-between border-b border-stone-100 py-4 transition-colors hover:text-green-700"
                 >
-                  <User className="h-5 w-5" strokeWidth={1.5} />
-                  <span className="text-sm font-medium tracking-wide">
-                    {t("navbar.login")}
+                  <span className="text-2xl font-light text-stone-800 transition-colors group-hover:text-green-700">
+                    {link.label}
                   </span>
+                  <ArrowUpRight className="h-5 w-5 text-stone-400 transition-colors group-hover:text-green-600" strokeWidth={1.5} />
                 </LocaleLink>
+              ))}
+            </div>
 
-                <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-stone-50">
-                  <MapPin className="h-5 w-5 text-stone-500" strokeWidth={1.5} />
-                  <div className="flex items-center gap-2">
-                    <FlagIcon locale="it" className="h-3 w-5 rounded-[1px] shadow-sm" />
-                    <span className="text-sm font-medium text-stone-600">
-                      {t("navbar.location")}
-                    </span>
-                  </div>
+            <div className="mt-8 space-y-3">
+              <LocaleLink
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 rounded-xl bg-stone-50 px-4 py-3.5 text-stone-700 transition-colors hover:bg-stone-100"
+              >
+                <User className="h-5 w-5" strokeWidth={1.5} />
+                <span className="text-sm font-medium tracking-wide">{t("navbar.login")}</span>
+              </LocaleLink>
+
+              <div className="flex items-center gap-3 rounded-xl bg-stone-50 px-4 py-3.5">
+                <MapPin className="h-5 w-5 text-stone-500" strokeWidth={1.5} />
+                <div className="flex items-center gap-2">
+                  <FlagIcon locale="it" className="h-3 w-5 rounded-[1px] shadow-sm" />
+                  <span className="text-sm font-medium text-stone-600">{t("navbar.location")}</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div
-              className={[
-                "border-t border-stone-100 px-6 pt-5 bg-stone-50/50 transition-all duration-500",
-                mobileOpen
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4",
-              ].join(" ")}
-              style={{
-                transitionDelay: mobileOpen ? "600ms" : "0ms",
-                paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))",
-              }}
-            >
-              {/* Social icons row */}
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <SocialIcon href="https://instagram.com" label="Instagram">
-                    <Instagram className="h-5 w-5" strokeWidth={1.5} />
-                  </SocialIcon>
-                  <SocialIcon href="https://facebook.com" label="Facebook">
-                    <Facebook className="h-5 w-5" strokeWidth={1.5} />
-                  </SocialIcon>
-                  <SocialIcon href="https://tiktok.com" label="TikTok">
-                    <TikTokIcon className="h-5 w-5" />
-                  </SocialIcon>
-                </div>
-                <span className="text-[10px] font-medium tracking-[0.15em] text-stone-400 uppercase">
-                  {t("navbar.language")}
-                </span>
+          <div
+            className="border-t border-stone-100 bg-stone-50/50 px-6 pt-5"
+            style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <SocialIcon href="https://instagram.com" label="Instagram">
+                  <Instagram className="h-5 w-5" strokeWidth={1.5} />
+                </SocialIcon>
+                <SocialIcon href="https://facebook.com" label="Facebook">
+                  <Facebook className="h-5 w-5" strokeWidth={1.5} />
+                </SocialIcon>
+                <SocialIcon href="https://tiktok.com" label="TikTok">
+                  <TikTokIcon className="h-5 w-5" />
+                </SocialIcon>
               </div>
+              <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-stone-400">
+                {t("navbar.language")}
+              </span>
+            </div>
 
-              {/* Language grid — 3 columns × 2 rows */}
-              <div className="grid grid-cols-3 gap-2">
-                {routing.locales.map((l) => (
-                  <LocaleLink
-                    key={l}
-                    href={pathname}
-                    locale={l}
-                    onClick={() => setMobileOpen(false)}
-                    className={[
-                      "flex flex-col items-center pt-3 pb-2.5 px-2 rounded-2xl border transition-all duration-200 active:scale-95",
-                      l === locale
-                        ? "bg-stone-900 border-stone-900 shadow-md"
-                        : "bg-white border-stone-100 hover:border-stone-200 hover:bg-stone-50 shadow-sm",
-                    ].join(" ")}
+            <div className="grid grid-cols-3 gap-2">
+              {routing.locales.map((l) => (
+                <LocaleLink
+                  key={l}
+                  href={pathname}
+                  locale={l}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex flex-col items-center rounded-2xl border px-2 pt-3 pb-2.5 shadow-sm transition-all hover:border-stone-200 hover:bg-stone-50 active:scale-95",
+                    l === locale ? "border-stone-900 bg-stone-900 shadow-md" : "border-stone-100 bg-white"
+                  )}
+                >
+                  <FlagIcon locale={l} className="mb-2 h-4 w-6 rounded-[2px] shadow-sm" />
+                  <span
+                    className={cn(
+                      "text-[10px] font-semibold leading-tight tracking-wide",
+                      l === locale ? "text-white" : "text-stone-500"
+                    )}
                   >
-                    <FlagIcon
-                      locale={l}
-                      className="h-4 w-6 rounded-[2px] shadow-sm mb-2"
-                    />
-                    <span
-                      className={[
-                        "text-[10px] font-semibold tracking-wide leading-tight",
-                        l === locale
-                          ? "text-white"
-                          : "text-stone-500",
-                      ].join(" ")}
-                    >
-                      {LOCALE_NAMES[l] ?? l.toUpperCase()}
-                    </span>
-                  </LocaleLink>
-                ))}
-              </div>
+                    {LOCALE_NAMES[l] ?? l.toUpperCase()}
+                  </span>
+                </LocaleLink>
+              ))}
             </div>
           </div>
         </div>
-      </div>
+      </SheetContent>
 
-      {/* MOBILE BOTTOM BAR - Semplificata e pulita */}
       <div
-        className={[
-          "md:hidden fixed left-0 right-0 bottom-0 z-[55]",
-          "bg-white",
-          "transition-all duration-500",
-          mobileOpen ? "translate-y-full" : "translate-y-0",
-        ].join(" ")}
+        className={cn(
+          "fixed right-0 bottom-0 left-0 z-[55] bg-white transition-all duration-500 md:hidden",
+          mobileOpen ? "translate-y-full" : "translate-y-0"
+        )}
         style={{
           paddingBottom: "env(safe-area-inset-bottom)",
           boxShadow: "0 -20px 25px -5px rgba(0, 0, 0, 0.1), 0 -8px 10px -6px rgba(0, 0, 0, 0.1)",
@@ -715,14 +528,13 @@ export default function Navbar() {
               label="Shop"
             />
 
-            {/* ✅ CART centrale - verde + icona bianca (forzato) */}
             <div className="relative -top-2 flex flex-col items-center">
               <CartButton
-                icon={<ShoppingBag className="w-5 h-5" strokeWidth={1.5} />}
-                className="h-12 w-12 rounded-full !bg-green-700 hover:!bg-green-800 !text-white shadow-lg active:scale-95 transition-all duration-200 flex items-center justify-center"
+                icon={<ShoppingBag className="h-5 w-5" strokeWidth={1.5} />}
+                className="flex h-12 w-12 items-center justify-center rounded-full !bg-green-700 !text-white shadow-lg transition-all duration-200 active:scale-95 hover:!bg-green-800"
                 badgeColor="default"
               />
-              <span className="mt-1 text-[10px] font-medium tracking-wider text-stone-600 uppercase">
+              <span className="mt-1 text-[10px] font-medium uppercase tracking-wider text-stone-600">
                 {t("navbar.cart")}
               </span>
             </div>
@@ -734,22 +546,21 @@ export default function Navbar() {
             />
 
             <button
+              type="button"
               onClick={() => setMobileOpen(true)}
-              className="flex flex-col items-center gap-1 px-2 py-1 text-stone-600 hover:text-green-700 transition-colors"
+              className="flex flex-col items-center gap-1 px-2 py-1 text-stone-600 transition-colors hover:text-green-700"
             >
               <Menu className="h-5 w-5" strokeWidth={1.5} />
-              <span className="text-[10px] font-medium tracking-wider uppercase">
+              <span className="text-[10px] font-medium uppercase tracking-wider">
                 {t("navbar.menu")}
               </span>
             </button>
           </div>
         </div>
       </div>
-    </>
+    </Sheet>
   );
 }
-
-// Components
 
 function NavLink({
   href,
@@ -761,10 +572,10 @@ function NavLink({
   return (
     <LocaleLink
       href={href}
-      className="group relative py-2 font-sans text-[13px] font-[560] tracking-[0.08em] text-stone-600 uppercase transition-colors duration-300 hover:text-stone-900"
+      className="group relative py-2 text-[13px] font-[560] uppercase tracking-[0.08em] text-stone-600 transition-colors duration-300 hover:text-green-600"
     >
       {children}
-      <span className="absolute bottom-0 left-0 w-full h-[2px] bg-green-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+      <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-green-500 transition-transform duration-500 group-hover:scale-x-100" />
     </LocaleLink>
   );
 }
@@ -781,12 +592,10 @@ function MobileBottomButton({
   return (
     <LocaleLink
       href={href}
-      className="flex flex-col items-center gap-1 px-2 py-1 font-sans text-stone-600 transition-colors active:scale-95 hover:text-green-700"
+      className="flex flex-col items-center gap-1 px-2 py-1 text-stone-600 transition-colors hover:text-green-700 active:scale-95"
     >
       {icon}
-      <span className="text-[10px] font-medium tracking-wider uppercase">
-        {label}
-      </span>
+      <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
     </LocaleLink>
   );
 }
@@ -806,7 +615,7 @@ function SocialIcon({
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      className="flex items-center justify-center h-10 w-10 rounded-full text-stone-500 hover:text-stone-900 hover:bg-stone-200/50 transition-all duration-300"
+      className="flex h-10 w-10 items-center justify-center rounded-full text-stone-500 transition-all duration-300 hover:bg-stone-200/50 hover:text-stone-900"
     >
       {children}
     </a>

@@ -5,7 +5,7 @@
   margin-right: calc(50% - 50vw);
   overflow: visible;
 
-  --card-w: 260px;
+  --card-w: 340px;
   --gap: 12px;
   --side: calc((100vw - var(--card-w)) / 2);
 }
