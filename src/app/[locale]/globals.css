@@ -2,6 +2,14 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Desktop-only approximation of Chrome 90% zoom. */
+@media (min-width: 1024px) {
+  html {
+    zoom: 0.9;
+    width: calc(100% / 0.9);
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
