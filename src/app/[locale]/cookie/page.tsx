@@ -1,6 +1,17 @@
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Cookie Policy" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: "Cookie Policy",
+    description: "Informazioni sui cookie e sulle tecnologie simili usate dal sito Frantoio Del Pasqua.",
+    path: "/cookie-policy/",
+    locale,
+    hreflang: false,
+  });
+}
 
 const lastUpdated = "17/02/2026";
 

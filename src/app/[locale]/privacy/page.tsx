@@ -1,6 +1,17 @@
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Privacy Policy" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: "Privacy Policy",
+    description: "Informativa privacy del sito Frantoio Del Pasqua.",
+    path: "/privacy-policy/",
+    locale,
+    hreflang: false,
+  });
+}
 
 const lastUpdated = "17/02/2026";
 

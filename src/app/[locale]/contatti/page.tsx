@@ -1,12 +1,27 @@
 import Footer from "@/components/Footer";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import ContactForm from "./ContactForm";
 import { useTranslations } from "next-intl";
+import { pageMetadata } from "@/lib/seo";
 
 const CONTACT_ADDRESS = "Loc Infernaccio, 510/B, 52048 Monte San Savino AR, Italia";
 const CONTACT_LAT = 43.359873179952864;
 const CONTACT_LNG = 11.750198258066469;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: locale === "en" ? "Contact" : "Contatti",
+    description:
+      locale === "en"
+        ? "Contact Frantoio Del Pasqua in Monte San Savino for products, orders and business requests."
+        : "Contatta il Frantoio Del Pasqua a Monte San Savino per prodotti, ordini e richieste commerciali.",
+    path: "/contatti/",
+    locale,
+  });
+}
 
 export default function ContattiPage() {
   const t = useTranslations("ContactPage");

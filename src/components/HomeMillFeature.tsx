@@ -15,7 +15,7 @@ export default function HomeMillFeature() {
     <section className="relative w-full bg-[#4a5a38] text-white">
       <div className="grid grid-cols-1 lg:grid-cols-2">
         <div className="relative order-2 h-[42svh] overflow-hidden bg-[#353e2a] lg:order-1 lg:h-auto lg:min-h-[88svh] lg:[clip-path:inset(0)]">
-          <div className="absolute inset-0 lg:fixed lg:inset-y-0 lg:left-0 lg:right-auto lg:h-svh lg:w-1/2">
+          <div className="absolute inset-0 lg-parallax-fixed lg:left-0 lg:right-auto lg:w-1/2">
             <Image
               src="/home_component_frantoio/home_frantoio.jpg"
               alt={t("title")}

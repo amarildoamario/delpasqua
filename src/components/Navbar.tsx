@@ -8,12 +8,6 @@ import "./Navbar-Styles.css";
 
 import CartButton from "@/components/CartButton";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLinkItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Sheet,
   SheetClose,
   SheetContent,
@@ -124,8 +118,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
 
   const lastScrollY = useRef(0);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     queueMicrotask(() => setMounted(true));
@@ -190,6 +186,36 @@ export default function Navbar() {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [mounted]);
+
+  useEffect(() => {
+    if (!languageOpen) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (target instanceof Node && !languageMenuRef.current?.contains(target)) {
+        setLanguageOpen(false);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLanguageOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [languageOpen]);
+
+  useEffect(() => {
+    queueMicrotask(() => setLanguageOpen(false));
+  }, [locale, pathname]);
 
   if (!mounted) {
     return (
@@ -328,26 +354,50 @@ export default function Navbar() {
 
               {/* ACTIONS (Far right: language flag dropdown, BARRA, Cart icon, burger button on mobile) */}
               <div className="flex items-center gap-1 md:gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium tracking-wider text-stone-600 transition-colors hover:bg-stone-50 hover:text-stone-900 md:flex">
+                <div ref={languageMenuRef} className="relative hidden md:block">
+                  <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={languageOpen}
+                    aria-label={t("navbar.language")}
+                    onClick={() => setLanguageOpen((open) => !open)}
+                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium tracking-wider text-stone-600 transition-colors hover:bg-stone-50 hover:text-stone-900"
+                  >
                     <FlagIcon locale={locale} className="h-3 w-5 rounded-[1px] shadow-sm" />
                     <span className="uppercase tracking-[0.1em]">{locale}</span>
-                    <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-28 p-1.5">
-                    {routing.locales.map((l) => (
-                      <DropdownMenuLinkItem
-                        key={l}
-                        closeOnClick
-                        render={(props) => <LocaleLink {...props} href={pathname} locale={l} />}
-                        className={l === locale ? "bg-green-50 text-green-700" : undefined}
-                      >
-                        <FlagIcon locale={l} className="h-2.5 w-4 shrink-0 rounded-[1px] shadow-sm" />
-                        {l}
-                      </DropdownMenuLinkItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    <ChevronDown
+                      className={cn("h-3.5 w-3.5 transition-transform", languageOpen && "rotate-180")}
+                      strokeWidth={2}
+                    />
+                  </button>
+
+                  {languageOpen && (
+                    <div
+                      role="menu"
+                      aria-label={t("navbar.language")}
+                      className="absolute top-full left-1/2 z-[9999] mt-2 w-28 -translate-x-1/2 overflow-hidden rounded-[5px] border border-stone-200/80 bg-white/95 p-1 text-stone-900 shadow-2xl backdrop-blur-xl outline-none"
+                    >
+                      {routing.locales.map((l) => (
+                        <LocaleLink
+                          key={l}
+                          href={pathname}
+                          locale={l}
+                          role="menuitem"
+                          onClick={() => setLanguageOpen(false)}
+                          className={cn(
+                            "flex items-center gap-2 rounded-[3px] px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] outline-none transition-colors",
+                            l === locale
+                              ? "bg-green-50/80 text-green-700"
+                              : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
+                          )}
+                        >
+                          <FlagIcon locale={l} className="h-2.5 w-4 shrink-0 rounded-[1px] shadow-sm" />
+                          <span>{l}</span>
+                        </LocaleLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* BARRA */}
                 <div className="hidden h-4 w-px bg-stone-200 md:block" />
@@ -363,7 +413,7 @@ export default function Navbar() {
 
                 {/* Desktop account */}
                 <LocaleLink
-                  href="/login"
+                  href="/my-account"
                   className="hidden h-10 w-10 items-center justify-center rounded-full text-stone-700 transition-all duration-300 hover:bg-stone-100 hover:text-stone-900 md:flex"
                   aria-label="Account"
                 >
@@ -437,7 +487,7 @@ export default function Navbar() {
 
             <div className="mt-8 space-y-3">
               <LocaleLink
-                href="/login"
+                href="/my-account"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 rounded-xl bg-stone-50 px-4 py-3.5 text-stone-700 transition-colors hover:bg-stone-100"
               >

@@ -121,6 +121,7 @@ html {
 }
 
 :root {
+  --viewport-height: 100svh; /* overridden on desktop below */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -205,5 +206,44 @@ html {
     font-family: var(--font-ui), sans-serif;
     font-kerning: normal;
     text-rendering: optimizeLegibility;
+  }
+}
+
+/* =======================================================
+   ZOOM 0.9 COMPENSATION
+   Must come AFTER :root so the media query wins the cascade.
+   ======================================================= */
+
+/* 1. Override the variable on desktop (AFTER :root definition above) */
+@media (min-width: 1024px) {
+  :root {
+    --viewport-height: calc(100svh / 0.9);
+  }
+}
+
+/* 2. Hero: height = full viewport minus navbar, compensated for zoom */
+.hero-container-height {
+  height: calc(100svh - 98px);
+}
+
+@media (min-width: 768px) {
+  .hero-container-height {
+    height: calc(100svh - 118px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-container-height {
+    height: calc(var(--viewport-height) - 118px);
+  }
+}
+
+/* 3. Parallax images: fixed, top-anchored only, explicit height */
+@media (min-width: 1024px) {
+  .lg-parallax-fixed {
+    position: fixed;
+    top: 0;
+    /* NO bottom: 0 — that would force height = viewport, ignoring our calc */
+    height: var(--viewport-height);
   }
 }

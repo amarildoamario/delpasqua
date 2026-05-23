@@ -6,7 +6,6 @@ import { useLocale } from "next-intl";
 import {
   HeartHandshake,
   Leaf,
-  MessageCircleMore,
   PackageCheck,
   ShieldCheck,
   Star,

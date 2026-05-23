@@ -89,7 +89,7 @@ export default function ProductPurchaseBox({
   const [loadingAvail, setLoadingAvail] = useState(false);
   const [availMap, setAvailMap] = useState<Record<string, number> | null>(null);
   const mobileSheetTouchStartY = useRef<number | null>(null);
-  const mobileSheetDragging = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -275,12 +275,12 @@ export default function ProductPurchaseBox({
     setShowMobileDetails(false);
     setMobileSheetOffset(0);
     mobileSheetTouchStartY.current = null;
-    mobileSheetDragging.current = false;
+    setIsDragging(false);
   };
 
   const handleMobileSheetTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     mobileSheetTouchStartY.current = event.touches[0]?.clientY ?? null;
-    mobileSheetDragging.current = false;
+    setIsDragging(false);
   };
 
   const handleMobileSheetTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -296,7 +296,7 @@ export default function ProductPurchaseBox({
     }
 
     event.preventDefault();
-    mobileSheetDragging.current = true;
+    setIsDragging(true);
     setMobileSheetOffset(Math.min(deltaY, 260));
   };
 
@@ -308,7 +308,7 @@ export default function ProductPurchaseBox({
 
     setMobileSheetOffset(0);
     mobileSheetTouchStartY.current = null;
-    mobileSheetDragging.current = false;
+    setIsDragging(false);
   };
 
   return (
@@ -529,7 +529,7 @@ export default function ProductPurchaseBox({
               className="rounded-t-3xl bg-white shadow-[0_-8px_40px_rgba(0,0,0,0.15)] animate-in slide-in-from-bottom duration-300"
               style={{
                 transform: `translate3d(0, ${mobileSheetOffset}px, 0)`,
-                transition: mobileSheetDragging.current ? "none" : "transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+                transition: isDragging ? "none" : "transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
                 willChange: "transform",
               }}
             >

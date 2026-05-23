@@ -66,9 +66,6 @@ const nextConfig: any = {
 
   // toglie "X-Powered-By: Next.js"
   poweredByHeader: false,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },

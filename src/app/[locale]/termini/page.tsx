@@ -1,6 +1,17 @@
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Termini e Condizioni" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: "Condizioni Generali di Vendita",
+    description: "Termini, condizioni di vendita e informazioni commerciali del sito Frantoio Del Pasqua.",
+    path: "/condizioni-generali-di-vendita/",
+    locale,
+    hreflang: false,
+  });
+}
 
 const lastUpdated = "17/02/2026";
 

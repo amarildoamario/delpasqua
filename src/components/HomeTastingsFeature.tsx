@@ -53,7 +53,7 @@ export default function HomeTastingsFeature() {
         </div>
 
         <div className="relative h-[42svh] overflow-hidden bg-stone-200 lg:h-auto lg:min-h-[88svh] lg:[clip-path:inset(0)]">
-          <div className="absolute inset-0 lg:fixed lg:inset-y-0 lg:left-1/2 lg:right-auto lg:h-svh lg:w-1/2">
+          <div className="absolute inset-0 lg-parallax-fixed lg:left-1/2 lg:right-auto lg:w-1/2">
             <Image
               src="/home_component_degustazioni/home_degustazioni.jpg"
               alt={t("title")}

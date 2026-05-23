@@ -9,12 +9,23 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import type { Metadata } from "next";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const uiSans = Manrope({
   subsets: ["latin"],
   variable: "--font-ui",
   display: "swap",
 });
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  applicationName: SITE_NAME,
+};
 
 export default async function RootLayout({
   children,

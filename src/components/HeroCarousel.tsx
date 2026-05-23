@@ -91,7 +91,7 @@ export default function HeroCarousel() {
     >
       <h1 className="sr-only">{t("sr_title")}</h1>
 
-      <div className="relative h-[calc(100svh-98px)] min-h-[500px] w-full md:h-[calc(100svh-118px)] md:min-h-[560px]">
+      <div className="relative hero-container-height min-h-[500px] w-full md:min-h-[560px]">
         {slides.map((slide, slideIndex) => {
           const active = slideIndex === index;
 

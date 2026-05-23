@@ -1,12 +1,28 @@
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { pageMetadata } from "@/lib/seo";
 
 const STORIA_IMAGES = {
   oliveti: "/storia/storia-1.jpg",
   raccolta: "/storia/storia-3.jpg",
   territorio: "/storia/storia-4.jpg",
 } as const;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: locale === "en" ? "Our Story" : "Storia",
+    description:
+      locale === "en"
+        ? "Family history, olive groves and Tuscan agricultural tradition of Frantoio Del Pasqua."
+        : "Storia familiare, oliveti e tradizione agricola toscana del Frantoio Del Pasqua.",
+    path: "/storia/",
+    locale,
+    hreflang: false,
+  });
+}
 
 export default function StoriaPage() {
   const t = useTranslations("StoriaPage");

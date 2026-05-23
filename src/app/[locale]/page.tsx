@@ -13,6 +13,21 @@ import HomeTastingsFeature from "@/components/HomeTastingsFeature";
 import HomeTrustAndReviews from "@/components/HomeTrustAndReviews";
 import HomeUniqueness from "@/components/HomeUniqueness";
 import ShopHighlights from "@/components/ShopHighlights";
+import { pageMetadata } from "@/lib/seo";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: locale === "en" ? "Frantoio Del Pasqua" : "Frantoio Del Pasqua",
+    description:
+      locale === "en"
+        ? "Extra virgin olive oil, Tuscan mill tradition and selected Del Pasqua products."
+        : "Olio extravergine di oliva, tradizione del frantoio toscano e prodotti selezionati Del Pasqua.",
+    path: "/",
+    locale,
+  });
+}
 
 export default function Home() {
   // Read gallery images dynamically from public/home_gallery at build/request time

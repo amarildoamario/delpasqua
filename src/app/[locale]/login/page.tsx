@@ -1,7 +1,21 @@
 import LoginForm from "./LoginForm";
+import { pageMetadata } from "@/lib/seo";
 
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  return pageMetadata({
+    title: "Login",
+    description: "Login amministrazione.",
+    path: "/login/",
+    locale,
+    index: false,
+    hreflang: false,
+  });
+}
 
 export default function LoginPage() {
   return (
