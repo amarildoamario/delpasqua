@@ -58,13 +58,6 @@ export default async function RootLayout({
 
             <main>
               {children}
-
-              {/* Spacer SOLO in fondo pagina per non far coprire il footer dalla bottom navbar mobile */}
-              <div
-                className="md:hidden"
-                aria-hidden="true"
-                style={{ height: "calc(76px + env(safe-area-inset-bottom))" }}
-              />
             </main>
           </Providers>
         </NextIntlClientProvider>

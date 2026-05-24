@@ -523,7 +523,6 @@ export default function ProductPurchaseBox({
 
           <div
             className="fixed inset-x-0 bottom-0 z-50 md:hidden"
-            style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 4rem)" }}
           >
             <div
               className="rounded-t-3xl bg-white shadow-[0_-8px_40px_rgba(0,0,0,0.15)] animate-in slide-in-from-bottom duration-300"
@@ -555,7 +554,7 @@ export default function ProductPurchaseBox({
 
               <div
                 className="max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain px-5 pt-5 [-webkit-overflow-scrolling:touch]"
-                style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)" }}
+                style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}
               >
                 {detailsContent}
               </div>
