@@ -13,7 +13,32 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-const lastUpdated = "17/02/2026";
+const lastUpdated = "24/05/2026";
+
+const COMPANY_EMAIL = "info@delpasqua.com";
+
+const cookieRows = [
+  {
+    name: "theme",
+    purpose: "Memorizza la preferenza di visualizzazione del sito.",
+    duration: "12 mesi",
+  },
+  {
+    name: "cart_id",
+    purpose: "Mantiene associato il carrello al browser.",
+    duration: "30 giorni",
+  },
+  {
+    name: "v_id",
+    purpose: "Identificatore anonimo di prima parte per misurazioni di utilizzo e performance.",
+    duration: "12 mesi",
+  },
+  {
+    name: "s_id",
+    purpose: "Identificatore di sessione per continuita di navigazione e misurazioni tecniche.",
+    duration: "30 minuti dall'ultima attivita",
+  },
+];
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
@@ -27,9 +52,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
       <h2 className="text-base font-semibold">{title}</h2>
-      <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">
-        {children}
-      </div>
+      <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">{children}</div>
     </div>
   );
 }
@@ -48,54 +71,68 @@ export default function CookiePage() {
 
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Cookie Policy</h1>
           <p className="max-w-3xl text-sm leading-relaxed text-zinc-700">
-            Qui trovi informazioni sui cookie e su tecnologie simili utilizzate dal sito. Se in
-            futuro attiveremo cookie non necessari (es. statistiche), aggiungeremo un sistema di
-            consenso.
+            Il sito usa cookie tecnici e identificativi di prima parte collegati a preferenze,
+            carrello e misurazioni di funzionamento. Non usiamo cookie pubblicitari sul frontend
+            pubblico.
           </p>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
-          <Card title="1. Cosa sono i cookie">
+          <Card title="1. Cosa usiamo">
             <p>
-              I cookie sono piccoli file di testo salvati sul tuo dispositivo quando visiti un
-              sito. Servono a far funzionare alcune funzionalità e a migliorare l’esperienza.
+              I cookie servono a mantenere attive alcune funzioni del sito, ricordare preferenze e
+              capire in modo aggregato come vengono usate pagine e checkout.
             </p>
-          </Card>
-
-          <Card title="2. Tipologie di cookie">
-            <ul className="list-disc space-y-2 pl-5">
-              <li>
-                <strong>Necessari</strong>: indispensabili per il funzionamento.
-              </li>
-              <li>
-                <strong>Preferenze</strong>: memorizzano scelte come lingua/tema (se presenti).
-              </li>
-              <li>
-                <strong>Statistiche</strong>: misurano utilizzo in forma aggregata (se attivate).
-              </li>
-              <li>
-                <strong>Marketing</strong>: profilazione e ads (se attivate).
-              </li>
-            </ul>
-          </Card>
-
-          <Card title="3. Gestione dal browser">
             <p>
-              Puoi gestire o eliminare i cookie dalle impostazioni del browser. Disattivando i
-              cookie necessari alcune parti del sito potrebbero non funzionare correttamente.
+              Oltre ai cookie, il browser puo conservare dati locali strettamente collegati a
+              preferenze di visualizzazione o continuita del carrello.
             </p>
           </Card>
 
-          <Card title="4. Elenco cookie (da completare)">
-            <p className="italic">
-              Inserisci qui l’elenco reale dei cookie: nome, provider, finalità, durata.
+          <Card title="2. Servizi statistici di terze parti">
+            <p>
+              Il sito puo integrare Google Analytics 4. Quando presente, il caricamento lato Google
+              usa Consent Mode con analytics storage negato finche non viene registrata una scelta
+              positiva.
             </p>
+            <p>Non vengono usati cookie marketing o di profilazione lato pubblico.</p>
           </Card>
         </div>
 
-        <div className="mt-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-700 shadow-sm">
-          <p className="font-medium text-zinc-900">Nota</p>
-          <p className="mt-1">Questo testo è un template informativo e non costituisce consulenza legale.</p>
+        <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <h2 className="text-base font-semibold">3. Cookie e identificativi principali</h2>
+          <div className="mt-4 space-y-3">
+            {cookieRows.map((cookie) => (
+              <div
+                key={cookie.name}
+                className="grid gap-2 rounded-xl border border-zinc-200 bg-zinc-50 p-4 md:grid-cols-[140px_1fr_180px]"
+              >
+                <div className="text-sm font-medium text-zinc-900">{cookie.name}</div>
+                <div className="text-sm text-zinc-700">{cookie.purpose}</div>
+                <div className="text-sm text-zinc-600">{cookie.duration}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          <Card title="4. Gestione dal browser">
+            <p>
+              Puoi limitare o cancellare i cookie dalle impostazioni del browser. Disattivando tutti
+              i cookie alcune funzioni, come carrello o preferenze, potrebbero non funzionare
+              correttamente.
+            </p>
+          </Card>
+
+          <Card title="5. Contatti">
+            <p>
+              Per richieste su cookie e privacy puoi scrivere a{" "}
+              <a className="text-zinc-900 underline underline-offset-4" href={`mailto:${COMPANY_EMAIL}`}>
+                {COMPANY_EMAIL}
+              </a>
+              .
+            </p>
+          </Card>
         </div>
       </main>
 

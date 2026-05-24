@@ -37,8 +37,8 @@ https://delpasqua.com/storia/
 
 [x] Verificare che /produzione/ parli di raccolta, lavorazione, frangitura, gramolazione, estrazione, stoccaggio e imbottigliamento
 
-[ ] Verificare che /produzione/ non abbia testi placeholder
-    (Nota: sono presenti placeholder "Spazio per raccontare..." in stoccaggio/controllo)
+[x] Verificare che /produzione/ non abbia testi placeholder
+    (Nota: placeholder rimossi dalla pagina /produzione/)
 
 [x] Verificare che /produzione/ abbia canonical:
 https://delpasqua.com/produzione/
@@ -112,8 +112,8 @@ https://delpasqua.com/contatti/
 
 [x] Verificare che /privacy-policy/ risponda 200
 
-[ ] Verificare che /privacy-policy/ abbia contenuto reale e aggiornato
-    (Nota: contiene ancora note e istruzioni placeholder da compilare)
+[x] Verificare che /privacy-policy/ abbia contenuto reale e aggiornato
+    (Nota: aggiornata con contenuto reale essenziale e dati aziendali gia presenti nel sito)
 
 [x] Verificare canonical:
 https://delpasqua.com/privacy-policy/
@@ -125,8 +125,8 @@ https://delpasqua.com/privacy-policy/
 
 [x] Verificare che /cookie-policy/ risponda 200
 
-[ ] Verificare che /cookie-policy/ abbia contenuto reale e aggiornato
-    (Nota: contiene note placeholder e lista cookie da personalizzare)
+[x] Verificare che /cookie-policy/ abbia contenuto reale e aggiornato
+    (Nota: aggiornata con cookie e identificativi tecnici realmente usati dal sito)
 
 [x] Verificare canonical:
 https://delpasqua.com/cookie-policy/
@@ -138,8 +138,8 @@ https://delpasqua.com/cookie-policy/
 
 [x] Verificare che /condizioni-generali-di-vendita/ risponda 200
 
-[ ] Verificare che contenga condizioni vendita, spedizione, pagamenti, resi, diritto di recesso e dati aziendali
-    (Nota: contiene note e istruzioni placeholder da compilare)
+[x] Verificare che contenga condizioni vendita, spedizione, pagamenti, resi, diritto di recesso e dati aziendali
+    (Nota: aggiornata con contenuto reale essenziale, spedizioni e resi collegati)
 
 [x] Verificare canonical:
 https://delpasqua.com/condizioni-generali-di-vendita/
@@ -483,14 +483,15 @@ https://delpasqua.com/sitemap.xml
 ────────────────────────────────────
 
 [ ] Rimuovere ogni testo placeholder
+    (Nota: restano placeholder pubblici in /parita-di-genere/ e nella pagina /degustazioni/)
 
-[ ] Rimuovere “Spazio per raccontare…”
-    (Nota: ancora presente in alcune sezioni descrittive interne a /produzione)
+[x] Rimuovere “Spazio per raccontare…”
+    (Nota: placeholder rimossi dalle sezioni descrittive di /produzione/)
 
 [x] Rimuovere “Spazio per descrivere…”
 
-[ ] Rimuovere “Powered by Modern Tech”
-    (Nota: presente nel Footer a fondo pagina)
+[x] Rimuovere “Powered by Modern Tech”
+    (Nota: rimosso dal Footer)
 
 [x] Rimuovere riferimenti pubblici inutili a Next.js
 
@@ -498,15 +499,15 @@ https://delpasqua.com/sitemap.xml
 
 [x] Rimuovere riferimenti pubblici inutili a TypeScript
 
-[ ] Rimuovere riferimenti pubblici inutili a Stripe
-    (Nota: presente dicitura "Pagamento sicuro con Stripe" in PaymentForm)
+[x] Rimuovere riferimenti pubblici inutili a Stripe
+    (Nota: rimossi i riferimenti visibili lato utente nel carrello/checkout)
 
 [x] Rimuovere riferimenti pubblici inutili a Vercel
 
 [ ] Verificare che tutte le recensioni mostrate siano vere
 
 [ ] Rimuovere recensioni finte o placeholder
-    (Nota: le recensioni hardcoded Google Reviews sono con nomi e testi fittizi/placeholder)
+    (Nota: HomeTrustAndReviews.tsx e' ancora popolato con recensioni hardcoded non definitive; da chiudere prima del go-live)
 
 ────────────────────────────────────
 13. TITLE, META, H1
@@ -556,11 +557,13 @@ https://delpasqua.com/sitemap.xml
 14. TEST FINALE PRE-GO-LIVE
 ────────────────────────────────────
 
-[ ] Eseguire crawl locale o staging delle route principali
+[x] Eseguire crawl locale o staging delle route principali
+    (Nota: 24/05/2026 - crawl locale eseguito su 15 route core, tutte 200)
 
 [x] Verificare che nessuna route core risponda 404
 
-[ ] Verificare che nessuna route core risponda 500
+[x] Verificare che nessuna route core risponda 500
+    (Nota: 24/05/2026 - nessun 500 rilevato sul crawl locale)
 
 [x] Verificare che nessuna route core abbia noindex per errore
 
@@ -631,7 +634,8 @@ La fase routing principale è completata quando:
 
 [ ] Tutte le vecchie URL WordPress core rispondono 200 sul nuovo Vercel
 
-[ ] Le URL finali combaciano con quelle WordPress
+[x] Le URL finali combaciano con quelle WordPress
+    (Nota: URL core allineate a delpasqua.com; title e H1 non sono una copia letterale del WordPress attuale)
 
 [x] La sitemap finale contiene solo le pagine core index
 
@@ -647,7 +651,7 @@ La fase routing principale è completata quando:
 
 [x] Non ci sono canonical sbagliati verso /it
 
-[ ] Non ci sono 404 sulle pagine principali
+[x] Non ci sono 404 sulle pagine principali
 
 [x] delpasqua.vercel.app non compete con delpasqua.com
 

@@ -21,13 +21,9 @@ import {
   ArrowUpRight,
   ChevronDown,
   Facebook,
-  Home,
   Instagram,
   MapPin,
-  Menu,
-  ShoppingBag,
-  Store,
-  Droplets,
+  ShoppingCart,
   User,
 } from "lucide-react";
 
@@ -121,6 +117,7 @@ export default function Navbar() {
   const [languageOpen, setLanguageOpen] = useState(false);
 
   const lastScrollY = useRef(0);
+  const headerRef = useRef<HTMLElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -217,11 +214,34 @@ export default function Navbar() {
     queueMicrotask(() => setLanguageOpen(false));
   }, [locale, pathname]);
 
+  useEffect(() => {
+    if (!mounted) return;
+
+    const updateNavbarOffset = () => {
+      const height = headerRef.current?.offsetHeight ?? (window.innerWidth >= 768 ? 118 : 98);
+      const nextOffset = hidden && window.innerWidth >= 768 ? 0 : height;
+      document.documentElement.style.setProperty("--main-navbar-offset", `${nextOffset}px`);
+    };
+
+    updateNavbarOffset();
+    window.addEventListener("resize", updateNavbarOffset);
+    window.visualViewport?.addEventListener("resize", updateNavbarOffset);
+
+    return () => {
+      window.removeEventListener("resize", updateNavbarOffset);
+      window.visualViewport?.removeEventListener("resize", updateNavbarOffset);
+    };
+  }, [hidden, mounted]);
+
   if (!mounted) {
     return (
       <>
         <div className="h-[98px] md:h-[118px]" aria-hidden="true" />
-        <header className="fixed top-0 left-0 z-50 w-full bg-[#fdfaf7] font-sans">
+        <header
+          data-main-navbar
+          data-navbar-hidden="false"
+          className="fixed top-0 left-0 z-50 w-full bg-[#fdfaf7] font-sans"
+        >
           <div className="w-full border-b border-[#0c1e13]/80 bg-[#132c1c] text-stone-100">
             <div className="w-full">
               <div className="relative flex h-7 items-center justify-center overflow-hidden md:h-8">
@@ -267,11 +287,15 @@ export default function Navbar() {
               </div>
 
               {/* ACTIONS (Far right) */}
-              <div className="flex items-center gap-1 md:gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 <div className="hidden w-20 md:block" />
                 <div className="hidden h-4 w-px bg-stone-200 md:block" />
                 <div className="hidden h-10 w-10 md:block" />
                 <div className="hidden h-10 w-10 md:block" />
+
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-stone-800 md:hidden">
+                  <ShoppingCart className="h-5 w-5" strokeWidth={1.5} />
+                </div>
 
                 {/* Mobile hamburger placeholder */}
                 <div className="group inline-flex items-center gap-2 p-2 pr-0 text-stone-800 md:hidden">
@@ -297,6 +321,9 @@ export default function Navbar() {
       <div className="h-[98px] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] md:h-[118px]" aria-hidden="true" />
 
       <header
+        ref={headerRef}
+        data-main-navbar
+        data-navbar-hidden={hidden ? "true" : "false"}
         className={cn(
           "fixed top-0 left-0 z-50 w-full font-sans transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
           hidden ? "translate-y-0 md:-translate-y-[calc(100%+20px)]" : "translate-y-0"
@@ -353,7 +380,7 @@ export default function Navbar() {
               </div>
 
               {/* ACTIONS (Far right: language flag dropdown, BARRA, Cart icon, burger button on mobile) */}
-              <div className="flex items-center gap-1 md:gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 <div ref={languageMenuRef} className="relative hidden md:block">
                   <button
                     type="button"
@@ -405,7 +432,7 @@ export default function Navbar() {
                 {/* Cart icon */}
                 <div className="hidden md:block">
                   <CartButton
-                    icon={<ShoppingBag className="h-5 w-5" strokeWidth={1.5} />}
+                    icon={<ShoppingCart className="h-5 w-5" strokeWidth={1.5} />}
                     className="h-10 w-10 rounded-full transition-all duration-300 hover:bg-stone-100"
                     badgeColor="green"
                   />
@@ -419,6 +446,14 @@ export default function Navbar() {
                 >
                   <User className="h-5 w-5" strokeWidth={1.5} />
                 </LocaleLink>
+
+                <CartButton
+                  icon={<ShoppingCart className="h-5 w-5" strokeWidth={1.5} />}
+                  ariaLabel={t("navbar.cart")}
+                  mobileOnly
+                  className="h-10 w-10 rounded-full border border-black/10 bg-white text-stone-800 transition-all duration-300 hover:bg-stone-100 hover:text-green-700"
+                  badgeColor="green"
+                />
 
                 {/* Mobile hamburger menu (top right) */}
                 <SheetTrigger
@@ -553,61 +588,6 @@ export default function Navbar() {
           </div>
         </div>
       </SheetContent>
-
-      <div
-        className={cn(
-          "fixed right-0 bottom-0 left-0 z-[55] bg-white transition-all duration-500 md:hidden",
-          mobileOpen ? "translate-y-full" : "translate-y-0"
-        )}
-        style={{
-          paddingBottom: "env(safe-area-inset-bottom)",
-          boxShadow: "0 -20px 25px -5px rgba(0, 0, 0, 0.1), 0 -8px 10px -6px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <div className="mx-auto max-w-md px-4">
-          <div className="flex h-[72px] items-center justify-between">
-            <MobileBottomButton
-              href="/"
-              icon={<Home className="h-5 w-5" strokeWidth={1.5} />}
-              label="Home"
-            />
-
-            <MobileBottomButton
-              href="/shop"
-              icon={<Store className="h-5 w-5" strokeWidth={1.5} />}
-              label="Shop"
-            />
-
-            <div className="relative -top-2 flex flex-col items-center">
-              <CartButton
-                icon={<ShoppingBag className="h-5 w-5" strokeWidth={1.5} />}
-                className="flex h-12 w-12 items-center justify-center rounded-full !bg-green-700 !text-white shadow-lg transition-all duration-200 active:scale-95 hover:!bg-green-800"
-                badgeColor="default"
-              />
-              <span className="mt-1 text-[10px] font-medium uppercase tracking-wider text-stone-600">
-                {t("navbar.cart")}
-              </span>
-            </div>
-
-            <MobileBottomButton
-              href="/il-nostro-olio"
-              icon={<Droplets className="h-5 w-5" strokeWidth={1.5} />}
-              label="Olio"
-            />
-
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="flex flex-col items-center gap-1 px-2 py-1 text-stone-600 transition-colors hover:text-green-700"
-            >
-              <Menu className="h-5 w-5" strokeWidth={1.5} />
-              <span className="text-[10px] font-medium uppercase tracking-wider">
-                {t("navbar.menu")}
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
     </Sheet>
   );
 }
@@ -626,26 +606,6 @@ function NavLink({
     >
       {children}
       <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-green-500 transition-transform duration-500 group-hover:scale-x-100" />
-    </LocaleLink>
-  );
-}
-
-function MobileBottomButton({
-  href,
-  icon,
-  label,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <LocaleLink
-      href={href}
-      className="flex flex-col items-center gap-1 px-2 py-1 text-stone-600 transition-colors hover:text-green-700 active:scale-95"
-    >
-      {icon}
-      <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
     </LocaleLink>
   );
 }

@@ -21,7 +21,7 @@ import {
   Minus,
   PackageOpen,
   Plus,
-  ShoppingBag,
+  ShoppingCart,
   Tag,
   Trash2,
   X,
@@ -134,7 +134,8 @@ export default function CartDrawer({
 
   const ui = (
     <div
-      className={["fixed inset-0 z-[9999]", open ? "pointer-events-auto" : "pointer-events-none"].join(" ")}
+      className={["fixed top-0 left-0 w-full z-[9999]", open ? "pointer-events-auto" : "pointer-events-none"].join(" ")}
+      style={{ height: "var(--viewport-height)" }}
       aria-hidden={!open}
     >
       <button
@@ -150,17 +151,18 @@ export default function CartDrawer({
 
       <aside
         className={[
-          "fixed right-0 top-0 h-[100dvh] max-h-[100dvh]",
+          "fixed right-0 top-0",
           "w-[min(98vw,820px)] sm:w-[640px] lg:w-[820px]",
           "border-l border-black/10 bg-white shadow-2xl",
           "transition-transform duration-[250ms] ease-out",
           open ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
+        style={{ height: "var(--viewport-height)", maxHeight: "var(--viewport-height)" }}
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="h-6 w-6 text-zinc-700" strokeWidth={1.5} />
+              <ShoppingCart className="h-6 w-6 text-zinc-700" strokeWidth={1.5} />
               <div>
                 <div className="text-[10px] tracking-[0.22em] text-zinc-500 uppercase">{t("drawer.eyebrow")}</div>
                 <div className="mt-1 font-serif text-2xl tracking-[0.06em] text-zinc-900">{t("drawer.title")}</div>
@@ -227,7 +229,7 @@ export default function CartDrawer({
           <div className="flex-1 overflow-y-auto border-t border-black/5 px-6 py-5">
             {lines.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <ShoppingBag className="mb-4 h-16 w-16 text-zinc-300" strokeWidth={1.5} />
+                <ShoppingCart className="mb-4 h-16 w-16 text-zinc-300" strokeWidth={1.5} />
                 <p className="text-sm text-zinc-500">{t("drawer.empty")}</p>
                 <div className="mt-3 flex items-center justify-center gap-1.5 rounded-full border border-black/5 bg-zinc-50 px-3 py-1.5 text-xs text-zinc-600">
                   <PackageOpen className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -269,11 +271,11 @@ export default function CartDrawer({
             )}
           </div>
 
-          <div className="border-t border-black/10 bg-white/95 px-6 pb-[calc(34px+env(safe-area-inset-bottom))] pt-5 backdrop-blur">
+          <div className="border-t border-black/10 bg-white/95 px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:pb-[calc(34px+env(safe-area-inset-bottom))] sm:pt-5 backdrop-blur">
             {lines.length > 0 && (
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 {promoApplied ? (
-                  <div className="flex items-center justify-between rounded-[12px] border border-emerald-200 bg-emerald-50 px-4 py-2.5">
+                  <div className="flex items-center justify-between rounded-[12px] border border-emerald-200 bg-emerald-50 px-4 py-2 sm:py-2.5">
                     <div className="flex items-center gap-2 text-emerald-700">
                       <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={1.5} />
                       <span className="text-sm font-medium">{promoApplied.code}</span>
@@ -323,7 +325,7 @@ export default function CartDrawer({
               </div>
             )}
 
-            <div className="space-y-2 text-sm">
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex items-center justify-between text-zinc-600">
                 <span>{t("common.subtotal")}</span>
                 <span className="text-zinc-900">{formatEUR(subtotal)}</span>
@@ -352,13 +354,21 @@ export default function CartDrawer({
               )}
             </div>
 
-            <div className="mt-7 grid gap-3">
+            <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:gap-3">
               {payError && (
-                <div className="flex items-center gap-2 text-sm text-red-600" data-testid="drawer-pay-error">
-                  <X className="h-4 w-4" strokeWidth={1.5} />
-                  {payError}
+                <div className="col-span-2 flex items-center gap-2 text-xs sm:text-sm text-red-600" data-testid="drawer-pay-error">
+                  <X className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                  <span>{payError}</span>
                 </div>
               )}
+
+              <Link
+                href="/cart"
+                onClick={onClose}
+                className="inline-flex h-10 sm:h-12 w-full items-center justify-center rounded-[5px] border border-black/10 bg-white px-2 sm:px-4 text-xs sm:text-sm tracking-[0.10em] text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+              >
+                {t("drawer.view_cart")}
+              </Link>
 
               <button
                 type="button"
@@ -379,7 +389,7 @@ export default function CartDrawer({
 
                   onClose();
                 }}
-                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 text-sm tracking-[0.10em] text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                className="group inline-flex h-10 sm:h-12 w-full items-center justify-center gap-1.5 sm:gap-2 rounded-[5px] bg-emerald-600 px-2 sm:px-4 text-xs sm:text-sm tracking-[0.10em] text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
                 data-testid="drawer-go-to-cassa"
               >
                 {payLoading ? (
@@ -389,22 +399,14 @@ export default function CartDrawer({
                   </>
                 ) : (
                   <>
-                    {t("drawer.go_to_checkout")}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
+                    <span className="truncate">{t("drawer.go_to_checkout")}</span>
+                    <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
                   </>
                 )}
               </button>
-
-              <Link
-                href="/cart"
-                onClick={onClose}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white px-4 text-sm tracking-[0.10em] text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
-              >
-                {t("drawer.view_cart")}
-              </Link>
             </div>
 
-            <p className="mt-4 text-xs text-zinc-500">
+            <p className="mt-2.5 sm:mt-4 text-[10px] sm:text-xs text-zinc-500">
               {t("drawer.server_note")}
             </p>
           </div>
@@ -445,21 +447,21 @@ function CartLineCard({
   const t = useTranslations("Cart");
 
   return (
-    <Card className="overflow-hidden rounded-[24px] border-[#e8e0d6] bg-[linear-gradient(180deg,#fffdf9_0%,#faf6f0_100%)] shadow-[0_12px_36px_rgba(24,24,27,0.06)]">
+    <Card className="overflow-hidden rounded-[5px] border-[#e8e0d6]/70 bg-white shadow-[0_8px_24px_rgba(24,24,27,0.12),0_1px_3px_rgba(24,24,27,0.08)]">
       <CardContent className="p-3 sm:p-4">
         <div className="flex gap-3 sm:gap-4">
-          <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[18px] bg-[#f3ede5] sm:h-28 sm:w-28">
+          <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[5px] bg-transparent sm:h-28 sm:w-28">
             {imageSrc ? (
               <Image
                 src={imageSrc}
                 alt={imageAlt}
                 fill
                 sizes="(min-width: 640px) 112px, 96px"
-                className="object-cover"
+                className="object-contain p-1"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <ShoppingBag className="h-8 w-8 text-zinc-300" strokeWidth={1.5} />
+                <ShoppingCart className="h-8 w-8 text-zinc-300" strokeWidth={1.5} />
               </div>
             )}
           </div>
@@ -525,7 +527,7 @@ function QtyStepper({
   const t = useTranslations("Cart");
 
   return (
-    <div className="flex h-9 items-center overflow-hidden rounded-[14px] border border-black/10 bg-white shadow-sm">
+    <div className="flex h-9 items-center overflow-hidden rounded-[5px] border border-black/10 bg-white shadow-sm">
       <Button
         type="button"
         variant="ghost"

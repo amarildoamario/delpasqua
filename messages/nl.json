@@ -41,18 +41,6 @@
                         "Cadeau- / evenementoptie"
                     ]
                 }
-            },
-            "divider_1": {
-                "label": "ZORG EN BEWARING",
-                "title_part1": "Van verwerking ",
-                "title_italic": "tot de fles",
-                "text": "Na de extractie beschermen we onze olie tegen licht en zuurstof. Alleen zo bereiken de aromas van de molen de tafel ongeschonden."
-            },
-            "divider_2": {
-                "label": "GEGARANDEERDE KWALITEIT",
-                "title_part1": "Controle in ",
-                "title_italic": "elke fase",
-                "text": "We laten niets aan het toeval over: van de aankomst van de olijven tot de controles op het eindproduct."
             }
         },
         "calendar": {
@@ -472,6 +460,25 @@
         }
     },
     "ProduzionePage": {
+        "nav": {
+            "section": "Sectie",
+            "sections": {
+                "capitolo-1": { "label": "De Oorsprong", "kicker": "Handpluk" },
+                "capitolo-2": { "label": "De Extractie", "kicker": "De 6 Stappen" },
+                "capitolo-3": { "label": "De Bewaring", "kicker": "Staal & Stikstof" },
+                "capitolo-4": { "label": "Het Zegel", "kicker": "Fles & Certificeringen" },
+                "capitolo-5": { "label": "Diensten & Bezoeken", "kicker": "Maling & Proeverijen" }
+            }
+        },
+        "origin": {
+            "tag1": "Beperkte batches",
+            "tag2": "Handgeplukt",
+            "tag3": "Maling binnen 24 uur"
+        },
+        "badges": {
+            "premium_quality": "PREMIUM KWALITEIT",
+            "certified_origin": "GECERTIFICEERDE OORSPRONG"
+        },
         "hero": {
             "label": "Molen",
             "title_part1": "Het hart van",
@@ -479,6 +486,7 @@
             "description": "In de molen telt elk detail: van het reinigen van de olijven tot gecontroleerde malaxatie, extractie en opslag. Hier werken technologie en ambachtelijke zorg samen om versheid, aroma's en stabiliteit te behouden.",
             "tag1": "Koude extractie",
             "tag2": "IGP Gecertificeerd",
+            "tag3": "100% Bio & Ambachtelijk",
             "img_alt": "Frantoio del Pasqua - exterieur"
         },
         "machines": {
@@ -509,6 +517,18 @@
             "filtrazione": {
                 "title": "Filtratie",
                 "desc": "Stabiliteit in de tijd en een schoon profiel."
+            },
+            "divider_1": {
+                "label": "ZORG EN BEWARING",
+                "title_part1": "Van verwerking ",
+                "title_italic": "tot de fles",
+                "text": "Na de extractie beschermen we onze olie tegen licht en zuurstof. Alleen zo bereiken de aromas van de molen de tafel ongeschonden."
+            },
+            "divider_2": {
+                "label": "GEGARANDEERDE KWALITEIT",
+                "title_part1": "Controle in ",
+                "title_italic": "elke fase",
+                "text": "We laten niets aan het toeval over: van de aankomst van de olijven tot de controles op het eindproduct."
             }
         },
         "showcase": {
@@ -516,30 +536,30 @@
                 "kicker": "TRANSPORT",
                 "title": "Schoonheid en stabiliteit",
                 "text": "Binnen de molen vindt de verplaatsing van de olie uitsluitend plaats in roestvrijstalen containers. Plastic is streng verboden, omdat het bijsmaken afgeeft aan de olie, wat de smaak en geur bederft.",
-                "img_label": "AFBEELDING — FILTRATIE"
+                "img_label": "Filtratie en overdracht in roestvrij staal"
             },
             "stoccaggio": {
                 "kicker": "Opslag",
                 "title": "Opslag onder stikstof",
-                "text": "Ruimte voor informatie over opslag in silo's, temperatuurcontrole en bescherming tegen oxidatie om aroma's en polyfenolen te behouden.",
-                "img_label": "AFBEELDING — OPSLAG"
+                "text": "Na de extractie wordt de olijfolie opgeslagen in roestvrijstalen tanks, beschermd tegen licht, temperatuurschommelingen en contact met zuurstof. De opslag onder stikstof helpt aroma's, versheid en polyfenolen te behouden tot aan het bottelen.",
+                "img_label": "Beschermde opslagtanks"
             },
             "imbottigliamento": {
                 "kicker": "Bottelen",
                 "title": "Vul- en verpakkingslijn",
-                "text": "Beschrijving van de lijn, formaten, etikettering en verpakking. Ideaal is een brede foto van de lijn.",
+                "text": "Onze bottellijn stelt ons in staat om verschillende formaten te beheren, nauwkeurige etikettering toe te passen en een ordelijke verpakking te garanderen, met behoud van continuïteit en hygiëne in elke eindfase van het proces.",
                 "tag1": "Variabele formaten",
                 "tag2": "Nauwkeurige etikettering",
-                "img_label": "AFBEELDING — BOTTELIJN"
+                "img_label": "Bottellijn"
             },
             "controllo": {
                 "kicker": "Controle",
                 "title": "Kwaliteit en traceerbaarheid",
-                "text": "Informatie over controles, batchtraceerbaarheid, beheer van leveringen en (indien aanwezig) een kleine laboratorium/proeverijhoek.",
+                "text": "Elke batch wordt nauwgezet gevolgd, vanaf het binnenbrengen van de olijven tot aan de uiteindelijke verpakking. Traceerbaarheid, procescontroles en keuringen van het eindproduct stellen ons in staat om de kwaliteit van de molen constant te houden.",
                 "list1": "Sensorische analyse",
                 "list2": "Volledige traceerbaarheid",
                 "list3": "Actuele certificeringen",
-                "img_label": "AFBEELDING — KWALITEITSCONTROLE / TRACEERBAARHEID"
+                "img_label": "Kwaliteitscontrole en traceerbaarheid"
             }
         },
         "technology": {
@@ -859,7 +879,7 @@
             "summary": "Overzicht",
             "opening_checkout": "Checkout wordt geopend...",
             "go_to_checkout": "Ga naar checkout",
-            "secure_payment": "Veilige betaling via Stripe.",
+            "secure_payment": "Veilige betaling.",
             "email_confirmation": "Je ontvangt een bevestiging per e-mail."
         },
         "errors": {

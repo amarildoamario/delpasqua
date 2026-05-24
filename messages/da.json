@@ -499,6 +499,25 @@
         }
     },
     "ProduzionePage": {
+        "nav": {
+            "section": "Sektion",
+            "sections": {
+                "capitolo-1": { "label": "Oprindelse", "kicker": "Håndhøstning" },
+                "capitolo-2": { "label": "Ekstraktionen", "kicker": "De 6 Mølletrin" },
+                "capitolo-3": { "label": "Opbevaringen", "kicker": "Stål & Nitrogen" },
+                "capitolo-4": { "label": "Forseglingen", "kicker": "Flaske & Certificeringer" },
+                "capitolo-5": { "label": "Service & Besøg", "kicker": "Maling & Smagninger" }
+            }
+        },
+        "origin": {
+            "tag1": "Begrænsede partier",
+            "tag2": "Håndhøstet",
+            "tag3": "Maling inden for 24 timer"
+        },
+        "badges": {
+            "premium_quality": "PREMIUM KVALITET",
+            "certified_origin": "CERTIFICERET OPRINDELSE"
+        },
         "hero": {
             "label": "Mølle",
             "title_part1": "Hjertet i",
@@ -506,6 +525,7 @@
             "description": "I møllen tæller hver detalje: fra rengøring af olivenerne til kontrolleret malaxation, frem til ekstraktion og opbevaring. Her arbejder teknologi og håndværksmæssig omhu sammen for at bevare friskhed, aromaer og stabilitet.",
             "tag1": "Koldpresning",
             "tag2": "BGB certificeret",
+            "tag3": "100% Økologisk & Håndværksmæssig",
             "img_alt": "Frantoio del Pasqua - eksteriør"
         },
         "machines": {
@@ -549,29 +569,6 @@
                 "title_part1": "Kontrol i ",
                 "title_italic": "hver fase",
                 "text": "Vi overlader intet til tilfaldighederne: fra olivenernes ankomst til kontrollen af det faerdige produkt."
-            },
-            "stoccaggio": {
-                "kicker": "Opbevaring",
-                "title": "Opbevaring under nitrogen",
-                "text": "Beskrivelse af opbevaring i siloer, temperaturkontrol og beskyttelse mod iltning for at bevare aromaer og polyfenoler.",
-                "img_label": "BILLEDE — OPBEVARING"
-            },
-            "imbottigliamento": {
-                "kicker": "Aftapning",
-                "title": "Linje til påfyldning og emballering",
-                "text": "Beskrivelse af linjen, formater, etikettering og emballering. Ideelt at tilføje et bredt billede af linjen.",
-                "tag1": "Variable formater",
-                "tag2": "Præcis etikettering",
-                "img_label": "BILLEDE — AFTAPNINGSLINJE"
-            },
-            "controllo": {
-                "kicker": "Kontrol",
-                "title": "Kvalitet og sporbarhed",
-                "text": "Angivelse af kontroller, sporbarhed af partier, styring af leverancer og (hvis til stede) et lille laboratorie/smagningsområde.",
-                "list1": "Sensorisk analyse",
-                "list2": "Fuld sporbarhed",
-                "list3": "Opdaterede certificeringer",
-                "img_label": "BILLEDE — KVALITETSKONTROL / SPORBARHED"
             }
         },
         "technology": {
@@ -625,30 +622,30 @@
                 "kicker": "TRANSPORT",
                 "title": "Renlighed og stabilitet",
                 "text": "Inden for møllen foregår bevægelsen af olien udelukkende i stålbeholdere. Plastik er absolut forbudt, da det giver bismag til olien og ødelægger dens smag og duft.",
-                "img_label": "BILLEDE — FILTRERING"
+                "img_label": "Filtrering og overførsel i rustfrit stål"
             },
             "stoccaggio": {
                 "kicker": "Opbevaring",
                 "title": "Opbevaring under nitrogen",
-                "text": "Plads til at fortælle om opbevaring i siloer, temperaturkontrol og beskyttelse mod iltning for at bevare aromaer og polyfenoler.",
-                "img_label": "BILLEDE — OPBEVARING"
+                "text": "Efter ekstraktion opbevares olien i tanke af rustfrit stål, beskyttet mod lys, temperatursvingninger og ilt. Opbevaring under nitrogen hjælper med at bevare aromaer, friskhed og polyfenoler indtil aftapning.",
+                "img_label": "Beskyttede opbevaringstanke"
             },
             "imbottigliamento": {
                 "kicker": "Aftapning",
-                "title": "Linha til påfyldning og emballering",
-                "text": "Plads til at beskrive linjen, formater, etikettering og emballering. Ideelt at tilføje et bredt billede af linjen.",
+                "title": "Linje til påfyldning og emballering",
+                "text": "Vores aftapningslinje gør det muligt at håndtere forskellige formater, præcis etikettering og pæn emballering, hvilket sikrer kontinuitet og renhed i hver eneste afsluttende fase af processen.",
                 "tag1": "Variable formater",
                 "tag2": "Præcis etikettering",
-                "img_label": "BILLEDE — AFTAPNINGSLINJE"
+                "img_label": "Aftapningslinje"
             },
             "controllo": {
                 "kicker": "Kontrol",
                 "title": "Kvalitet og sporbarhed",
-                "text": "Angivelse af kontroller, sporbarhed af partier, styring af leverancer.",
+                "text": "Hvert parti følges nøje fra modtagelsen af olivenerne til den endelige emballering. Sporbarhed, proceskontrol og analyser af det færdige produkt gør det muligt at holde møllens kvalitet konstant.",
                 "list1": "Sensorisk analyse",
                 "list2": "Fuld sporbarhed",
                 "list3": "Opdaterede certificeringer",
-                "img_label": "BILLEDE — KVALITETSKONTROL"
+                "img_label": "Kvalitetskontrol og sporbarhed"
             }
         },
         "steps_section": {

@@ -499,6 +499,25 @@
         }
     },
     "ProduzionePage": {
+        "nav": {
+            "section": "Section",
+            "sections": {
+                "capitolo-1": { "label": "The Origin", "kicker": "Hand Harvesting" },
+                "capitolo-2": { "label": "The Extraction", "kicker": "The 6 Mill Steps" },
+                "capitolo-3": { "label": "The Safekeeping", "kicker": "Steel & Nitrogen" },
+                "capitolo-4": { "label": "The Seal", "kicker": "Bottle & Certifications" },
+                "capitolo-5": { "label": "Services & Visits", "kicker": "Milling & Tastings" }
+            }
+        },
+        "origin": {
+            "tag1": "Limited batches",
+            "tag2": "Hand harvested",
+            "tag3": "Milling within 24h"
+        },
+        "badges": {
+            "premium_quality": "PREMIUM QUALITY",
+            "certified_origin": "CERTIFIED ORIGIN"
+        },
         "hero": {
             "label": "Mill",
             "title_part1": "The heart of",
@@ -506,6 +525,7 @@
             "description": "At the mill, every detail counts: from cleaning the olives to controlled malaxation, extraction, and storage. Here, technology and artisanal care work together to preserve freshness, aromas, and stability.",
             "tag1": "Cold extraction",
             "tag2": "IGP Certified",
+            "tag3": "100% Organic & Artisanal",
             "img_alt": "Frantoio del Pasqua - exterior"
         },
         "machines": {
@@ -554,31 +574,31 @@
             "trasporto": {
                 "kicker": "TRANSPORT",
                 "title": "Cleanliness and stability",
-                "text": "Inside the mill, the movement of the oil occurs exclusively through the use of steel containers. Plastic is strictly forbidden, as it imparts off-flavors to the oil, spoiling its taste and smell.",
-                "img_label": "IMAGE — FILTRATION"
+                "text": "Inside the mill, the oil moves only through stainless steel containers. Plastic is excluded because it can transfer off-flavors and compromise the product's clarity, aroma, and stability.",
+                "img_label": "Filtration and stainless steel transfer"
             },
             "stoccaggio": {
                 "kicker": "Storage",
                 "title": "Storage under nitrogen",
-                "text": "Space to tell about storage in silos, temperature control, and protection from oxidation to preserve aromas and polyphenols.",
-                "img_label": "IMAGE — STORAGE"
+                "text": "After extraction, the oil is stored in stainless steel tanks protected from light, temperature swings, and oxygen exposure. Nitrogen storage helps preserve aromas, freshness, and polyphenols until bottling.",
+                "img_label": "Protected storage tanks"
             },
             "imbottigliamento": {
                 "kicker": "Bottling",
                 "title": "Filling and packaging line",
-                "text": "Space to describe the line, formats, labeling, and packaging. Ideal to add a wide photo of the line.",
+                "text": "Our bottling line handles different formats, precise labeling, and orderly packaging while maintaining continuity and cleanliness throughout the final stage of the process.",
                 "tag1": "Variable formats",
                 "tag2": "Precise labeling",
-                "img_label": "IMAGE — BOTTLING LINE"
+                "img_label": "Bottling line"
             },
             "controllo": {
                 "kicker": "Control",
                 "title": "Quality and traceability",
-                "text": "Space to indicate controls, lot traceability, management of deliveries and (if present) a small laboratory/tasting corner.",
+                "text": "Each batch is followed carefully from olive delivery to final packaging. Traceability, process checks, and verification on the finished oil help us keep the mill's quality consistent.",
                 "list1": "Sensory analysis",
                 "list2": "Full traceability",
                 "list3": "Updated certifications",
-                "img_label": "IMAGE — QUALITY CONTROL / TRACEABILITY"
+                "img_label": "Quality control and traceability"
             }
         },
         "technology": {
@@ -640,7 +660,7 @@
                 "paragraphs": [
                     "Even today in Tuscany, much of the olive harvest takes place traditionally, with hand picking; the olives transported to the mill are then processed within 24 hours to safeguard the integrity of the aromatic and phenolic components. The Del Pasqua Mill is equipped with a modern Alfalaval olive processing plant with cold extraction."
                 ],
-                "placeholder": "IMAGE — HARVEST"
+                "placeholder": "Hand harvest of the olives"
             },
             "imbottigliamento": {
                 "kicker": "PLANT",
@@ -649,7 +669,7 @@
                     "The plant is equipped with a line for bottling and packaging; and a nitrogen storage to guarantee the organoleptic characteristics of our 'Il Magnifico' oil while waiting for bottling.",
                     "But we don't stop here: we perform milling and packaging processes for third parties."
                 ],
-                "placeholder": "IMAGE — LINE"
+                "placeholder": "Bottling and packaging line"
             },
             "evo": {
                 "kicker": "QUALITY",
@@ -657,7 +677,7 @@
                 "paragraphs": [
                     "All these factors are an absolute guarantee for the production of extra virgin olive oil of the highest quality, capable of preserving the freshness and aromas that characterize freshly squeezed oil for longer."
                 ],
-                "placeholder": "IMAGE — EVO"
+                "placeholder": "Freshly processed EVO oil"
             },
             "igp_bio": {
                 "kicker": "CERTIFICATIONS",
@@ -665,7 +685,7 @@
                 "paragraphs": [
                     "The Del Pasqua mill is certified Suolo e Salute for the transformation and production of Bio products and is registered with the Tuscan Oil Consortium for the production of IGP Toscano extra virgin olive oil."
                 ],
-                "placeholder": "IMAGE — IGP/BIO"
+                "placeholder": "IGP and organic certifications"
             }
         },
         "shared": {
@@ -859,7 +879,7 @@
             "summary": "Summary",
             "opening_checkout": "Opening checkout...",
             "go_to_checkout": "Go to checkout",
-            "secure_payment": "Secure payment via Stripe.",
+            "secure_payment": "Secure payment.",
             "email_confirmation": "You will receive confirmation by email."
         },
         "errors": {

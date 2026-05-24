@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import CartDrawer from "@/components/CartDrawer";
 
@@ -70,7 +71,7 @@ export default function CartButton({
           ].join(" ")}
           aria-label={ariaLabel}
         >
-          {icon ? icon : <span className="text-lg">🛒</span>}
+          {icon ? icon : <ShoppingCart className="h-5 w-5 text-zinc-700" strokeWidth={1.5} />}
 
           <span
             data-testid="nav-cart-count"

@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import {
   Minus,
   Plus,
-  ShoppingBag,
+  ShoppingCart,
   Truck,
   ShieldCheck,
   ChevronDown,
@@ -444,7 +444,7 @@ export default function ProductPurchaseBox({
             className={`flex items-center justify-center gap-2 transition-all duration-300 ${isAdding ? "-translate-y-10 opacity-0" : "translate-y-0 opacity-100"
               }`}
           >
-            <ShoppingBag className="h-4 w-4" />
+            <ShoppingCart className="h-4 w-4" />
             {isOut ? "Esaurito" : `Aggiungi — ${formatEUR(totalPrice)}`}
           </span>
 

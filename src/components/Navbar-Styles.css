@@ -69,33 +69,6 @@
   pointer-events: auto;
 }
 
-/* Mobile Bottom Bar - Soluzione definitiva */
-.mobile-bottom-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 55;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
-  transform: translateY(0);
-  transition: transform 0.3s ease-out;
-  will-change: transform;
-}
-
-.mobile-bottom-bar.hidden {
-  transform: translateY(100%);
-}
-
-/* Spacer per compensare la bottom bar */
-.mobile-bottom-spacer {
-  height: calc(64px + max(12px, env(safe-area-inset-bottom)));
-}
-
 /* Drawer mobile */
 .mobile-drawer {
   position: fixed;
@@ -131,18 +104,6 @@
 .mobile-overlay.open {
   opacity: 1;
   pointer-events: auto;
-}
-
-/* Fix per iOS Safari e viewport instabile */
-@supports (-webkit-touch-callout: none) {
-  /* CSS specifico per iOS */
-  .mobile-bottom-bar {
-    /* Forza il posizionamento anche con toolbar nascosta */
-    position: fixed;
-    bottom: 0;
-    bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
-    bottom: env(safe-area-inset-bottom); /* iOS 11.2+ */
-  }
 }
 
 /* Desktop transform fix */

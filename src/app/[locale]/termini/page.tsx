@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import { Link } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -13,7 +14,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-const lastUpdated = "17/02/2026";
+const lastUpdated = "24/05/2026";
+
+const COMPANY_NAME = "FRANTOIO DEL PASQUA srl";
+const COMPANY_ADDRESS = "Loc. Infernaccio 510/B, 52048 Monte San Savino (AR), Italia";
+const COMPANY_EMAIL = "info@delpasqua.com";
+const COMPANY_PHONE = "+39 0575 810065";
 
 const toc = [
   { id: "venditore", label: "Informazioni sul venditore" },
@@ -23,7 +29,7 @@ const toc = [
   { id: "spedizioni", label: "Spedizioni e consegna" },
   { id: "recesso", label: "Recesso e resi" },
   { id: "garanzia", label: "Garanzia legale" },
-  { id: "responsabilita", label: "Limitazioni di responsabilità" },
+  { id: "responsabilita", label: "Limitazioni di responsabilita" },
   { id: "legge", label: "Legge applicabile e foro" },
 ];
 
@@ -39,9 +45,7 @@ function Section({
   return (
     <section id={id} className="scroll-mt-24">
       <h2 className="text-lg font-semibold">{title}</h2>
-      <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">
-        {children}
-      </div>
+      <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">{children}</div>
       <div className="my-8 h-px bg-zinc-200" />
     </section>
   );
@@ -63,9 +67,10 @@ export default function TerminiPage() {
           </p>
 
           <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700">
-            <p className="font-medium text-zinc-900">Suggerimento</p>
+            <p className="font-medium text-zinc-900">Ambito</p>
             <p className="mt-1">
-              Dove vedi testo in <span className="italic">corsivo</span>, completa con i tuoi dati.
+              Queste condizioni si applicano agli acquisti conclusi tramite il sito Frantoio Del
+              Pasqua.
             </p>
           </div>
         </div>
@@ -73,62 +78,101 @@ export default function TerminiPage() {
         <div className="mt-8 grid gap-8 md:grid-cols-[1fr_280px]">
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8">
             <Section id="venditore" title="1. Informazioni sul venditore">
-              <p className="italic">
-                Inserisci ragione sociale, P.IVA, sede, contatti, PEC, REA (se applicabile).
+              <p>
+                <strong>{COMPANY_NAME}</strong>
+                <br />
+                {COMPANY_ADDRESS}
+              </p>
+              <p>
+                Email:{" "}
+                <a className="text-zinc-900 underline underline-offset-4" href={`mailto:${COMPANY_EMAIL}`}>
+                  {COMPANY_EMAIL}
+                </a>
+                <br />
+                Telefono:{" "}
+                <a className="text-zinc-900 underline underline-offset-4" href="tel:+390575810065">
+                  {COMPANY_PHONE}
+                </a>
               </p>
             </Section>
 
             <Section id="oggetto" title="2. Oggetto">
-              <p>Il presente documento disciplina l’acquisto di prodotti tramite il sito.</p>
+              <p>
+                Il sito consente l&apos;acquisto online dei prodotti proposti da Frantoio Del Pasqua,
+                con particolare riferimento a olio extra vergine di oliva e articoli collegati.
+              </p>
             </Section>
 
             <Section id="prezzi" title="3. Prezzi e pagamenti">
-              <p className="italic">
-                Indica valuta, IVA inclusa/esclusa, metodi di pagamento e eventuali costi extra.
+              <p>
+                I prezzi sono espressi in euro. Eventuali spese di spedizione e il totale finale
+                vengono mostrati prima della conferma dell&apos;ordine.
+              </p>
+              <p>
+                I metodi di pagamento disponibili sono quelli visualizzati al checkout al momento
+                dell&apos;acquisto.
               </p>
             </Section>
 
             <Section id="contratto" title="4. Conclusione del contratto">
-              <p>L’ordine si intende confermato al ricevimento della conferma d’ordine via email.</p>
+              <p>
+                L&apos;invio dell&apos;ordine costituisce una richiesta di acquisto. Il contratto si considera
+                concluso quando ricevi la conferma d&apos;ordine all&apos;indirizzo email indicato.
+              </p>
             </Section>
 
             <Section id="spedizioni" title="5. Spedizioni e consegna">
               <p>
-                Per costi e tempi, fai riferimento alla pagina <strong>Spedizioni</strong>.
+                La preparazione dell&apos;ordine avviene di norma entro 24/48 ore lavorative. La consegna
+                e generalmente prevista in 2-3 giorni lavorativi dalla spedizione.
+              </p>
+              <p>
+                Per dettagli aggiornati su costi, soglie e modalita consulta la pagina{" "}
+                <Link className="text-zinc-900 underline underline-offset-4" href="/spedizioni">
+                  Spedizioni
+                </Link>
+                .
               </p>
             </Section>
 
             <Section id="recesso" title="6. Recesso e resi">
               <p>
-                Per condizioni, tempi e procedure, fai riferimento alla pagina{" "}
-                <strong>Resi e rimborsi</strong>.
+                Se acquisti come consumatore, puoi esercitare il diritto di recesso entro 14 giorni
+                dalla consegna, salvo le esclusioni previste dalla legge.
               </p>
-              <p className="text-xs text-zinc-500">
-                Nota: per alcuni beni possono valere esclusioni previste dalla legge (es. beni
-                sigillati/deperibili).
+              <p>
+                Procedura, condizioni e tempi di rimborso sono riepilogati nella pagina{" "}
+                <Link className="text-zinc-900 underline underline-offset-4" href="/resi">
+                  Resi e rimborsi
+                </Link>
+                .
               </p>
             </Section>
 
             <Section id="garanzia" title="7. Garanzia legale">
-              <p className="italic">
-                Inserisci info sulla garanzia legale di conformità (per consumatori).
+              <p>
+                Per i clienti consumatori si applica la garanzia legale di conformita prevista dalla
+                normativa vigente.
               </p>
             </Section>
 
-            <Section id="responsabilita" title="8. Limitazioni di responsabilità">
-              <p className="italic">
-                Inserisci eventuali limitazioni consentite e condizioni d’uso del sito.
+            <Section id="responsabilita" title="8. Limitazioni di responsabilita">
+              <p>
+                Frantoio Del Pasqua non risponde di ritardi o disservizi dovuti a cause di forza
+                maggiore, servizi di terzi o dati errati forniti dal cliente, nei limiti consentiti
+                dalla legge.
               </p>
             </Section>
 
             <section id="legge" className="scroll-mt-24">
               <h2 className="text-lg font-semibold">9. Legge applicabile e foro</h2>
               <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">
-                <p className="italic">
-                  Indica legge applicabile e foro competente nel rispetto delle norme consumeristiche.
+                <p>
+                  I contratti conclusi tramite il sito sono regolati dalla legge italiana.
                 </p>
-                <p className="text-xs text-zinc-500">
-                  Nota: questo testo non costituisce consulenza legale.
+                <p>
+                  Se acquisti come consumatore, per le controversie resta fermo il foro del tuo
+                  luogo di residenza o domicilio, quando previsto dalla normativa applicabile.
                 </p>
               </div>
             </section>
@@ -138,13 +182,13 @@ export default function TerminiPage() {
             <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
               <p className="text-sm font-semibold">Indice</p>
               <nav className="mt-3 space-y-1">
-                {toc.map((t) => (
+                {toc.map((item) => (
                   <a
-                    key={t.id}
-                    href={`#${t.id}`}
+                    key={item.id}
+                    href={`#${item.id}`}
                     className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-100"
                   >
-                    {t.label}
+                    {item.label}
                   </a>
                 ))}
               </nav>

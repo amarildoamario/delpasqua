@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Heart, ShoppingBag } from "lucide-react"
+import { Heart, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useState } from "react"
 import { useLocale } from "next-intl"
@@ -313,7 +313,7 @@ function CardActionsLink({
         aria-label="Aggiungi al carrello"
         className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#132c1c] text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-[#1a3d27] active:scale-95"
       >
-        <ShoppingBag className="h-[15px] w-[15px]" strokeWidth={1.8} />
+        <ShoppingCart className="h-[15px] w-[15px]" strokeWidth={1.8} />
       </button>
     </div>
   )
@@ -343,7 +343,7 @@ function CardActionsButton({
         aria-label="Aggiungi al carrello"
         className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#132c1c] text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-[#1a3d27] active:scale-95"
       >
-        <ShoppingBag className="h-[15px] w-[15px]" strokeWidth={1.8} />
+        <ShoppingCart className="h-[15px] w-[15px]" strokeWidth={1.8} />
       </button>
     </div>
   )

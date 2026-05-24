@@ -499,6 +499,25 @@
         }
     },
     "ProduzionePage": {
+        "nav": {
+            "section": "Sezione",
+            "sections": {
+                "capitolo-1": { "label": "L'Origine", "kicker": "La Raccolta a Mano" },
+                "capitolo-2": { "label": "L'Estrazione", "kicker": "I 6 Step in Frantoio" },
+                "capitolo-3": { "label": "La Custodia", "kicker": "Acciaio & Azoto" },
+                "capitolo-4": { "label": "Il Sigillo", "kicker": "Bottiglia & Certificazioni" },
+                "capitolo-5": { "label": "Servizi e Visite", "kicker": "Molitura & Degustazioni" }
+            }
+        },
+        "origin": {
+            "tag1": "Lotti ristretti",
+            "tag2": "Raccolta manuale",
+            "tag3": "Molitura in 24 ore"
+        },
+        "badges": {
+            "premium_quality": "PREMIUM QUALITY",
+            "certified_origin": "CERTIFIED ORIGIN"
+        },
         "hero": {
             "label": "Frantoio",
             "title_part1": "Il cuore della",
@@ -506,6 +525,7 @@
             "description": "Nel frantoio ogni dettaglio conta: dalla pulizia delle olive, alla gramolazione controllata, fino all'estrazione e alla conservazione. Qui tecnologia e cura artigianale lavorano insieme per preservare freschezza, profumi e stabilità.",
             "tag1": "Estrazione a freddo",
             "tag2": "Certificato IGP",
+            "tag3": "100% Bio & Artigianale",
             "img_alt": "Frantoio del Pasqua - esterno"
         },
         "machines": {
@@ -554,31 +574,31 @@
             "trasporto": {
                 "kicker": "TRASPORTO",
                 "title": "Pulizia e stabilità",
-                "text": "All'interno del frantoio lo spostamento dell'olio avviene esclusivamente mediante l'utilizzo di contenitori di acciaio. La plastica è assolutamente vietata, in quanto converisce off-flavours all'olio rovinandone il gusto e l'odore",
-                "img_label": "IMMAGINE — FILTRAZIONE"
+                "text": "All'interno del frantoio lo spostamento dell'olio avviene esclusivamente in contenitori di acciaio inox. La plastica è esclusa perché può alterare il profilo aromatico e compromettere pulizia e stabilità del prodotto.",
+                "img_label": "Filtrazione e passaggio in acciaio inox"
             },
             "stoccaggio": {
                 "kicker": "Stoccaggio",
                 "title": "Conservazione sotto azoto",
-                "text": "Spazio per raccontare lo stoccaggio in silos, controllo temperatura e protezione dall'ossidazione per preservare aromi e polifenoli.",
-                "img_label": "IMMAGINE — CONSERVAZIONE"
+                "text": "Dopo l'estrazione l'olio viene conservato in serbatoi di acciaio inox, protetti da luce, sbalzi termici e contatto con l'ossigeno. Lo stoccaggio sotto azoto aiuta a preservare aromi, freschezza e patrimonio polifenolico fino all'imbottigliamento.",
+                "img_label": "Serbatoi di conservazione protetta"
             },
             "imbottigliamento": {
                 "kicker": "Imbottigliamento",
                 "title": "Linea di riempimento e confezionamento",
-                "text": "Spazio per descrivere la linea, i formati, l'etichettatura e il confezionamento. Ideale aggiungere una foto ampia della linea.",
+                "text": "La linea di imbottigliamento ci permette di gestire formati diversi, etichettatura accurata e confezionamento ordinato, mantenendo continuità e pulizia in ogni fase finale del processo.",
                 "tag1": "Formati variabili",
                 "tag2": "Etichettatura precisa",
-                "img_label": "IMMAGINE — LINEA IMBOTTIGLIAMENTO"
+                "img_label": "Linea di imbottigliamento"
             },
             "controllo": {
                 "kicker": "Controllo",
                 "title": "Qualità e tracciabilità",
-                "text": "Spazio per indicare controlli, tracciabilità lotti, gestione conferimenti e (se presente) un piccolo angolo laboratorio/degustazione.",
+                "text": "Ogni lotto viene seguito con attenzione dalla fase di conferimento fino al confezionamento finale. Tracciabilità, controlli di processo e verifiche sul prodotto finito ci permettono di mantenere costante la qualità del frantoio.",
                 "list1": "Analisi sensoriale",
                 "list2": "Tracciabilità completa",
                 "list3": "Certificazioni aggiornate",
-                "img_label": "IMMAGINE — CONTROLLO QUALITÀ / TRACCIABILITÀ"
+                "img_label": "Controllo qualita e tracciabilita"
             }
         },
         "technology": {
@@ -640,7 +660,7 @@
                 "paragraphs": [
                     "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell'arco delle 24 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche. Il Frantoio del Pasqua è dotato di un moderno impianto di lavorazione delle olive Alfalaval con estrazione a freddo."
                 ],
-                "placeholder": "IMMAGINE — RACCOLTA"
+                "placeholder": "Raccolta manuale delle olive"
             },
             "imbottigliamento": {
                 "kicker": "IMPIANTO",
@@ -649,7 +669,7 @@
                     "L'impianto è fornito di una linea per l'imbottigliamento e il confezionamento; e di uno stoccaggio sotto azoto per garantire le caratteristiche organolettiche del nostro olio 'Il Magnifico' in attesa dell'imbottigliamento.",
                     "Ma non ci fermiamo qui: svolgiamo lavorazioni di molitura e confezionamento per conto di terzi."
                 ],
-                "placeholder": "IMMAGINE — LINEA"
+                "placeholder": "Linea di imbottigliamento e confezionamento"
             },
             "evo": {
                 "kicker": "QUALITÀ",
@@ -657,7 +677,7 @@
                 "paragraphs": [
                     "Tutti questi fattori sono un'assoluta garanzia per la produzione di olio extravergine d'oliva di altissima qualità, in grado di conservare più a lungo la freschezza e i profumi che caratterizzano l'olio appena spremuto."
                 ],
-                "placeholder": "IMMAGINE — EVO"
+                "placeholder": "Olio EVO appena lavorato"
             },
             "igp_bio": {
                 "kicker": "CERTIFICAZIONI",
@@ -665,7 +685,7 @@
                 "paragraphs": [
                     "Il frantoio del Pasqua è certificato Suolo e Salute per la trasformazione e produzione di prodotti Bio ed è iscritto al Consorzio dell'olio Toscano, per la produzione di olio extravergine di oliva IGP Toscano."
                 ],
-                "placeholder": "IMMAGINE — IGP/BIO"
+                "placeholder": "Certificazioni IGP e BIO"
             }
         },
         "shared": {
@@ -859,7 +879,7 @@
             "summary": "Riepilogo",
             "opening_checkout": "Apertura checkout...",
             "go_to_checkout": "Vai al checkout",
-            "secure_payment": "Pagamento sicuro tramite Stripe.",
+            "secure_payment": "Pagamento sicuro.",
             "email_confirmation": "Riceverai conferma via email."
         },
         "errors": {

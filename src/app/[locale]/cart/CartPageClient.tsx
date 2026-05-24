@@ -4,10 +4,9 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { CheckCircle2, Tag } from "lucide-react";
+import { CheckCircle2, Tag, ShoppingCart } from "lucide-react";
 
 import Footer from "@/components/Footer";
-import PaymentMethodsBadges from "@/components/PaymentMethodsBadges";
 import { useCart } from "@/context/CartContext";
 import products from "@/db/products.json";
 import { track } from "@/lib/analytics/track";
@@ -64,6 +63,13 @@ export default function CartPageClient() {
   const cartLines = cart.lines;
   const lines = useMemo(() => cartLines ?? [], [cartLines]);
   const empty = lines.length === 0;
+
+  const recommendations = useMemo(() => {
+    const inCartIds = lines.map((line) => line.productId);
+    return catalog.filter((prod) => !inCartIds.includes(prod.id)).slice(0, 3);
+  }, [catalog, lines]);
+
+  const remainingForFreeShipping = Math.max(0, 6900 - totals.subtotalCents);
 
   const linesCount = lines.length;
   useEffect(() => {
@@ -264,14 +270,129 @@ export default function CartPageClient() {
           </div>
 
           {empty ? (
-            <div className="mt-10 rounded-[20px] border border-black/[0.03] bg-white p-6 text-sm text-zinc-500 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
-              {t.rich("page.empty_state", {
-                shop: (chunks) => (
-                  <Link className="underline" href="/shop">
-                    {chunks}
-                  </Link>
-                ),
-              })}
+            <div className="mt-10 flex flex-col gap-8">
+              {/* Sleek Minimalist empty state banner */}
+              <div className="rounded-[5px] border border-black/[0.05] bg-white p-8 text-center shadow-[0_8px_24px_rgba(24,24,27,0.04)]">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-zinc-50">
+                  <ShoppingCart className="h-6 w-6 text-zinc-400" strokeWidth={1.5} />
+                </div>
+                <h2 className="mt-4 font-serif text-xl font-medium text-zinc-900">Il tuo carrello è vuoto</h2>
+                <p className="mt-2 text-sm text-zinc-500 max-w-md mx-auto">
+                  Non hai ancora aggiunto prodotti al carrello. Scopri la nostra selezione speciale di oli pregiati.
+                </p>
+                <Link 
+                  href="/shop" 
+                  className="mt-6 inline-flex h-10 items-center justify-center rounded-[5px] bg-zinc-900 px-6 text-xs font-medium tracking-wider text-white uppercase transition-colors hover:bg-zinc-700 active:scale-95"
+                >
+                  Torna allo Shop
+                </Link>
+              </div>
+
+              {/* GORGEOUS QUICK PURCHASE CARDS FOR EMPTY STATE */}
+              <div className="rounded-[5px] border border-black/[0.05] bg-white p-6 shadow-[0_8px_24px_rgba(24,24,27,0.04)]">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-zinc-100 pb-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-zinc-900 tracking-wider uppercase">
+                      Bestseller consigliati
+                    </h3>
+                    <p className="mt-0.5 text-xs text-zinc-500">
+                      I nostri migliori prodotti selezionati direttamente dal Frantoio.
+                    </p>
+                  </div>
+                  <div className="mt-2 sm:mt-0 flex items-center gap-1.5 rounded-full border border-black/5 bg-zinc-50 px-2.5 py-1 text-[10px] text-zinc-600">
+                    <span>🚚 Consegna gratis da 69€</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {recommendations.map((prod) => {
+                    const firstVariant = prod.variants[0];
+                    const price = firstVariant?.priceCents ?? 0;
+                    return (
+                      <div 
+                        key={prod.id} 
+                        className="group relative flex flex-col h-full overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white text-[#1f1a17] shadow-[0_2px_8px_rgba(31,26,23,0.18)] transition-all duration-300 hover:-translate-y-[4px] hover:shadow-[0_8px_20px_rgba(31,26,23,0.25)] transform-gpu"
+                      >
+                        {/* Immagine prodotto in risalto - aspetto verticale */}
+                        <div className="relative aspect-[4/4.5] w-full overflow-hidden bg-white flex items-center justify-center p-3">
+                          <Link 
+                            href={`/shop/${prod.slug}`} 
+                            className="relative h-full w-full block bg-transparent"
+                            aria-label={prod.title}
+                          >
+                            {prod.imageSrc ? (
+                              <Image
+                                src={prod.imageSrc}
+                                alt={prod.imageAlt ?? prod.title}
+                                fill
+                                sizes="(min-width: 640px) 250px, 100vw"
+                                className="object-contain p-2 transition-transform duration-500 group-hover:scale-[1.04]"
+                              />
+                            ) : (
+                              <div className="h-full w-full bg-transparent" />
+                            )}
+                          </Link>
+
+                          {/* Badge sovrapposto, stile premium */}
+                          {prod.badge && (
+                            <span className="absolute left-2.5 top-2.5 rounded-[4px] bg-[#d29b46] px-1.5 py-[3px] text-[8px] font-bold tracking-[0.08em] text-white uppercase z-10 shadow-sm">
+                              {prod.badge}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Area Dettagli */}
+                        <div className="flex flex-1 flex-col p-3.5 bg-white border-t border-[#f0ece6]">
+                          <span className="text-[8px] font-semibold tracking-[0.12em] text-[#8a7c6e] uppercase">
+                            Bestseller
+                          </span>
+
+                          <Link 
+                            href={`/shop/${prod.slug}`} 
+                            className="mt-1 font-serif text-[0.95rem] font-semibold leading-[1.25] tracking-tight text-[#1f1a17] hover:text-[#8f6d4c] transition-colors line-clamp-2"
+                          >
+                            {prod.title}
+                          </Link>
+
+                          <div className="mt-auto pt-3">
+                            <div className="flex items-baseline gap-1">
+                              <span className="font-serif text-[1.15rem] font-bold tracking-tight text-[#1f1a17]">
+                                {formatEUR(price)}
+                              </span>
+                              <span className="text-[9px] font-medium text-[#8a7c6e]">
+                                + iva
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!firstVariant) return;
+                                track({
+                                  type: "add_to_cart",
+                                  productKey: prod.id,
+                                  variantKey: firstVariant.id,
+                                  data: {
+                                    qty: 1,
+                                    unitPriceCents: price,
+                                    variantLabel: firstVariant.label,
+                                    slug: prod.slug,
+                                  },
+                                  cartId: null,
+                                });
+                                cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                              }}
+                              className="mt-3 w-full inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-[11px] font-semibold text-white hover:bg-emerald-700 transition-colors active:scale-95 cursor-pointer shadow-sm"
+                            >
+                              Acquista +
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           ) : (
             <div className="mt-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_360px]">
@@ -279,11 +400,11 @@ export default function CartPageClient() {
                 {computed.map((line) => (
                   <div
                     key={`${line.productId}:${line.variantId}`}
-                    className="flex gap-4 rounded-[20px] border border-black/[0.03] bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] sm:gap-6"
+                    className="flex gap-4 rounded-[5px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_24px_rgba(24,24,27,0.06)] sm:gap-6"
                   >
                     <Link
                       href={line.href}
-                      className="relative h-28 w-24 shrink-0 bg-transparent sm:h-32 sm:w-28"
+                      className="relative h-28 w-24 shrink-0 overflow-hidden rounded-[5px] bg-transparent sm:h-32 sm:w-28"
                       aria-label={t("page.open_product", { title: line.title })}
                     >
                       {line.imageSrc ? (
@@ -292,7 +413,7 @@ export default function CartPageClient() {
                           alt={line.imageAlt}
                           fill
                           sizes="(max-width: 640px) 96px, 112px"
-                          className="object-contain"
+                          className="object-contain p-1"
                         />
                       ) : (
                         <div className="h-full w-full bg-transparent" />
@@ -323,10 +444,10 @@ export default function CartPageClient() {
                       </div>
 
                       <div className="mt-5 flex items-center justify-between gap-3 sm:mt-6">
-                        <div className="flex h-9 items-center overflow-hidden rounded-[8px] border border-black/5 bg-zinc-100/80 sm:h-10 sm:rounded-[10px]">
+                        <div className="flex h-9 items-center overflow-hidden rounded-[5px] border border-black/10 bg-white shadow-sm sm:h-10">
                           <button
                             type="button"
-                            className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 disabled:opacity-30 sm:h-10 sm:w-10"
+                            className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 disabled:opacity-30 sm:h-10 sm:w-10 border-r border-black/5"
                             onClick={() => {
                               const nextQty = Math.max(1, line.qty - 1);
                               const delta = nextQty - line.qty;
@@ -357,7 +478,7 @@ export default function CartPageClient() {
 
                           <button
                             type="button"
-                            className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 sm:h-10 sm:w-10"
+                            className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 sm:h-10 sm:w-10 border-l border-black/5"
                             onClick={() => {
                               const nextQty = line.qty + 1;
                               const delta = nextQty - line.qty;
@@ -384,7 +505,7 @@ export default function CartPageClient() {
 
                         <button
                           type="button"
-                          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-[10px] font-medium tracking-[0.18em] text-red-600 transition-colors hover:bg-red-100 sm:px-4 sm:py-2 sm:text-[11px]"
+                          className="inline-flex shrink-0 items-center gap-2 rounded-[5px] bg-red-50 px-3 py-1.5 text-[10px] font-medium tracking-[0.18em] text-red-600 transition-colors hover:bg-red-100 sm:px-4 sm:py-2 sm:text-[11px]"
                           onClick={() => {
                             track({
                               type: "remove_from_cart",
@@ -433,10 +554,35 @@ export default function CartPageClient() {
                     {t("common.continue_shopping")} →
                   </Link>
                 </div>
+
               </div>
 
-              <aside className="h-fit rounded-[20px] border border-black/[0.03] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.06)] lg:sticky lg:top-28">
+              <aside className="h-fit rounded-[5px] border border-black/[0.06] bg-white p-6 shadow-[0_8px_24px_rgba(24,24,27,0.06)] lg:sticky lg:top-28">
                 <div className="text-sm tracking-[0.12em] text-zinc-700">{t("page.summary")}</div>
+
+                {/* PROGRESS BAR FOR FREE SHIPPING */}
+                {totals.subtotalCents > 0 && (
+                  <div className="mt-4 rounded-[5px] border border-zinc-100 bg-zinc-50/50 p-3.5 text-xs text-zinc-600">
+                    {remainingForFreeShipping > 0 ? (
+                      <div>
+                        <div className="flex items-center justify-between font-medium text-zinc-800">
+                          <span>Spedizione gratuita</span>
+                          <span>Mancano {formatEUR(remainingForFreeShipping)}</span>
+                        </div>
+                        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
+                          <div 
+                            className="h-full bg-emerald-600 transition-all duration-500 ease-out"
+                            style={{ width: `${Math.min(100, (totals.subtotalCents / 6900) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 font-medium text-emerald-600">
+                        <span>🎉 Spedizione gratuita sbloccata!</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="mt-5">
                   {promoApplied ? (
@@ -468,7 +614,7 @@ export default function CartPageClient() {
                             }}
                             onKeyDown={(event) => event.key === "Enter" && handleApplyPromo()}
                             placeholder={t("common.discount_code_placeholder")}
-                            className="h-10 w-full rounded-[10px] border border-black/10 bg-zinc-50 pl-9 pr-3 text-base text-zinc-900 placeholder-zinc-400 transition-colors focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                            className="h-10 w-full rounded-[5px] border border-black/10 bg-white pl-9 pr-3 text-base text-zinc-900 placeholder-zinc-400 transition-colors focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                             disabled={promoLoading}
                           />
                         </div>
@@ -476,7 +622,7 @@ export default function CartPageClient() {
                           type="button"
                           onClick={handleApplyPromo}
                           disabled={promoLoading || !promoInput.trim()}
-                          className="h-10 whitespace-nowrap rounded-[10px] bg-zinc-900 px-4 text-xs tracking-[0.12em] text-white transition-colors hover:bg-zinc-700 disabled:opacity-40"
+                          className="h-10 whitespace-nowrap rounded-[5px] bg-zinc-900 px-4 text-xs tracking-[0.12em] text-white transition-colors hover:bg-zinc-700 disabled:opacity-40"
                         >
                           {promoLoading ? "..." : t("common.apply")}
                         </button>
@@ -525,21 +671,87 @@ export default function CartPageClient() {
 
                 <button
                   type="button"
-                  className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-[12px] bg-emerald-600 px-4 text-sm font-medium tracking-[0.10em] text-white shadow-[0_4px_14px_0_rgba(5,150,105,0.39)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-[0_6px_20px_rgba(5,150,105,0.23)] disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                  className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-[5px] bg-emerald-600 px-4 text-sm font-medium tracking-[0.10em] text-white shadow-sm transition-all duration-200 hover:bg-emerald-700 disabled:opacity-50"
                   onClick={handleCheckout}
                   disabled={payLoading || empty}
                 >
                   {payLoading ? t("page.opening_checkout") : t("page.go_to_checkout")}
                 </button>
 
-                <PaymentMethodsBadges className="mt-4" />
-
-                <p className="mt-4 text-center text-[11px] text-zinc-400">
+                <p className="mt-6 text-center text-[11px] text-zinc-400">
                   {t("page.secure_payment")}
                   <br />
                   {t("page.email_confirmation")}
                 </p>
               </aside>
+
+              {recommendations.length > 0 && (
+                <div className="rounded-[5px] border border-black/[0.06] bg-white p-6 shadow-[0_8px_24px_rgba(24,24,27,0.06)] lg:col-start-1">
+                  <h3 className="text-sm font-semibold tracking-wider text-zinc-900 uppercase">
+                    Ti potrebbe interessare anche...
+                  </h3>
+                  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {recommendations.map((prod) => {
+                      const firstVariant = prod.variants[0];
+                      const price = firstVariant?.priceCents ?? 0;
+                      return (
+                        <div
+                          key={prod.id}
+                          className="flex flex-row items-center gap-4 rounded-[5px] border border-zinc-100 bg-zinc-50/50 p-4 transition-colors hover:bg-zinc-50 sm:flex-col"
+                        >
+                          <Link
+                            href={`/shop/${prod.slug}`}
+                            className="relative h-20 w-16 shrink-0 overflow-hidden rounded-[5px] bg-transparent"
+                            aria-label={prod.title}
+                          >
+                            {prod.imageSrc ? (
+                              <Image
+                                src={prod.imageSrc}
+                                alt={prod.imageAlt ?? prod.title}
+                                fill
+                                sizes="80px"
+                                className="object-contain p-1"
+                              />
+                            ) : (
+                              <div className="h-full w-full bg-transparent" />
+                            )}
+                          </Link>
+
+                          <div className="flex min-w-0 flex-1 flex-col text-left sm:w-full sm:text-center">
+                            <Link href={`/shop/${prod.slug}`} className="truncate text-sm font-medium text-zinc-800 hover:underline">
+                              {prod.title}
+                            </Link>
+                            <div className="mt-1 text-xs font-medium text-zinc-500">
+                              {formatEUR(price)}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!firstVariant) return;
+                                track({
+                                  type: "add_to_cart",
+                                  productKey: prod.id,
+                                  variantKey: firstVariant.id,
+                                  data: {
+                                    qty: 1,
+                                    unitPriceCents: price,
+                                    variantLabel: firstVariant.label,
+                                    slug: prod.slug,
+                                  },
+                                });
+                                cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                              }}
+                              className="mt-3 inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-xs font-medium tracking-wide text-white transition-colors hover:bg-emerald-700 active:scale-95 cursor-pointer"
+                            >
+                              Aggiungi +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

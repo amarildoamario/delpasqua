@@ -103,7 +103,7 @@ export default function SuccessAutoRefresh({
           {stripePaymentStatus ? (
             <>
               {" "}
-              • Stripe:{" "}
+              • Stato pagamento:{" "}
               <code className="rounded bg-neutral-100 px-1.5 py-0.5">
                 {stripePaymentStatus}
               </code>

@@ -1,8 +1,22 @@
 import Footer from "@/components/Footer";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Resi e rimborsi" };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
 
-const lastUpdated = "17/02/2026";
+  return pageMetadata({
+    title: "Resi e rimborsi",
+    description: "Informazioni su recesso, resi e rimborsi di Frantoio Del Pasqua.",
+    path: "/resi/",
+    locale,
+    hreflang: false,
+  });
+}
+
+const lastUpdated = "24/05/2026";
+
+const COMPANY_EMAIL = "info@delpasqua.com";
+const COMPANY_PHONE = "+39 0575 810065";
 
 function Step({
   n,
@@ -21,9 +35,7 @@ function Step({
         </div>
         <div className="min-w-0">
           <p className="text-sm font-semibold">{title}</p>
-          <div className="mt-2 text-sm leading-relaxed text-zinc-700">
-            {children}
-          </div>
+          <div className="mt-2 text-sm leading-relaxed text-zinc-700">{children}</div>
         </div>
       </div>
     </div>
@@ -40,47 +52,53 @@ export default function ResiPage() {
             Ultimo aggiornamento: <span className="font-medium">{lastUpdated}</span>
           </p>
           <p className="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-700">
-            Qui trovi le condizioni per recesso, reso e rimborso. Completa i campi in{" "}
-            <span className="italic">corsivo</span> con le policy reali (tempi, eccezioni, chi paga il reso).
+            Se acquisti come consumatore, puoi richiedere il recesso entro 14 giorni dalla
+            consegna, salvo le eccezioni previste dalla legge.
           </p>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-              Recesso
-            </p>
-            <p className="mt-2 text-sm italic text-zinc-800">
-              (es.) Entro 14 giorni dalla consegna
-            </p>
+            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Recesso</p>
+            <p className="mt-2 text-sm text-zinc-800">Entro 14 giorni dalla consegna.</p>
           </div>
           <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-              Rimborso
-            </p>
-            <p className="mt-2 text-sm italic text-zinc-800">
-              (es.) Entro 5–10 giorni lavorativi dalla verifica
-            </p>
+            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Rimborso</p>
+            <p className="mt-2 text-sm text-zinc-800">Dopo ricezione e verifica del reso.</p>
           </div>
           <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-              Condizioni
-            </p>
-            <p className="mt-2 text-sm italic text-zinc-800">
-              (es.) Prodotto integro + imballo adeguato
+            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Condizioni</p>
+            <p className="mt-2 text-sm text-zinc-800">
+              Prodotto integro, non utilizzato, con imballo adeguato.
             </p>
           </div>
         </div>
 
         <div className="mt-6 grid gap-6 md:grid-cols-3">
           <Step n={1} title="Richiesta reso">
-            <p className="italic">Contatta l’assistenza indicando numero ordine e motivazione.</p>
+            <p>
+              Scrivi a{" "}
+              <a className="text-zinc-900 underline underline-offset-4" href={`mailto:${COMPANY_EMAIL}`}>
+                {COMPANY_EMAIL}
+              </a>{" "}
+              oppure chiama il{" "}
+              <a className="text-zinc-900 underline underline-offset-4" href="tel:+390575810065">
+                {COMPANY_PHONE}
+              </a>
+              , indicando numero ordine e motivo della richiesta.
+            </p>
           </Step>
           <Step n={2} title="Istruzioni e spedizione">
-            <p className="italic">Ricevi istruzioni e invia il pacco all’indirizzo indicato.</p>
+            <p>
+              Ti confermeremo la procedura e l&apos;indirizzo a cui inviare il reso. Imballa il prodotto
+              con cura per evitare danni durante il trasporto.
+            </p>
           </Step>
           <Step n={3} title="Verifica e rimborso">
-            <p className="italic">Dopo la verifica del reso, ricevi rimborso secondo i tempi indicati.</p>
+            <p>
+              Dopo il controllo del reso, il rimborso viene disposto sul metodo di pagamento
+              originario, quando possibile.
+            </p>
           </Step>
         </div>
 
@@ -88,8 +106,10 @@ export default function ResiPage() {
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
             <h2 className="text-base font-semibold">Costi di reso</h2>
             <div className="mt-3 text-sm leading-relaxed text-zinc-700">
-              <p className="italic">
-                Specifica chi paga il reso (cliente/venditore) e in quali casi (difetto, errore spedizione, ecc.).
+              <p>
+                Se il prodotto arriva danneggiato o c&apos;è un errore nell&apos;ordine, contattaci subito.
+                Negli altri casi, eventuali costi di restituzione vengono comunicati durante
+                l&apos;apertura della pratica.
               </p>
             </div>
           </div>
@@ -97,16 +117,20 @@ export default function ResiPage() {
           <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
             <h2 className="text-base font-semibold">Eccezioni</h2>
             <div className="mt-3 text-sm leading-relaxed text-zinc-700">
-              <p className="italic">
-                Inserisci eventuali esclusioni applicabili (beni sigillati, deperibili, personalizzati, ecc.).
+              <p>
+                Non possono essere accettati resi di prodotti aperti, alterati, privi di imballo
+                idoneo o esclusi dal diritto di recesso secondo la normativa applicabile.
               </p>
             </div>
           </div>
         </div>
 
         <div className="mt-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-700 shadow-sm">
-          <p className="font-medium text-zinc-900">Nota</p>
-          <p className="mt-1">Questo testo è un template informativo e non costituisce consulenza legale.</p>
+          <p className="font-medium text-zinc-900">Contatti utili</p>
+          <p className="mt-1">
+            Per velocizzare la pratica, indica sempre numero ordine, nome usato all&apos;acquisto e un
+            recapito valido.
+          </p>
         </div>
       </main>
 

@@ -41,18 +41,6 @@
                         "Geschenk- / Veranstaltungsoption"
                     ]
                 }
-            },
-            "divider_1": {
-                "label": "PFLEGE UND KONSERVIERUNG",
-                "title_part1": "Von der Verarbeitung ",
-                "title_italic": "bis zur Flasche",
-                "text": "Nach der Extraktion schutzen wir unser Ol vor Licht und Sauerstoff. Nur so kommen die Aromen der Muhle unverandert auf den Tisch."
-            },
-            "divider_2": {
-                "label": "GARANTIERTE QUALITAT",
-                "title_part1": "Kontrolle in ",
-                "title_italic": "jeder Phase",
-                "text": "Wir uberlassen nichts dem Zufall: von der Anlieferung der Oliven bis zu den Kontrollen des Endprodukts."
             }
         },
         "calendar": {
@@ -511,6 +499,25 @@
         }
     },
     "ProduzionePage": {
+        "nav": {
+            "section": "Abschnitt",
+            "sections": {
+                "capitolo-1": { "label": "Der Ursprung", "kicker": "Handlese" },
+                "capitolo-2": { "label": "Die Extraktion", "kicker": "Die 6 Mühlenschritte" },
+                "capitolo-3": { "label": "Die Aufbewahrung", "kicker": "Stahl & Stickstoff" },
+                "capitolo-4": { "label": "Das Siegel", "kicker": "Flasche & Zertifizierungen" },
+                "capitolo-5": { "label": "Service & Besuch", "kicker": "Mahlung & Verkostungen" }
+            }
+        },
+        "origin": {
+            "tag1": "Begrenzte Chargen",
+            "tag2": "Handlese",
+            "tag3": "Mahlung innerhalb von 24 Std."
+        },
+        "badges": {
+            "premium_quality": "PREMIUM-QUALITÄT",
+            "certified_origin": "ZERTIFIZIERTER URSPRUNG"
+        },
         "hero": {
             "label": "Mühle",
             "title_part1": "Das Herz",
@@ -518,6 +525,7 @@
             "description": "In der Mühle zählt jedes Detail: von der Reinigung der Oliven über die kontrollierte Malaxation bis hin zur Extraktion und Lagerung. Hier arbeiten Technologie und handwerkliche Sorgfalt zusammen, um Frische, Aromen und Stabilität zu bewahren.",
             "tag1": "Kaltextraktion",
             "tag2": "IGP-zertifiziert",
+            "tag3": "100% Bio & Handwerklich",
             "img_alt": "Frantoio del Pasqua - Außenansicht"
         },
         "machines": {
@@ -548,6 +556,18 @@
             "filtrazione": {
                 "title": "Filtration",
                 "desc": "Stabilität über die Zeit und sauberes Profil."
+            },
+            "divider_1": {
+                "label": "PFLEGE UND KONSERVIERUNG",
+                "title_part1": "Von der Verarbeitung ",
+                "title_italic": "bis zur Flasche",
+                "text": "Nach der Extraktion schutzen wir unser Ol vor Licht und Sauerstoff. Nur so kommen die Aromen der Muhle unverandert auf den Tisch."
+            },
+            "divider_2": {
+                "label": "GARANTIERTE QUALITAT",
+                "title_part1": "Kontrolle in ",
+                "title_italic": "jeder Phase",
+                "text": "Wir uberlassen nichts dem Zufall: von der Anlieferung der Oliven bis zu den Kontrollen des Endprodukts."
             }
         },
         "showcase": {
@@ -555,30 +575,30 @@
                 "kicker": "TRANSPORT",
                 "title": "Sauberkeit und Stabilität",
                 "text": "Innerhalb der Mühle erfolgt der Transport des Öls ausschließlich in Edelstahlbehältern. Kunststoff ist streng verboten, da er dem Öl Beigeschmäcker verleiht und Geschmack sowie Geruch beeinträchtigt.",
-                "img_label": "BILD — FILTRATION"
+                "img_label": "Filtration und Transfer in Edelstahlbehälter"
             },
             "stoccaggio": {
                 "kicker": "Lagerung",
                 "title": "Lagerung unter Stickstoff",
-                "text": "Platz für Informationen zur Lagerung in Silos, Temperaturkontrolle und Schutz vor Oxidation zur Erhaltung von Aromen und Polyphenolen.",
-                "img_label": "BILD — LAGERUNG"
+                "text": "Nach der Extraktion wird das Öl in Edelstahltanks gelagert, geschützt vor Licht, Temperaturschwankungen und Sauerstoff. Die Lagerung unter Stickstoff bewahrt Aromen, Frische und den Polyphenolgehalt bis zur Abfüllung.",
+                "img_label": "Geschützte Lagertanks"
             },
             "imbottigliamento": {
                 "kicker": "Abfüllung",
                 "title": "Abfüll- und Verpackungslinie",
-                "text": "Beschreibung der Linie, Formate, Etikettierung und Verpackung. Ideal ist ein großes Foto der Linie.",
+                "text": "Unsere Abfülllinie ermöglicht es uns, verschiedene Formate, eine präzise Etikettierung und eine ordnungsgemäße Verpackung zu verwalten, wodurch Kontinuität und Sauberkeit in jeder Endphase des Prozesses gewahrt bleiben.",
                 "tag1": "Variable Formate",
                 "tag2": "Präzise Etikettierung",
-                "img_label": "BILD — ABFÜLLLINIE"
+                "img_label": "Abfülllinie"
             },
             "controllo": {
                 "kicker": "Kontrolle",
                 "title": "Qualität und Rückverfolgbarkeit",
-                "text": "Angaben zu Kontrollen, Chargenrückverfolgbarkeit, Liefermanagement und (falls vorhanden) eine kleine Labor-/Verkostungsecke.",
+                "text": "Jede Charge wird von der Anlieferung bis zur Endverpackung sorgfältig überwacht. Rückverfolgbarkeit, Prozesskontrollen und Prüfungen des Endprodukts ermöglichen es uns, die Qualität der Ölmühle stets konstant zu halten.",
                 "list1": "Sensorische Analyse",
                 "list2": "Vollständige Rückverfolgbarkeit",
                 "list3": "Aktuelle Zertifizierungen",
-                "img_label": "BILD — QUALITÄTSKONTROLLE / RÜCKVERFOLGBARKEIT"
+                "img_label": "Qualitätskontrolle und Rückverfolgbarkeit"
             }
         },
         "technology": {
@@ -859,7 +879,7 @@
             "summary": "Zusammenfassung",
             "opening_checkout": "Checkout wird geöffnet...",
             "go_to_checkout": "Zum Checkout",
-            "secure_payment": "Sichere Zahlung über Stripe.",
+            "secure_payment": "Sichere Zahlung.",
             "email_confirmation": "Sie erhalten eine Bestätigung per E-Mail."
         },
         "errors": {
