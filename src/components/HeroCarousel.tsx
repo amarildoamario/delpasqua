@@ -24,15 +24,6 @@ export default function HeroCarousel() {
   const slides: Slide[] = useMemo(
     () => [
       {
-        id: "storia",
-        title: t("slides.storia.title"),
-        excerpt: t("slides.storia.excerpt"),
-        cta: t("slides.storia.cta"),
-        href: "/storia",
-        imageSrc: "/hero/storia.jpg",
-        imageAlt: t("slides.storia.alt"),
-      },
-      {
         id: "oli",
         title: t("slides.oli.title"),
         excerpt: t("slides.oli.excerpt"),
@@ -40,6 +31,15 @@ export default function HeroCarousel() {
         href: "/shop",
         imageSrc: "/hero/oli.jpg",
         imageAlt: t("slides.oli.alt"),
+      },
+      {
+        id: "storia",
+        title: t("slides.storia.title"),
+        excerpt: t("slides.storia.excerpt"),
+        cta: t("slides.storia.cta"),
+        href: "/storia",
+        imageSrc: "/hero/storia.jpg",
+        imageAlt: t("slides.storia.alt"),
       },
       {
         id: "tradizione",

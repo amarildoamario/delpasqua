@@ -11,14 +11,14 @@ const FRANTOIO_IMAGES = {
 
   // griglia macchine
   defogliazione: "/frantoio/defogliazione.jpg",
+  frangitura: "/frantoio/frangitura.jpg",
   gramolazione: "/frantoio/gramolazione.jpg",
   estrazione: "/frantoio/estrazione.jpg",
-  separazione: "/frantoio/separazione.jpeg",
   filtrazione: "/frantoio/filtrazione.jpg",
 
   // sezioni presentative
   conservazione: "/frantoio/conservazione.jpg",
-  pulizia: "/frantoio/pulizia.jpg",
+  pulizia: "/frantoio/pulizia.jpeg",
   confezionamento: "/frantoio/confezionamento.jpg",
   tracciabilita: "/frantoio/tracciabilita.jpg",
 
@@ -345,49 +345,52 @@ export default function ProduzionePageClient() {
             </div>
 
             {/* Custom Machinery Grid Journey */}
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <MachineCard
-                title={t("machines.defogliazione.title")}
-                desc={t("machines.defogliazione.desc")}
-                imgSrc={FRANTOIO_IMAGES.defogliazione}
-                color="olive"
-                icon="defogliazione"
-              />
-              <MachineCard
-                title={t("machines.frangitura.title")}
-                desc={t("machines.frangitura.desc")}
-                imgSrc={FRANTOIO_IMAGES.pulizia}
-                color="gold"
-                icon="frangitura"
-              />
-              <MachineCard
-                title={t("machines.gramolazione.title")}
-                desc={t("machines.gramolazione.desc")}
-                imgSrc={FRANTOIO_IMAGES.gramolazione}
-                color="olive"
-                icon="gramolazione"
-              />
-              <MachineCard
-                title={t("machines.estrazione.title")}
-                desc={t("machines.estrazione.desc")}
-                imgSrc={FRANTOIO_IMAGES.estrazione}
-                color="gold"
-                icon="estrazione"
-              />
-              <MachineCard
-                title={t("machines.separazione.title")}
-                desc={t("machines.separazione.desc")}
-                imgSrc={FRANTOIO_IMAGES.separazione}
-                color="olive"
-                icon="separazione"
-              />
-              <MachineCard
-                title={t("machines.filtrazione.title")}
-                desc={t("machines.filtrazione.desc")}
-                imgSrc={FRANTOIO_IMAGES.filtrazione}
-                color="gold"
-                icon="filtrazione"
-              />
+            <div className="flex flex-wrap justify-center gap-8">
+              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
+                <MachineCard
+                  title={t("machines.defogliazione.title")}
+                  desc={t("machines.defogliazione.desc")}
+                  imgSrc={FRANTOIO_IMAGES.defogliazione}
+                  color="olive"
+                  icon="defogliazione"
+                />
+              </div>
+              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
+                <MachineCard
+                  title={t("machines.frangitura.title")}
+                  desc={t("machines.frangitura.desc")}
+                  imgSrc={FRANTOIO_IMAGES.pulizia}
+                  color="gold"
+                  icon="frangitura"
+                />
+              </div>
+              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
+                <MachineCard
+                  title={t("machines.gramolazione.title")}
+                  desc={t("machines.gramolazione.desc")}
+                  imgSrc={FRANTOIO_IMAGES.gramolazione}
+                  color="olive"
+                  icon="gramolazione"
+                />
+              </div>
+              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
+                <MachineCard
+                  title={t("machines.estrazione.title")}
+                  desc={t("machines.estrazione.desc")}
+                  imgSrc={FRANTOIO_IMAGES.estrazione}
+                  color="gold"
+                  icon="estrazione"
+                />
+              </div>
+              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
+                <MachineCard
+                  title={t("machines.filtrazione.title")}
+                  desc={t("machines.filtrazione.desc")}
+                  imgSrc={FRANTOIO_IMAGES.filtrazione}
+                  color="olive"
+                  icon="filtrazione"
+                />
+              </div>
             </div>
 
           </div>
@@ -426,7 +429,7 @@ export default function ProduzionePageClient() {
                 title={t("showcase.trasporto.title")}
                 text={t("showcase.trasporto.text")}
                 imgLabel={t("showcase.trasporto.img_label")}
-                imgSrc={FRANTOIO_IMAGES.pulizia}
+                imgSrc={FRANTOIO_IMAGES.frangitura}
                 alt={t("showcase.trasporto.title")}
                 badgeColor="olive"
               />
@@ -657,6 +660,53 @@ export default function ProduzionePageClient() {
                   </div>
                 </div>
 
+              </div>
+
+              {/* Row 4: Dedicated IQO Certification Block */}
+              <div className="mt-12 rounded-[5px] border border-[#E7E5E4] bg-white p-8 lg:p-12 shadow-sm flex flex-col lg:flex-row items-center gap-10 transition-all duration-300 hover:border-[#3D5A3D]/20 hover:shadow-md">
+                {/* Left side: Icon & Text */}
+                <div className="flex flex-col md:flex-row items-center gap-6 flex-grow">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#3D5A3D]/5 border border-[#3D5A3D]/15 text-[#3D5A3D] shadow-inner">
+                    <IconAward className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-xl font-light text-[#1C1917] tracking-tight md:text-2xl">
+                      {t("steps.iqo.title")}
+                    </h4>
+                    <p className="mt-3 text-sm leading-relaxed text-[#57534E] sm:text-base">
+                      {t("steps.iqo.text")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right side: Interactive Highlighted Logos (Even Larger & Borderless) */}
+                <div className="shrink-0">
+                  <a
+                    href="https://www.iqo.it/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-6 sm:gap-8 group/logo"
+                    title="Visita il sito ufficiale IQO"
+                  >
+                    <div className="relative h-56 w-56 sm:h-72 sm:w-72 overflow-hidden transition-transform duration-300 group-hover/logo:scale-105">
+                      <Image
+                        src="/loghi/bollino IQO 1.avif"
+                        alt="Bollino IQO 1"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="h-40 w-px bg-[#E7E5E4]" />
+                    <div className="relative h-56 w-56 sm:h-72 sm:w-72 overflow-hidden transition-transform duration-300 group-hover/logo:scale-105">
+                      <Image
+                        src="/loghi/bollino IQO 2.avif"
+                        alt="Bollino IQO 2"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  </a>
+                </div>
               </div>
 
             </div>
@@ -960,6 +1010,23 @@ function IconShield({ className }: { className?: string }) {
       strokeLinejoin="round"
     >
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  );
+}
+
+function IconAward({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="8" r="7" />
+      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
     </svg>
   );
 }

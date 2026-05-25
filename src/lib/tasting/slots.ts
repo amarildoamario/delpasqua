@@ -16,31 +16,30 @@ export type WeeklySlotRule = {
 const defaultTypes: TastingType[] = [
   {
     id: "classica",
-    title: "Degustazione Classica",
-    subtitle: "Introduzione agli oli Delpasqua con assaggio guidato.",
+    title: "Visita e degustazione",
+    subtitle: "Vieni a trovarci direttamente in Frantoio a Monte San savino e scopri tutto quello che c'è da sapere su l'olio extravergine di oliva e sulle olive.",
     durationMinutes: 60,
     priceFrom: "da €20/persona",
-    includes: ["Assaggio di 3 oli", "Pane & acqua", "Cultivar e frangitura"],
-  },
-  {
-    id: "premium",
-    title: "Degustazione Premium",
-    subtitle: "Percorso completo con abbinamenti e note sensoriali.",
-    durationMinutes: 90,
-    priceFrom: "da €35/persona",
     includes: [
-      "Assaggio di 5 oli",
-      "Abbinamenti (pane / pomodoro / formaggi)",
-      "Mini tour del frantoio (se disponibile)",
+      "Coltivazione dell'olivo e le diverse varietà tipiche della zona",
+      "Metodi di coltivazione, raccolta, produzione e conservazione",
+      "Assaggio guidato per riconoscere qualità sensoriali ed eventuali difetti",
+      "Degustazione dei nostri oli abbinati a bruschetta con pane macinato a pietra, verdure fresche in pinzimonio e calice di Rosso di Sangiovese",
     ],
   },
   {
-    id: "privata",
-    title: "Degustazione Privata",
-    subtitle: "Esperienza su misura per gruppi e occasioni speciali.",
-    durationMinutes: 90,
+    id: "premium",
+    title: "Esperienza in campo",
+    subtitle: "Un'esperienza unica nell'oliveto a Pozzo della Chiana con pic-nic BBQ e molitura in frantoio.",
+    durationMinutes: 240,
     priceFrom: "su richiesta",
-    includes: ["Percorso personalizzato", "Opzione aperitivo", "Opzione regalo / evento"],
+    includes: [
+      "Accoglienza di Marta nell'oliveto con vista sul Tempio di Santo Stefano della Vittoria",
+      "Raccolta manuale tradizionale delle olive con pettinino e teli",
+      "Pranzo pic-nic con barbecue direttamente nell'oliveto tra gli ulivi",
+      "Visita al frantoio con molitura delle olive appena raccolte ed estrazione a freddo",
+      "Degustazione finale di olio extravergine e aromatizzati con bruschetta",
+    ],
   },
 ];
 

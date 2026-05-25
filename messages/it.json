@@ -15,30 +15,24 @@
             "from": "A partire da",
             "types": {
                 "classica": {
-                    "title": "Degustazione Classica",
-                    "subtitle": "Introduzione agli oli Delpasqua con assaggio guidato.",
+                    "title": "Visita e degustazione",
+                    "subtitle": "Vieni a trovarci direttamente in Frantoio a Monte San savino e scopri tutto quello che c'è da sapere su l'olio extravergine di oliva e sulle olive.",
                     "includes": [
-                        "Assaggio di 3 oli",
-                        "Pane & acqua",
-                        "Cultivar e frangitura"
+                        "Coltivazione dell'olivo e le diverse varietà tipiche della zona",
+                        "Metodi di coltivazione, raccolta, produzione e conservazione",
+                        "Assaggio guidato per riconoscere qualità sensoriali ed eventuali difetti",
+                        "Degustazione dei nostri oli abbinati a bruschetta con pane macinato a pietra, verdure fresche in pinzimonio e calice di Rosso di Sangiovese"
                     ]
                 },
                 "premium": {
-                    "title": "Degustazione Premium",
-                    "subtitle": "Percorso completo con abbinamenti e note sensoriali.",
+                    "title": "Esperienza in campo",
+                    "subtitle": "Un'esperienza unica nell'oliveto a Pozzo della Chiana con pic-nic BBQ e molitura in frantoio.",
                     "includes": [
-                        "Assaggio di 5 oli",
-                        "Abbinamenti (pane / pomodoro / formaggi)",
-                        "Mini tour del frantoio (se disponibile)"
-                    ]
-                },
-                "privata": {
-                    "title": "Degustazione Privata",
-                    "subtitle": "Esperienza su misura per gruppi e occasioni speciali.",
-                    "includes": [
-                        "Percorso personalizzato",
-                        "Opzione aperitivo",
-                        "Opzione regalo / evento"
+                        "Accoglienza di Marta nell'oliveto con vista sul Tempio di Santo Stefano della Vittoria",
+                        "Raccolta manuale tradizionale delle olive con pettinino e teli",
+                        "Pranzo pic-nic con barbecue direttamente nell'oliveto tra gli ulivi",
+                        "Visita al frantoio con molitura delle olive appena raccolte ed estrazione a freddo",
+                        "Degustazione finale di olio extravergine e aromatizzati con bruschetta"
                     ]
                 }
             }
@@ -464,14 +458,14 @@
             "subtitle": "Storia",
             "title_part1": "La nostra ",
             "title_italic": "storia",
-            "description": "L'azienda Del Pasqua nasce intorno agli anni '60 dal lavoro del padre Sabatino. Con gli anni, si unisce all'azienda di famiglia anche il figlio Emanuele, con l'obiettivo di fare forza sulla diversificazione, puntando sulla qualità dei prodotti e aprendo così l'azienda a nuovi sbocchi e direzioni."
+            "description": "L’azienda Del Pasqua nasce intorno agli anni ’60 in Valdichiana, modificatasi nel tempo, evolvendosi e prefissandosi l'obbiettivo di fare forza sulla diversificazione, puntando sulla qualità dei prodotti, sull'innovazione, rispettando l'ambiente, senza perdere di vista i valori e i sapori della vera tradizione Toscana e italiana,aprendosi a nuovi sbocchi e direzioni sia in campo olivicolo che vitivinicolo. Tutta la filiera di produzione è realizzata nel nostro territorio, dalla coltivazione degli olivi e delle viti, passando per la raccolta fino ad arrivare al confezionamento del prodotto finito."
         },
         "section1": {
-            "subtitle": "I nostri oliveti",
+            "subtitle": "Gli oliveti",
             "title_part1": "Tradizione e innovazione ",
             "title_italic": "nel verde",
-            "p1": "I nostri oliveti si estendono per 4 ettari, suddivisi tra le cultivar tipiche delle nostre zone: leccino, frantoiane e moraiolo.",
-            "p2": "Nel rispetto delle coltivazioni tradizionali, ma secondo tecniche moderne e innovative, sono stati piantati nuovi olivi il cui stato viene costantemente monitorato dal lavoro dell'agronomo che valuta lo stato di maturità delle olive.",
+            "p1": "I nostri oliveti si estendono per 4 ettari, suddivisi tra le cultivar tipiche della zona.",
+            "p2": "Nel rispetto delle coltivazioni tradizionali, ma secondo tecniche moderne e innovative, sono stati piantati nuovi olivi il cui stato viene costantemente monitorato dal lavoro dell’agronomo che valuta lo stato di maturità delle olive.",
             "stats": {
                 "hectares": "Ettari",
                 "cultivars": "Cultivar",
@@ -479,12 +473,12 @@
             }
         },
         "section2": {
-            "subtitle": "La nostra raccolta",
-            "title_part1": "Da Ottobre con ",
-            "title_italic": "passione",
-            "p1": "Aspettiamo sempre Ottobre per la raccolta e ci divertiamo lavorando con le nostre passioni. Oggi abbiamo raggiunto un grande traguardo: attualmente i nostri prodotti sono apprezzati a livello locale e internazionale.",
-            "p2": "Da qualche anno l'azienda esporta stabilmente i propri prodotti negli Stati Uniti. L'olio extravergine di oliva \"Il Magnifico\" riscuote una sempre più alta approvazione da parte del mercato.",
-            "badge": "Esportazione USA"
+            "subtitle": "La raccolta",
+            "title_part1": "La nostra ",
+            "title_italic": "raccolta",
+            "p1": "La raccolta avviene \"al giusto momento\" per ottenere un olio ricco di polifenoli, profumi e gusto. Le olive sono lavorate in giornata con estrazione a freddo, nel nostro frantoio di ultima generazione.",
+            "p2": "I nostri prodotti oggi sono indicati per ogni tipo di alimentazione, uniti dal filo conduttore della qualità ma che si rivolgono ad un mercato trasversale, da chi apprezza un olio intenso e fruttato, a chi utilizza un olio più leggero e delicato, senza dimenticare l'alimentazione dei bambini nel periodo dello svezzamento.",
+            "badge": "Estrazione a freddo"
         },
         "philosophy": {
             "subtitle": "Filosofia",
@@ -503,7 +497,7 @@
             "section": "Sezione",
             "sections": {
                 "capitolo-1": { "label": "L'Origine", "kicker": "La Raccolta a Mano" },
-                "capitolo-2": { "label": "L'Estrazione", "kicker": "I 6 Step in Frantoio" },
+                "capitolo-2": { "label": "L'Estrazione", "kicker": "I 5 Step in Frantoio" },
                 "capitolo-3": { "label": "La Custodia", "kicker": "Acciaio & Azoto" },
                 "capitolo-4": { "label": "Il Sigillo", "kicker": "Bottiglia & Certificazioni" },
                 "capitolo-5": { "label": "Servizi e Visite", "kicker": "Molitura & Degustazioni" }
@@ -532,7 +526,7 @@
             "label": "Macchine & Linee",
             "title_part1": "Impianti moderni,",
             "title_italic": "processo controllato",
-            "subtitle": "Defogliazione, frangitura, gramolazione, estrazione, separazione e filtrazione: ogni fase è pensata per preservare profumi e stabilità.",
+            "subtitle": "Defogliazione, frangitura, gramolazione, estrazione e filtrazione: ogni fase è pensata per preservare profumi e stabilità.",
             "defogliazione": {
                 "title": "Defogliazione",
                 "desc": "Rimozione foglie e impurità, lavaggio delicato."
@@ -658,7 +652,7 @@
                 "kicker": "RACCOLTA",
                 "title": "La brucatura a mano",
                 "paragraphs": [
-                    "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell'arco delle 24 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche. Il Frantoio del Pasqua è dotato di un moderno impianto di lavorazione delle olive Alfalaval con estrazione a freddo."
+                    "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell’arco delle 12 ore per salvaguardare l’integrità delle componenti aromatiche e fenoliche. Il Frantoio del Pasqua, di recente ristrutturazione a conduzione familiare presso monte San Savino, di recente costruzione, con criteri di bioedilizia e risparmio energetico è dotato di un moderno impianto di lavorazione delle olive Alfalaval con estrazione a freddo."
                 ],
                 "placeholder": "Raccolta manuale delle olive"
             },
@@ -666,7 +660,7 @@
                 "kicker": "IMPIANTO",
                 "title": "La linea per l'imbottigliamento",
                 "paragraphs": [
-                    "L'impianto è fornito di una linea per l'imbottigliamento e il confezionamento; e di uno stoccaggio sotto azoto per garantire le caratteristiche organolettiche del nostro olio 'Il Magnifico' in attesa dell'imbottigliamento.",
+                    "L’impianto è fornito di una linea per l’imbottigliamento e il confezionamento; e di uno stoccaggio sotto azoto per garantire le caratteristiche organolettiche del olio in attesa dell’imbottigliamento.",
                     "Ma non ci fermiamo qui: svolgiamo lavorazioni di molitura e confezionamento per conto di terzi."
                 ],
                 "placeholder": "Linea di imbottigliamento e confezionamento"
@@ -675,7 +669,7 @@
                 "kicker": "QUALITÀ",
                 "title": "Il nostro Olio EVO",
                 "paragraphs": [
-                    "Tutti questi fattori sono un'assoluta garanzia per la produzione di olio extravergine d'oliva di altissima qualità, in grado di conservare più a lungo la freschezza e i profumi che caratterizzano l'olio appena spremuto."
+                    "Tutti questi fattori sono un’assoluta garanzia per la produzione di olio extravergine d’oliva di altissima qualità, in grado di conservare più a lungo la freschezza e i profumi che caratterizzano l’olio appena spremuto."
                 ],
                 "placeholder": "Olio EVO appena lavorato"
             },
@@ -683,9 +677,13 @@
                 "kicker": "CERTIFICAZIONI",
                 "title": "IGP E BIO",
                 "paragraphs": [
-                    "Il frantoio del Pasqua è certificato Suolo e Salute per la trasformazione e produzione di prodotti Bio ed è iscritto al Consorzio dell'olio Toscano, per la produzione di olio extravergine di oliva IGP Toscano."
+                    "Il nostro Olio extravergine di oliva italiano non nasce solamente da olive coltivate nel rispetto dell’ambiente, ma tutte le attività per la sua lavorazione sono assoggettate al regime di controllo di organismi riconosciuti per garantire al consumatore finale un prodotto naturale, controllato e certificato, il frantoio è certificato Suolo e Salute per la trasformazione e produzione di prodotti Bio ed è iscritto al Consorzio dell’olio Toscano, per la produzione di olio extravergine di oliva IGP Toscano."
                 ],
                 "placeholder": "Certificazioni IGP e BIO"
+            },
+            "iqo": {
+                "title": "Certificazione IQO",
+                "text": "Il nostro olio extravergine di oliva è certificato IQO, analisi chimiche e scientifiche ne garantiscono un alto valore nutrizionale naturale, una stabile conservabilità nel tempo ed una sicurezza di tracciabilità accurata senza rischio di frodi."
             }
         },
         "shared": {
@@ -702,7 +700,8 @@
             "intro": {
                 "title": "Il nostro olio EVO",
                 "body": [
-                    "Il nostro Olio extravergine di oliva italiano non nasce solamente da olive coltivate nel rispetto dell'ambiente; ma tutte le attività per la sua lavorazione sono assoggettate al regime di controllo di organismi riconosciuti per garantire al consumatore finale un prodotto naturale, controllato e certificato."
+                    "Il nostro Olio extravergine di oliva italiano non nasce solamente da olive coltivate nel rispetto dell’ambiente, ma tutte le attività per la sua lavorazione sono assoggettate al regime di controllo di organismi riconosciuti per garantire al consumatore finale un prodotto naturale, controllato e certificato, il frantoio è certificato Suolo e Salute per la trasformazione e produzione di prodotti Bio ed è iscritto al Consorzio dell’olio Toscano, per la produzione di olio extravergine di oliva IGP Toscano.",
+                    "Il nostro olio extravergine di oliva è certificato IQO, analisi chimiche e scientifiche ne garantiscono un alto valore nutrizionale naturale, una stabile conservabilità nel tempo ed una sicurezza di tracciabilità accurata senza rischio di frodi."
                 ],
                 "placeholder": "IMMAGINE — INTRO"
             },
