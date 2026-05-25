@@ -5,7 +5,7 @@ import ContactForm from "./ContactForm";
 import { useTranslations } from "next-intl";
 import { pageMetadata } from "@/lib/seo";
 
-const CONTACT_ADDRESS = "Loc Infernaccio, 510/B, 52048 Monte San Savino AR, Italia";
+const CONTACT_ADDRESS = "Via casacce 4, Pozzo della chiana, 52045 (AR), Italia";
 const CONTACT_LAT = 43.359873179952864;
 const CONTACT_LNG = 11.750198258066469;
 
@@ -84,14 +84,14 @@ export default function ContattiPage() {
                 </div>
 
                 <h2 className="mt-4 font-serif text-2xl font-light tracking-tight text-[#1C1917]">
-                  FRANTOIO DEL PASQUA <span className="text-[#8B7355]">srl</span>
+                  Az. Agr. Del Pasqua
                 </h2>
 
                 <div className="mt-8 space-y-5">
                   <InfoRow label={t("info.address_label")}>
-                    Loc. Infernaccio 510/B
+                    Via casacce 4
                     <br />
-                    Monte San Savino - Arezzo
+                    Pozzo della chiana - 52045 (AR)
                   </InfoRow>
 
                   <InfoRow label={t("info.phone_label")}>
@@ -246,7 +246,7 @@ function GoogleMapEmbed({
   latitude: number;
   longitude: number;
 }) {
-  const src = `https://maps.google.com/maps?hl=it&q=${latitude},${longitude}&ll=${latitude},${longitude}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
+  const src = `https://maps.google.com/maps?hl=it&q=${encodeURIComponent(address)}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-[#E7E5E4] bg-[#F5F5F4]">

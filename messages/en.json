@@ -153,7 +153,7 @@
             },
             "contacts": {
                 "title": "CONTACTS",
-                "address": "Loc. Infernaccio 510/B, Monte San Savino – Arezzo",
+                "address": "Via casacce 4 Pozzo della chiana 52045 (Ar)",
                 "gender_policy": "Gender Equality Policy UNI PDR 125"
             },
             "info": {
@@ -169,7 +169,7 @@
                 "title": "NAVIGATION"
             },
             "bottom": {
-                "rights": "© {year} Frantoio del Pasqua — All rights reserved.",
+                "rights": "© {year} Az. Agr. Del Pasqua — All rights reserved.",
                 "back_to_top": "Back to top",
                 "powered_by": "Powered by Modern Tech",
                 "secure_payments": "Secure Payments"

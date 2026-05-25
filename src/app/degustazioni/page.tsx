@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Degustazione Olio Extra Vergine in Toscana | Frantoio del Pasqua",
     description: "Vivi un'esperienza unica nel cuore della provincia di Arezzo. Scopri l'olio extra vergine di oliva toscano con una visita al frantoio e analisi sensoriale.",
     url: "https://www.delpasqua.com/degustazioni",
-    siteName: "Frantoio del Pasqua srl",
+    siteName: "Frantoio del Pasqua",
     locale: "it_IT",
     type: "website",
     images: [
@@ -311,7 +311,7 @@ export default async function DegustazioniPage() {
                 __html: JSON.stringify({
                   "@context": "https://schema.org",
                   "@type": "FoodEstablishment", // o "Winery" / "LocalBusiness"
-                  "name": "Frantoio del Pasqua - Degustazione Olio EVO",
+                  "name": "Az. Agr. Del Pasqua - Degustazione Olio EVO",
                   "image": "https://www.delpasqua.com/images/placeholder-degustazione.jpg", // Aggiornare URL
                   "@id": "https://www.delpasqua.com/degustazioni",
                   "url": "https://www.delpasqua.com/degustazioni",
@@ -319,10 +319,10 @@ export default async function DegustazioniPage() {
                   "priceRange": "€€",
                   "address": {
                     "@type": "PostalAddress",
-                    "streetAddress": "Loc. Infernaccio 510/B",
-                    "addressLocality": "Monte San Savino",
+                    "streetAddress": "Via Casacce 4",
+                    "addressLocality": "Pozzo della Chiana",
                     "addressRegion": "AR",
-                    "postalCode": "52048",
+                    "postalCode": "52045",
                     "addressCountry": "IT"
                   },
                   "geo": {

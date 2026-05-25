@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 const lastUpdated = "24/05/2026";
 
-const COMPANY_NAME = "FRANTOIO DEL PASQUA srl";
-const COMPANY_ADDRESS = "Loc. Infernaccio 510/B, 52048 Monte San Savino (AR), Italia";
+const COMPANY_NAME = "Az. Agr. Del Pasqua";
+const COMPANY_ADDRESS = "Via casacce 4, Pozzo della chiana, 52045 (AR), Italia";
 const COMPANY_EMAIL = "info@delpasqua.com";
 const COMPANY_PHONE = "+39 0575 810065";
 

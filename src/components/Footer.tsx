@@ -40,11 +40,10 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-12 md:gap-16 lg:gap-24">
           {/* Brand */}
           <div className="md:col-span-3">
-            <div className="font-serif text-2xl tracking-[0.12em] text-stone-100">
-              FRANTOIO DEL PASQUA
-            </div>
-            <div className="mt-2 text-xs tracking-[0.2em] text-emerald-500 font-medium">
-              SRL
+            <div className="font-serif text-2xl tracking-[0.08em] text-stone-100 uppercase leading-snug">
+              Az. Agr.
+              <br />
+              Del Pasqua
             </div>
 
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-stone-400">
