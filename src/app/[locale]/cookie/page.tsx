@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: "Informazioni sui cookie e sulle tecnologie simili usate dal sito Frantoio Del Pasqua.",
     path: "/cookie-policy/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }
 

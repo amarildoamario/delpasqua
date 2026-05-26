@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         : "Storia familiare, oliveti e tradizione agricola toscana del Frantoio Del Pasqua.",
     path: "/storia/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }
 

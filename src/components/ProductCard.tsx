@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { Heart, ShoppingCart } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { useCallback, useState } from "react"
 import { useLocale } from "next-intl"
 

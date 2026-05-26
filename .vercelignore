@@ -1,0 +1,14 @@
+.git
+.next
+.vscode
+node_modules
+coverage
+dev.db
+*.db
+*.sqlite
+*.sqlite3
+*.log
+out.txt
+tmp-*
+.env
+.env.local

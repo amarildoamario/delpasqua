@@ -14,18 +14,24 @@ export const REQUIRED_CORE_INDEXABLE_PATHS = [
   "/privacy-policy/",
   "/cookie-policy/",
   "/condizioni-generali-di-vendita/",
+  "/degustazioni/",
   "/en/",
+  "/en/about-us/",
+  "/en/production/",
+  "/en/olive-oil/",
   "/en/shop/",
-  "/en/il-nostro-olio/",
-  "/en/produzione/",
-  "/en/contatti/",
+  "/en/contact/",
+  "/en/tastings/",
+  "/en/terms/",
+  "/en/privacy-policy/",
+  "/en/cookie-policy/",
 ] as const;
 
 export const REQUIRED_UTILITY_NOINDEX_PATHS = [
   "/carrello/",
   "/checkout/",
   "/my-account/",
-] as const;
+ ] as const;
 
 const HREFLANG_CORE_PATHS = new Set([
   "/",
@@ -33,6 +39,11 @@ const HREFLANG_CORE_PATHS = new Set([
   "/produzione/",
   "/il-nostro-olio/",
   "/contatti/",
+  "/storia/",
+  "/privacy-policy/",
+  "/cookie-policy/",
+  "/condizioni-generali-di-vendita/",
+  "/degustazioni/",
 ]);
 
 export function normalizePath(path: string) {
@@ -46,6 +57,22 @@ export function localizedPath(path: string, locale: string) {
 
   if (locale === "it") return normalized;
   if (normalized === "/") return `/${locale}/`;
+
+  const enMappings: Record<string, string> = {
+    "/storia/": "/about-us/",
+    "/produzione/": "/production/",
+    "/il-nostro-olio/": "/olive-oil/",
+    "/contatti/": "/contact/",
+    "/degustazioni/": "/tastings/",
+    "/condizioni-generali-di-vendita/": "/terms/",
+    "/cart/": "/cart/",
+    "/carrello/": "/cart/",
+  };
+
+  const mapped = enMappings[normalized];
+  if (mapped) {
+    return normalizePath(`/${locale}${mapped}`);
+  }
 
   return normalizePath(`/${locale}${normalized}`);
 }

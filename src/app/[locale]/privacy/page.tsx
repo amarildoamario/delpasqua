@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import { pageMetadata } from "@/lib/seo";
+import { companyInfo } from "@/lib/companyInfo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -9,14 +10,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: "Informativa privacy del sito Frantoio Del Pasqua.",
     path: "/privacy-policy/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }
 
 const lastUpdated = "24/05/2026";
 
 const COMPANY_NAME = "Az. Agr. Del Pasqua";
-const COMPANY_ADDRESS = "Via casacce 4, Pozzo della chiana, 52045 (AR), Italia";
+const COMPANY_ADDRESS = companyInfo.addressLegal;
 const COMPANY_EMAIL = "info@delpasqua.com";
 const COMPANY_PHONE = "+39 0575 810065";
 const COMPANY_MOBILE = "+39 338 811 0356";

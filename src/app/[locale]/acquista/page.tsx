@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         : "Acquista online olio extravergine Del Pasqua dallo shop ufficiale.",
     path: "/acquista/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }
 

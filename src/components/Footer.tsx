@@ -2,6 +2,7 @@
 
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { companyInfo } from "@/lib/companyInfo";
 import PaymentMethodsBadges from "@/components/PaymentMethodsBadges";
 import {
   ArrowUp,
@@ -77,7 +78,7 @@ export default function Footer() {
                   <MapPin className="h-4 w-4" />
                 </div>
                 <span className="leading-relaxed text-stone-400 group-hover:text-stone-300 transition-colors font-sans">
-                  {t("contacts.address")}
+                  {companyInfo.addressSingleLine}
                 </span>
               </li>
               <li className="flex items-center gap-3 group">

@@ -63,6 +63,7 @@ const hstsHeader = isProd
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const nextConfig: any = {
   reactCompiler: true,
+  trailingSlash: true,
 
   // toglie "X-Powered-By: Next.js"
   poweredByHeader: false,
@@ -93,6 +94,216 @@ const nextConfig: any = {
       {
         source: "/:path*",
         headers: [...securityHeaders, ...hstsHeader],
+      },
+    ];
+  },
+
+  async redirects() {
+    return [
+      // INTERVENTO 1: Redirect Categoria Vino (WordPress -> Vercel)
+      {
+        source: "/portfolio-category/wine",
+        destination: "/shop/vino/",
+        permanent: true,
+      },
+      {
+        source: "/portfolio-category/wine/",
+        destination: "/shop/vino/",
+        permanent: true,
+      },
+      {
+        source: "/en/portfolio-category/wine",
+        destination: "/en/shop/vino/",
+        permanent: true,
+      },
+      {
+        source: "/en/portfolio-category/wine/",
+        destination: "/en/shop/vino/",
+        permanent: true,
+      },
+
+      // INTERVENTO 2: Redirect di sicurezza /it/ per evitare pagine duplicate
+      {
+        source: "/it",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/it/",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/it/storia",
+        destination: "/storia/",
+        permanent: true,
+      },
+      {
+        source: "/it/storia/",
+        destination: "/storia/",
+        permanent: true,
+      },
+      {
+        source: "/it/produzione",
+        destination: "/produzione/",
+        permanent: true,
+      },
+      {
+        source: "/it/produzione/",
+        destination: "/produzione/",
+        permanent: true,
+      },
+      {
+        source: "/it/il-nostro-olio",
+        destination: "/il-nostro-olio/",
+        permanent: true,
+      },
+      {
+        source: "/it/il-nostro-olio/",
+        destination: "/il-nostro-olio/",
+        permanent: true,
+      },
+      {
+        source: "/it/shop",
+        destination: "/shop/",
+        permanent: true,
+      },
+      {
+        source: "/it/shop/",
+        destination: "/shop/",
+        permanent: true,
+      },
+      {
+        source: "/it/acquista",
+        destination: "/acquista/",
+        permanent: true,
+      },
+      {
+        source: "/it/acquista/",
+        destination: "/acquista/",
+        permanent: true,
+      },
+      {
+        source: "/it/contatti",
+        destination: "/contatti/",
+        permanent: true,
+      },
+      {
+        source: "/it/contatti/",
+        destination: "/contatti/",
+        permanent: true,
+      },
+      {
+        source: "/it/degustazioni",
+        destination: "/degustazioni/",
+        permanent: true,
+      },
+      {
+        source: "/it/degustazioni/",
+        destination: "/degustazioni/",
+        permanent: true,
+      },
+      {
+        source: "/it/privacy-policy",
+        destination: "/privacy-policy/",
+        permanent: true,
+      },
+      {
+        source: "/it/privacy-policy/",
+        destination: "/privacy-policy/",
+        permanent: true,
+      },
+      {
+        source: "/it/cookie-policy",
+        destination: "/cookie-policy/",
+        permanent: true,
+      },
+      {
+        source: "/it/cookie-policy/",
+        destination: "/cookie-policy/",
+        permanent: true,
+      },
+      {
+        source: "/it/condizioni-generali-di-vendita",
+        destination: "/condizioni-generali-di-vendita/",
+        permanent: true,
+      },
+      {
+        source: "/it/condizioni-generali-di-vendita/",
+        destination: "/condizioni-generali-di-vendita/",
+        permanent: true,
+      },
+
+      // Migration of English slugs from Italian to English
+      {
+        source: "/en/storia",
+        destination: "/en/about-us/",
+        permanent: true,
+      },
+      {
+        source: "/en/storia/",
+        destination: "/en/about-us/",
+        permanent: true,
+      },
+      {
+        source: "/en/produzione",
+        destination: "/en/production/",
+        permanent: true,
+      },
+      {
+        source: "/en/produzione/",
+        destination: "/en/production/",
+        permanent: true,
+      },
+      {
+        source: "/en/il-nostro-olio",
+        destination: "/en/olive-oil/",
+        permanent: true,
+      },
+      {
+        source: "/en/il-nostro-olio/",
+        destination: "/en/olive-oil/",
+        permanent: true,
+      },
+      {
+        source: "/en/acquista",
+        destination: "/en/shop/",
+        permanent: true,
+      },
+      {
+        source: "/en/acquista/",
+        destination: "/en/shop/",
+        permanent: true,
+      },
+      {
+        source: "/en/contatti",
+        destination: "/en/contact/",
+        permanent: true,
+      },
+      {
+        source: "/en/contatti/",
+        destination: "/en/contact/",
+        permanent: true,
+      },
+      {
+        source: "/en/degustazioni",
+        destination: "/en/tastings/",
+        permanent: true,
+      },
+      {
+        source: "/en/degustazioni/",
+        destination: "/en/tastings/",
+        permanent: true,
+      },
+      {
+        source: "/en/condizioni-generali-di-vendita",
+        destination: "/en/terms/",
+        permanent: true,
+      },
+      {
+        source: "/en/condizioni-generali-di-vendita/",
+        destination: "/en/terms/",
+        permanent: true,
       },
     ];
   },

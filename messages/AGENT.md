@@ -15,4 +15,4 @@
 - Se aggiungi una nuova locale, devi aggiornare anche `src/i18n/routing.ts`, eventuali link lingua e middleware/request config.
 
 ## Supporto
-- Esiste `scripts/update-locales.js` per piccoli aggiornamenti massivi: preferiscilo a modifiche manuali ripetitive.
+- Mantieni eventuali aggiornamenti massivi delle traduzioni espliciti e verificabili prima del commit.

@@ -58,3 +58,5 @@ tsconfig.tsbuildinfo
 
 # logs
 *.log
+
+.vercel

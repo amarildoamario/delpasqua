@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { companyInfo } from "@/lib/companyInfo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -331,16 +332,16 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                   "priceRange": "€€",
                   "address": {
                     "@type": "PostalAddress",
-                    "streetAddress": "Via Casacce 4",
-                    "addressLocality": "Pozzo della Chiana",
-                    "addressRegion": "AR",
-                    "postalCode": "52045",
-                    "addressCountry": "IT"
+                    "streetAddress": companyInfo.postalAddress.streetAddress,
+                    "addressLocality": companyInfo.postalAddress.addressLocality,
+                    "addressRegion": companyInfo.postalAddress.addressRegion,
+                    "postalCode": companyInfo.postalAddress.postalCode,
+                    "addressCountry": companyInfo.postalAddress.addressCountry
                   },
                   "geo": {
                     "@type": "GeoCoordinates",
-                    "latitude": 43.3323, // Inserire coordinate precise per Google Maps
-                    "longitude": 11.7258
+                    "latitude": companyInfo.geo.latitude,
+                    "longitude": companyInfo.geo.longitude
                   },
                   "description": t("seo.description"),
                   "offers": {

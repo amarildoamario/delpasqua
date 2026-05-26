@@ -11,14 +11,14 @@ const FRANTOIO_IMAGES = {
 
   // griglia macchine
   defogliazione: "/frantoio/defogliazione.jpg",
-  frangitura: "/frantoio/frangitura.jpg",
+  frangitura: "/frantoio/frangitura.jpeg",
   gramolazione: "/frantoio/gramolazione.jpg",
   estrazione: "/frantoio/estrazione.jpg",
   filtrazione: "/frantoio/filtrazione.jpg",
 
   // sezioni presentative
   conservazione: "/frantoio/conservazione.jpg",
-  pulizia: "/frantoio/pulizia.jpeg",
+  pulizia: "/frantoio/pulizia.jpg",
   confezionamento: "/frantoio/confezionamento.jpg",
   tracciabilita: "/frantoio/tracciabilita.jpg",
 
@@ -359,7 +359,7 @@ export default function ProduzionePageClient() {
                 <MachineCard
                   title={t("machines.frangitura.title")}
                   desc={t("machines.frangitura.desc")}
-                  imgSrc={FRANTOIO_IMAGES.pulizia}
+                  imgSrc={FRANTOIO_IMAGES.frangitura}
                   color="gold"
                   icon="frangitura"
                 />

@@ -4,10 +4,11 @@ import Image from "next/image";
 import ContactForm from "./ContactForm";
 import { useTranslations } from "next-intl";
 import { pageMetadata } from "@/lib/seo";
+import { companyInfo } from "@/lib/companyInfo";
 
-const CONTACT_ADDRESS = "Via casacce 4, Pozzo della chiana, 52045 (AR), Italia";
-const CONTACT_LAT = 43.359873179952864;
-const CONTACT_LNG = 11.750198258066469;
+const CONTACT_ADDRESS = companyInfo.addressMap;
+const CONTACT_LAT = companyInfo.geo.latitude;
+const CONTACT_LNG = companyInfo.geo.longitude;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -89,9 +90,9 @@ export default function ContattiPage() {
 
                 <div className="mt-8 space-y-5">
                   <InfoRow label={t("info.address_label")}>
-                    Via casacce 4
+                    {companyInfo.postalAddress.streetAddress}
                     <br />
-                    Pozzo della chiana - 52045 (AR)
+                    {companyInfo.postalAddress.addressLocality} - {companyInfo.postalAddress.postalCode} ({companyInfo.postalAddress.addressRegion})
                   </InfoRow>
 
                   <InfoRow label={t("info.phone_label")}>

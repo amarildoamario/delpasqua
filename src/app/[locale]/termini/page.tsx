@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import { Link } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
+import { companyInfo } from "@/lib/companyInfo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -10,14 +11,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: "Termini, condizioni di vendita e informazioni commerciali del sito Frantoio Del Pasqua.",
     path: "/condizioni-generali-di-vendita/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }
 
 const lastUpdated = "24/05/2026";
 
 const COMPANY_NAME = "Az. Agr. Del Pasqua";
-const COMPANY_ADDRESS = "Via casacce 4, Pozzo della chiana, 52045 (AR), Italia";
+const COMPANY_ADDRESS = companyInfo.addressLegal;
 const COMPANY_EMAIL = "info@delpasqua.com";
 const COMPANY_PHONE = "+39 0575 810065";
 

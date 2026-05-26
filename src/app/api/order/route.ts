@@ -225,6 +225,7 @@ export async function POST(req: Request) {
 
     const sessionResp = await stripe.checkout.sessions.create({
       mode: "payment",
+      payment_method_types: ["card"],
       ...(order.email ? { customer_email: order.email } : {}),
       shipping_address_collection: { allowed_countries: ["IT"] },
       phone_number_collection: { enabled: true },
@@ -275,19 +276,20 @@ export async function POST(req: Request) {
 
     return Response.json({ orderId: order.id, checkoutUrl: session.url }, { status: 200 });
   } catch (e: unknown) {
-    const err = e as Error & { status?: number; retryAfterSec?: number };
+    const err = e as Error & { status?: number; statusCode?: number; retryAfterSec?: number };
+    const status = err?.status ?? err?.statusCode;
 
-    if (err?.status === 429) {
+    if (status === 429) {
       return new Response("Too Many Requests", {
         status: 429,
         headers: { "Retry-After": String(err.retryAfterSec ?? 30) },
       });
     }
 
-    if (err?.status === 413) return new Response("Payload Too Large", { status: 413 });
-    if (err?.status === 400) return new Response(err.message ?? "Bad Request", { status: 400 });
+    if (status === 413) return new Response("Payload Too Large", { status: 413 });
+    if (status === 400) return new Response(err.message ?? "Bad Request", { status: 400 });
 
-    if (err?.status === 409) {
+    if (status === 409) {
       return Response.json(
         { error: "OUT_OF_STOCK", message: err.message ?? "Out of stock" },
         { status: 409 }
