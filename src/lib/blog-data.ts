@@ -25,6 +25,8 @@ import { postsRicette } from "./blog-posts-recipes";
 import { postsDifetti, postsChimica, postsFiducia, postsGlossario } from "./blog-posts-extra";
 import { postsBatch2 } from "./blog-posts-batch2";
 import { postsTecnici } from "./blog-posts-tecnici";
+import { BLOG_POST_TRANSLATIONS } from "./blogTranslationsData";
+import { findBlogPostBySlug, type Locale } from "./blogSlugs";
 
 const corePosts: BlogPost[] = [
 
@@ -455,12 +457,39 @@ export const mockBlogPosts: BlogPost[] = [
     ...postsTecnici,
 ];
 
-export async function getBlogPosts(): Promise<BlogPost[]> {
-    return mockBlogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+export function hasBlogPostTranslation(post: BlogPost, locale: string): boolean {
+    if (locale === "it") return true;
+    const trans = BLOG_POST_TRANSLATIONS[post.id];
+    return !!(trans && trans[locale as Locale]);
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-    return mockBlogPosts.find(post => post.slug === slug) || null;
+export async function getBlogPosts(locale: string = "it"): Promise<BlogPost[]> {
+    return mockBlogPosts
+        .filter(post => hasBlogPostTranslation(post, locale))
+        .map(post => localizeBlogPost(post, locale))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export async function getBlogPostBySlug(slug: string, locale: string = "it"): Promise<BlogPost | null> {
+    const basePost = findBlogPostBySlug(mockBlogPosts, slug);
+    if (!basePost) return null;
+    return localizeBlogPost(basePost, locale);
+}
+
+export function localizeBlogPost(post: BlogPost, locale: string): BlogPost {
+    const translations = BLOG_POST_TRANSLATIONS[post.id];
+    if (!translations) return post;
+    const trans = translations[locale as Locale];
+    if (!trans) return post;
+
+    return {
+        ...post,
+        slug: trans.slug,
+        title: trans.title,
+        excerpt: trans.excerpt,
+        category: trans.category,
+        content: trans.content ?? post.content
+    };
 }
 
 

@@ -451,6 +451,17 @@
                 "magnifico": "Bottiglia Magnifico Del Pasqua",
                 "vittoria": "Bottiglia di vino Vittoria Del Pasqua"
             }
+        },
+        "HomeGallery": {
+            "title": "Atmosfera & Tradizione",
+            "carouselLabel": "Atmosfera e tradizione",
+            "previousImage": "Foto precedente",
+            "nextImage": "Foto successiva",
+            "imageAlt": "Galleria Del Pasqua {index}"
+        },
+        "BlogHighlights": {
+            "title": "Dal nostro Magazine",
+            "cta": "Leggi tutti gli articoli"
         }
     },
     "StoriaPage": {

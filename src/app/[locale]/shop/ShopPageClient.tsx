@@ -37,7 +37,7 @@ const shopCopy = {
     evo: "EVO",
     wine: "Wine",
     box: "Box",
-    from: "Starting from",
+    from: "From",
     price: "Price",
   },
   de: {

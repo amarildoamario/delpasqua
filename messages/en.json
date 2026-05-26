@@ -19,8 +19,8 @@
                     "subtitle": "Come visit us directly at the Mill in Monte San Savino and discover everything there is to know about extra virgin olive oil and olives.",
                     "includes": [
                         "Description and explanation of olive cultivation and the typical varieties of the area",
-                        "Knowledge of the different methods of cultivation, harvesting, production, and storage",
-                        "Guided tasting to learn to recognize the sensory qualities of olive oil and identify any defects",
+                        "Introduction to the different methods of cultivation, harvesting, production, and storage",
+                        "Guided tasting to learn how to recognize the sensory qualities of olive oil and identify any defects",
                         "Tasting of our oils paired with local products: stone-ground bread bruschetta, fresh pinzimonio vegetables, and a glass of Rosso di Sangiovese"
                     ]
                 },
@@ -28,10 +28,10 @@
                     "title": "Field experience",
                     "subtitle": "A unique experience in the olive grove at Pozzo della Chiana with a picnic BBQ and milling at the olive mill.",
                     "includes": [
-                        "Warm welcome by Marta at our olive grove in Pozzo della Chiana with views of the Temple of Santo Stefano della Vittoria",
+                        "A warm welcome from Marta at our olive grove in Pozzo della Chiana with views of the Temple of Santo Stefano della Vittoria",
                         "Traditional hand picking of olives using only a small comb and collection nets",
-                        "Picnic lunch with a barbeque directly in the olive grove under the trees",
-                        "Visit to the family mill to mill the previously harvested olives, following the process step by step to the fresh oil",
+                        "Picnic lunch with a barbecue directly in the olive grove under the trees",
+                        "Visit to the family mill to see the milling of the harvested olives, following the process step-by-step to the fresh oil",
                         "Final tasting of extra virgin and flavored olive oils with bruschetta"
                     ]
                 }
@@ -49,7 +49,7 @@
             "title_part1": "Tasting ",
             "title_italic": "experience",
             "title_part2": " in Tuscany",
-            "description": "Live a unique experience in the heart of the Arezzo province. Frantoio del Pasqua welcomes you in Monte San Savino to reveal the secrets of Tuscan extra virgin olive oil. An authentic journey from cold pressing to sensory analysis."
+            "description": "Experience a unique journey in the heart of the Arezzo province. Frantoio del Pasqua welcomes you to Monte San Savino to reveal the secrets of Tuscan extra virgin olive oil. An authentic journey from cold pressing to sensory analysis."
         },
         "features": {
             "f1_title": "Arezzo, Tuscany",
@@ -63,13 +63,13 @@
         "image_badge": "[Tasting Image]",
         "faq": {
             "q1": "Where do the tastings take place?",
-            "a1": "The tours and tastings take place right inside our Frantoio del Pasqua, located in Loc. Infernaccio 510/B, Monte San Savino (in the province of Arezzo). You will discover how our oil is born surrounded by the extraction machinery.",
+            "a1": "The tours and tastings take place right inside our Frantoio del Pasqua, located in Loc. Infernaccio 510/B, Monte San Savino (in the province of Arezzo). You will discover how our oil is produced while surrounded by the extraction machinery.",
             "q2": "What does the analysis in the mill consist of?",
-            "a2": "We will guide you to discover our cultivars. You will learn to recognize the fruity, bitter, and spicy notes that characterize a true high-quality Tuscan extra virgin olive oil.",
+            "a2": "We will guide you in discovering our cultivars. You will learn to recognize the fruity, bitter, and spicy notes that characterize a true high-quality Tuscan extra virgin olive oil.",
             "q3": "How long does the experience last and what does it include?",
-            "a3": "The experience lasts from 30 to 90 minutes. It includes an illustration of the continuous cycle pressing process and technical tasting, often enriched by refined gastronomic pairings.",
+            "a3": "The experience lasts from 30 to 90 minutes. It includes an explanation of the continuous-cycle pressing process and technical tasting, often enriched by refined gastronomic pairings.",
             "q4": "Is it possible to purchase oil at the end?",
-            "a4": "Certainly. You can buy our cold-pressed evo oil directly in our farm shop. A perfect and exclusive souvenir of Arezzo's excellence."
+            "a4": "Certainly. You can buy our cold-pressed EVO oil directly from our farm shop. A perfect and exclusive souvenir of Arezzo's excellence."
         }
     },
     "TastingsCalendar": {
@@ -209,7 +209,7 @@
         "tartufo": {
             "title": "Extra Virgin - Truffle",
             "subtitle": "Flavored extra virgin",
-            "description": "Perfect on eggs, potatoes, carpaccio.",
+            "description": "Perfect on eggs, potatoes, and carpaccio.",
             "badge": "FLAVORED"
         },
         "peperoncino": {
@@ -244,7 +244,7 @@
             "reset": "Show all products"
         },
         "info": {
-            "shipping": "Free shipping for orders over €50",
+            "shipping": "Free shipping on orders over €50",
             "notes": "Prices are indicative and do not include VAT. Contact us for custom orders."
         },
         "filters": {
@@ -300,9 +300,9 @@
             "iva": "+ VAT"
         },
         "BioMethod": {
-            "label": "BIO METHOD",
+            "label": "ORGANIC METHOD",
             "title": "Small scale. Controlled quality.",
-            "description": "An artisanal oil is not born from an industrial line: it is born from the right timing, small batches, and constant attention.",
+            "description": "An artisanal oil is not produced on an industrial line: it is born from the right timing, small batches, and constant attention.",
             "points": {
                 "control": "Real control",
                 "control_text": " over every step",
@@ -315,7 +315,7 @@
             "cta_oil": "Oil Qualities",
             "card_header": {
                 "label": "PRODUCTION CHARTER",
-                "title": "BIO Method – Artisanal",
+                "title": "Organic Method – Artisanal",
                 "subtitle": "Short supply chain quality, not industrial volumes."
             },
             "specs": {
@@ -347,7 +347,7 @@
                 "control": "Total Control",
                 "control_text": "Every phase cared for"
             },
-            "footer": "BIO • ARTISANAL PRODUCTION",
+            "footer": "ORGANIC • ARTISANAL PRODUCTION",
             "details": "Details"
         },
         "Discover": {
@@ -355,7 +355,7 @@
             "title": "Discover Del Pasqua Mill",
             "cards": {
                 "produzione": {
-                    "title": "FRANTOIO",
+                    "title": "OIL MILL",
                     "subtitle": "From field to mill"
                 },
                 "degustazioni": {
@@ -383,7 +383,7 @@
             },
             "control": {
                 "label": "CONTROL",
-                "title": "Precision without industrial",
+                "title": "Precision without industrial scale",
                 "text": "Harvest, attention, care: quality is born before the mill.",
                 "tag1": "Preserved freshness",
                 "tag2": "Clean profile"
@@ -398,7 +398,7 @@
         "HomeAboutTerritory": {
             "label": "THE MILL",
             "title": "A Tradition that continues",
-            "description": "Even today in Tuscany, a large part of the olive harvest takes place traditionally, with hand picking; the olives transported to the mill are then processed within 24 hours to safeguard the integrity of the aromatic and phenolic components...",
+            "description": "Even today in Tuscany, a large part of the olive harvest is still done traditionally, by hand-picking. The harvested olives are transported to the mill and processed within 24 hours to safeguard the integrity of their aromatic and phenolic components...",
             "cta": "READ MORE"
         },
         "HomeUniqueness": {
@@ -406,7 +406,7 @@
             "items": {
                 "tradition": {
                     "title": "Agricultural Tradition",
-                    "desc": "For generations we have cultivated cereals, olive trees and vineyards respecting our land"
+                    "desc": "For generations, we have cultivated cereals, olive trees, and vineyards with respect for our land"
                 },
                 "passion": {
                     "title": "Family Passion",
@@ -439,7 +439,7 @@
                 },
                 "gift": {
                     "label": "TO GIFT",
-                    "title": "Bottles that present themselves"
+                    "title": "Bottles that speak for themselves"
                 },
                 "daily": {
                     "label": "EVERYDAY LINE",
@@ -451,6 +451,17 @@
                 "magnifico": "Del Pasqua Magnifico bottle",
                 "vittoria": "Del Pasqua Vittoria wine bottle"
             }
+        },
+        "HomeGallery": {
+            "title": "Rooted in Tuscan Tradition",
+            "carouselLabel": "Tuscan atmosphere and tradition",
+            "previousImage": "Previous image",
+            "nextImage": "Next image",
+            "imageAlt": "Del Pasqua gallery image {index}"
+        },
+        "BlogHighlights": {
+            "title": "From the Del Pasqua Journal",
+            "cta": "Explore all articles"
         }
     },
     "StoriaPage": {
@@ -458,14 +469,14 @@
             "subtitle": "History",
             "title_part1": "Our ",
             "title_italic": "history",
-            "description": "The Del Pasqua company was born around the 1960s in Valdichiana, modifying over time, evolving and aiming to focus on diversification, focusing on the quality of the products, on innovation, respecting the environment, without losing sight of the values and flavors of the true Tuscan and Italian tradition, opening up to new outlets and directions both in the olive-growing and wine-making fields. The entire production chain is carried out in our territory, from the cultivation of olive trees and vines, through harvesting up to the packaging of the finished product."
+            "description": "Founded in the 1960s in the Valdichiana region, the Del Pasqua company has evolved over the years by embracing diversification. We focus on product quality, innovation, and environmental sustainability, without ever losing sight of the values and flavors of authentic Tuscan and Italian traditions. This approach has opened new pathways in both olive growing and winemaking. Our entire production chain is local: from cultivating olive trees and grapevines to harvesting and packaging the final product."
         },
         "section1": {
             "subtitle": "The olive groves",
             "title_part1": "Tradition and innovation ",
             "title_italic": "in the green",
             "p1": "Our olive groves extend over 4 hectares, divided among the typical cultivars of the area.",
-            "p2": "In respect of traditional cultivation, but using modern and innovative techniques, new olive trees have been planted whose status is constantly monitored by the agronomist who evaluates the ripeness of the olives.",
+            "p2": "While respecting traditional cultivation methods, we use modern and innovative techniques. The health of our newly planted olive trees is constantly monitored by our agronomist, who also assesses the ripeness of the olives.",
             "stats": {
                 "hectares": "Hectares",
                 "cultivars": "Cultivars",
@@ -476,8 +487,8 @@
             "subtitle": "The harvest",
             "title_part1": "Our ",
             "title_italic": "harvest",
-            "p1": "Harvesting takes place 'at the right moment' to obtain an oil rich in polyphenols, aromas, and taste. The olives are processed on the same day with cold extraction in our latest generation olive mill.",
-            "p2": "Today, our products are suitable for every type of diet, united by the common thread of quality but addressing a transverse market, from those who appreciate an intense and fruity oil to those who use a lighter and more delicate oil, without forgetting children's nutrition during the weaning period.",
+            "p1": "Harvesting takes place 'at the right moment' to obtain an oil rich in polyphenols, aromas, and taste. The olives are processed on the same day using cold extraction in our state-of-the-art olive mill.",
+            "p2": "Today, our products are suitable for every type of diet, serving a diverse market: appealing to everyone from connoisseurs of intense, fruity oils to those who prefer a lighter, more delicate flavor, as well as providing healthy nutrition for children during weaning.",
             "badge": "Cold extraction"
         },
         "philosophy": {
@@ -518,7 +529,7 @@
             "title_italic": "our quality",
             "description": "At the mill, every detail counts: from cleaning the olives to controlled malaxation, extraction, and storage. Here, technology and artisanal care work together to preserve freshness, aromas, and stability.",
             "tag1": "Cold extraction",
-            "tag2": "IGP Certified",
+            "tag2": "PGI Certified",
             "tag3": "100% Organic & Artisanal",
             "img_alt": "Frantoio del Pasqua - exterior"
         },
@@ -526,10 +537,10 @@
             "label": "Machines & Lines",
             "title_part1": "Modern plants,",
             "title_italic": "controlled process",
-            "subtitle": "Leaves removal, crushing, malaxation, extraction, and filtration: every stage is designed to preserve aromas and stability.",
+            "subtitle": "Leaf removal, crushing, malaxation, extraction, and filtration: every stage is designed to preserve aromas and stability.",
             "defogliazione": {
-                "title": "Leaves removal",
-                "desc": "Removal of leaves and impurities, delicate washing."
+                "title": "Leaf removal",
+                "desc": "Removal of leaves and impurities, followed by a gentle wash."
             },
             "frangitura": {
                 "title": "Crushing",
@@ -652,7 +663,7 @@
                 "kicker": "HARVEST",
                 "title": "Hand picking",
                 "paragraphs": [
-                    "Even today in Tuscany, much of the olive harvest takes place traditionally, with hand picking; the olives transported to the mill are then processed within 12 hours to safeguard the integrity of the aromatic and phenolic components. The family-run Del Pasqua Mill, recently renovated near Monte San Savino, recently built with green building and energy saving criteria, is equipped with a modern Alfalaval olive processing plant with cold extraction."
+                    "Even today in Tuscany, much of the olive harvest is still done traditionally, by hand-picking. The harvested olives are transported to the mill and processed within 12 hours to safeguard the integrity of their aromatic and phenolic components. The family-run Del Pasqua Mill, located near Monte San Savino, was recently renovated using green building and energy-saving standards. It is equipped with a modern Alfa Laval olive processing system featuring cold extraction."
                 ],
                 "placeholder": "Hand harvest of the olives"
             },
@@ -660,8 +671,8 @@
                 "kicker": "PLANT",
                 "title": "The bottling line",
                 "paragraphs": [
-                    "The plant is equipped with a line for bottling and packaging; and a nitrogen storage to guarantee the organoleptic characteristics of the oil while waiting for bottling.",
-                    "But we don't stop here: we perform milling and packaging processes for third parties."
+                    "The plant is equipped with a line for bottling and packaging, and storage under nitrogen to guarantee the sensory qualities of the oil prior to bottling.",
+                    "However, we don't stop there: we also offer custom milling and packaging services for third parties."
                 ],
                 "placeholder": "Bottling and packaging line"
             },
@@ -669,21 +680,21 @@
                 "kicker": "QUALITY",
                 "title": "Our EVO Oil",
                 "paragraphs": [
-                    "All these factors are an absolute guarantee for the production of extra virgin olive oil of the highest quality, capable of preserving the freshness and aromas that characterize freshly squeezed oil for longer."
+                    "All these factors are an absolute guarantee for the production of extra virgin olive oil of the highest quality, capable of preserving the freshness and aromas that characterize freshly pressed oil for a longer period."
                 ],
                 "placeholder": "Freshly processed EVO oil"
             },
             "igp_bio": {
                 "kicker": "CERTIFICATIONS",
-                "title": "IGP AND BIO",
+                "title": "PGI AND ORGANIC",
                 "paragraphs": [
-                    "Our Italian extra virgin olive oil is not only born from olives grown with respect for the environment, but all activities for its processing are subject to the control regime of recognized bodies to guarantee the end consumer a natural, controlled, and certified product. The Del Pasqua mill is certified Suolo e Salute for the transformation and production of Bio products and is registered with the Tuscan Oil Consortium for the production of IGP Toscano extra virgin olive oil."
+                    "Our Italian extra virgin olive oil is not only produced from olives grown with respect for the environment, but all activities for its processing are subject to the strict controls of authorized certification bodies to guarantee the end consumer a natural, controlled, and certified product. The Del Pasqua mill is certified by Suolo e Salute for the processing and production of organic products and is registered with the Tuscan Olive Oil Consortium for the production of Toscano PGI extra virgin olive oil."
                 ],
-                "placeholder": "IGP and organic certifications"
+                "placeholder": "PGI and organic certifications"
             },
             "iqo": {
                 "title": "IQO Certification",
-                "text": "Our extra virgin olive oil is IQO certified; chemical and scientific analyses guarantee a high natural nutritional value, stable conservation over time, and a security of accurate traceability without risk of fraud."
+                "text": "Our extra virgin olive oil is IQO certified; chemical and scientific analyses guarantee a high natural nutritional value, long-term stability, and guaranteed traceability without risk of fraud."
             }
         },
         "shared": {
@@ -700,8 +711,8 @@
             "intro": {
                 "title": "Our EVO oil",
                 "body": [
-                    "Our Italian extra virgin olive oil is not only born from olives grown with respect for the environment, but all activities for its processing are subject to the control regime of recognized bodies to guarantee the end consumer a natural, controlled, and certified product. The Del Pasqua mill is certified Suolo e Salute for the transformation and production of Bio products and is registered with the Tuscan Oil Consortium for the production of IGP Toscano extra virgin olive oil.",
-                    "Our extra virgin olive oil is IQO certified; chemical and scientific analyses guarantee a high natural nutritional value, a stable conservation over time, and a security of accurate traceability without risk of fraud."
+                    "Our Italian extra virgin olive oil is not only produced from olives grown with respect for the environment, but all activities for its processing are subject to the strict controls of authorized certification bodies to guarantee the end consumer a natural, controlled, and certified product. The Del Pasqua mill is certified by Suolo e Salute for the processing and production of organic products and is registered with the Tuscan Olive Oil Consortium for the production of Toscano PGI extra virgin olive oil.",
+                    "Our extra virgin olive oil is IQO certified; chemical and scientific analyses guarantee a high natural nutritional value, long-term stability, and guaranteed traceability without risk of fraud."
                 ],
                 "placeholder": "IMAGE — INTRO"
             },
@@ -722,8 +733,8 @@
                 "short_title": "Intense Fruity",
                 "title": "Extra Virgin Olive Oil - Intense Fruity 100% Italian",
                 "body": [
-                    "With a strong but balanced flavor, the bitterness and spiciness are at a medium-high level, with an aftertaste tending towards artichoke, bright green color.",
-                    "The harvest takes place in advance of complete maturation."
+                    "Featuring a bold yet balanced flavor, it has medium-high bitterness and spiciness with a pleasant artichoke aftertaste and a bright green color.",
+                    "The olives are harvested before they reach full ripeness."
                 ],
                 "formats": [
                     "Bottle: 250/500/750",
@@ -735,7 +746,7 @@
                 "short_title": "Medium Fruity",
                 "title": "Extra Virgin Olive Oil - Medium Fruity 100% Italian",
                 "body": [
-                    "Blend of leccino, frantoio, and moraiolo olives; balanced in spiciness and bitterness, with hints of almond and a light sensation of grass.",
+                    "Blend of Leccino, Frantoio, and Moraiolo olives; balanced in spiciness and bitterness, with hints of almond and fresh grass notes.",
                     "Green color with yellow veins."
                 ],
                 "formats": [
@@ -748,7 +759,7 @@
                 "short_title": "EVO",
                 "title": "Extra Virgin Olive Oil - EVO",
                 "body": [
-                    "With the selection of the best olives, our 'EVO' oil is born, cold extracted according to the principles of tradition and with an eye on innovation. Bright green color and herbaceous scent with hints of almond."
+                    "With the selection of the best olives, our 'EVO' oil is born, cold-extracted according to the principles of tradition and with a focus on innovation. It features a bright green color and herbaceous scent with hints of almond."
                 ],
                 "formats": [
                     "Bottle: 500ml"
@@ -756,11 +767,11 @@
                 "placeholder": "IMAGE — EVO"
             },
             "aromatico": {
-                "short_title": "Aromatic",
-                "title": "Aromatic Oils - Extra Virgin Olive Oil",
+                "short_title": "Flavored",
+                "title": "Flavored Oils - Extra Virgin Olive Oil",
                 "body": [
-                    "Our special selection of aromatized oils.",
-                    "Available versions: truffle, chili and lemon."
+                    "Our special selection of flavored oils.",
+                    "Available versions: truffle, chili, and lemon."
                 ],
                 "formats": [
                     "Bottle: 250ml"

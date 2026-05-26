@@ -15,30 +15,24 @@
             "from": "Fra",
             "types": {
                 "classica": {
-                    "title": "Klassisk Smaking",
-                    "subtitle": "Introduksjon til Delpasqua-oljer med guidet smaking.",
+                    "title": "Besøk og smaking",
+                    "subtitle": "Besøk oss direkte på møllen i Monte San Savino og oppdag alt som er verdt å vite om ekstra jomfru olivenolje og oliven.",
                     "includes": [
-                        "Smaking av 3 oljer",
-                        "Brød & vann",
-                        "Sorter og pressprosess"
+                        "Beskrivelse og forklaring av olivendyrking og de typiske sortene i området",
+                        "Innføring i de ulike metodene for dyrking, høsting, produksjon og lagring",
+                        "Guidet smaking for å lære å kjenne igjen de sensoriske kvalitetene til olivenolje og identifisere eventuelle defekter",
+                        "Smaking av oljene våre kombinert med lokale produkter: bruschetta på steinovnsbakt brød, friske pinzimonio-grønnsaker og et glass Rosso di Sangiovese"
                     ]
                 },
                 "premium": {
-                    "title": "Premium Smaking",
-                    "subtitle": "Komplett reise med matkombinasjoner og sansenoter.",
+                    "title": "Opplevelse i feltet",
+                    "subtitle": "En unik opplevelse i olivenlunden i Pozzo della Chiana med piknik-grill og pressing på oljemøllen.",
                     "includes": [
-                        "Smaking av 5 olier",
-                        "Kombinasjoner (brød / tomat / oster)",
-                        "Liten omvisning på møllen (hvis tilgjengelig)"
-                    ]
-                },
-                "privata": {
-                    "title": "Privat Smaking",
-                    "subtitle": "Skreddersydd opplevelse for grupper og spesielle anledninger.",
-                    "includes": [
-                        "Personlig tilpasset løp",
-                        "Aperitiffalternativ",
-                        "Gave- / eventalternativ"
+                        "En varm velkomst fra Marta i olivenlunden vår i Pozzo della Chiana med utsikt over Santo Stefano della Vittoria-tempelet",
+                        "Tradisjonell håndhøsting av oliven ved bruk av kun en liten kam og oppsamlingsnett",
+                        "Piknik-lunsj med grilling direkte i olivenlunden under trærne",
+                        "Besøk på familiemøllen for å se pressingen av de nyhøstede olivenene, der du følger prosessen steg-for-steg til fersk olje",
+                        "Avsluttende smaking av ekstra jomfru olivenolje og aromatiserte oljer med bruschetta"
                     ]
                 }
             }
@@ -55,7 +49,7 @@
             "title_part1": "Smaks-",
             "title_italic": "opplevelse",
             "title_part2": " i Toscana",
-            "description": "Lev en unik opplevelse i hjertet av Arezzo-provinsen. Frantoio del Pasqua ønsker deg velkommen i Monte San Savino for å avsløre hemmelighetene bak toskansk ekstra jomfru olivenolje. En autentisk reise fra kaldpressings til sanseanalyse."
+            "description": "Få en unik opplevelse i hjertet av Arezzo-provinsen. Frantoio del Pasqua ønsker deg velkommen i Monte San Savino for å avsløre hemmelighetene bak toskansk ekstra jomfru olivenolje. En autentisk reise fra kaldpressing til sanseanalyse."
         },
         "features": {
             "f1_title": "Arezzo, Toscana",
@@ -69,13 +63,13 @@
         "image_badge": "[Smakingsbilde]",
         "faq": {
             "q1": "Hvor finner smakingen sted?",
-            "a1": "Besøkene og smakingene finner sted rett inne i vår Frantoio del Pasqua, som ligger i Loc. Infernaccio 510/B, Monte San Savino (i provinsen Arezzo). Du vil oppdage hvordan vår olje blir til, omgitt av ekstraksjonsmaskinene.",
+            "a1": "Besøkene og smakingene finner sted rett inne i vår Frantoio del Pasqua, som ligger i Loc. Infernaccio 510/B, Monte San Savino (i provinsen Arezzo). Du vil oppdage hvordan vår olje produseres, omgitt av ekstraksjonsmaskinene.",
             "q2": "Hva består analysen på møllen av?",
             "a2": "Vi vil veilede deg til å oppdage våre sorter. Du vil lære å kjenne igjen de fruktige, bitre og krydrede notene som kjennetegner en ekte toskansk ekstra jomfru olivenolje av høy kvalitet.",
             "q3": "Hvor lenge varer opplevelsen og hva inkluderer den?",
-            "a3": "Opplevelsen varer i 30 til 90 minutter. Den inkluderer en illustrasjon av den kontinuerlige pressprosessen og teknisk smaking, ofte beriket av raffinerte gastronomiske sammenkoblinger.",
+            "a3": "Opplevelsen varer i 30 til 90 minutter. Den inkluderer en forklaring av den kontinuerlige pressprosessen og teknisk smaking, ofte beriket av raffinerte gastronomiske sammenkoblinger.",
             "q4": "Er det mulig å kjøpe olje på slutten?",
-            "a4": "Sikkert. Du kan kjøpe vår kaldpressede evo-olje direkte i vår gårdsbutikk. En perfekt og eksklusiv suvenir av Arezzos fortreffeligheter."
+            "a4": "Selvfølgelig. Du kan kjøpe vår kaldpressede EVO-olje direkte fra vår gårdsbutikk. En perfekt og eksklusiv suvenir av Arezzos fortreffeligheter."
         }
     },
     "TastingsCalendar": {
@@ -208,14 +202,14 @@
         },
         "fruttato-intenso": {
             "title": "Ekstra Jomfru - Intens Fruktig",
-            "subtitle": "Aromatisert ekstra jomfru",
+            "subtitle": "Ekstra jomfru olivenolje",
             "description": "Kraftig smak, med mer markerte bitre og krydrede toner.",
             "badge": "KLASSIKER"
         },
         "tartufo": {
             "title": "Ekstra Jomfru - Trøffel",
             "subtitle": "Aromatisert ekstra jomfru",
-            "description": "Perfekt på egg, poteter, carpaccio.",
+            "description": "Perfekt på egg, poteter, og carpaccio.",
             "badge": "AROMATISERT"
         },
         "peperoncino": {
@@ -241,7 +235,7 @@
         "categories": {
             "all": "Alle",
             "fruttato": "Fruktig",
-            "igp": "BGI",
+            "igp": "BGB",
             "bio": "Økologisk",
             "aromatico": "Aromatisert"
         },
@@ -275,7 +269,7 @@
                 },
                 "tradizione": {
                     "title": "Moderne Tradisjon",
-                    "excerpt": "Moderne teknikker, respekt for råvarer og håndverksmessig omsorg: fremtiden starter på landet.",
+                    "excerpt": "Moderne teknikker, respekt for råvarer og håndverksmessig omsorg: fremtiden starter med jorden.",
                     "cta": "Lær mer",
                     "alt": "Detalj av oljemølle eller håndverksmessig foredling"
                 }
@@ -306,9 +300,9 @@
             "iva": "+ MVA"
         },
         "BioMethod": {
-            "label": "BIO METODE",
+            "label": "ØKOLOGISK METODE",
             "title": "Liten skala. Kontrollert kvalitet.",
-            "description": "En håndverksmessig olje fødes ikke fra en industriell linje: den fødes fra korrekt timing, små partier og konstant oppmerksomhet.",
+            "description": "En håndverksmessig olje skapes ikke på en industriell produksjonslinje: den skapes av korrekt timing, små partier og konstant oppmerksomhet.",
             "points": {
                 "control": "Ekte kontroll",
                 "control_text": " over hvert trinn",
@@ -321,7 +315,7 @@
             "cta_oil": "Oljekvaliteter",
             "card_header": {
                 "label": "PRODUKSJONSKART",
-                "title": "BIO Metode – Håndverksmessig",
+                "title": "Økologisk Metode – Håndverksmessig",
                 "subtitle": "Kvalitet fra kort forsyningskjede, ikke industrielle volumer."
             },
             "specs": {
@@ -353,7 +347,7 @@
                 "control": "Total kontroll",
                 "control_text": "Hver fase passet på"
             },
-            "footer": "BIO • HÅNDVERKSMESSIG PRODUKSJON",
+            "footer": "ØKOLOGISK • HÅNDVERKSMESSIG PRODUKSJON",
             "details": "Detaljer"
         },
         "Discover": {
@@ -361,7 +355,7 @@
             "title": "Oppdag Del Pasqua Møllen",
             "cards": {
                 "produzione": {
-                    "title": "PRODUKSJON",
+                    "title": "OLJEMØLLE",
                     "subtitle": "Fra felt til mølle"
                 },
                 "degustazioni": {
@@ -389,22 +383,22 @@
             },
             "control": {
                 "label": "KONTROLL",
-                "title": "Presisjon uten industri",
+                "title": "Presisjon uten industriskala",
                 "text": "Høst, oppmerksomhet, omsorg: kvalitet fødes før møllen.",
                 "tag1": "Bevart friskhet",
-                "tag2": "Rent profil"
+                "tag2": "Ren profil"
             }
         },
         "HomeAboutFamily": {
             "label": "SMAKINGER",
             "title": "Opplevelser på Møllen",
-            "description": "Opplev en unik guidet smaking på vår olivenmølle. En sensorisk reise for å oppdage vår lidenskab, lære kunsten å smake økologisk og IGP ekstra jomfru olivenolje, og nyte autentiske toskanske matkombinasjoner ledet av våre eksperter.",
+            "description": "Opplev en unik guidet smaking på vår olivenmølle. En sensorisk reise for å oppdage vår lidenskap, lære kunsten å smake økologisk og BGB ekstra jomfru olivenolje, og nyte autentiske toskanske matkombinasjoner ledet av våre eksperter.",
             "cta": "OPPDAG SMAKINGER"
         },
         "HomeAboutTerritory": {
             "label": "MØLLEN",
             "title": "En tradisjon som fortsetter",
-            "description": "Selv i dag i Toscana skjer en stor del av olivinhøstingen tradisjonelt ved håndhøstning; olivenene transporteres til møllen og behandles innen 24 timer for å bevare de aromatiske og fenoliske komponentene...",
+            "description": "Selv i dag i Toscana skjer en stor del av olivenhøstingen tradisjonelt ved håndhøsting; olivenene transporteres til møllen og presses innen 24 timer for å bevare de aromatiske og fenoliske komponentene...",
             "cta": "LES MER"
         },
         "HomeUniqueness": {
@@ -412,7 +406,7 @@
             "items": {
                 "tradition": {
                     "title": "Landbrukstradisjon",
-                    "desc": "I generasjoner har vi dyrket korn, oliventrær og vinmarker med respekt for jorden vår"
+                    "desc": "I generasjoner har vi dyrket korn, oliventrær og vindruer med respekt for jorden vår"
                 },
                 "passion": {
                     "title": "Familielidenskap",
@@ -432,7 +426,7 @@
             "label": "FLASKER & UTVALG",
             "carouselLabel": "FLASKER I SCENE",
             "title": "Karakteren av vårt land, på flaske",
-            "description": "Vi bringer den enestående kvaliteten til vår ekstra jomfruolivenolje til bordet ditt i nøye utformet emballasje. Fra mørkt glass som bevarer oljens friskhet, til klassiske kanner for daglig bruk på kjøkkenet: et utvalg skapt for å berike enhver rett.",
+            "description": "Vi bringer den enestående kvaliteten til vår ekstra jomfruolivenolje til bordet ditt i nøye utformet emballasje. Fra mørkt glass som bevarer oljens friskhet, to klassiske kanner for daglig bruk på kjøkkenet: et utvalg skapt for å berike enhver rett.",
             "cta": "GÅ TIL SHOP",
             "groups": {
                 "signature": {
@@ -445,7 +439,7 @@
                 },
                 "gift": {
                     "label": "TIL GAVE",
-                    "title": "Flasker som presenterer seg selv"
+                    "title": "Flasker som taler for seg selv"
                 },
                 "daily": {
                     "label": "HVERDAGSLINJE",
@@ -457,6 +451,17 @@
                 "magnifico": "Del Pasqua Magnifico-flaske",
                 "vittoria": "Del Pasqua Vittoria-vinflaske"
             }
+        },
+        "HomeGallery": {
+            "title": "Forankret i toscansk tradisjon",
+            "carouselLabel": "Toskansk atmosfære og tradisjon",
+            "previousImage": "Forrige bilde",
+            "nextImage": "Neste bilde",
+            "imageAlt": "Galleri Del Pasqua bilde {index}"
+        },
+        "BlogHighlights": {
+            "title": "Fra Del Pasqua Journalen",
+            "cta": "Les alle artikler"
         }
     },
     "StoriaPage": {
@@ -464,14 +469,14 @@
             "subtitle": "Historie",
             "title_part1": "Vår ",
             "title_italic": "historie",
-            "description": "Del Pasqua-selskapet ble født rundt 1960-tallet fra faren Sabatinos arbeid. Gjennom årene ble sønnen Emanuele også med i familiebedriften, med mål om å styrke diversifiseringen, fokusere på kvaliteten på produktene og dermed åpne selskapet for nye markeder og retninger."
+            "description": "Del Pasqua ble grunnlagt på 1960-tallet i Valdichiana-regionen, og har utviklet seg gjennom årene ved å satse på mangfold. Vi fokuserer på produktkvalitet, innovasjon og miljøvennlig bærekraft, uten noen gang å miste verdiene og smakene fra ekte toskanske og italienske tradisjoner av syne. Denne tilnærmingen har åpnet nye veier innen både olivendyrking og vinproduksjon. Hele produksjonskjeden vår er lokal: fra dyrking av oliventrær og vinstokker til høsting og emballering av det ferdige produktet."
         },
         "section1": {
             "subtitle": "Våre olivenlunder",
             "title_part1": "Tradisjon og innovasjon ",
             "title_italic": "i det grønne",
             "p1": "Våre olivenlunder strekker seg over 4 hektar, fordelt på de typiske sortene i vårt område: leccino, frantoiane og moraiolo.",
-            "p2": "Med respekt for tradisjonell dyrking, men etter moderne og innovative teknikker, er det plantet nye oliventrær hvis tilstand overvåkes kontinuerlig av agronomen som vurderer olivenens modenhet.",
+            "p2": "Samtidig som vi respekterer tradisjonelle dyrkingsmetoder, bruker vi moderne og innovative teknikker. Tilstanden til de nylig plantede oliventrærne våre overvåkes kontinuerlig av agronomen vår, som også vurderer olivenenes modenhet.",
             "stats": {
                 "hectares": "Hektar",
                 "cultivars": "Sorter",
@@ -482,8 +487,8 @@
             "subtitle": "Vår innhøsting",
             "title_part1": "Siden oktober med ",
             "title_italic": "lidenskap",
-            "p1": "Vi venter alltid på oktober for innhøstingen, og vi liker å jobbe med våre lidenskaper. I dag har vi nådd en stor milepæl: våre produkter blir for tiden verdsatt lokalt og internasjonalt.",
-            "p2": "I noen år har selskapet eksportert produktene sine stabilt til USA. Den ekstra jomfruolivenoljen \"Il Magnifico\" får stadig høyere anerkjennelse i markedet.",
+            "p1": "Høstingen foregår 'i det rette øyeblikket' for å få en olje rik på polyfenoler, aromaer og smak. Olivenene presses samme dag med kaldpressingsmetoder i vår toppmoderne oljemølle.",
+            "p2": "I dag er produktene våre egnet for alle typer kosthold og henvender seg til et bredt marked: fra de som setter pris på en intens og fruktig olje, til de som foretrekker en lettere og mer delikat smak, uten å glemme sunn ernæring for barn i avvenningsperioden.",
             "badge": "USA Eksport"
         },
         "philosophy": {
@@ -506,13 +511,13 @@
                 "capitolo-2": { "label": "Ekstraksjonen", "kicker": "De 6 Møllestegene" },
                 "capitolo-3": { "label": "Oppbevaringen", "kicker": "Stål & Nitrogen" },
                 "capitolo-4": { "label": "Forseglingen", "kicker": "Flaske & Sertifiseringer" },
-                "capitolo-5": { "label": "Tjenester & Besøk", "kicker": "Maling & Smakinger" }
+                "capitolo-5": { "label": "Tjenester & Besøk", "kicker": "Pressing & Smakinger" }
             }
         },
         "origin": {
             "tag1": "Begrensede partier",
             "tag2": "Håndhøstet",
-            "tag3": "Maling innen 24 timer"
+            "tag3": "Pressing innen 24 timer"
         },
         "badges": {
             "premium_quality": "PREMIUM KVALITET",
@@ -522,7 +527,7 @@
             "label": "Mølle",
             "title_part1": "Hjertet i",
             "title_italic": "vår kvalitet",
-            "description": "I møllen teller hver detalje: fra rengjøring av olivene til kontrollert malaxation, frem til ekstraksjon og lagring. Her arbeider teknologi og håndverksmessig omsorg sammen for å bevare friskhet, aromaer og stabilitet.",
+            "description": "I møllen teller hver detalj: fra rengjøring av olivene til kontrollert malaxation, frem til ekstraksjon og lagring. Her arbeider teknologi og håndverksmessig omsorg sammen for å bevare friskhet, aromaer og stabilitet.",
             "tag1": "Kaldpressing",
             "tag2": "BGB-sertifisert",
             "tag3": "100% Økologisk & Håndverksmessig",
@@ -562,7 +567,7 @@
                 "label": "PLEIE OG OPPBEVARING",
                 "title_part1": "Fra bearbeiding ",
                 "title_italic": "til flasken",
-                "text": "Etter ekstraksjonen beskytter vi oljen mot lys og oksygen. Bare slik kommer duftene fra mollen frem intakte til bordet."
+                "text": "Etter ekstraksjonen beskytter vi oljen mot lys og oksygen. Bare slik kommer duftene fra møllen frem intakte til bordet."
             },
             "divider_2": {
                 "label": "GARANTERT KVALITET",
@@ -579,7 +584,7 @@
             "checks": {
                 "chain": {
                     "title": "Kort forsyningskjede",
-                    "desc": "Fra høst til maling på kort tid."
+                    "desc": "Fra høst til pressing på kort tid."
                 },
                 "clean": {
                     "title": "Rengjøring og seleksjon",
@@ -596,8 +601,8 @@
             },
             "cards": {
                 "molitura": {
-                    "title": "Maling for tredjepart",
-                    "text": "Maling og emballering med sporbarhet av partier.",
+                    "title": "Pressing for tredjepart",
+                    "text": "Pressing og emballering med sporbarhet av partier.",
                     "badge": "Tjenester"
                 },
                 "conferimento": {
@@ -621,7 +626,7 @@
             "trasporto": {
                 "kicker": "TRANSPORT",
                 "title": "Renslighet og stabilitet",
-                "text": "Inne i møllen skjer bevegelsen av oljen utelukkende i stålbeholdere. Plast er absolutt forbudt, da det gir bi-smak til oljen og ødelegger dens smak og lukt.",
+                "text": "Inne i møllen skjer bevegelsen av oljen utelukkende i stålbeholdere. Plast er absolutt forbudt, da det kan overføre uønsket smak til oljen og ødelegge dens smak og lukt.",
                 "img_label": "Filtrering og overføring i rustfritt stål"
             },
             "stoccaggio": {
@@ -633,7 +638,7 @@
             "imbottigliamento": {
                 "kicker": "Tapping",
                 "title": "Linje for fylling og emballering",
-                "text": "Vår tappelinje gjør det muligt for oss å håndtere ulike formater, nøyaktig etikettering og ryddig emballering, samtidig som kontinuitet og renslighet opprettholdes i hver sluttfase av prosessen.",
+                "text": "Vår tappelinje gjør det mulig for oss å håndtere ulike formater, nøyaktig etikettering og ryddig emballering, samtidig som kontinuitet og renslighet opprettholdes i hver sluttfase av prosessen.",
                 "tag1": "Variable formater",
                 "tag2": "Presis etikettering",
                 "img_label": "Tappelinje"
@@ -659,7 +664,7 @@
                 "kicker": "HØST",
                 "title": "Håndhøsting",
                 "paragraphs": [
-                    "Selv i dag skjer en stor del av olivinhøstingen i Toscana tradisjonelt ved håndhøsting; olivenene transporteres til møllen og behandles innen 24 timer for å bevare de aromatiske og fenoliske komponentene. Frantoio del Pasqua er utstyrt med et moderne Alfalaval olivenbehandlingsanlegg med kaldpressing."
+                    "Selv i dag foregår en stor del av olivenhøstingen i Toscana på tradisjonelt vis med håndhøsting. Olivenene transporteres deretter til møllen og presses innen 12 timer for å bevare de aromatiske og fenoliske komponentene. Den familiedrevne møllen Del Pasqua, som ligger i nærheten av Monte San Savino, ble nylig renovert etter bærekraftige prinsipper og standarder for energisparing, og er utstyrt med et moderne olivenpressingsanlegg fra Alfa Laval med kaldpressing."
                 ],
                 "placeholder": "BILDE — HØST"
             },
@@ -667,8 +672,8 @@
                 "kicker": "ANLEGG",
                 "title": "Tappelinjen",
                 "paragraphs": [
-                    "Anlegget er utstyrt med en linje for fylling og emballering samt lagring under nitrogen for å garantere de organoleptiske egenskapene til vår olje 'Il Magnifico' før tapping.",
-                    "Men vi stopper ikke her: vi utfører maling og emballering for tredjepart."
+                    "Anlegget er utstyrt med en linje for fylling og emballering samt lagring under nitrogen for å bevare de sensoriske kvalitetene til oljen før tapping.",
+                    "Imidlertid stopper vi ikke her: vi utfører også presse- og emballeringstjenester for tredjeparter."
                 ],
                 "placeholder": "BILDE — LINJE"
             },
@@ -676,17 +681,17 @@
                 "kicker": "KVALITET",
                 "title": "Vår EVO Olje",
                 "paragraphs": [
-                    "Alle disse faktorene er en absolutt garanti for produksjon av ekstra jomfru olivenolje av høyeste kvalitet, i stand til lenger å bevare friskhet og aromaer som kjennetegner den nylig pressede oljen."
+                    "Alle disse faktorene er en absolutt garanti for produksjon av ekstra jomfru olivenolje av høyeste kvalitet, i stand til lenger å bevare friskhet og aromaer som kjennetegner den ferskpressede oljen."
                 ],
                 "placeholder": "BILDE — EVO"
             },
             "igp_bio": {
                 "kicker": "SERTIFISERINGER",
-                "title": "IGP OG ØKOLOGISK",
+                "title": "BGB OG ØKOLOGISK",
                 "paragraphs": [
-                    "Frantoio del Pasqua er sertifisert av Suolo e Salute for transformasjon og produksjon av økologiske produkter og er registrert i Det Toskanske Olivenoljekonsortiet for produksjon av IGP Toscano ekstra jomfru olivenolje."
+                    "Frantoio del Pasqua er sertifisert av Suolo e Salute for foredling og produksjon av økologiske produkter og er registrert i Det Toskanske Olivenoljekonsortiet for produksjon av Toscano BGB ekstra jomfru olivenolje."
                 ],
-                "placeholder": "BILDE — IGP/ØKOLOGISK"
+                "placeholder": "BILDE — BGB/ØKOLOGISK"
             }
         },
         "shared": {
@@ -725,7 +730,7 @@
                 "short_title": "Medium fruktig",
                 "title": "Medium Fruktig",
                 "body": [
-                    "En balansert olje med en middels sterk karakter, med dufter av tomat og artisjokk.",
+                    "En balansert olje med en middels sterk karakter, med aromaer av tomat og artisjokk.",
                     "Perfekt for supper, grønnsaker og rødt kjøtt. En allsidig olje for enhver anledning."
                 ],
                 "formats": [
@@ -738,7 +743,7 @@
                 "short_title": "Intens fruktig",
                 "title": "Intens Fruktig",
                 "body": [
-                    "En olje med en sterk og bestemt personlighet, med markante noter av bitterhet og krydret smak.",
+                    "En olje med en sterk og bestemt personlighet, med markante bitre toner og krydret smak.",
                     "Anbefales til retter med sterk smak, stekt kjøtt og belgfrukter. En opplevelse for ekte kjennere."
                 ],
                 "formats": [
@@ -751,7 +756,7 @@
                 "short_title": "EVO",
                 "title": "Ekstra Jomfru - EVO",
                 "body": [
-                    "Vår klassiske ekstra jomfru olivenolje, oppnådd ved kaldpressing av de beste sortene.",
+                    "Vår klassiske ekstra jomfru olivenolje, fremstilt ved kaldpressing av de beste sortene.",
                     "En autentisk og ekte olje, perfekt for daglig bruk på kjøkkenet."
                 ],
                 "formats": [
@@ -761,10 +766,10 @@
                 "placeholder": "BILDE — EVO"
             },
             "aromatico": {
-                "short_title": "Aromatisk",
+                "short_title": "Flavored",
                 "title": "Aromatiserte Oljer",
                 "body": [
-                    "Vårt spesielle utvalg av aromatiserte oljer.",
+                    "Vårt spesielle utvalg av flavored oljer.",
                     "Varianter tilgjengelige: trøffel, chili og sitron."
                 ],
                 "formats": [
@@ -809,7 +814,7 @@
         "form": {
             "label": "Skriv til oss",
             "title": "Send en melding",
-            "subtitle": "Utfyll skjemaet: vi svarer så raskt som mulig.",
+            "subtitle": "Fyll ut skjemaet: vi svarer så raskt som mulig.",
             "name_label": "Navn",
             "name_placeholder": "Ditt navn",
             "email_label": "E-post",
@@ -867,7 +872,7 @@
             "shipping_from": "Frakt fra {amount}",
             "discounted_total": "Pris etter rabatt",
             "redirecting": "Videresender...",
-            "go_to_checkout": "Gå til checkout",
+            "go_to_checkout": "Gå til kassen",
             "view_cart": "Se handlekurv",
             "server_note": "Sluttsummen (mva. + frakt) blir kontrollert av serveren før betaling."
         },
@@ -881,8 +886,8 @@
             "invalid_line": "Ugyldig linje: produkt eller variant ble ikke funnet i katalogen.",
             "clear_cart": "Tøm handlekurv",
             "summary": "Oversikt",
-            "opening_checkout": "Åpner checkout...",
-            "go_to_checkout": "Gå til checkout",
+            "opening_checkout": "Åpner kassen...",
+            "go_to_checkout": "Gå til kassen",
             "secure_payment": "Sikker betaling via Stripe.",
             "email_confirmation": "Du vil motta bekreftelse på e-post."
         },
@@ -899,9 +904,9 @@
             "invalid_cart": "Ugyldig handlekurv.",
             "order_creation": "Feil ved opprettelse av ordre.",
             "invalid_server_response": "Ugyldig serversvar.",
-            "checkout_unavailable": "Checkout er ikke tilgjengelig.",
-            "missing_checkout_url": "Checkout-URL mangler.",
-            "checkout_generic": "Checkout-feil."
+            "checkout_unavailable": "Kassen er ikke tilgjengelig.",
+            "missing_checkout_url": "Kasse-URL mangler.",
+            "checkout_generic": "Feil ved kassen."
         }
     }
 }

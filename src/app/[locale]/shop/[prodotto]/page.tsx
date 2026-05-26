@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { readCatalog } from "@/lib/server/catalog";
+import { findProductBySlug } from "@/lib/productSlugs";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
 
@@ -31,33 +32,6 @@ type Product = {
   variants: ProductVariant[];
   specs?: Specs;
 };
-
-
-function safeDecodeURIComponent(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function normalizeSlug(value: unknown): string {
-  const s = safeDecodeURIComponent(String(value ?? "")).trim().toLowerCase();
-  return s.replace(/\s+/g, "-").replace(/\/+$/, "");
-}
-
-function safeFindProduct(list: Product[], routeParam: unknown): Product | undefined {
-  const wanted = normalizeSlug(routeParam);
-  if (!wanted) return undefined;
-
-  const bySlug = list.find((p) => normalizeSlug(p.slug) === wanted);
-  if (bySlug) return bySlug;
-
-  const byId = list.find((p) => normalizeSlug(p.id) === wanted);
-  if (byId) return byId;
-
-  return undefined;
-}
 
 function hasTranslation(t: { has?: (key: string) => boolean }, key: string) {
   return typeof t.has === "function" && t.has(key);
@@ -154,7 +128,7 @@ export default async function ProductPage({
   const tp = await getTranslations({ locale, namespace: "Products" });
 
   const list = (await readCatalog()) as unknown as Product[];
-  const product = safeFindProduct(list, prodotto);
+  const product = findProductBySlug(list, prodotto);
 
   if (!product) notFound();
 

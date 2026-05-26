@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
 import "./Navbar-Styles.css";
 
 import CartButton from "@/components/CartButton";
+import productsRaw from "@/db/products.json";
 import {
   Sheet,
   SheetClose,
@@ -16,6 +18,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Link as LocaleLink, routing, usePathname } from "@/i18n/routing";
+import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
+import { mockBlogPosts } from "@/lib/blog-data";
+import { findBlogPostBySlug, getLocalizedBlogHref, findCategoryNameBySlug, normalizeBlogSlug } from "@/lib/blogSlugs";
+import { BLOG_POST_TRANSLATIONS } from "@/lib/blogTranslationsData";
+import type { Locale as BlogLocale } from "@/lib/blogTranslationsData";
 import { cn } from "@/lib/utils";
 import {
   ArrowUpRight,
@@ -109,6 +116,7 @@ export default function Navbar() {
   const t = useTranslations("Common");
   const locale = useLocale();
   const pathname = usePathname();
+  const params = useParams<{ prodotto?: string | string[]; slug?: string | string[]; category?: string | string[] }>();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -119,6 +127,79 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
+  const catalog = useMemo(() => productsRaw as Array<{ id: string; slug?: string }>, []);
+  // All localized variants of the "category" path segment, from pathnames.ts
+  // it: "categoria", en: "category", de: "kategorie", nl: "categorie", da/no: "kategori"
+  const BLOG_CATEGORY_SEGMENTS = new Set(["category", "categoria", "kategorie", "categorie", "kategori"]);
+  const routeProduct = Array.isArray(params.prodotto) ? params.prodotto[0] : params.prodotto;
+  const routeSlug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+  const routeCategory = Array.isArray(params.category) ? params.category[0] : params.category;
+
+  function getLocaleSwitchHref(targetLocale: string) {
+    const segments = pathname.split("/").filter(Boolean);
+
+    // 1. Product details page: /shop/[prodotto] (e.g. /shop/vino-novello/)
+    if (routeProduct && (pathname === "/shop/[prodotto]" || (segments[0] === "shop" && segments.length === 2))) {
+      const currentSlug = routeProduct;
+      const product = findProductBySlug(catalog, currentSlug);
+      if (!product) return "/shop";
+
+      return {
+        pathname: "/shop/[prodotto]",
+        params: { prodotto: getLocalizedProductSlug(product, targetLocale) },
+      } as const;
+    }
+
+    // 2. Blog Category Post page: /blog/<categoria|category|kategorie|...>/[category]/[slug]
+    //    usePathname() returns the localized path (e.g. "categoria" in Italian, "kategorie" in German)
+    //    so we must check ALL localized variants, not just "category"
+    if (
+      routeSlug &&
+      routeCategory &&
+      (pathname === "/blog/category/[category]/[slug]" ||
+        (segments[0] === "blog" && BLOG_CATEGORY_SEGMENTS.has(segments[1]) && segments.length === 4))
+    ) {
+      const currentSlug = routeSlug;
+      const post = findBlogPostBySlug(mockBlogPosts, currentSlug);
+      if (!post) return "/blog";
+
+      return getLocalizedBlogHref(post, targetLocale);
+    }
+
+    // 3. Blog Category page: /blog/<categoria|category|...>/[category]
+    if (
+      routeCategory &&
+      !routeSlug &&
+      (pathname === "/blog/category/[category]" ||
+        (segments[0] === "blog" && BLOG_CATEGORY_SEGMENTS.has(segments[1]) && segments.length === 3))
+    ) {
+      const currentCategory = routeCategory;
+      const targetCategoryName = findCategoryNameBySlug(currentCategory, targetLocale);
+
+      const targetCategorySlug = normalizeBlogSlug(targetCategoryName ?? currentCategory);
+
+      return {
+        pathname: "/blog/category/[category]",
+        params: { category: targetCategorySlug },
+      } as const;
+    }
+
+    // 4. Blog Post page (without category prefix): /blog/[slug]
+    if (
+      routeSlug &&
+      !routeCategory &&
+      (pathname === "/blog/[slug]" ||
+        (segments[0] === "blog" && segments.length === 2 && !BLOG_CATEGORY_SEGMENTS.has(segments[1])))
+    ) {
+      const currentSlug = routeSlug;
+      const post = findBlogPostBySlug(mockBlogPosts, currentSlug);
+      if (!post) return "/blog";
+
+      return getLocalizedBlogHref(post, targetLocale);
+    }
+
+    return pathname;
+  }
 
   useEffect(() => {
     queueMicrotask(() => setMounted(true));
@@ -407,7 +488,7 @@ export default function Navbar() {
                       {routing.locales.map((l) => (
                         <LocaleLink
                           key={l}
-                          href={pathname}
+                          href={getLocaleSwitchHref(l)}
                           locale={l}
                           role="menuitem"
                           onClick={() => setLanguageOpen(false)}
@@ -565,7 +646,7 @@ export default function Navbar() {
               {routing.locales.map((l) => (
                 <LocaleLink
                   key={l}
-                  href={pathname}
+                  href={getLocaleSwitchHref(l)}
                   locale={l}
                   onClick={() => setMobileOpen(false)}
                   className={cn(

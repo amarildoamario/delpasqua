@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, Tag, ShoppingCart } from "lucide-react";
 
 import Footer from "@/components/Footer";
@@ -11,6 +11,7 @@ import { useCart } from "@/context/CartContext";
 import products from "@/db/products.json";
 import { track } from "@/lib/analytics/track";
 import { translateCartCheckoutError, translateCartPromoError } from "@/lib/cartI18n";
+import { getLocalizedProductHref } from "@/lib/productSlugs";
 import type { Product } from "@/lib/shopTypes";
 
 function formatEUR(cents: number) {
@@ -39,17 +40,13 @@ type PromoResult = {
   freeShipping: boolean;
 };
 
-function productHref(slug?: string | null) {
-  return slug
-    ? {
-        pathname: "/shop/[prodotto]",
-        params: { prodotto: slug },
-      } as never
-    : "/shop";
+function productHref(product: Product | undefined, locale: string) {
+  return product ? (getLocalizedProductHref(product, locale) as never) : "/shop";
 }
 
 export default function CartPageClient() {
   const t = useTranslations("Cart");
+  const locale = useLocale();
   const cart = useCart();
 
   const [payError, setPayError] = useState<string | null>(null);
@@ -96,7 +93,7 @@ export default function CartPageClient() {
       const unitPriceCents = variant?.priceCents ?? 0;
       const imageSrc = variant?.imageSrc ?? product?.imageSrc ?? "";
       const imageAlt = variant?.imageAlt ?? product?.imageAlt ?? title;
-      const href = productHref(product?.slug);
+      const href = productHref(product, locale);
 
       return {
         productId: line.productId,
@@ -112,7 +109,7 @@ export default function CartPageClient() {
         valid: Boolean(product && variant),
       };
     });
-  }, [catalog, lines, t]);
+  }, [catalog, lines, locale, t]);
 
   useEffect(() => {
     let cancelled = false;
@@ -325,7 +322,7 @@ export default function CartPageClient() {
                         {/* Immagine prodotto in risalto - aspetto verticale */}
                         <div className="relative aspect-[4/4.5] w-full overflow-hidden bg-white flex items-center justify-center p-3">
                           <Link 
-                            href={productHref(prod.slug)}
+                            href={productHref(prod, locale)}
                             className="relative h-full w-full block bg-transparent"
                             aria-label={prod.title}
                           >
@@ -357,7 +354,7 @@ export default function CartPageClient() {
                           </span>
 
                           <Link 
-                            href={productHref(prod.slug)}
+                            href={productHref(prod, locale)}
                             className="mt-1 font-serif text-[0.95rem] font-semibold leading-[1.25] tracking-tight text-[#1f1a17] hover:text-[#8f6d4c] transition-colors line-clamp-2"
                           >
                             {prod.title}
@@ -709,7 +706,7 @@ export default function CartPageClient() {
                           className="flex flex-row items-center gap-4 rounded-[5px] border border-zinc-100 bg-zinc-50/50 p-4 transition-colors hover:bg-zinc-50 sm:flex-col"
                         >
                           <Link
-                            href={productHref(prod.slug)}
+                            href={productHref(prod, locale)}
                             className="relative h-20 w-16 shrink-0 overflow-hidden rounded-[5px] bg-transparent"
                             aria-label={prod.title}
                           >
@@ -727,7 +724,7 @@ export default function CartPageClient() {
                           </Link>
 
                           <div className="flex min-w-0 flex-1 flex-col text-left sm:w-full sm:text-center">
-                            <Link href={productHref(prod.slug)} className="truncate text-sm font-medium text-zinc-800 hover:underline">
+                            <Link href={productHref(prod, locale)} className="truncate text-sm font-medium text-zinc-800 hover:underline">
                               {prod.title}
                             </Link>
                             <div className="mt-1 text-xs font-medium text-zinc-500">

@@ -101,53 +101,77 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
             </div>
 
             {/* Tasting Types Cards */}
-            <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {types.map((tastingType, idx: number) => {
-                const accents = ["olive", "gold", "terracotta"] as const;
-                const accent = accents[idx % 3];
-                const accentColor = accent === "olive" ? "#3D5A3D" : accent === "gold" ? "#B8860B" : "#8B7355";
+            <div className="mt-16 grid gap-8 md:grid-cols-2 max-w-5xl mx-auto">
+              {[...types]
+                .sort((a, b) => {
+                  const order: Record<string, number> = { classica: 1, premium: 2 };
+                  return (order[a.id] || 99) - (order[b.id] || 99);
+                })
+                .map((tastingType) => {
+                  const isPremium = tastingType.id === "premium";
+                  const accentColor = isPremium ? "#B8860B" : "#3D5A3D";
+                  const accentBgLight = isPremium ? "bg-gradient-to-br from-white to-[#B8860B]/[0.02]" : "bg-gradient-to-br from-white to-[#3D5A3D]/[0.02]";
+                  const borderHoverClass = isPremium ? "hover:border-[#B8860B]/40 hover:shadow-[0_10px_30px_rgba(184,134,11,0.06)]" : "hover:border-[#3D5A3D]/40 hover:shadow-[0_10px_30px_rgba(61,90,61,0.06)]";
 
-                return (
-                  <div
-                    key={tastingType.id}
-                    className="group relative overflow-hidden rounded-3xl border border-[#E7E5E4] bg-white p-6 transition-all duration-300 hover:border-[#3D5A3D]/30 hover:shadow-lg lg:p-8"
-                  >
+                  return (
                     <div
-                      className="absolute left-0 top-0 h-1 w-0 transition-all duration-300 group-hover:w-full"
-                      style={{ backgroundColor: accentColor }}
-                    />
-
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="font-serif text-xl font-light tracking-tight text-[#1C1917]">{tastingType.title}</h3>
-                        <p className="mt-1 text-sm text-[#57534E]">{tastingType.subtitle}</p>
-                      </div>
+                      key={tastingType.id}
+                      className={`group relative overflow-hidden rounded-[5px] border border-[#E7E5E4] p-6 lg:p-8 transition-all duration-500 hover:-translate-y-1.5 ${accentBgLight} ${borderHoverClass}`}
+                    >
                       <div
-                        className="shrink-0 rounded-2xl px-3 py-2 text-xs font-bold text-white"
+                        className="absolute left-0 top-0 h-1.5 w-0 transition-all duration-500 group-hover:w-full"
                         style={{ backgroundColor: accentColor }}
-                      >
-                        {tastingType.durationMinutes} {t("hero.duration")}
+                      />
+
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col">
+                          {isPremium ? (
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#B8860B]/10 text-[#B8860B] mb-5">
+                              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 20h18" />
+                                <path d="M6 20l6-10 4 6 2-3 3 7" />
+                                <circle cx="12" cy="6" r="2" />
+                              </svg>
+                            </div>
+                          ) : (
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3D5A3D]/10 text-[#3D5A3D] mb-5">
+                              <IconLeaf className="h-6 w-6" />
+                            </div>
+                          )}
+                          <h3 className="font-serif text-2xl font-light tracking-tight text-[#1C1917]">{tastingType.title}</h3>
+                          <p className="mt-2 text-sm leading-relaxed text-[#57534E] min-h-[40px]">{tastingType.subtitle}</p>
+                        </div>
+                        <div
+                          className="shrink-0 rounded-2xl px-3.5 py-2 text-xs font-bold text-white shadow-sm flex items-center gap-1.5"
+                          style={{ backgroundColor: accentColor }}
+                        >
+                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>{tastingType.durationMinutes} {t("hero.duration")}</span>
+                        </div>
                       </div>
+
+                      <ul className="mt-8 space-y-3.5">
+                        {tastingType.includes.map((x: string) => (
+                          <li key={x} className="flex gap-3 text-sm leading-relaxed text-[#57534E]">
+                            <svg className="h-5 w-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: accentColor }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>{x}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {tastingType.priceFrom ? (
+                        <div className="mt-8 pt-5 border-t border-[#E7E5E4]">
+                          <span className="text-[10px] font-semibold tracking-[0.15em] text-[#8B7355] uppercase block">{t("hero.from")}</span>
+                          <div className="mt-1.5 font-serif text-xl font-light text-[#1C1917]" style={{ color: accentColor }}>{tastingType.priceFrom}</div>
+                        </div>
+                      ) : null}
                     </div>
-
-                    <ul className="mt-6 space-y-3">
-                      {tastingType.includes.slice(0, 4).map((x: string) => (
-                        <li key={x} className="flex gap-3 text-sm text-[#57534E]">
-                          <span className="mt-[6px] h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: accentColor }} />
-                          <span>{x}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {tastingType.priceFrom ? (
-                      <div className="mt-6 pt-4 border-t border-[#E7E5E4]">
-                        <span className="text-xs font-medium tracking-[0.15em] text-[#8B7355] uppercase">{t("hero.from")}</span>
-                        <div className="mt-1 font-serif text-lg font-light text-[#1C1917]">{tastingType.priceFrom}</div>
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </section>

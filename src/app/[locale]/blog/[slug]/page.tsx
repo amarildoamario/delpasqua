@@ -1,22 +1,28 @@
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/blog-data";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
 import { ChevronRight, Share2, Printer, Tag, User, Clock, CalendarDays, RefreshCcw, ArrowRight, ExternalLink, BookOpen } from "lucide-react";
 import Footer from "@/components/Footer";
-
+import {
+    getBlogCategoryHref,
+    getLocalizedBlogCategorySlug,
+    getLocalizedBlogHref,
+    getLocalizedBlogSlug,
+    normalizeBlogSlug,
+} from "@/lib/blogSlugs";
 import { Metadata } from 'next';
 
 export async function generateMetadata(
-    { params }: { params: Promise<{ slug: string, locale: string }> }
+    { params }: { params: Promise<{ slug: string, locale: string, category?: string }> }
 ): Promise<Metadata> {
     const { slug, locale } = await params;
-    const post = await getBlogPostBySlug(slug);
+    const post = await getBlogPostBySlug(slug, locale);
 
     if (!post) return { title: "Post non trovato" };
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.frantoiodelpasqua.com";
-    const postUrl = `${baseUrl}/${locale}/blog/${post.slug}`;
+    const postUrl = `${baseUrl}/${locale}/blog/category/${getLocalizedBlogCategorySlug(post, locale)}/${post.slug}`;
     const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${baseUrl}${post.imageUrl}`;
 
     return {
@@ -26,6 +32,14 @@ export async function generateMetadata(
         keywords: [post.category, "olio extravergine", "Frantoio del Pasqua", "olio EVO", "conservazione olio", "qualità olio"],
         alternates: {
             canonical: postUrl,
+            languages: {
+                it: `${baseUrl}/it/blog/category/${getLocalizedBlogCategorySlug(post, 'it')}/${getLocalizedBlogSlug(post, 'it')}`,
+                en: `${baseUrl}/en/blog/category/${getLocalizedBlogCategorySlug(post, 'en')}/${getLocalizedBlogSlug(post, 'en')}`,
+                de: `${baseUrl}/de/blog/category/${getLocalizedBlogCategorySlug(post, 'de')}/${getLocalizedBlogSlug(post, 'de')}`,
+                nl: `${baseUrl}/nl/blog/category/${getLocalizedBlogCategorySlug(post, 'nl')}/${getLocalizedBlogSlug(post, 'nl')}`,
+                da: `${baseUrl}/da/blog/category/${getLocalizedBlogCategorySlug(post, 'da')}/${getLocalizedBlogSlug(post, 'da')}`,
+                no: `${baseUrl}/no/blog/category/${getLocalizedBlogCategorySlug(post, 'no')}/${getLocalizedBlogSlug(post, 'no')}`,
+            }
         },
         openGraph: {
             title: post.title,
@@ -62,15 +76,156 @@ export async function generateMetadata(
     };
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
-    const post = await getBlogPostBySlug(slug);
-    const allPosts = await getBlogPosts();
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string, locale: string, category?: string }> }) {
+    const { slug, locale, category } = await params;
+    const post = await getBlogPostBySlug(slug, locale);
 
     if (!post) notFound();
 
+    const canonicalCategory = getLocalizedBlogCategorySlug(post, locale);
+
+    if (slug !== post.slug || normalizeBlogSlug(category) !== canonicalCategory) {
+        redirect({
+            href: getLocalizedBlogHref(post, locale),
+            locale: locale
+        });
+    }
+
+    const allPosts = await getBlogPosts(locale);
+
     const categories = Array.from(new Set(allPosts.map(p => p.category)));
     const relatedPosts = allPosts.filter(p => p.category === post.category && p.id !== post.id).slice(0, 3);
+
+    const ui = {
+        updated: {
+            it: "Agg.",
+            en: "Upd.",
+            de: "Akt.",
+            nl: "Bijgew.",
+            da: "Opd.",
+            no: "Oppd."
+        }[locale] || "Agg.",
+        readingTime: {
+            it: "di lettura",
+            en: "read",
+            de: "Lesezeit",
+            nl: "leestijd",
+            da: "læsetid",
+            no: "lesetid"
+        }[locale] || "di lettura",
+        inThisArticle: {
+            it: "In questo articolo",
+            en: "In this article",
+            de: "In diesem Artikel",
+            nl: "In dit artikel",
+            da: "I denne artikel",
+            no: "I denne artikkel"
+        }[locale] || "In questo articolo",
+        contents: {
+            it: "Contenuti",
+            en: "Contents",
+            de: "Inhalt",
+            nl: "Inhoud",
+            da: "Indhold",
+            no: "Innhold"
+        }[locale] || "Contenuti",
+        sources: {
+            it: "Fonti e riferimenti scientifici",
+            en: "Sources & Scientific References",
+            de: "Quellen & wissenschaftliche Belege",
+            nl: "Bronnen & wetenschappelijke referenties",
+            da: "Kilder & videnskabelige referencer",
+            no: "Kilder & vitenskapelige referanser"
+        }[locale] || "Fonti e riferimenti scientifici",
+        share: {
+            it: "Condividi",
+            en: "Share",
+            de: "Teilen",
+            nl: "Delen",
+            da: "Del",
+            no: "Del"
+        }[locale] || "Condividi",
+        print: {
+            it: "Stampa",
+            en: "Print",
+            de: "Drucken",
+            nl: "Printen",
+            da: "Print",
+            no: "Skriv ut"
+        }[locale] || "Stampa",
+        topics: {
+            it: "Argomenti",
+            en: "Topics",
+            de: "Themen",
+            nl: "Onderwerpen",
+            da: "Emner",
+            no: "Emner"
+        }[locale] || "Argomenti",
+        inSameCategory: {
+            it: "Nella stessa categoria",
+            en: "In the same category",
+            de: "In derselben Kategorie",
+            nl: "In dezelfde categorie",
+            da: "I samme kategori",
+            no: "I samme kategori"
+        }[locale] || "Nella stessa categoria",
+        promoTitle: {
+            it: "Prenota una degustazione",
+            en: "Book a tasting",
+            de: "Verkostung buchen",
+            nl: "Proeverij boeken",
+            da: "Book en smagning",
+            no: "Bestill en smaking"
+        }[locale] || "Prenota una degustazione",
+        promoText: {
+            it: "Vivi l'esperienza dal vivo nel nostro Frantoio in Toscana.",
+            en: "Live the experience live at our Olive Mill in Tuscany.",
+            de: "Erleben Sie die Erfahrung live in unserer Ölmühle in der Toskana.",
+            nl: "Beleef de ervaring live in onze olijfmolen in Toscane.",
+            da: "Oplev det live på vores oliemølle i Toscana.",
+            no: "Oppdag det live på oljemøllen vår i Toscana."
+        }[locale] || "Vivi l'esperienza dal vivo nel nostro Frantoio in Toscana.",
+        promoBtn: {
+            it: "Scopri di più",
+            en: "Learn more",
+            de: "Mehr erfahren",
+            nl: "Meer informatie",
+            da: "Læs mere",
+            no: "Les mer"
+        }[locale] || "Scopri di più"
+        , home: {
+            it: "Home",
+            en: "Home",
+            de: "Startseite",
+            nl: "Home",
+            da: "Hjem",
+            no: "Hjem"
+        }[locale] || "Home",
+        magazine: {
+            it: "Il Magazine",
+            en: "Magazine",
+            de: "Magazin",
+            nl: "Magazine",
+            da: "Magasin",
+            no: "Magasin"
+        }[locale] || "Il Magazine",
+        articleImageAlt: {
+            it: "Immagine per",
+            en: "Image for",
+            de: "Bild für",
+            nl: "Afbeelding voor",
+            da: "Billede til",
+            no: "Bilde for"
+        }[locale] || "Immagine per",
+        evoTag: {
+            it: "Olio EVO",
+            en: "EVOO",
+            de: "EVOO",
+            nl: "EVOO",
+            da: "EVOO",
+            no: "EVOO"
+        }[locale] || "Olio EVO"
+    };
 
     // Build TOC from headings
     const toc: { title: string; id: string; level: number }[] = [];
@@ -211,9 +366,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         return elements;
     };
 
-    // JSON-LD Schema.org Structured Data
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.frantoiodelpasqua.com";
-    const postUrl = `${baseUrl}/it/blog/${post.slug}`;
+    const postUrl = `${baseUrl}/${locale}/blog/category/${canonicalCategory}/${post.slug}`;
     const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${baseUrl}${post.imageUrl}`;
 
     const jsonLd = {
@@ -250,22 +404,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <main className="flex-1 pt-20 sm:pt-28 pb-24 sm:pb-32">
-
-                {/* ── Breadcrumb + Title header ── */}
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-                    {/* Breadcrumb */}
                     <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-stone-400 mb-8 pt-4 sm:pt-6">
-                        <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
+                        <Link href="/" className="hover:text-zinc-900 transition-colors">{ui.home}</Link>
                         <ChevronRight className="w-3.5 h-3.5" />
-                        <Link href="/blog" className="hover:text-zinc-900 transition-colors">Magazine</Link>
+                        <Link href="/blog" className="hover:text-zinc-900 transition-colors">{ui.magazine}</Link>
                         <ChevronRight className="w-3.5 h-3.5" />
-                        <Link href={`/blog?category=${encodeURIComponent(post.category)}`} className="text-[#3D5A3D] hover:underline underline-offset-4 decoration-[#3D5A3D]/40">
+                        <Link href={getBlogCategoryHref(post.category)} className="text-[#3D5A3D] hover:underline underline-offset-4 decoration-[#3D5A3D]/40">
                             {post.category}
                         </Link>
                     </div>
 
-                    {/* Article header */}
                     <div className="max-w-3xl">
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.1] mb-6">
                             {post.title}
@@ -274,35 +423,29 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                             {post.excerpt}
                         </p>
 
-                        {/* ── Meta bar ── */}
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4 border-y border-stone-100">
-                            {/* Author */}
                             <div className="flex items-center gap-2">
                                 <div className="w-7 h-7 rounded-full bg-[#3D5A3D]/10 flex items-center justify-center">
                                     <User className="w-3.5 h-3.5 text-[#3D5A3D]" />
                                 </div>
                                 <span className="text-sm font-semibold text-zinc-900">{post.author}</span>
                             </div>
-                            {/* Published */}
                             <div className="flex items-center gap-1.5 text-sm text-stone-500">
                                 <CalendarDays className="w-3.5 h-3.5 text-stone-400" />
                                 <span>
-                                    {new Date(post.date).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" })}
+                                    {new Date(post.date).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
                                 </span>
                             </div>
-                            {/* Updated */}
                             <div className="flex items-center gap-1.5 text-sm text-stone-400">
                                 <RefreshCcw className="w-3.5 h-3.5" />
-                                <span>Agg. {new Date(post.updateDate).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" })}</span>
+                                <span>{ui.updated} {new Date(post.updateDate).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}</span>
                             </div>
-                            {/* Read time */}
                             <div className="flex items-center gap-1.5 text-sm font-semibold text-[#3D5A3D] bg-[#3D5A3D]/8 px-3 py-1 rounded-full">
                                 <Clock className="w-3.5 h-3.5" />
-                                {post.readingTime} di lettura
+                                {post.readingTime} {ui.readingTime}
                             </div>
-                            {/* Category badge */}
                             <Link
-                                href={`/blog?category=${encodeURIComponent(post.category)}`}
+                                href={getBlogCategoryHref(post.category)}
                                 className="flex items-center gap-1.5 text-sm font-semibold text-stone-600 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-full transition-colors"
                             >
                                 <Tag className="w-3.5 h-3.5 text-stone-400" />
@@ -312,17 +455,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     </div>
                 </div>
 
-                {/* ── Hero image + Content ── */}
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
                     <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-16 items-start">
-
-                        {/* Main article body */}
                         <article>
-                            {/* Hero image */}
                             <figure className="relative w-full aspect-video rounded-2xl overflow-hidden mb-10 bg-stone-100 border border-stone-100">
                                 <Image
                                     src={post.imageUrl}
-                                    alt={`Immagine per ${post.title}`}
+                                    alt={`${ui.articleImageAlt} ${post.title}`}
                                     fill
                                     className="object-cover"
                                     sizes="(max-width: 1024px) 100vw, 780px"
@@ -330,10 +469,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 />
                             </figure>
 
-                            {/* Inline TOC (mobile + desktop below xl) */}
                             {toc.length > 0 && (
                                 <nav className="xl:hidden bg-stone-50 border border-stone-100 rounded-2xl p-6 mb-10">
-                                    <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-stone-400 mb-4">In questo articolo</h3>
+                                    <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-stone-400 mb-4">{ui.inThisArticle}</h3>
                                     <ul className="space-y-2">
                                         {toc.map((item, idx) => (
                                             <li key={idx} className={item.level === 3 ? 'ml-4 border-l-2 border-stone-200 pl-3' : ''}>
@@ -349,13 +487,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 </nav>
                             )}
 
-                            {/* On xl: article + left TOC in a sub-grid */}
                             <div className="xl:flex xl:gap-12 xl:items-start">
-                                {/* XL sticky left TOC */}
                                 {toc.length > 0 && (
                                     <nav className="hidden xl:block w-52 shrink-0 sticky top-32">
                                         <h3 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-stone-400 mb-4 pb-3 border-b border-stone-100">
-                                            Contenuti
+                                            {ui.contents}
                                         </h3>
                                         <ul className="space-y-3">
                                             {toc.map((item, idx) => (
@@ -372,21 +508,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                     </nav>
                                 )}
 
-                                {/* Prose content */}
                                 <div className="flex-1 min-w-0">
                                     {renderContent(post.content)}
                                 </div>
                             </div>
 
-                            {/* Bibliography section */}
                             {post.references && post.references.length > 0 && (
                                 <div className="mt-14 pt-8 border-t-2 border-[#3D5A3D]/20">
-                                    {/* Header */}
                                     <div className="flex items-center gap-2 mb-6">
                                         <BookOpen className="w-4 h-4 text-[#3D5A3D]" />
-                                        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#3D5A3D]">Fonti e riferimenti scientifici</span>
+                                        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#3D5A3D]">{ui.sources}</span>
                                     </div>
-                                    {/* References list */}
                                     <ol className="space-y-4">
                                         {post.references.map((ref, i) => (
                                             <li key={i} className="flex items-start gap-3 group">
@@ -411,36 +543,31 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 </div>
                             )}
 
-                            {/* Bottom toolbar */}
-
                             <div className="mt-12 pt-8 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="flex flex-wrap gap-2">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 self-center mr-1">Tag:</span>
-                                    <Link href={`/blog?category=${encodeURIComponent(post.category)}`} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 transition-colors text-xs font-bold text-stone-700">
+                                    <Link href={getBlogCategoryHref(post.category)} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 transition-colors text-xs font-bold text-stone-700">
                                         {post.category}
                                     </Link>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 text-xs font-bold text-stone-500">
-                                        Olio EVO
+                                        {ui.evoTag}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#3D5A3D] border border-[#3D5A3D]/30 hover:bg-[#3D5A3D]/5 px-4 py-2.5 rounded-full transition-colors">
-                                        <Share2 className="w-3.5 h-3.5" /> Condividi
+                                        <Share2 className="w-3.5 h-3.5" /> {ui.share}
                                     </button>
                                     <button className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-stone-500 border border-stone-200 hover:bg-stone-50 px-4 py-2.5 rounded-full transition-colors">
-                                        <Printer className="w-3.5 h-3.5" /> Stampa
+                                        <Printer className="w-3.5 h-3.5" /> {ui.print}
                                     </button>
                                 </div>
                             </div>
                         </article>
 
-                        {/* Sidebar */}
                         <aside className="hidden lg:block space-y-8 sticky top-32">
-
-                            {/* Categories */}
                             <div className="bg-stone-50 border border-stone-100 rounded-2xl p-6">
                                 <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-stone-400 mb-4 pb-3 border-b border-stone-200">
-                                    Argomenti
+                                    {ui.topics}
                                 </h3>
                                 <ul className="space-y-1">
                                     {categories.map((cat) => {
@@ -448,7 +575,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                         return (
                                             <li key={cat}>
                                                 <Link
-                                                    href={`/blog?category=${encodeURIComponent(cat)}`}
+                                                    href={getBlogCategoryHref(cat)}
                                                     className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
                                                         ? 'bg-[#3D5A3D] text-white'
                                                         : 'text-stone-600 hover:bg-stone-100 hover:text-zinc-900'
@@ -465,18 +592,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 </ul>
                             </div>
 
-                            {/* Related in same category */}
                             {relatedPosts.length > 0 && (
                                 <div className="bg-stone-50 border border-stone-100 rounded-2xl p-6">
                                     <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-stone-400 mb-4 pb-3 border-b border-stone-200">
-                                        Nella stessa categoria
+                                        {ui.inSameCategory}
                                     </h3>
                                     <div className="space-y-5">
                                         {relatedPosts.map(p => (
                                             <div key={p.id} className="group flex gap-3 items-start">
                                                 <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-stone-100 border border-stone-100">
                                                     <Image src={p.imageUrl} alt={p.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="56px" />
-                                                    <Link href={`/blog/${p.slug}`} className="absolute inset-0 z-10" />
+                                                    <Link href={getLocalizedBlogHref(p, locale)} className="absolute inset-0 z-10" />
                                                 </div>
                                                 <div className="relative flex-1 min-w-0">
                                                     <h4 className="text-sm font-semibold text-zinc-900 group-hover:text-[#3D5A3D] line-clamp-2 mb-1 transition-colors leading-snug">
@@ -485,7 +611,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                                     <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wide flex items-center gap-1">
                                                         <Clock className="w-3 h-3" /> {p.readingTime}
                                                     </span>
-                                                    <Link href={`/blog/${p.slug}`} className="absolute inset-0 z-10" />
+                                                    <Link href={getLocalizedBlogHref(p, locale)} className="absolute inset-0 z-10" />
                                                 </div>
                                             </div>
                                         ))}
@@ -493,22 +619,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 </div>
                             )}
 
-                            {/* Promo CTA */}
                             <div className="bg-zinc-900 text-white rounded-2xl p-6 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#3D5A3D]/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                                <h3 className="text-lg font-bold tracking-tight mb-2 relative z-10">Prenota una degustazione</h3>
+                                <h3 className="text-lg font-bold tracking-tight mb-2 relative z-10">{ui.promoTitle}</h3>
                                 <p className="text-sm text-zinc-400 mb-5 relative z-10 leading-relaxed">
-                                    Vivi l&apos;esperienza dal vivo nel nostro Frantoio in Toscana.
+                                    {ui.promoText}
                                 </p>
                                 <Link href="/degustazioni" className="inline-flex items-center gap-2 relative z-10 bg-white text-zinc-900 text-[11px] font-bold uppercase tracking-widest px-5 py-3 rounded-full hover:bg-stone-100 transition-colors">
-                                    Scopri di più <ArrowRight className="w-3.5 h-3.5" />
+                                    {ui.promoBtn} <ArrowRight className="w-3.5 h-3.5" />
                                 </Link>
                             </div>
                         </aside>
                     </div>
                 </div>
             </main>
-
             <Footer />
         </div>
     );

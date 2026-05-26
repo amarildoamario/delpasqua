@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import {
   Carousel,
   CarouselContent,
@@ -63,6 +64,7 @@ interface HomeGalleryProps {
 }
 
 export default function HomeGallery({ images }: HomeGalleryProps) {
+  const t = useTranslations("HomePage.HomeGallery");
   const imagesList = images && images.length > 0 ? images : HOME_GALLERY_IMAGES;
 
   return (
@@ -70,13 +72,13 @@ export default function HomeGallery({ images }: HomeGalleryProps) {
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="mb-5 md:mb-9 flex flex-col gap-4 md:flex-row md:items-center">
           <h2 className="font-serif text-3xl font-light tracking-tight text-[#1f1a17] md:text-4xl">
-            Atmosfera &amp; Tradizione
+            {t("title")}
           </h2>
           <div className="hidden h-px w-28 bg-[#DCCFBE] md:block" />
         </div>
 
         <Carousel
-          aria-label="Atmosfera e tradizione"
+          aria-label={t("carouselLabel")}
           className="relative w-full cursor-grab select-none px-6 active:cursor-grabbing sm:px-10 lg:px-0"
           opts={GALLERY_CAROUSEL_OPTS}
         >
@@ -89,7 +91,7 @@ export default function HomeGallery({ images }: HomeGalleryProps) {
                 <div className="relative aspect-[1.08/1] overflow-hidden rounded-[5px] bg-[#E4DED3]">
                   <Image
                     src={getGalleryImageSrc(imageName)}
-                    alt={`Galleria Del Pasqua ${index + 1}`}
+                    alt={t("imageAlt", { index: index + 1 })}
                     fill
                     sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 22vw"
                     className="rounded-[5px] object-cover"
@@ -100,13 +102,13 @@ export default function HomeGallery({ images }: HomeGalleryProps) {
           </CarouselContent>
 
           <CarouselPrevious
-            aria-label="Foto precedente"
+            aria-label={t("previousImage")}
             className="left-0 z-10 h-9 w-9 border border-white/70 bg-white/80 text-[#9A928A] shadow-[0_6px_18px_rgba(58,47,37,0.12)] hover:bg-white hover:text-[#314030] sm:-left-1 lg:-left-10"
             size="icon-lg"
             variant="ghost"
           />
           <CarouselNext
-            aria-label="Foto successiva"
+            aria-label={t("nextImage")}
             className="right-0 z-10 h-9 w-9 border border-white/70 bg-white/80 text-[#9A928A] shadow-[0_6px_18px_rgba(58,47,37,0.12)] hover:bg-white hover:text-[#314030] sm:-right-1 lg:-right-10"
             size="icon-lg"
             variant="ghost"

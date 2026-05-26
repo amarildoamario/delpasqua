@@ -11,6 +11,7 @@ import { useCart } from "@/context/CartContext"
 import { getOrCreateCartId } from "@/lib/analytics/cartId"
 import { track } from "@/lib/analytics/track"
 import { shouldContainProductImage } from "@/lib/productImageFit"
+import { getLocalizedProductHref } from "@/lib/productSlugs"
 
 export type ProductCardProduct = {
   id: string
@@ -56,7 +57,7 @@ const cardCopy = {
     wineCategory: "WINE",
     oneFormat: "AVAILABLE IN ONE FORMAT ONLY",
     manyFormats: (count: number) => `AVAILABLE IN ${count} DIFFERENT FORMATS`,
-    from: "Starting from",
+    from: "From",
     price: "Price",
     vat: "+ VAT",
     details: "View details",
@@ -147,15 +148,12 @@ export default function ProductCard({
   onClick?: () => void
   onOpen?: (product: ProductCardProduct) => void
 }) {
-  const href = {
-    pathname: "/shop/[prodotto]",
-    params: { prodotto: product.slug },
-  } as const
   const { add } = useCart()
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMsg, setToastMsg] = useState("")
   const locale = useLocale()
   const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
+  const href = getLocalizedProductHref(product, locale)
 
   const showToast = useCallback((message: string) => {
     setToastMsg(message)

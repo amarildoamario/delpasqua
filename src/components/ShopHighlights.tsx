@@ -8,10 +8,50 @@ import productsData from "@/db/products.json";
 import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
 import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
+import { getLocalizedProductSlug } from "@/lib/productSlugs";
 
 type HighlightProduct = ProductCardProduct;
 
 const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
+
+const SHOP_HIGHLIGHTS_COPY = {
+  it: {
+    from: "A partire da",
+    price: "Prezzo",
+    featuredProducts: "Prodotti in evidenza",
+    goToProduct: (index: number, total: number) => `Vai al prodotto ${index} di ${total}`,
+  },
+  en: {
+    from: "From",
+    price: "Price",
+    featuredProducts: "Featured products",
+    goToProduct: (index: number, total: number) => `Go to product ${index} of ${total}`,
+  },
+  de: {
+    from: "Ab",
+    price: "Preis",
+    featuredProducts: "Vorgestellte Produkte",
+    goToProduct: (index: number, total: number) => `Gehe zu Produkt ${index} von ${total}`,
+  },
+  nl: {
+    from: "Vanaf",
+    price: "Prijs",
+    featuredProducts: "Aanbevolen producten",
+    goToProduct: (index: number, total: number) => `Ga naar product ${index} van ${total}`,
+  },
+  da: {
+    from: "Fra",
+    price: "Pris",
+    featuredProducts: "Udvalgte produkter",
+    goToProduct: (index: number, total: number) => `Gå til produkt ${index} af ${total}`,
+  },
+  no: {
+    from: "Fra",
+    price: "Pris",
+    featuredProducts: "Utvalgte produkter",
+    goToProduct: (index: number, total: number) => `Gå til produkt ${index} av ${total}`,
+  },
+} as const;
 
 
 
@@ -20,6 +60,7 @@ const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "
 export default function ShopHighlights() {
   const tp = useTranslations("Products");
   const locale = useLocale();
+  const copy = SHOP_HIGHLIGHTS_COPY[locale as keyof typeof SHOP_HIGHLIGHTS_COPY] ?? SHOP_HIGHLIGHTS_COPY.en;
 
   const products: HighlightProduct[] = useMemo(() => {
     const all = (productsData as unknown as DbProduct[]) ?? [];
@@ -49,11 +90,11 @@ export default function ShopHighlights() {
 
       return {
         id: p.id,
-        slug: p.slug,
+        slug: getLocalizedProductSlug(p, locale),
         title: tp(`${p.id}.title`) || p.title,
         subtitle: tp(`${p.id}.subtitle`) || p.subtitle || "",
         priceLabel: fmt,
-        priceCaption: hasMany ? "A partire da" : "Prezzo",
+        priceCaption: hasMany ? copy.from : copy.price,
         priceCents: minPriceCents,
         defaultVariantId: p.variants?.[0]?.id,
         badge: tp(`${p.id}.badge`) || p.badge,
@@ -62,7 +103,7 @@ export default function ShopHighlights() {
         variantsCount: p.variants?.length ?? 1,
       };
     });
-  }, [tp, locale]);
+  }, [copy.from, copy.price, tp, locale]);
 
 
 
@@ -153,7 +194,7 @@ export default function ShopHighlights() {
               ref={scrollerRef}
               className={styles.mobileScroller}
               onScroll={onMobileScroll}
-              aria-label="Prodotti in evidenza"
+              aria-label={copy.featuredProducts}
             >
               <div className={styles.mobileTrack}>
                 {products.map((p, idx) => (
@@ -188,7 +229,7 @@ export default function ShopHighlights() {
                     type="button"
                     className={isActive ? styles.mobileDotActive : styles.mobileDotBtn}
                     onClick={() => scrollToIndex(idx)}
-                    aria-label={`Vai al prodotto ${idx + 1} di ${products.length}`}
+                    aria-label={copy.goToProduct(idx + 1, products.length)}
                     aria-current={isActive ? "true" : "false"}
                   />
                 );

@@ -200,11 +200,7 @@ export default function ContattiPage() {
               </div>
 
               <div className="mt-6">
-                <GoogleMapEmbed
-                  address={CONTACT_ADDRESS}
-                  latitude={CONTACT_LAT}
-                  longitude={CONTACT_LNG}
-                />
+                <GoogleMapEmbed address={CONTACT_ADDRESS} />
               </div>
             </div>
           </div>
@@ -240,12 +236,8 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
 
 function GoogleMapEmbed({
   address,
-  latitude,
-  longitude,
 }: {
   address: string;
-  latitude: number;
-  longitude: number;
 }) {
   const src = `https://maps.google.com/maps?hl=it&q=${encodeURIComponent(address)}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
 

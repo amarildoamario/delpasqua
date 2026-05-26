@@ -27,7 +27,7 @@ export default function GoogleAnalytics() {
 
           // Consent Mode (GDPR friendly)
           // Default: denied. Se trovi cookie analytics_consent=1 => granted.
-          var consentGranted = ${hasAnalyticsConsent().toString()};
+          var consentGranted = /(?:^|;\\s*)analytics_consent=1(?:;|$)/.test(document.cookie);
           gtag('consent', 'default', {
             ad_storage: 'denied',
             analytics_storage: consentGranted ? 'granted' : 'denied',

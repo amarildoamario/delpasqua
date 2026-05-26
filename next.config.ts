@@ -134,6 +134,11 @@ const nextConfig: any = {
         permanent: true,
       },
       {
+        source: "/it/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+      {
         source: "/it/storia",
         destination: "/storia/",
         permanent: true,

@@ -4,9 +4,10 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import productsRaw from "@/db/products.json";
 import ProductPurchaseBox from "@/app/[locale]/shop/_components/ProductPurchaseBox.client";
+import { getLocalizedProductHref } from "@/lib/productSlugs";
 
 type ProductVariant = {
   id: string;
@@ -60,6 +61,7 @@ function Stars({ rating = 4.9, count = 312 }: { rating?: number; count?: number 
 export default function HeroSplitEvo() {
   const t = useTranslations("HomePage.HeroSplitEvo");
   const tp = useTranslations("Products");
+  const locale = useLocale();
 
   const evo = useMemo(() => {
     const list = getProductsList();
@@ -106,10 +108,7 @@ export default function HeroSplitEvo() {
 
               <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href={{
-                    pathname: "/shop/[prodotto]",
-                    params: { prodotto: evo.slug },
-                  } as never}
+                  href={getLocalizedProductHref(evo, locale) as never}
                   className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm tracking-[0.10em] text-white hover:bg-zinc-800"
                 >
                   {t("buy_btn")}

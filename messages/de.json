@@ -457,6 +457,17 @@
                 "magnifico": "Del-Pasqua-Magnifico-Flasche",
                 "vittoria": "Del-Pasqua-Vittoria-Weinflasche"
             }
+        },
+        "HomeGallery": {
+            "title": "In toskanischer Tradition verwurzelt",
+            "carouselLabel": "Toskanische Atmosphäre und Tradition",
+            "previousImage": "Vorheriges Bild",
+            "nextImage": "Nächstes Bild",
+            "imageAlt": "Galeriebild Del Pasqua {index}"
+        },
+        "BlogHighlights": {
+            "title": "Aus dem Del Pasqua Journal",
+            "cta": "Alle Artikel lesen"
         }
     },
     "StoriaPage": {

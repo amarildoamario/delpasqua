@@ -457,6 +457,17 @@
                 "magnifico": "Del Pasqua Magnifico-flaske",
                 "vittoria": "Del Pasqua Vittoria-vinflaske"
             }
+        },
+        "HomeGallery": {
+            "title": "Forankret i toscansk tradition",
+            "carouselLabel": "Toscansk atmosfære og tradition",
+            "previousImage": "Forrige billede",
+            "nextImage": "Næste billede",
+            "imageAlt": "Galleri Del Pasqua billede {index}"
+        },
+        "BlogHighlights": {
+            "title": "Fra Del Pasqua Journalen",
+            "cta": "Læs alle artikler"
         }
     },
     "StoriaPage": {

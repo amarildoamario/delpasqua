@@ -457,6 +457,17 @@
                 "magnifico": "Del Pasqua Magnifico-fles",
                 "vittoria": "Del Pasqua Vittoria-wijnfles"
             }
+        },
+        "HomeGallery": {
+            "title": "Geworteld in Toscaanse Traditie",
+            "carouselLabel": "Toscaanse sfeer en traditie",
+            "previousImage": "Vorige afbeelding",
+            "nextImage": "Volgende afbeelding",
+            "imageAlt": "Afbeelding galerij Del Pasqua {index}"
+        },
+        "BlogHighlights": {
+            "title": "Uit het Del Pasqua Journal",
+            "cta": "Lees alle artikelen"
         }
     },
     "ProduzionePage": {

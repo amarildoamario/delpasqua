@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/routing";
 import { readCatalog } from "@/lib/server/catalog";
+import { getLocalizedProductHref } from "@/lib/productSlugs";
 import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -95,10 +96,7 @@ export default async function AcquistaPage({ params }: { params: Promise<{ local
             return (
               <Link
                 key={product.id}
-                href={{
-                  pathname: "/shop/[prodotto]",
-                  params: { prodotto: product.slug ?? product.id },
-                } as never}
+                href={getLocalizedProductHref(product, locale) as never}
                 className="group overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative aspect-square bg-white">

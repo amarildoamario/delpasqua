@@ -17,6 +17,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    // Let internal default-locale rewrites render without re-entering the proxy.
-    matcher: ['/((?!api|_next|_vercel|it(?:/|$)|.*\\..*).*)']
+    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };
