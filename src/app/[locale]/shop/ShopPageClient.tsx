@@ -25,6 +25,53 @@ type ShopProduct = ProductCardProduct & {
   filterTags: ShopFilterId[];
 };
 
+const shopCopy = {
+  it: {
+    evo: "EVO",
+    wine: "Vino",
+    box: "Box",
+    from: "A partire da",
+    price: "Prezzo",
+  },
+  en: {
+    evo: "EVO",
+    wine: "Wine",
+    box: "Box",
+    from: "Starting from",
+    price: "Price",
+  },
+  de: {
+    evo: "EVO",
+    wine: "Wein",
+    box: "Box",
+    from: "Ab",
+    price: "Preis",
+  },
+  nl: {
+    evo: "EVO",
+    wine: "Wijn",
+    box: "Box",
+    from: "Vanaf",
+    price: "Prijs",
+  },
+  da: {
+    evo: "EVO",
+    wine: "Vin",
+    box: "Box",
+    from: "Fra",
+    price: "Pris",
+  },
+  no: {
+    evo: "EVO",
+    wine: "Vin",
+    box: "Box",
+    from: "Fra",
+    price: "Pris",
+  },
+};
+
+type ShopCopyLocale = keyof typeof shopCopy;
+
 function normalizeFilterText(value: string | null | undefined) {
   return (value ?? "").trim().toLowerCase();
 }
@@ -74,15 +121,16 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
   const t = useTranslations("ShopPage");
   const tp = useTranslations("Products");
   const locale = useLocale();
+  const copy = shopCopy[(locale as ShopCopyLocale)] ?? shopCopy.it;
 
   const CATEGORIES = useMemo(() => [
     { id: "all" as ShopFilterId, label: t("categories.all") },
     { id: "fruttato" as ShopFilterId, label: t("categories.fruttato") },
     { id: "aromatico" as ShopFilterId, label: t("categories.aromatico") },
-    { id: "evo" as ShopFilterId, label: "EVO" },
-    { id: "vino" as ShopFilterId, label: "Vino" },
-    { id: "box" as ShopFilterId, label: "Box" },
-  ], [t]);
+    { id: "evo" as ShopFilterId, label: copy.evo },
+    { id: "vino" as ShopFilterId, label: copy.wine },
+    { id: "box" as ShopFilterId, label: copy.box },
+  ], [t, copy]);
 
   const [activeCategory, setActiveCategory] = useState<ShopFilterId>("all");
   const sentListRef = useRef(false);
@@ -116,8 +164,8 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
             }).format(minPriceCents / 100)}`
             : "",
         priceCaption: hasManyVariants
-          ? locale === "it" ? "A partire da" : "Starting from"
-          : locale === "it" ? "Prezzo" : "Price",
+          ? copy.from
+          : copy.price,
         priceCents: typeof minPriceCents === "number" ? minPriceCents : undefined,
         defaultVariantId: p.variants?.[0]?.id,
         category: p.category ?? "all",
@@ -125,7 +173,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
         variantsCount: p.variants?.length ?? 1,
       };
     });
-  }, [initialProducts, locale, tp]);
+  }, [copy, initialProducts, locale, tp]);
 
   const filteredProducts = useMemo(() => (
     activeCategory === "all"

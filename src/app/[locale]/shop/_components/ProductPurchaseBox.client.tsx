@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 import { useCart } from "@/context/CartContext";
 import {
   Minus,
@@ -33,15 +34,11 @@ type PurchaseInfo = {
   resi?: string;
 };
 
-function formatEUR(cents: number) {
-  const sign = cents < 0 ? "-" : "";
-  const abs = Math.abs(cents);
-  const intPart = Math.floor(abs / 100);
-  const decPart = abs % 100;
-
-  const grouped = String(intPart).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  const decimals = String(decPart).padStart(2, "0");
-  return `${sign}${grouped},${decimals} €`;
+function formatEUR(cents: number, locale: string) {
+  return new Intl.NumberFormat(locale === "it" ? "it-IT" : locale, {
+    style: "currency",
+    currency: "EUR",
+  }).format(cents / 100);
 }
 
 function makeSku(productId: string, variantId: string) {
@@ -52,6 +49,197 @@ function pickText(custom: unknown, fallback: string) {
   const s = typeof custom === "string" ? custom.trim() : "";
   return s.length ? s : fallback;
 }
+
+const labels = {
+  it: {
+    checking: "Controllo...",
+    soldOut: "Esaurito",
+    available: "Disponibile",
+    size: "Formato",
+    checkingStock: "Controllo stock...",
+    availableCount: (count: number) => `${count} disponibili`,
+    unavailable: "Non disponibile",
+    inStock: (count: number) => `${count} in stock`,
+    quantity: "Quantita",
+    max: (count: number) => `Max ${count}`,
+    add: "Aggiungi",
+    added: (qty: number) => `Aggiunto al carrello (${qty})`,
+    freeShipping: "Spedizione gratis",
+    freeShippingSub: "Sopra i 50 euro",
+    quality: "Qualita garantita",
+    qualitySub: "100% italiano",
+    productDetails: "Dettagli prodotto",
+    details: {
+      caratteristiche: "Caratteristiche",
+      imballaggio: "Imballaggio",
+      spedizione: "Spedizione",
+      resi: "Resi",
+    },
+    defaults: {
+      caratteristiche: "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidita <0,3%. Estratto a freddo per preservare tutte le proprieta organolettiche.",
+      imballaggio: "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
+      spedizione: "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50 euro.",
+      resi: "Reso gratuito entro 14 giorni. Rimborso completo senza domande.",
+    },
+  },
+  en: {
+    checking: "Checking...",
+    soldOut: "Sold out",
+    available: "Available",
+    size: "Size",
+    checkingStock: "Checking stock...",
+    availableCount: (count: number) => `${count} available`,
+    unavailable: "Unavailable",
+    inStock: (count: number) => `${count} in stock`,
+    quantity: "Quantity",
+    max: (count: number) => `Max ${count}`,
+    add: "Add",
+    added: (qty: number) => `Added to cart (${qty})`,
+    freeShipping: "Free shipping",
+    freeShippingSub: "Over EUR 50",
+    quality: "Guaranteed quality",
+    qualitySub: "100% Italian",
+    productDetails: "Product details",
+    details: {
+      caratteristiche: "Characteristics",
+      imballaggio: "Packaging",
+      spedizione: "Shipping",
+      resi: "Returns",
+    },
+    defaults: {
+      caratteristiche: "Extra virgin olive oil obtained directly from olives and solely by mechanical processes. Cold extracted to preserve its sensory qualities.",
+      imballaggio: "Dark glass bottle or protective tin packaging designed to preserve the oil from light and oxidation.",
+      spedizione: "Delivery in 2-3 working days with tracking. Free shipping for orders over EUR 50.",
+      resi: "Returns available within 14 days according to the sales conditions.",
+    },
+  },
+  de: {
+    checking: "Pruefung...",
+    soldOut: "Ausverkauft",
+    available: "Verfuegbar",
+    size: "Format",
+    checkingStock: "Bestand wird geprueft...",
+    availableCount: (count: number) => `${count} verfuegbar`,
+    unavailable: "Nicht verfuegbar",
+    inStock: (count: number) => `${count} auf Lager`,
+    quantity: "Menge",
+    max: (count: number) => `Max ${count}`,
+    add: "Hinzufuegen",
+    added: (qty: number) => `In den Warenkorb gelegt (${qty})`,
+    freeShipping: "Kostenloser Versand",
+    freeShippingSub: "Ab EUR 50",
+    quality: "Garantierte Qualitaet",
+    qualitySub: "100% italienisch",
+    productDetails: "Produktdetails",
+    details: {
+      caratteristiche: "Eigenschaften",
+      imballaggio: "Verpackung",
+      spedizione: "Versand",
+      resi: "Rueckgabe",
+    },
+    defaults: {
+      caratteristiche: "Natives Olivenoel extra, direkt aus Oliven und ausschliesslich mit mechanischen Verfahren gewonnen. Kaltextrahiert, um die sensorischen Eigenschaften zu bewahren.",
+      imballaggio: "Dunkle Glasflasche oder schuetzende Dose, um das Oel vor Licht und Oxidation zu schuetzen.",
+      spedizione: "Lieferung in 2-3 Werktagen mit Sendungsverfolgung. Kostenloser Versand ab EUR 50.",
+      resi: "Rueckgabe innerhalb von 14 Tagen gemaess den Verkaufsbedingungen.",
+    },
+  },
+  nl: {
+    checking: "Controleren...",
+    soldOut: "Uitverkocht",
+    available: "Beschikbaar",
+    size: "Formaat",
+    checkingStock: "Voorraad controleren...",
+    availableCount: (count: number) => `${count} beschikbaar`,
+    unavailable: "Niet beschikbaar",
+    inStock: (count: number) => `${count} op voorraad`,
+    quantity: "Aantal",
+    max: (count: number) => `Max ${count}`,
+    add: "Toevoegen",
+    added: (qty: number) => `Toegevoegd aan winkelwagen (${qty})`,
+    freeShipping: "Gratis verzending",
+    freeShippingSub: "Boven EUR 50",
+    quality: "Gegarandeerde kwaliteit",
+    qualitySub: "100% Italiaans",
+    productDetails: "Productdetails",
+    details: {
+      caratteristiche: "Kenmerken",
+      imballaggio: "Verpakking",
+      spedizione: "Verzending",
+      resi: "Retouren",
+    },
+    defaults: {
+      caratteristiche: "Extra vierge olijfolie rechtstreeks uit olijven verkregen en uitsluitend met mechanische procedes. Koud geextraheerd om de sensorische kwaliteiten te behouden.",
+      imballaggio: "Donkere glazen fles of beschermende blikverpakking om de olie tegen licht en oxidatie te beschermen.",
+      spedizione: "Levering binnen 2-3 werkdagen met tracking. Gratis verzending bij bestellingen boven EUR 50.",
+      resi: "Retour mogelijk binnen 14 dagen volgens de verkoopvoorwaarden.",
+    },
+  },
+  da: {
+    checking: "Kontrollerer...",
+    soldOut: "Udsolgt",
+    available: "Tilgaengelig",
+    size: "Format",
+    checkingStock: "Kontrollerer lager...",
+    availableCount: (count: number) => `${count} tilgaengelige`,
+    unavailable: "Ikke tilgaengelig",
+    inStock: (count: number) => `${count} paa lager`,
+    quantity: "Antal",
+    max: (count: number) => `Maks ${count}`,
+    add: "Tilfoej",
+    added: (qty: number) => `Tilfoejet til kurv (${qty})`,
+    freeShipping: "Gratis fragt",
+    freeShippingSub: "Over EUR 50",
+    quality: "Garanteret kvalitet",
+    qualitySub: "100% italiensk",
+    productDetails: "Produktdetaljer",
+    details: {
+      caratteristiche: "Egenskaber",
+      imballaggio: "Emballage",
+      spedizione: "Forsendelse",
+      resi: "Returnering",
+    },
+    defaults: {
+      caratteristiche: "Ekstra jomfruolivenolie fremstillet direkte af oliven og udelukkende ved mekaniske processer. Koldpresset for at bevare de sensoriske kvaliteter.",
+      imballaggio: "Moerk glasflaske eller beskyttende dunk, der beskytter olien mod lys og oxidering.",
+      spedizione: "Levering paa 2-3 hverdage med tracking. Gratis fragt ved ordrer over EUR 50.",
+      resi: "Returnering inden for 14 dage i henhold til salgsbetingelserne.",
+    },
+  },
+  no: {
+    checking: "Kontrollerer...",
+    soldOut: "Utsolgt",
+    available: "Tilgjengelig",
+    size: "Format",
+    checkingStock: "Kontrollerer lager...",
+    availableCount: (count: number) => `${count} tilgjengelig`,
+    unavailable: "Ikke tilgjengelig",
+    inStock: (count: number) => `${count} paa lager`,
+    quantity: "Antall",
+    max: (count: number) => `Maks ${count}`,
+    add: "Legg til",
+    added: (qty: number) => `Lagt i handlekurven (${qty})`,
+    freeShipping: "Gratis frakt",
+    freeShippingSub: "Over EUR 50",
+    quality: "Garantert kvalitet",
+    qualitySub: "100% italiensk",
+    productDetails: "Produktdetaljer",
+    details: {
+      caratteristiche: "Egenskaper",
+      imballaggio: "Emballasje",
+      spedizione: "Frakt",
+      resi: "Retur",
+    },
+    defaults: {
+      caratteristiche: "Extra virgin olivenolje fremstilt direkte fra oliven og utelukkende med mekaniske prosesser. Kaldpresset for aa bevare de sensoriske kvalitetene.",
+      imballaggio: "Moerk glassflaske eller beskyttende kanne som beskytter oljen mot lys og oksidasjon.",
+      spedizione: "Levering paa 2-3 virkedager med sporing. Gratis frakt for bestillinger over EUR 50.",
+      resi: "Retur innen 14 dager i henhold til salgsbetingelsene.",
+    },
+  },
+};
+
+type LabelLocale = keyof typeof labels;
 
 export default function ProductPurchaseBox({
   productId,
@@ -66,6 +254,8 @@ export default function ProductPurchaseBox({
   onVariantChange?: (variantId: string) => void;
   purchaseInfo?: PurchaseInfo;
 }) {
+  const locale = useLocale();
+  const text = labels[(locale as LabelLocale)] ?? labels.it;
   const isControlled = selectedVariantId != null && typeof onVariantChange === "function";
   const [localVariantId, setLocalVariantId] = useState<string | undefined>(selectedVariantId ?? variants[0]?.id);
 
@@ -210,20 +400,11 @@ export default function ProductPurchaseBox({
 
   const totalPrice = priceCents * qty;
 
-  // Testi default (quelli che avevi hardcoded)
-  const defaultTexts = {
-    caratteristiche:
-      "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità <0,3%. Estratto a freddo per preservare tutte le proprietà organolettiche.",
-    imballaggio: "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
-    spedizione: "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50€.",
-    resi: "Reso gratuito entro 14 giorni. Rimborso completo senza domande.",
-  };
-
   const detailsTexts = {
-    caratteristiche: pickText(purchaseInfo?.caratteristiche, defaultTexts.caratteristiche),
-    imballaggio: pickText(purchaseInfo?.imballaggio, defaultTexts.imballaggio),
-    spedizione: pickText(purchaseInfo?.spedizione, defaultTexts.spedizione),
-    resi: pickText(purchaseInfo?.resi, defaultTexts.resi),
+    caratteristiche: pickText(locale === "it" ? purchaseInfo?.caratteristiche : undefined, text.defaults.caratteristiche),
+    imballaggio: pickText(locale === "it" ? purchaseInfo?.imballaggio : undefined, text.defaults.imballaggio),
+    spedizione: pickText(locale === "it" ? purchaseInfo?.spedizione : undefined, text.defaults.spedizione),
+    resi: pickText(locale === "it" ? purchaseInfo?.resi : undefined, text.defaults.resi),
   };
 
   // Contenuto dettagli (condiviso tra desktop e mobile) — TITOLI + ICONE IDENTICI
@@ -232,7 +413,7 @@ export default function ProductPurchaseBox({
       <div className="flex items-start gap-3">
         <Info className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
         <div>
-          <h4 className="text-sm font-semibold text-neutral-900">Caratteristiche</h4>
+          <h4 className="text-sm font-semibold text-neutral-900">{text.details.caratteristiche}</h4>
           <p className="mt-1 text-xs leading-relaxed text-neutral-600 whitespace-pre-wrap">
             {detailsTexts.caratteristiche}
           </p>
@@ -242,7 +423,7 @@ export default function ProductPurchaseBox({
       <div className="flex items-start gap-3">
         <Package className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
         <div>
-          <h4 className="text-sm font-semibold text-neutral-900">Imballaggio</h4>
+          <h4 className="text-sm font-semibold text-neutral-900">{text.details.imballaggio}</h4>
           <p className="mt-1 text-xs leading-relaxed text-neutral-600 whitespace-pre-wrap">
             {detailsTexts.imballaggio}
           </p>
@@ -252,7 +433,7 @@ export default function ProductPurchaseBox({
       <div className="flex items-start gap-3">
         <Truck className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
         <div>
-          <h4 className="text-sm font-semibold text-neutral-900">Spedizione</h4>
+          <h4 className="text-sm font-semibold text-neutral-900">{text.details.spedizione}</h4>
           <p className="mt-1 text-xs leading-relaxed text-neutral-600 whitespace-pre-wrap">
             {detailsTexts.spedizione}
           </p>
@@ -262,7 +443,7 @@ export default function ProductPurchaseBox({
       <div className="flex items-start gap-3">
         <RotateCcw className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
         <div>
-          <h4 className="text-sm font-semibold text-neutral-900">Resi</h4>
+          <h4 className="text-sm font-semibold text-neutral-900">{text.details.resi}</h4>
           <p className="mt-1 text-xs leading-relaxed text-neutral-600 whitespace-pre-wrap">
             {detailsTexts.resi}
           </p>
@@ -319,10 +500,10 @@ export default function ProductPurchaseBox({
           <div>
             <span className="text-[10px] font-medium tracking-[0.2em] text-neutral-400 uppercase">{productId}</span>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="font-serif text-3xl text-neutral-900">{formatEUR(priceCents)}</span>
+              <span className="font-serif text-3xl text-neutral-900">{formatEUR(priceCents, locale)}</span>
               {variants.length > 1 && (
                 <span className="text-sm text-neutral-400 line-through">
-                  {formatEUR(Math.max(...variants.map((v) => v.priceCents)))}
+                  {formatEUR(Math.max(...variants.map((v) => v.priceCents)), locale)}
                 </span>
               )}
             </div>
@@ -334,7 +515,7 @@ export default function ProductPurchaseBox({
                 }`}
             />
             <span className="text-[11px] font-medium text-neutral-600">
-              {loadingAvail ? "Controllo…" : isOut ? "Esaurito" : "Disponibile"}
+              {loadingAvail ? text.checking : isOut ? text.soldOut : text.available}
             </span>
           </div>
         </div>
@@ -343,7 +524,7 @@ export default function ProductPurchaseBox({
         {variants.length > 1 && (
           <div className="mt-6 relative">
             <label className="mb-2 block text-[11px] font-medium tracking-[0.15em] text-neutral-500 uppercase">
-              Formato
+              {text.size}
             </label>
             <button
               onClick={() => setShowVariantDropdown(!showVariantDropdown)}
@@ -353,11 +534,11 @@ export default function ProductPurchaseBox({
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-neutral-900">{selected?.label}</span>
                   <span className="text-xs text-neutral-400 mt-0.5">
-                    {loadingAvail ? "Controllo stock…" : selectedAvailable != null ? `${selectedAvailable} disponibili` : "—"}
+                    {loadingAvail ? text.checkingStock : selectedAvailable != null ? text.availableCount(selectedAvailable) : "-"}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-neutral-900">{formatEUR(priceCents)}</span>
+                  <span className="text-sm font-semibold text-neutral-900">{formatEUR(priceCents, locale)}</span>
                   <ChevronDown
                     className={`h-4 w-4 text-neutral-400 transition-transform duration-300 ${showVariantDropdown ? "rotate-180" : ""
                       }`}
@@ -386,10 +567,10 @@ export default function ProductPurchaseBox({
                         <span className={`text-sm ${isSelected ? "font-medium text-neutral-900" : "text-neutral-600"}`}>
                           {variant.label}
                         </span>
-                        <span className="text-[11px] text-neutral-400">{out ? "Non disponibile" : avail != null ? `${avail} in stock` : "—"}</span>
+                        <span className="text-[11px] text-neutral-400">{out ? text.unavailable : avail != null ? text.inStock(avail) : "-"}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-neutral-900">{formatEUR(variant.priceCents)}</span>
+                        <span className="text-sm font-medium text-neutral-900">{formatEUR(variant.priceCents, locale)}</span>
                         {isSelected && (
                           <div className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900">
                             <Check className="h-3 w-3 text-white" />
@@ -407,8 +588,8 @@ export default function ProductPurchaseBox({
         {/* Quantità */}
         <div className="mt-6">
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-[11px] font-medium tracking-[0.15em] text-neutral-500 uppercase">Quantità</label>
-            {!loadingAvail && maxQty > 0 && <span className="text-[11px] text-neutral-400">Max {maxQty}</span>}
+            <label className="text-[11px] font-medium tracking-[0.15em] text-neutral-500 uppercase">{text.quantity}</label>
+            {!loadingAvail && maxQty > 0 && <span className="text-[11px] text-neutral-400">{text.max(maxQty)}</span>}
           </div>
           <div style={{ borderRadius: '5px' }} className="inline-flex items-center border border-neutral-200 bg-white">
             <button
@@ -445,7 +626,7 @@ export default function ProductPurchaseBox({
               }`}
           >
             <ShoppingCart className="h-4 w-4" />
-            {isOut ? "Esaurito" : `Aggiungi — ${formatEUR(totalPrice)}`}
+            {isOut ? text.soldOut : `${text.add} - ${formatEUR(totalPrice, locale)}`}
           </span>
 
           {isAdding && (
@@ -465,7 +646,7 @@ export default function ProductPurchaseBox({
         {added && (
           <div style={{ borderRadius: '5px' }} className="mt-3 flex items-center justify-center gap-2 bg-emerald-50 py-3 text-sm text-emerald-700 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <Check className="h-4 w-4" />
-            Aggiunto al carrello ({qty})
+            {text.added(qty)}
           </div>
         )}
 
@@ -474,15 +655,15 @@ export default function ProductPurchaseBox({
           <div style={{ borderRadius: '5px' }} className="flex items-start gap-2 bg-neutral-50 p-3">
             <Truck className="h-4 w-4 shrink-0 text-neutral-400 mt-0.5" />
             <div>
-              <p className="text-[11px] font-medium text-neutral-900">Spedizione gratis</p>
-              <p className="text-[10px] text-neutral-500">Sopra i 50€</p>
+              <p className="text-[11px] font-medium text-neutral-900">{text.freeShipping}</p>
+              <p className="text-[10px] text-neutral-500">{text.freeShippingSub}</p>
             </div>
           </div>
           <div style={{ borderRadius: '5px' }} className="flex items-start gap-2 bg-neutral-50 p-3">
             <ShieldCheck className="h-4 w-4 shrink-0 text-neutral-400 mt-0.5" />
             <div>
-              <p className="text-[11px] font-medium text-neutral-900">Qualità garantita</p>
-              <p className="text-[10px] text-neutral-500">100% italiano</p>
+              <p className="text-[11px] font-medium text-neutral-900">{text.quality}</p>
+              <p className="text-[10px] text-neutral-500">{text.qualitySub}</p>
             </div>
           </div>
         </div>
@@ -494,7 +675,7 @@ export default function ProductPurchaseBox({
         <div className="mt-4 hidden md:block space-y-1">
           <details className="group">
             <summary className="flex cursor-pointer list-none items-center justify-between py-2 text-xs text-neutral-500 transition-colors hover:text-neutral-900">
-              <span>Dettagli prodotto</span>
+              <span>{text.productDetails}</span>
               <Plus className="h-3 w-3 transition-transform group-open:rotate-45" />
             </summary>
             <div className="pb-2">
@@ -509,7 +690,7 @@ export default function ProductPurchaseBox({
           style={{ borderRadius: '5px' }} className="mt-4 flex w-full items-center justify-center gap-2 border border-neutral-200 py-3 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-50 md:hidden"
         >
           <Info className="h-4 w-4" />
-          Dettagli prodotto
+          {text.productDetails}
         </button>
       </div>
 
@@ -543,7 +724,7 @@ export default function ProductPurchaseBox({
               </div>
 
               <div className="flex items-center justify-between px-5 py-3 border-b border-neutral-100">
-                <h3 className="text-base font-semibold text-neutral-900">Dettagli prodotto</h3>
+                <h3 className="text-base font-semibold text-neutral-900">{text.productDetails}</h3>
                 <button
                   onClick={closeMobileDetails}
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 hover:bg-neutral-200 transition-colors"

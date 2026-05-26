@@ -39,6 +39,15 @@ type PromoResult = {
   freeShipping: boolean;
 };
 
+function productHref(slug?: string | null) {
+  return slug
+    ? {
+        pathname: "/shop/[prodotto]",
+        params: { prodotto: slug },
+      } as never
+    : "/shop";
+}
+
 export default function CartPageClient() {
   const t = useTranslations("Cart");
   const cart = useCart();
@@ -87,7 +96,7 @@ export default function CartPageClient() {
       const unitPriceCents = variant?.priceCents ?? 0;
       const imageSrc = variant?.imageSrc ?? product?.imageSrc ?? "";
       const imageAlt = variant?.imageAlt ?? product?.imageAlt ?? title;
-      const href = product?.slug ? `/shop/${product.slug}` : "/shop";
+      const href = productHref(product?.slug);
 
       return {
         productId: line.productId,
@@ -316,7 +325,7 @@ export default function CartPageClient() {
                         {/* Immagine prodotto in risalto - aspetto verticale */}
                         <div className="relative aspect-[4/4.5] w-full overflow-hidden bg-white flex items-center justify-center p-3">
                           <Link 
-                            href={`/shop/${prod.slug}`} 
+                            href={productHref(prod.slug)}
                             className="relative h-full w-full block bg-transparent"
                             aria-label={prod.title}
                           >
@@ -348,7 +357,7 @@ export default function CartPageClient() {
                           </span>
 
                           <Link 
-                            href={`/shop/${prod.slug}`} 
+                            href={productHref(prod.slug)}
                             className="mt-1 font-serif text-[0.95rem] font-semibold leading-[1.25] tracking-tight text-[#1f1a17] hover:text-[#8f6d4c] transition-colors line-clamp-2"
                           >
                             {prod.title}
@@ -700,7 +709,7 @@ export default function CartPageClient() {
                           className="flex flex-row items-center gap-4 rounded-[5px] border border-zinc-100 bg-zinc-50/50 p-4 transition-colors hover:bg-zinc-50 sm:flex-col"
                         >
                           <Link
-                            href={`/shop/${prod.slug}`}
+                            href={productHref(prod.slug)}
                             className="relative h-20 w-16 shrink-0 overflow-hidden rounded-[5px] bg-transparent"
                             aria-label={prod.title}
                           >
@@ -718,7 +727,7 @@ export default function CartPageClient() {
                           </Link>
 
                           <div className="flex min-w-0 flex-1 flex-col text-left sm:w-full sm:text-center">
-                            <Link href={`/shop/${prod.slug}`} className="truncate text-sm font-medium text-zinc-800 hover:underline">
+                            <Link href={productHref(prod.slug)} className="truncate text-sm font-medium text-zinc-800 hover:underline">
                               {prod.title}
                             </Link>
                             <div className="mt-1 text-xs font-medium text-zinc-500">

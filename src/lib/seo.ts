@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { locales, localizedPathnames, type Locale } from "@/i18n/pathnames";
 
 export const SITE_URL = "https://delpasqua.com";
 export const SITE_NAME = "Frantoio Del Pasqua";
 
-export const REQUIRED_CORE_INDEXABLE_PATHS = [
+const REQUIRED_CORE_INTERNAL_PATHS = [
   "/",
   "/storia/",
   "/produzione/",
@@ -11,21 +12,15 @@ export const REQUIRED_CORE_INDEXABLE_PATHS = [
   "/shop/",
   "/acquista/",
   "/contatti/",
-  "/privacy-policy/",
-  "/cookie-policy/",
-  "/condizioni-generali-di-vendita/",
+  "/privacy/",
+  "/cookie/",
+  "/termini/",
   "/degustazioni/",
-  "/en/",
-  "/en/about-us/",
-  "/en/production/",
-  "/en/olive-oil/",
-  "/en/shop/",
-  "/en/contact/",
-  "/en/tastings/",
-  "/en/terms/",
-  "/en/privacy-policy/",
-  "/en/cookie-policy/",
 ] as const;
+
+export const REQUIRED_CORE_INDEXABLE_PATHS = REQUIRED_CORE_INTERNAL_PATHS.flatMap((path) =>
+  locales.map((locale) => localizedPath(path, locale))
+);
 
 export const REQUIRED_UTILITY_NOINDEX_PATHS = [
   "/carrello/",
@@ -36,15 +31,28 @@ export const REQUIRED_UTILITY_NOINDEX_PATHS = [
 const HREFLANG_CORE_PATHS = new Set([
   "/",
   "/shop/",
+  "/acquista/",
   "/produzione/",
   "/il-nostro-olio/",
   "/contatti/",
   "/storia/",
+  "/privacy/",
   "/privacy-policy/",
+  "/cookie/",
   "/cookie-policy/",
+  "/termini/",
   "/condizioni-generali-di-vendita/",
   "/degustazioni/",
 ]);
+
+const OG_LOCALES: Record<string, string> = {
+  it: "it_IT",
+  en: "en_US",
+  de: "de_DE",
+  nl: "nl_NL",
+  da: "da_DK",
+  no: "nb_NO",
+};
 
 export function normalizePath(path: string) {
   const withLeadingSlash = path.startsWith("/") ? path : `/${path}`;
@@ -54,27 +62,20 @@ export function normalizePath(path: string) {
 
 export function localizedPath(path: string, locale: string) {
   const normalized = normalizePath(path);
+  const supportedLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
 
-  if (locale === "it") return normalized;
-  if (normalized === "/") return `/${locale}/`;
-
-  const enMappings: Record<string, string> = {
-    "/storia/": "/about-us/",
-    "/produzione/": "/production/",
-    "/il-nostro-olio/": "/olive-oil/",
-    "/contatti/": "/contact/",
-    "/degustazioni/": "/tastings/",
-    "/condizioni-generali-di-vendita/": "/terms/",
-    "/cart/": "/cart/",
-    "/carrello/": "/cart/",
-  };
-
-  const mapped = enMappings[normalized];
-  if (mapped) {
-    return normalizePath(`/${locale}${mapped}`);
+  if (normalized === "/") {
+    return supportedLocale === "it" ? "/" : `/${supportedLocale}/`;
   }
 
-  return normalizePath(`/${locale}${normalized}`);
+  const internalPath = normalized.replace(/\/$/, "");
+  const externalPath = localizedPathnames[internalPath]?.[supportedLocale] ?? normalized;
+
+  if (supportedLocale === "it") {
+    return normalizePath(externalPath);
+  }
+
+  return normalizePath(`/${supportedLocale}${externalPath}`);
 }
 
 export function absoluteUrl(path: string) {
@@ -101,11 +102,10 @@ export function pageMetadata({
   const normalizedPath = normalizePath(path);
   const canonical = absoluteUrl(canonicalPath ?? localizedPath(normalizedPath, locale));
   const languages = hreflang
-    ? {
-        "it-IT": absoluteUrl(localizedPath(normalizedPath, "it")),
-        "en": absoluteUrl(localizedPath(normalizedPath, "en")),
-        "x-default": absoluteUrl(localizedPath(normalizedPath, "it")),
-      }
+    ? Object.fromEntries([
+        ...locales.map((l) => [l === "it" ? "it-IT" : l, absoluteUrl(localizedPath(normalizedPath, l))]),
+        ["x-default", absoluteUrl(localizedPath(normalizedPath, "it"))],
+      ])
     : undefined;
 
   return {
@@ -130,7 +130,7 @@ export function pageMetadata({
       description,
       url: canonical,
       siteName: SITE_NAME,
-      locale: locale === "it" ? "it_IT" : locale,
+      locale: OG_LOCALES[locale] ?? locale,
       type: "website",
     },
   };

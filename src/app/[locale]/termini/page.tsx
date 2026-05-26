@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageMetadata({
     title: "Condizioni Generali di Vendita",
     description: "Termini, condizioni di vendita e informazioni commerciali del sito Frantoio Del Pasqua.",
-    path: "/condizioni-generali-di-vendita/",
+    path: "/termini/",
     locale,
     hreflang: true,
   });

@@ -1,7 +1,7 @@
 // BioMethodSection.tsx
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import {
@@ -187,7 +187,7 @@ export default function BioMethodSection() {
               <Link href="/produzione" className="group inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-medium text-stone-950 transition-all hover:bg-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                 {t("cta_prod")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
-              <Link href="/olio" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-700 bg-stone-900/50 px-5 py-2.5 text-sm font-medium text-stone-300 transition-all hover:border-emerald-500/50 hover:bg-stone-800 hover:text-emerald-400">
+              <Link href="/il-nostro-olio" className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-700 bg-stone-900/50 px-5 py-2.5 text-sm font-medium text-stone-300 transition-all hover:border-emerald-500/50 hover:bg-stone-800 hover:text-emerald-400">
                 {t("cta_oil")}
               </Link>
             </div>

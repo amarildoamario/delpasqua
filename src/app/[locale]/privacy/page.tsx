@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageMetadata({
     title: "Privacy Policy",
     description: "Informativa privacy del sito Frantoio Del Pasqua.",
-    path: "/privacy-policy/",
+    path: "/privacy/",
     locale,
     hreflang: true,
   });

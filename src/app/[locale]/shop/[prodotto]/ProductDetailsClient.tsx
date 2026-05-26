@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { useLocale } from "next-intl";
 import ProductPurchaseBox from "../_components/ProductPurchaseBox.client";
 import { resolveTransparentProductImage, shouldContainProductImage } from "@/lib/productImageFit";
 
@@ -60,6 +61,83 @@ function buildSpecsRows(product: Product, variant?: ProductVariant) {
   return rows;
 }
 
+const pageCopy = {
+  it: {
+    missingImage: "Immagine non impostata",
+    missingImageHint: "Aggiungi un URL in Admin > Prodotti",
+    details: "Dettagli",
+    specs: {
+      Weight: "Peso",
+      Dimensions: "Dimensioni",
+      Harvest: "Raccolta",
+      Prize: "Premio",
+      Certification: "Certificazione",
+    },
+  },
+  en: {
+    missingImage: "Image not set",
+    missingImageHint: "Add an URL in Admin > Products",
+    details: "Details",
+    specs: {
+      Weight: "Weight",
+      Dimensions: "Dimensions",
+      Harvest: "Harvest",
+      Prize: "Award",
+      Certification: "Certification",
+    },
+  },
+  de: {
+    missingImage: "Bild nicht festgelegt",
+    missingImageHint: "URL in Admin > Produkte hinzufuegen",
+    details: "Details",
+    specs: {
+      Weight: "Gewicht",
+      Dimensions: "Abmessungen",
+      Harvest: "Ernte",
+      Prize: "Auszeichnung",
+      Certification: "Zertifizierung",
+    },
+  },
+  nl: {
+    missingImage: "Afbeelding niet ingesteld",
+    missingImageHint: "Voeg een URL toe in Admin > Producten",
+    details: "Details",
+    specs: {
+      Weight: "Gewicht",
+      Dimensions: "Afmetingen",
+      Harvest: "Oogst",
+      Prize: "Prijs",
+      Certification: "Certificering",
+    },
+  },
+  da: {
+    missingImage: "Billede ikke angivet",
+    missingImageHint: "Tilfoej en URL i Admin > Produkter",
+    details: "Detaljer",
+    specs: {
+      Weight: "Vaegt",
+      Dimensions: "Dimensioner",
+      Harvest: "Hoest",
+      Prize: "Pris",
+      Certification: "Certificering",
+    },
+  },
+  no: {
+    missingImage: "Bilde ikke angitt",
+    missingImageHint: "Legg til en URL i Admin > Produkter",
+    details: "Detaljer",
+    specs: {
+      Weight: "Vekt",
+      Dimensions: "Dimensjoner",
+      Harvest: "Innhosting",
+      Prize: "Pris",
+      Certification: "Sertifisering",
+    },
+  },
+};
+
+type PageCopyLocale = keyof typeof pageCopy;
+
 export default function ProductDetailsClient({
   product,
   initialVariantId,
@@ -67,6 +145,8 @@ export default function ProductDetailsClient({
   product: Product;
   initialVariantId?: string;
 }) {
+  const locale = useLocale();
+  const text = pageCopy[(locale as PageCopyLocale)] ?? pageCopy.it;
   const variants = useMemo(() => product.variants?.length ? product.variants : [], [product.variants]);
 
   const firstId = variants[0]?.id;
@@ -119,8 +199,8 @@ export default function ProductDetailsClient({
           ) : (
             <div className="absolute inset-0 grid place-items-center">
               <div className="text-center">
-                <div className="text-xs font-semibold text-neutral-500">Immagine non impostata</div>
-                <div className="mt-1 text-[11px] text-neutral-400">Aggiungi un URL in Admin → Prodotti</div>
+                <div className="text-xs font-semibold text-neutral-500">{text.missingImage}</div>
+                <div className="mt-1 text-[11px] text-neutral-400">{text.missingImageHint}</div>
               </div>
             </div>
           )}
@@ -143,12 +223,12 @@ export default function ProductDetailsClient({
 
         {specsRows.length ? (
           <section className="mt-8">
-            <h3 className="text-sm font-semibold tracking-wide text-neutral-900">Dettagli</h3>
+            <h3 className="text-sm font-semibold tracking-wide text-neutral-900">{text.details}</h3>
 
             <div className="mt-3 divide-y divide-neutral-200 rounded-xl border border-neutral-200 bg-white">
               {specsRows.map((r) => (
                 <div key={r.k} className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
-                  <div className="text-neutral-700">{r.k}</div>
+                  <div className="text-neutral-700">{text.specs[r.k as keyof typeof text.specs] ?? r.k}</div>
                   <div className="text-right text-neutral-900">{r.v}</div>
                 </div>
               ))}

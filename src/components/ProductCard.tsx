@@ -31,6 +31,113 @@ export type ProductCardProduct = {
 const shellClassName =
   "group relative flex h-full w-full overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white text-[#1f1a17] shadow-[0_2px_8px_rgba(31,26,23,0.30)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_10px_28px_rgba(31,26,23,0.40)] transform-gpu will-change-transform backface-hidden"
 
+const cardCopy = {
+  it: {
+    chooseSize: "Apri il prodotto per scegliere il formato.",
+    added: (title: string) => `${title} aggiunto al carrello`,
+    oilCategory: "OLIO EXTRAVERGINE DI OLIVA",
+    wineCategory: "VINO",
+    oneFormat: "DISPONIBILE IN UN SOLO FORMATO",
+    manyFormats: (count: number) => `DISPONIBILE IN ${count} FORMATI DIVERSI`,
+    from: "A partire da",
+    price: "Prezzo",
+    vat: "+ iva",
+    details: "Vedi i dettagli",
+    productImage: "Immagine Prodotto",
+    addToCart: "Aggiungi al carrello",
+    favoriteAdd: "Aggiungi ai preferiti",
+    favoriteRemove: "Rimuovi dai preferiti",
+    secondaryBadge: "100% ITALIANO",
+  },
+  en: {
+    chooseSize: "Open the product to choose the size.",
+    added: (title: string) => `${title} added to cart`,
+    oilCategory: "EXTRA VIRGIN OLIVE OIL",
+    wineCategory: "WINE",
+    oneFormat: "AVAILABLE IN ONE FORMAT ONLY",
+    manyFormats: (count: number) => `AVAILABLE IN ${count} DIFFERENT FORMATS`,
+    from: "Starting from",
+    price: "Price",
+    vat: "+ VAT",
+    details: "View details",
+    productImage: "Product Image",
+    addToCart: "Add to cart",
+    favoriteAdd: "Add to favorites",
+    favoriteRemove: "Remove from favorites",
+    secondaryBadge: "100% ITALIAN",
+  },
+  de: {
+    chooseSize: "Produkt oeffnen, um das Format zu waehlen.",
+    added: (title: string) => `${title} wurde in den Warenkorb gelegt`,
+    oilCategory: "NATIVES OLIVENOEL EXTRA",
+    wineCategory: "WEIN",
+    oneFormat: "IN EINEM FORMAT VERFUEGBAR",
+    manyFormats: (count: number) => `IN ${count} FORMATEN VERFUEGBAR`,
+    from: "Ab",
+    price: "Preis",
+    vat: "+ MwSt.",
+    details: "Details ansehen",
+    productImage: "Produktbild",
+    addToCart: "In den Warenkorb",
+    favoriteAdd: "Zu Favoriten hinzufuegen",
+    favoriteRemove: "Aus Favoriten entfernen",
+    secondaryBadge: "100% ITALIENISCH",
+  },
+  nl: {
+    chooseSize: "Open het product om het formaat te kiezen.",
+    added: (title: string) => `${title} toegevoegd aan winkelwagen`,
+    oilCategory: "EXTRA VIERGE OLIJFOLIE",
+    wineCategory: "WIJN",
+    oneFormat: "BESCHIKBAAR IN EEN FORMAAT",
+    manyFormats: (count: number) => `BESCHIKBAAR IN ${count} FORMATEN`,
+    from: "Vanaf",
+    price: "Prijs",
+    vat: "+ btw",
+    details: "Details bekijken",
+    productImage: "Productafbeelding",
+    addToCart: "Toevoegen aan winkelwagen",
+    favoriteAdd: "Toevoegen aan favorieten",
+    favoriteRemove: "Verwijderen uit favorieten",
+    secondaryBadge: "100% ITALIAANS",
+  },
+  da: {
+    chooseSize: "Aabn produktet for at vaelge format.",
+    added: (title: string) => `${title} tilfoejet til kurv`,
+    oilCategory: "EKSTRA JOMFRUOLIVENOLIE",
+    wineCategory: "VIN",
+    oneFormat: "FAAS I ET FORMAT",
+    manyFormats: (count: number) => `FAAS I ${count} FORMATER`,
+    from: "Fra",
+    price: "Pris",
+    vat: "+ moms",
+    details: "Se detaljer",
+    productImage: "Produktbillede",
+    addToCart: "Tilfoej til kurv",
+    favoriteAdd: "Tilfoej til favoritter",
+    favoriteRemove: "Fjern fra favoritter",
+    secondaryBadge: "100% ITALIENSK",
+  },
+  no: {
+    chooseSize: "Aapne produktet for aa velge format.",
+    added: (title: string) => `${title} lagt i handlekurven`,
+    oilCategory: "EXTRA VIRGIN OLIVENOLJE",
+    wineCategory: "VIN",
+    oneFormat: "TILGJENGELIG I ETT FORMAT",
+    manyFormats: (count: number) => `TILGJENGELIG I ${count} FORMATER`,
+    from: "Fra",
+    price: "Pris",
+    vat: "+ mva.",
+    details: "Se detaljer",
+    productImage: "Produktbilde",
+    addToCart: "Legg i handlekurv",
+    favoriteAdd: "Legg til i favoritter",
+    favoriteRemove: "Fjern fra favoritter",
+    secondaryBadge: "100% ITALIENSK",
+  },
+};
+
+type CardLocale = keyof typeof cardCopy;
+
 export default function ProductCard({
   product,
   onClick,
@@ -40,11 +147,15 @@ export default function ProductCard({
   onClick?: () => void
   onOpen?: (product: ProductCardProduct) => void
 }) {
-  const href = `/shop/${encodeURIComponent(product.slug)}`
+  const href = {
+    pathname: "/shop/[prodotto]",
+    params: { prodotto: product.slug },
+  } as const
   const { add } = useCart()
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMsg, setToastMsg] = useState("")
   const locale = useLocale()
+  const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
 
   const showToast = useCallback((message: string) => {
     setToastMsg(message)
@@ -62,7 +173,7 @@ export default function ProductCard({
       event.stopPropagation()
 
       if (!product.defaultVariantId) {
-        showToast(locale === "it" ? "Apri il prodotto per scegliere il formato." : "Open the product to choose the size.")
+        showToast(text.chooseSize)
         return
       }
 
@@ -80,9 +191,9 @@ export default function ProductCard({
         },
       })
 
-      showToast(locale === "it" ? `${product.title} aggiunto al carrello` : `${product.title} added to cart`)
+      showToast(text.added(product.title))
     },
-    [add, product.defaultVariantId, product.id, product.priceCents, product.slug, product.title, showToast, locale]
+    [add, product.defaultVariantId, product.id, product.priceCents, product.slug, product.title, showToast, text]
   )
 
   if (onOpen) {
@@ -136,16 +247,16 @@ export default function ProductCard({
 
 function CardInner({ product }: { product: ProductCardProduct }) {
   const locale = useLocale()
-  const isIt = locale === "it"
+  const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
   const [isFavorite, setIsFavorite] = useState(false)
   const usesContainedImage = shouldContainProductImage(product.imageSrc)
 
   // Clean title: rimuovi il prefisso "Extravergine - "
   let cleanTitle = product.title
   if (product.id === "tartufo") {
-    cleanTitle = isIt ? "Olio aromatico al tartufo" : "Truffle aromatic oil"
+    cleanTitle = product.title
   } else if (product.id === "peperoncino") {
-    cleanTitle = isIt ? "Olio aromatico al peperoncino" : "Chili aromatic oil"
+    cleanTitle = product.title
   } else {
     cleanTitle = product.title.replace(/^(Extravergine\s*-\s*|Olio\s+Extravergine\s+di\s+oliva\s+-?\s*)/i, "")
   }
@@ -153,30 +264,30 @@ function CardInner({ product }: { product: ProductCardProduct }) {
   // Badges mapping
   const badgesMap: Record<string, { primary: string; secondary: string }> = {
     "fruttato-medio": {
-      primary: "CLASSICO",
-      secondary: "RACCOLTA 2025",
+      primary: product.badge || "",
+      secondary: text.secondaryBadge,
     },
     "fruttato-intenso": {
-      primary: "BIOLOGICO",
-      secondary: "100% ITALIANO",
+      primary: product.badge || "",
+      secondary: text.secondaryBadge,
     },
     "evo": {
-      primary: "BIOLOGICO",
-      secondary: "100% ITALIANO",
+      primary: product.badge || "",
+      secondary: text.secondaryBadge,
     },
     "tartufo": {
-      primary: "SPECIALE",
-      secondary: "100% ITALIANO",
+      primary: product.badge || "",
+      secondary: text.secondaryBadge,
     },
     "peperoncino": {
-      primary: "SPECIALE",
-      secondary: "100% ITALIANO",
+      primary: product.badge || "",
+      secondary: text.secondaryBadge,
     },
   }
 
   const badgeInfo = badgesMap[product.id] || {
     primary: product.badge || "CLASSICO",
-    secondary: product.secondaryBadge || "100% ITALIANO",
+    secondary: product.secondaryBadge || text.secondaryBadge,
   }
 
   // Variants count → testo formati
@@ -184,8 +295,8 @@ function CardInner({ product }: { product: ProductCardProduct }) {
 
   const formatsText =
     variantsCount <= 1
-      ? isIt ? "DISPONIBILE IN UN SOLO FORMATO" : "AVAILABLE IN ONE FORMAT ONLY"
-      : isIt ? `DISPONIBILE IN ${variantsCount} FORMATI DIVERSI` : `AVAILABLE IN ${variantsCount} DIFFERENT FORMATS`
+      ? text.oneFormat
+      : text.manyFormats(variantsCount)
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -205,7 +316,7 @@ function CardInner({ product }: { product: ProductCardProduct }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-[#fdfaf7] text-[10px] font-semibold uppercase tracking-wider text-[#8f6d4c]/70">
-            {isIt ? "Immagine Prodotto" : "Product Image"}
+            {text.productImage}
           </div>
         )}
 
@@ -235,7 +346,7 @@ function CardInner({ product }: { product: ProductCardProduct }) {
         {/* Categoria + Wishlist */}
         <div className="flex items-center justify-between gap-2">
           <span className="text-[9px] font-semibold tracking-[0.12em] text-[#8a7c6e] uppercase truncate">
-            {isIt ? "OLIO EXTRAVERGINE DI OLIVA" : "EXTRA VIRGIN OLIVE OIL"}
+            {product.id === "vino" ? text.wineCategory : text.oilCategory}
           </span>
           <button
             type="button"
@@ -245,7 +356,7 @@ function CardInner({ product }: { product: ProductCardProduct }) {
               setIsFavorite(!isFavorite)
             }}
             className="shrink-0 focus:outline-none transition-transform active:scale-90 hover:scale-110 p-0.5"
-            aria-label={isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+            aria-label={isFavorite ? text.favoriteRemove : text.favoriteAdd}
           >
             <Heart
               className={`h-4 w-4 transition-all duration-300 ${
@@ -271,14 +382,14 @@ function CardInner({ product }: { product: ProductCardProduct }) {
         {/* Prezzo */}
         <div className="mt-auto pt-1.5 pb-0.5">
           <div className="text-[9px] font-semibold tracking-[0.1em] text-[#9c8f82] uppercase leading-none">
-            {product.priceCaption || (isIt ? "A partire da" : "Starting from")}
+            {product.priceCaption || text.from}
           </div>
           <div className="mt-0.5 flex items-baseline gap-1">
             <span className="font-serif text-[1.25rem] font-bold tracking-tight text-[#1f1a17]">
               {product.priceLabel || "€0,00"}
             </span>
             <span className="text-[10px] font-medium text-[#8a7c6e]">
-              {isIt ? "+ iva" : "+ vat"}
+              {text.vat}
             </span>
           </div>
         </div>
@@ -293,11 +404,13 @@ function CardActionsLink({
   onAdd,
   locale,
 }: {
-  href: string
+  href: React.ComponentProps<typeof Link>["href"]
   onClick?: () => void
   onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void
   locale: string
 }) {
+  const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
+
   return (
     <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-[#f0ece6]">
       <Link
@@ -305,12 +418,12 @@ function CardActionsLink({
         onClick={onClick}
         className="flex-1 rounded-[5px] border border-[#d2c9bd] bg-white px-3 py-2 text-[10px] font-bold tracking-[0.1em] text-[#1f1a17] uppercase transition-all duration-200 hover:border-[#1f1a17] hover:bg-stone-50 text-center"
       >
-        {locale === "it" ? "Vedi i dettagli" : "View details"}
+        {text.details}
       </Link>
       <button
         type="button"
         onClick={onAdd}
-        aria-label="Aggiungi al carrello"
+        aria-label={text.addToCart}
         className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#132c1c] text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-[#1a3d27] active:scale-95"
       >
         <ShoppingCart className="h-[15px] w-[15px]" strokeWidth={1.8} />
@@ -328,6 +441,8 @@ function CardActionsButton({
   onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void
   locale: string
 }) {
+  const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
+
   return (
     <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-[#f0ece6]">
       <button
@@ -335,12 +450,12 @@ function CardActionsButton({
         onClick={onOpen}
         className="flex-1 rounded-[5px] border border-[#d2c9bd] bg-white px-3 py-2 text-[10px] font-bold tracking-[0.1em] text-[#1f1a17] uppercase transition-all duration-200 hover:border-[#1f1a17] hover:bg-stone-50 text-center"
       >
-        {locale === "it" ? "Vedi i dettagli" : "View details"}
+        {text.details}
       </button>
       <button
         type="button"
         onClick={onAdd}
-        aria-label="Aggiungi al carrello"
+        aria-label={text.addToCart}
         className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#132c1c] text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-[#1a3d27] active:scale-95"
       >
         <ShoppingCart className="h-[15px] w-[15px]" strokeWidth={1.8} />

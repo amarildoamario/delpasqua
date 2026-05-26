@@ -267,12 +267,12 @@ const nextConfig: any = {
       },
       {
         source: "/en/acquista",
-        destination: "/en/shop/",
+        destination: "/en/buy/",
         permanent: true,
       },
       {
         source: "/en/acquista/",
-        destination: "/en/shop/",
+        destination: "/en/buy/",
         permanent: true,
       },
       {

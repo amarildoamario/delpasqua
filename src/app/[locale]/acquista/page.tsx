@@ -7,15 +7,40 @@ import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+const BUY_METADATA: Record<string, { title: string; description: string }> = {
+  it: {
+    title: "Acquista Olio Del Pasqua",
+    description: "Acquista online olio extravergine Del Pasqua dallo shop ufficiale.",
+  },
+  en: {
+    title: "Buy Del Pasqua Olive Oil",
+    description: "Buy Del Pasqua extra virgin olive oil online from the official shop.",
+  },
+  de: {
+    title: "Del Pasqua Olivenoel kaufen",
+    description: "Kaufen Sie natives Olivenoel extra von Del Pasqua im offiziellen Online-Shop.",
+  },
+  nl: {
+    title: "Del Pasqua olijfolie kopen",
+    description: "Koop extra vierge olijfolie van Del Pasqua online in de officiele winkel.",
+  },
+  da: {
+    title: "Koeb Del Pasqua olivenolie",
+    description: "Koeb Del Pasqua ekstra jomfruolivenolie online i den officielle butik.",
+  },
+  no: {
+    title: "Kjop Del Pasqua olivenolje",
+    description: "Kjop Del Pasqua extra virgin olivenolje pa nett i den offisielle butikken.",
+  },
+};
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const metadata = BUY_METADATA[locale] ?? BUY_METADATA.it;
 
   return pageMetadata({
-    title: locale === "en" ? "Buy Del Pasqua Olive Oil" : "Acquista Olio Del Pasqua",
-    description:
-      locale === "en"
-        ? "Buy Del Pasqua extra virgin olive oil online from the official shop."
-        : "Acquista online olio extravergine Del Pasqua dallo shop ufficiale.",
+    title: metadata.title,
+    description: metadata.description,
     path: "/acquista/",
     locale,
     hreflang: true,
@@ -70,7 +95,10 @@ export default async function AcquistaPage({ params }: { params: Promise<{ local
             return (
               <Link
                 key={product.id}
-                href={`/shop/${product.slug ?? product.id}`}
+                href={{
+                  pathname: "/shop/[prodotto]",
+                  params: { prodotto: product.slug ?? product.id },
+                } as never}
                 className="group overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative aspect-square bg-white">

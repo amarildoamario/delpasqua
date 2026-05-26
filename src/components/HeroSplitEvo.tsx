@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import productsRaw from "@/db/products.json";
@@ -106,7 +106,10 @@ export default function HeroSplitEvo() {
 
               <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href={`/shop/${encodeURIComponent(evo.slug)}`}
+                  href={{
+                    pathname: "/shop/[prodotto]",
+                    params: { prodotto: evo.slug },
+                  } as never}
                   className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-sm tracking-[0.10em] text-white hover:bg-zinc-800"
                 >
                   {t("buy_btn")}

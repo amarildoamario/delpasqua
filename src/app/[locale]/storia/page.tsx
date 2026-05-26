@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { pageMetadata } from "@/lib/seo";
 
 const STORIA_IMAGES = {
+  iniziale: "/storia/sezione_iniziale.jpg",
   oliveti: "/storia/storia-1.jpg",
   raccolta: "/storia/storia-3.jpg",
   territorio: "/storia/storia-4.jpg",
@@ -29,26 +30,37 @@ export default function StoriaPage() {
 
   return (
     <>
-      <section className="bg-[#FDFCF8] min-h-screen">
-        <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
-          {/* Header */}
-          <div className="max-w-3xl">
+      {/* Hero Background Photo Section (Parallax / Copertura Ferma) */}
+      <section className="relative h-[65vh] lg:h-[80vh] overflow-hidden bg-[#1C1917]">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-bottom bg-no-repeat md:bg-fixed"
+          style={{ backgroundImage: `url('${STORIA_IMAGES.iniziale}')` }}
+        />
+        <div className="absolute inset-0 bg-black/10" />
+      </section>
+
+      {/* Main Content Sections */}
+      <section className="bg-[#FDFCF8] py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          {/* Header (Messo Sotto, Fuori dalla Foto) */}
+          <div className="max-w-5xl mb-20">
             <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
               <span className="h-px w-6 bg-[#8B7355]" />
               {t("header.subtitle")}
             </div>
 
-            <h1 className="mt-6 font-serif text-4xl font-light leading-[1.1] tracking-tight text-[#1C1917] lg:text-5xl xl:text-6xl">
+            <h1 className="mt-6 font-serif text-4xl lg:text-5xl xl:text-6xl font-light leading-[1.15] tracking-tight text-[#1C1917] max-w-4xl">
               {t("header.title_part1")}<span className="italic text-[#3D5A3D]">{t("header.title_italic")}</span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#57534E] lg:text-lg">
+            <p className="mt-6 max-w-4xl text-sm sm:text-base lg:text-lg leading-relaxed text-[#57534E]">
               {t("header.description")}
             </p>
           </div>
 
           {/* Section 1 - Oliveti */}
-          <div className="mt-20 grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div className="order-2 lg:order-1">
               <div className="text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
                 {t("section1.subtitle")}
@@ -198,13 +210,18 @@ function ImageBox({
   src: string;
   alt: string;
   variant: "light" | "dark";
-  aspect: "portrait" | "landscape";
+  aspect: "portrait" | "landscape" | "wide";
 }) {
-  const aspectClass = aspect === "portrait" ? "aspect-[4/5]" : "aspect-[4/3]";
+  const aspectClass =
+    aspect === "portrait"
+      ? "aspect-[4/5]"
+      : aspect === "landscape"
+      ? "aspect-[4/3]"
+      : "aspect-[16/9] md:aspect-[21/9]";
 
   if (variant === "dark") {
     return (
-      <div className="relative overflow-hidden rounded-3xl border border-[#44403C] bg-[#292524]">
+      <div className="relative overflow-hidden rounded-[5px] border border-[#44403C] bg-[#292524]">
         <div className={`relative w-full ${aspectClass}`}>
           <Image
             src={src}
@@ -220,7 +237,7 @@ function ImageBox({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-[#E7E5E4] bg-[#F5F5F4]">
+    <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4]">
       <div className={`relative w-full ${aspectClass}`}>
         <Image
           src={src}

@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowRight, MapPin, Thermometer } from "lucide-react";

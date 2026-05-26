@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { prisma } from "@/lib/server/prisma";
 import { releaseReserved } from "@/lib/server/inventory";
 import CancelTrack from "./_components/CancelTrack";

@@ -47,7 +47,7 @@ export default function HeroCarousel() {
         excerpt: t("slides.tradizione.excerpt"),
         cta: t("slides.tradizione.cta"),
         href: "/produzione",
-        imageSrc: "/hero/tradizione.jpeg",
+        imageSrc: "/hero/tradizione.jpg",
         imageAlt: t("slides.tradizione.alt"),
       },
     ],

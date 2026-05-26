@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageMetadata({
     title: "Cookie Policy",
     description: "Informazioni sui cookie e sulle tecnologie simili usate dal sito Frantoio Del Pasqua.",
-    path: "/cookie-policy/",
+    path: "/cookie/",
     locale,
     hreflang: true,
   });
