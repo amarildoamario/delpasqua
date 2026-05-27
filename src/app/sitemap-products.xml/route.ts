@@ -11,6 +11,9 @@ export async function GET() {
   const urls: string[] = [];
 
   for (const product of products) {
+    if ((product as any).excludeFromSeo === true) {
+      continue;
+    }
     for (const locale of locales) {
       const slug = getLocalizedProductSlug(product, locale);
       const template = localizedPathnames["/shop/[prodotto]"]?.[locale] || "/shop/[prodotto]";

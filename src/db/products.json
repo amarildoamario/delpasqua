@@ -332,6 +332,7 @@
     "imageAlt": "Prodotto di Test",
     "description": "Prodotto di test a 0.50€ con spedizione gratuita.",
     "specs": {},
-    "freeShipping": true
+    "freeShipping": true,
+    "excludeFromSeo": true
   }
 ]

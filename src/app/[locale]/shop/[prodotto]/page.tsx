@@ -138,6 +138,14 @@ export async function generateMetadata({
   const languages = getProductAlternateUrls(product);
   const canonical = languages[locale];
 
+  if ((product as any).excludeFromSeo === true) {
+    return {
+      title: `${title} | Frantoio Del Pasqua`,
+      description,
+      robots: "noindex, nofollow",
+    };
+  }
+
   return {
     title: `${title} | Frantoio Del Pasqua`,
     description,

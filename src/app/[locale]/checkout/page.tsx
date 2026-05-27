@@ -3,10 +3,11 @@ import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const isEn = locale === "en";
 
   return pageMetadata({
-    title: locale === "en" ? "Checkout" : "Checkout",
-    description: locale === "en" ? "Checkout utility page." : "Pagina utility checkout.",
+    title: isEn ? "Checkout" : "Cassa",
+    description: isEn ? "Checkout utility page." : "Pagina tecnica della cassa.",
     path: "/checkout/",
     locale,
     index: false,
@@ -22,7 +23,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ local
     <main className="min-h-[70vh] bg-zinc-50 px-6 py-20">
       <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
-          Checkout
+          {isEn ? "Checkout" : "Cassa"}
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900">
           {isEn ? "Continue from your cart" : "Continua dal carrello"}
