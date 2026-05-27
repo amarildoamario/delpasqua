@@ -14,7 +14,11 @@
     "check:blog-translations": "tsx tools/check-blog-translations.ts --full",
     "typecheck": "tsc --noEmit",
     "verify:migration": "node scripts/verify-migration.mjs",
-    "migrate:prod": "prisma migrate deploy"
+    "migrate:prod": "prisma migrate deploy",
+    "seo:audit-locales": "node scripts/audit-locales.mjs",
+    "seo:audit-sitemap": "node scripts/audit-sitemap.mjs",
+    "seo:audit-hreflang": "node scripts/audit-hreflang.mjs",
+    "seo:audit-canonical": "node scripts/audit-canonical.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

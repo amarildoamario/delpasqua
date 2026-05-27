@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useEffect, useMemo, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
 
 type Card = {
@@ -14,8 +14,44 @@ type Card = {
   imageAlt: string;
 };
 
+const DISCOVER_ALTS: Record<string, { produzione: string; degustazioni: string; contatti: string }> = {
+  it: {
+    produzione: "Macchinari di estrazione e frantoio",
+    degustazioni: "Tavolo allestito per degustazione olio extravergine",
+    contatti: "Ramo di ulivo con olive",
+  },
+  en: {
+    produzione: "Extraction machinery and olive mill",
+    degustazioni: "Table set for extra virgin olive oil tasting",
+    contatti: "Olive branch with olives",
+  },
+  de: {
+    produzione: "Extraktionsmaschinen und Ölmühle",
+    degustazioni: "Gedeckter Tisch für Verkostung von Olivenöl extra vergine",
+    contatti: "Olivenzweig mit Oliven",
+  },
+  nl: {
+    produzione: "Extractiemachines en olijfmolen",
+    degustazioni: "Tafel gedekt voor olijfolieproeverij",
+    contatti: "Olijftak met olijven",
+  },
+  no: {
+    produzione: "Ekstraktionsmaskiner og oljemølle",
+    degustazioni: "Bord dekket for smaking av olivenolje",
+    contatti: "Olivengren med oliven",
+  },
+  da: {
+    produzione: "Ekstraktionsmaskiner og olivenmølle",
+    degustazioni: "Bord dækket til smagning af olivenolie",
+    contatti: "Olivengren med oliven",
+  },
+};
+
 export default function DiscoverSection() {
   const t = useTranslations("HomePage.Discover");
+  const locale = useLocale();
+  const alts = DISCOVER_ALTS[locale] ?? DISCOVER_ALTS.en;
+
   const cards: Card[] = useMemo(
     () => [
       {
@@ -23,24 +59,24 @@ export default function DiscoverSection() {
         subtitle: t("cards.produzione.subtitle"),
         href: "/produzione",
         imageSrc: "/home_component_frantoio/home_frantoio.jpg",
-        imageAlt: "Macchinari di estrazione e frantoio",
+        imageAlt: alts.produzione,
       },
       {
         title: t("cards.degustazioni.title"),
         subtitle: t("cards.degustazioni.subtitle"),
         href: "/degustazioni",
         imageSrc: "/home_component_degustazioni/home_degustazioni.jpg",
-        imageAlt: "Tavolo allestito per degustazione olio extravergine",
+        imageAlt: alts.degustazioni,
       },
       {
         title: t("cards.contatti.title"),
         subtitle: t("cards.contatti.subtitle"),
         href: "/contatti",
         imageSrc: "/home/home_contatti.jpg",
-        imageAlt: "Ramo di ulivo con olive",
+        imageAlt: alts.contatti,
       },
     ],
-    [t]
+    [t, alts]
   );
 
   const titleRef = useRef<HTMLHeadingElement | null>(null);

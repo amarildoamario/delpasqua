@@ -5,6 +5,8 @@ import { readCatalog } from "@/lib/server/catalog";
 import { findProductBySlug } from "@/lib/productSlugs";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
+import { getProductAlternateUrls } from "@/lib/seo";
+import type { Metadata } from "next";
 
 type Specs = Record<string, string>;
 
@@ -114,6 +116,36 @@ function translateCategory(value: string | undefined, locale: string) {
   };
 
   return categories[normalized]?.[locale] ?? value ?? "";
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; prodotto: string }>;
+}): Promise<Metadata> {
+  const { locale, prodotto } = await params;
+  const list = (await readCatalog()) as unknown as Product[];
+  const product = findProductBySlug(list, prodotto);
+
+  if (!product) return { title: "Prodotto non trovato" };
+
+  const tp = await getTranslations({ locale, namespace: "Products" });
+  const title = hasTranslation(tp, `${product.id}.title`) ? tp(`${product.id}.title`) : product.title;
+  const description = hasTranslation(tp, `${product.id}.description`)
+    ? tp(`${product.id}.description`)
+    : product.description;
+
+  const languages = getProductAlternateUrls(product);
+  const canonical = languages[locale];
+
+  return {
+    title: `${title} | Frantoio Del Pasqua`,
+    description,
+    alternates: {
+      canonical,
+      languages,
+    },
+  };
 }
 
 export default async function ProductPage({

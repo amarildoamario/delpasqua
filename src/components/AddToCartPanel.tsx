@@ -5,6 +5,7 @@ import type { Product } from "@/lib/shopTypes";
 import { useCart } from "@/context/CartContext";
 import { track } from "@/lib/analytics/track";
 import { getOrCreateCartId } from "@/lib/analytics/cartId";
+import { useTranslations } from "next-intl";
 
 type Props = {
   product: Product;
@@ -20,19 +21,20 @@ function clampInt(n: number, min: number, max: number) {
 }
 
 function QtyHint({ available }: { available: number }) {
+  const t = useTranslations("Cart");
   const max = Math.min(Math.max(0, Math.trunc(available)), 99);
 
   if (max <= 0) {
     return (
       <div className="mt-2 text-[10px] tracking-[0.20em] text-red-600">
-        ESAURITO
+        {t("panel.sold_out").toUpperCase()}
       </div>
     );
   }
 
   return (
     <div className="mt-2 text-[10px] tracking-[0.20em] text-zinc-500">
-      MAX {max}
+      {t("panel.max_qty", { max })}
     </div>
   );
 }
@@ -48,6 +50,7 @@ function ToggleMessage({
   durationMs?: number;
   onClose: () => void;
 }) {
+  const t = useTranslations("Cart");
   useEffect(() => {
     if (!open) return;
     const id = window.setTimeout(onClose, durationMs);
@@ -67,7 +70,7 @@ function ToggleMessage({
 
             <div className="min-w-0">
               <div className="text-sm font-semibold text-emerald-950">
-                Aggiunto al carrello
+                {t("panel.added_to_cart_toast")}
               </div>
               <div className="mt-1 text-sm text-emerald-900/90">{message}</div>
             </div>
@@ -76,8 +79,8 @@ function ToggleMessage({
               type="button"
               onClick={onClose}
               className="ml-auto rounded-lg px-2 py-1 text-emerald-900/70 hover:bg-emerald-200 hover:text-emerald-950"
-              aria-label="Chiudi"
-              title="Chiudi"
+              aria-label={t("panel.close_toast_aria")}
+              title={t("panel.close_toast_aria")}
             >
               ✕
             </button>
@@ -95,6 +98,7 @@ export default function AddToCartPanel({
   available,
 }: Props) {
   const { add } = useCart();
+  const t = useTranslations("Cart");
 
   const defaultVariantId = product.variants[0]?.id ?? "default";
   const [uncontrolledId, setUncontrolledId] = useState(defaultVariantId);
@@ -142,7 +146,7 @@ export default function AddToCartPanel({
 
   const onAdd = () => {
     if (maxQty <= 0) {
-      showToast("Prodotto esaurito.");
+      showToast(t("panel.out_of_stock_toast"));
       return;
     }
 
@@ -164,7 +168,7 @@ export default function AddToCartPanel({
 
     add({ productId: product.id, variantId, qty: safeQty });
 
-    const title = product.title ?? product.slug ?? "Prodotto";
+    const title = product.title ?? product.slug ?? t("common.product_fallback");
     const vLabel = variant?.label ? ` — ${variant.label}` : "";
     showToast(`${title}${vLabel} (x${safeQty})`);
   };
@@ -175,7 +179,7 @@ export default function AddToCartPanel({
 
       <div className="rounded-[14px] border border-black/10 p-4">
         <div className="flex flex-col gap-3">
-          <div className="text-sm tracking-[0.12em] text-zinc-700">FORMATO BOTTIGLIA</div>
+          <div className="text-sm tracking-[0.12em] text-zinc-700">{t("panel.bottle_format")}</div>
 
           <select
             value={variantId}
@@ -210,7 +214,7 @@ export default function AddToCartPanel({
               setVariantId(next);
             }}
             className="h-11 w-full rounded-[10px] border border-black/10 bg-white px-3 text-sm"
-            aria-label="Seleziona formato bottiglia"
+            aria-label={t("panel.select_format_aria")}
             data-testid="variant-select"
           >
             {product.variants.map((v) => (
@@ -222,7 +226,7 @@ export default function AddToCartPanel({
 
           <div className="grid grid-cols-[110px_1fr] items-start gap-3">
             <div className="flex flex-col">
-              <div className="text-xs tracking-[0.18em] text-zinc-500">QUANTITÀ</div>
+              <div className="text-xs tracking-[0.18em] text-zinc-500">{t("panel.quantity")}</div>
 
               <input
                 type="number"
@@ -253,13 +257,13 @@ export default function AddToCartPanel({
               data-testid="add-to-cart"
               className="mt-[22px] inline-flex h-11 w-full items-center justify-center rounded-full bg-zinc-900 px-4 text-sm tracking-[0.10em] text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {maxQty <= 0 ? "Esaurito" : "Aggiungi al carrello"}
+              {maxQty <= 0 ? t("panel.sold_out") : t("panel.add_to_cart")}
             </button>
           </div>
 
           {variant?.label ? (
             <div className="text-xs text-zinc-500">
-              Formato selezionato:{" "}
+              {t("panel.selected_format")}{" "}
               <span className="text-zinc-700">{variant.label}</span>
             </div>
           ) : null}

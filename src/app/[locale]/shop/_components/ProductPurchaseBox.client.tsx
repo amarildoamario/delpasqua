@@ -494,7 +494,7 @@ export default function ProductPurchaseBox({
 
   return (
     <>
-      <div style={{ borderRadius: '5px' }} className="border border-neutral-200 bg-white p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm md:sticky md:top-6">
+      <div style={{ borderRadius: '5px' }} className="border border-neutral-200 bg-white p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-sm">
         {/* Header: Prezzo e disponibilità */}
         <div className="flex items-start justify-between gap-4">
           <div>

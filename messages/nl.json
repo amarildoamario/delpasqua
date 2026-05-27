@@ -229,6 +229,12 @@
             "subtitle": "100% Sangiovese",
             "description": "Een rode wijn met karakter, een uitdrukking van ons territorium.",
             "badge": "NIEUW"
+        },
+        "prodotto-test": {
+            "title": "Testproduct",
+            "subtitle": "Gratis verzending voor betalingstesten",
+            "description": "Dit is een testproduct voor € 0,50 met gratis verzending om de betalingsstroom en de voorraad te controleren.",
+            "badge": "TEST"
         }
     },
     "ShopPage": {
@@ -658,6 +664,10 @@
                     "De Del Pasqua-molen is gecertificeerd door Suolo e Salute voor de transformatie en productie van biologische producten en staat ingeschreven bij het Toscaanse Olieconsortium voor de productie van IGP Toscano extra vierge olijfolie."
                 ],
                 "placeholder": "AFBEELDING — IGP/BIO"
+            },
+            "iqo": {
+                "title": "IQO-certificering",
+                "text": "Onze extra vierge olijfolie is IQO-gecertificeerd; chemische en wetenschappelijke analyses garanderen een hoge natuurlijke voedingswaarde, stabiliteit op lange termijn en gegarandeerde traceerbaarheid zonder risico op fraude."
             }
         },
         "shared": {
@@ -891,7 +901,18 @@
             "opening_checkout": "Checkout wordt geopend...",
             "go_to_checkout": "Ga naar checkout",
             "secure_payment": "Veilige betaling.",
-            "email_confirmation": "Je ontvangt een bevestiging per e-mail."
+            "email_confirmation": "Je ontvangt een bevestiging per e-mail.",
+            "empty_title": "Je winkelwagen is leeg",
+            "empty_desc": "Je hebt nog geen producten aan je winkelwagen toegevoegd. Ontdek onze speciale selectie van fijne oliën.",
+            "bestsellers_title": "Aanbevolen Bestsellers",
+            "bestsellers_desc": "Onze beste producten rechtstreeks uit de Ölmühle geselecteerd.",
+            "free_shipping_notice": "🚚 Gratis verzending vanaf €69",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Koop nu +",
+            "free_shipping_progress": "Nog {amount} tot gratis verzending",
+            "free_shipping_unlocked": "🎉 Gratis verzending ontgrendeld!",
+            "you_may_also_like": "Misschien vind je dit ook leuk...",
+            "add_more": "Toevoegen +"
         },
         "errors": {
             "promo_invalid": "Ongeldige code.",
@@ -909,6 +930,20 @@
             "checkout_unavailable": "Checkout niet beschikbaar.",
             "missing_checkout_url": "Checkout-URL ontbreekt.",
             "checkout_generic": "Checkoutfout."
+        },
+        "panel": {
+            "bottle_format": "FLESFORMAAT",
+            "select_format_aria": "Selecteer flesformaat",
+            "quantity": "AANTAL",
+            "sold_out": "Uitverkocht",
+            "add_to_cart": "Toevoegen aan winkelwagen",
+            "selected_format": "Geselecteerd formaat: ",
+            "added_to_cart_toast": "Toegevoegd aan winkelwagen",
+            "out_of_stock_toast": "Product uitverkocht.",
+            "close_toast_aria": "Sluiten",
+            "max_qty": "MAX {max}",
+            "available": "BESCHIKBAAR",
+            "plus_vat": "+ btw"
         }
     }
 }

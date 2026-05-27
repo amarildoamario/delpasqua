@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: t.description,
     path: "/parita-di-genere/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }
 

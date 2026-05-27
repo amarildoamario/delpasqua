@@ -11,6 +11,7 @@ import {
     findCategoryNameBySlug,
     normalizeBlogSlug,
 } from "@/lib/blogSlugs";
+import { pageMetadata } from "@/lib/seo";
 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -32,10 +33,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         no: "Oppdag de siste nyhetene, smaksprøver og hemmeligheder i oljemøllen vår. En blogg dedikert til ekstra virgin olivenolje."
     };
 
-    return {
+    return pageMetadata({
         title: titles[locale as keyof typeof titles] || titles.it,
         description: descriptions[locale as keyof typeof descriptions] || descriptions.it,
-    };
+        path: "/blog/",
+        locale,
+        hreflang: true,
+    });
 }
 
 export default async function BlogPage({

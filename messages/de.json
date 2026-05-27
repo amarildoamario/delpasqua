@@ -229,6 +229,12 @@
             "subtitle": "100% Sangiovese",
             "description": "Ein Rotwein mit Charakter, ein Ausdruck unseres Territoriums.",
             "badge": "NEU"
+        },
+        "prodotto-test": {
+            "title": "Testprodukt",
+            "subtitle": "Kostenloser Versand für Zahlungstests",
+            "description": "Dies ist ein Testprodukt für 0,50 € mit kostenlosem Versand, um den Zahlungsfluss und den Lagerbestand zu überprüfen.",
+            "badge": "TEST"
         }
     },
     "ShopPage": {
@@ -697,6 +703,10 @@
                     "Das Frantoio del Pasqua ist durch Suolo e Salute für die Verarbeitung und Produktion von Bio-Produkten zertifiziert und beim Konsortium für toskanisches Öl für die Produktion von nativem Olivenöl extra IGP Toscano registriert."
                 ],
                 "placeholder": "BILD — IGP/BIO"
+            },
+            "iqo": {
+                "title": "IQO-Zertifizierung",
+                "text": "Unser natives Olivenöl extra ist IQO-zertifiziert; chemische und wissenschaftliche Analysen garantieren einen hohen natürlichen Nährwert, langfristige Stabilität und eine lückenlose Rückverfolgbarkeit ohne Betrugsrisiko."
             }
         },
         "shared": {
@@ -891,7 +901,18 @@
             "opening_checkout": "Checkout wird geöffnet...",
             "go_to_checkout": "Zum Checkout",
             "secure_payment": "Sichere Zahlung.",
-            "email_confirmation": "Sie erhalten eine Bestätigung per E-Mail."
+            "email_confirmation": "Sie erhalten eine Bestätigung per E-Mail.",
+            "empty_title": "Ihr Warenkorb ist leer",
+            "empty_desc": "Sie haben noch keine Produkte in Ihren Warenkorb gelegt. Entdecken Sie unsere besondere Auswahl an feinen Ölen.",
+            "bestsellers_title": "Empfohlene Bestseller",
+            "bestsellers_desc": "Unsere besten Produkte direkt aus der Ölmühle ausgewählt.",
+            "free_shipping_notice": "🚚 Kostenloser Versand ab 69 €",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Jetzt kaufen +",
+            "free_shipping_progress": "Noch {amount} bis zum kostenlosen Versand",
+            "free_shipping_unlocked": "🎉 Kostenloser Versand freigeschaltet!",
+            "you_may_also_like": "Das könnte Ihnen auch gefallen...",
+            "add_more": "Hinzufügen +"
         },
         "errors": {
             "promo_invalid": "Ungültiger Code.",
@@ -909,6 +930,20 @@
             "checkout_unavailable": "Checkout nicht verfügbar.",
             "missing_checkout_url": "Checkout-URL fehlt.",
             "checkout_generic": "Checkout-Fehler."
+        },
+        "panel": {
+            "bottle_format": "FLASCHENGRÖSSE",
+            "select_format_aria": "Flaschengröße auswählen",
+            "quantity": "MENGE",
+            "sold_out": "Ausverkauft",
+            "add_to_cart": "In den Warenkorb",
+            "selected_format": "Ausgewähltes Format: ",
+            "added_to_cart_toast": "In den Warenkorb gelegt",
+            "out_of_stock_toast": "Produkt ausverkauft.",
+            "close_toast_aria": "Schließen",
+            "max_qty": "MAX {max}",
+            "available": "VERFÜGBAR",
+            "plus_vat": "+ MwSt."
         }
     }
 }

@@ -680,29 +680,31 @@ export default function ProduzionePageClient() {
                 </div>
 
                 {/* Right side: Interactive Highlighted Logos (Even Larger & Borderless) */}
-                <div className="shrink-0">
+                <div className="w-full max-w-full shrink-0 lg:w-auto">
                   <a
                     href="https://www.iqo.it/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-6 sm:gap-8 group/logo"
+                    className="mx-auto flex w-full items-center justify-center gap-3 sm:gap-5 md:gap-6 lg:mx-0"
                     title="Visita il sito ufficiale IQO"
                   >
-                    <div className="relative h-56 w-56 sm:h-72 sm:w-72 overflow-hidden transition-transform duration-300 group-hover/logo:scale-105">
+                    <div className="relative aspect-square w-[148px] sm:w-[190px] md:w-[220px] lg:w-[256px] overflow-hidden transition-transform duration-300 hover:scale-105">
                       <Image
-                        src="/loghi/bollino IQO 1.avif"
+                        src="/loghi/bollino_IQO_1.avif"
                         alt="Bollino IQO 1"
                         fill
                         className="object-contain"
+                        sizes="(max-width: 640px) 148px, (max-width: 1024px) 220px, 256px"
                       />
                     </div>
-                    <div className="h-40 w-px bg-[#E7E5E4]" />
-                    <div className="relative h-56 w-56 sm:h-72 sm:w-72 overflow-hidden transition-transform duration-300 group-hover/logo:scale-105">
+                    <div className="hidden h-32 w-px bg-[#E7E5E4] md:block lg:h-40" />
+                    <div className="relative aspect-square w-[148px] sm:w-[190px] md:w-[220px] lg:w-[256px] overflow-hidden transition-transform duration-300 hover:scale-105">
                       <Image
-                        src="/loghi/bollino IQO 2.avif"
+                        src="/loghi/bollino_IQO_2.avif"
                         alt="Bollino IQO 2"
                         fill
                         className="object-contain"
+                        sizes="(max-width: 640px) 148px, (max-width: 1024px) 220px, 256px"
                       />
                     </div>
                   </a>

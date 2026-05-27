@@ -12,6 +12,7 @@ import {
     normalizeBlogSlug,
 } from "@/lib/blogSlugs";
 import { Metadata } from 'next';
+import { getBlogAlternateUrls, SITE_URL } from "@/lib/seo";
 
 export async function generateMetadata(
     { params }: { params: Promise<{ slug: string, locale: string, category?: string }> }
@@ -21,8 +22,9 @@ export async function generateMetadata(
 
     if (!post) return { title: "Post non trovato" };
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.frantoiodelpasqua.com";
-    const postUrl = `${baseUrl}/${locale}/blog/category/${getLocalizedBlogCategorySlug(post, locale)}/${post.slug}`;
+    const languages = getBlogAlternateUrls(post);
+    const postUrl = languages[locale];
+    const baseUrl = SITE_URL;
     const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${baseUrl}${post.imageUrl}`;
 
     return {
@@ -32,14 +34,7 @@ export async function generateMetadata(
         keywords: [post.category, "olio extravergine", "Frantoio del Pasqua", "olio EVO", "conservazione olio", "qualità olio"],
         alternates: {
             canonical: postUrl,
-            languages: {
-                it: `${baseUrl}/it/blog/category/${getLocalizedBlogCategorySlug(post, 'it')}/${getLocalizedBlogSlug(post, 'it')}`,
-                en: `${baseUrl}/en/blog/category/${getLocalizedBlogCategorySlug(post, 'en')}/${getLocalizedBlogSlug(post, 'en')}`,
-                de: `${baseUrl}/de/blog/category/${getLocalizedBlogCategorySlug(post, 'de')}/${getLocalizedBlogSlug(post, 'de')}`,
-                nl: `${baseUrl}/nl/blog/category/${getLocalizedBlogCategorySlug(post, 'nl')}/${getLocalizedBlogSlug(post, 'nl')}`,
-                da: `${baseUrl}/da/blog/category/${getLocalizedBlogCategorySlug(post, 'da')}/${getLocalizedBlogSlug(post, 'da')}`,
-                no: `${baseUrl}/no/blog/category/${getLocalizedBlogCategorySlug(post, 'no')}/${getLocalizedBlogSlug(post, 'no')}`,
-            }
+            languages,
         },
         openGraph: {
             title: post.title,
@@ -84,7 +79,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
     const canonicalCategory = getLocalizedBlogCategorySlug(post, locale);
 
-    if (slug !== post.slug || normalizeBlogSlug(category) !== canonicalCategory) {
+    if (normalizeBlogSlug(slug) !== normalizeBlogSlug(post.slug) || normalizeBlogSlug(category) !== canonicalCategory) {
         redirect({
             href: getLocalizedBlogHref(post, locale),
             locale: locale
@@ -366,8 +361,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         return elements;
     };
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.frantoiodelpasqua.com";
-    const postUrl = `${baseUrl}/${locale}/blog/category/${canonicalCategory}/${post.slug}`;
+    const baseUrl = SITE_URL;
+    const postUrl = getBlogAlternateUrls(post)[locale];
     const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${baseUrl}${post.imageUrl}`;
 
     const jsonLd = {

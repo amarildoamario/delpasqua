@@ -223,6 +223,12 @@
             "subtitle": "100% Sangiovese",
             "description": "A red wine with character, an expression of our territory.",
             "badge": "NEW"
+        },
+        "prodotto-test": {
+            "title": "Test Product",
+            "subtitle": "Free shipping for payment testing",
+            "description": "This is a test product for €0.50 with free shipping to check payment flow and inventory.",
+            "badge": "TEST"
         }
     },
     "ShopPage": {
@@ -890,7 +896,18 @@
             "opening_checkout": "Opening checkout...",
             "go_to_checkout": "Go to checkout",
             "secure_payment": "Secure payment.",
-            "email_confirmation": "You will receive confirmation by email."
+            "email_confirmation": "You will receive confirmation by email.",
+            "empty_title": "Your cart is empty",
+            "empty_desc": "You haven't added any products to your cart yet. Discover our special selection of fine oils.",
+            "bestsellers_title": "Recommended Bestsellers",
+            "bestsellers_desc": "Our best products selected directly from the Oil Mill.",
+            "free_shipping_notice": "🚚 Free shipping from €69",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Buy now +",
+            "free_shipping_progress": "You are {amount} away from free shipping",
+            "free_shipping_unlocked": "🎉 Free shipping unlocked!",
+            "you_may_also_like": "You may also like...",
+            "add_more": "Add +"
         },
         "errors": {
             "promo_invalid": "Invalid code.",
@@ -908,6 +925,20 @@
             "checkout_unavailable": "Checkout unavailable.",
             "missing_checkout_url": "Missing checkout URL.",
             "checkout_generic": "Checkout error."
+        },
+        "panel": {
+            "bottle_format": "BOTTLE SIZE",
+            "select_format_aria": "Select bottle size",
+            "quantity": "QUANTITY",
+            "sold_out": "Sold out",
+            "add_to_cart": "Add to cart",
+            "selected_format": "Selected size: ",
+            "added_to_cart_toast": "Added to cart",
+            "out_of_stock_toast": "Product sold out.",
+            "close_toast_aria": "Close",
+            "max_qty": "MAX {max}",
+            "available": "AVAILABLE",
+            "plus_vat": "+ VAT"
         }
     }
 }

@@ -492,6 +492,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: t.description,
     path: "/resi/",
     locale,
-    hreflang: false,
+    hreflang: true,
   });
 }

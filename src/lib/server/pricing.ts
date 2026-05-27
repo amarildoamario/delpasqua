@@ -214,7 +214,12 @@ export async function computeOrderPricing(args: {
   }
 
   // 3) Shipping
-  const shippingCents = freeShipping ? 0 : subtotalCents >= 6900 ? 0 : 590;
+  const hasProductWithFreeShipping = baseItems.some((item) => {
+    const prod = catalog.find((x) => x.id === item.productId);
+    return prod && (prod as any).freeShipping === true;
+  });
+  const orderFreeShipping = freeShipping || hasProductWithFreeShipping;
+  const shippingCents = orderFreeShipping ? 0 : subtotalCents >= 6900 ? 0 : 590;
 
   // 4) Allocazione sconto per riga
   const weights = baseItems.map((x) => x.lineSubtotalCents);

@@ -403,3 +403,17 @@ export default async function CookiePage({ params }: { params: Promise<{ locale:
     </div>
   );
 }
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
+  const t = translations[activeLocale];
+
+  return pageMetadata({
+    title: t.title,
+    description: t.description,
+    path: "/cookie/",
+    locale,
+    hreflang: true,
+  });
+}

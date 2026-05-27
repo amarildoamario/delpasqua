@@ -282,15 +282,15 @@ export default function CartPageClient() {
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-zinc-50">
                   <ShoppingCart className="h-6 w-6 text-zinc-400" strokeWidth={1.5} />
                 </div>
-                <h2 className="mt-4 font-serif text-xl font-medium text-zinc-900">Il tuo carrello è vuoto</h2>
+                <h2 className="mt-4 font-serif text-xl font-medium text-zinc-900">{t("page.empty_title")}</h2>
                 <p className="mt-2 text-sm text-zinc-500 max-w-md mx-auto">
-                  Non hai ancora aggiunto prodotti al carrello. Scopri la nostra selezione speciale di oli pregiati.
+                  {t("page.empty_desc")}
                 </p>
                 <Link 
                   href="/shop" 
                   className="mt-6 inline-flex h-10 items-center justify-center rounded-[5px] bg-zinc-900 px-6 text-xs font-medium tracking-wider text-white uppercase transition-colors hover:bg-zinc-700 active:scale-95"
                 >
-                  Torna allo Shop
+                  {t("page.back_to_shop")}
                 </Link>
               </div>
 
@@ -299,14 +299,14 @@ export default function CartPageClient() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-zinc-100 pb-3">
                   <div>
                     <h3 className="text-sm font-semibold text-zinc-900 tracking-wider uppercase">
-                      Bestseller consigliati
+                      {t("page.bestsellers_title")}
                     </h3>
                     <p className="mt-0.5 text-xs text-zinc-500">
-                      I nostri migliori prodotti selezionati direttamente dal Frantoio.
+                      {t("page.bestsellers_desc")}
                     </p>
                   </div>
                   <div className="mt-2 sm:mt-0 flex items-center gap-1.5 rounded-full border border-black/5 bg-zinc-50 px-2.5 py-1 text-[10px] text-zinc-600">
-                    <span>🚚 Consegna gratis da 69€</span>
+                    <span>{t("page.free_shipping_notice")}</span>
                   </div>
                 </div>
 
@@ -350,7 +350,7 @@ export default function CartPageClient() {
                         {/* Area Dettagli */}
                         <div className="flex flex-1 flex-col p-3.5 bg-white border-t border-[#f0ece6]">
                           <span className="text-[8px] font-semibold tracking-[0.12em] text-[#8a7c6e] uppercase">
-                            Bestseller
+                            {t("page.bestseller_badge")}
                           </span>
 
                           <Link 
@@ -365,8 +365,8 @@ export default function CartPageClient() {
                               <span className="font-serif text-[1.15rem] font-bold tracking-tight text-[#1f1a17]">
                                 {formatEUR(price)}
                               </span>
-                              <span className="text-[9px] font-medium text-[#8a7c6e]">
-                                + iva
+                              <span className="text-[9px] font-medium text-[#8a7c6e] lowercase">
+                                {t("panel.plus_vat")}
                               </span>
                             </div>
 
@@ -390,7 +390,7 @@ export default function CartPageClient() {
                               }}
                               className="mt-3 w-full inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-[11px] font-semibold text-white hover:bg-emerald-700 transition-colors active:scale-95 cursor-pointer shadow-sm"
                             >
-                              Acquista +
+                              {t("page.buy_now")}
                             </button>
                           </div>
                         </div>
@@ -572,8 +572,7 @@ export default function CartPageClient() {
                     {remainingForFreeShipping > 0 ? (
                       <div>
                         <div className="flex items-center justify-between font-medium text-zinc-800">
-                          <span>Spedizione gratuita</span>
-                          <span>Mancano {formatEUR(remainingForFreeShipping)}</span>
+                          <span>{t("page.free_shipping_progress", { amount: formatEUR(remainingForFreeShipping) })}</span>
                         </div>
                         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
                           <div 
@@ -584,7 +583,7 @@ export default function CartPageClient() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 font-medium text-emerald-600">
-                        <span>🎉 Spedizione gratuita sbloccata!</span>
+                        <span>{t("page.free_shipping_unlocked")}</span>
                       </div>
                     )}
                   </div>
@@ -694,7 +693,7 @@ export default function CartPageClient() {
               {recommendations.length > 0 && (
                 <div className="rounded-[5px] border border-black/[0.06] bg-white p-6 shadow-[0_8px_24px_rgba(24,24,27,0.06)] lg:col-start-1">
                   <h3 className="text-sm font-semibold tracking-wider text-zinc-900 uppercase">
-                    Ti potrebbe interessare anche...
+                    {t("page.you_may_also_like")}
                   </h3>
                   <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {recommendations.map((prod) => {
@@ -749,7 +748,7 @@ export default function CartPageClient() {
                               }}
                               className="mt-3 inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-xs font-medium tracking-wide text-white transition-colors hover:bg-emerald-700 active:scale-95 cursor-pointer"
                             >
-                              Aggiungi +
+                              {t("page.add_more")}
                             </button>
                           </div>
                         </div>

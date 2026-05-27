@@ -1,7 +1,70 @@
 import type { Metadata } from "next";
 import { locales, localizedPathnames, type Locale } from "@/i18n/pathnames";
+import { getLocalizedProductSlug } from "@/lib/productSlugs";
+import { getLocalizedBlogSlug, getLocalizedBlogCategorySlug } from "@/lib/blogSlugs";
+import { hasBlogPostTranslation } from "@/lib/blog-data";
 
-export const SITE_URL = "https://delpasqua.com";
+export function getSiteUrl(): string {
+  let url = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
+  
+  if (!url) {
+    if (process.env.NODE_ENV === "development") {
+      url = "http://localhost:3000";
+    } else {
+      // In production, fallback to Vercel env vars if available, but log a warning
+      const fallback = process.env.VERCEL_PROJECT_PRODUCTION_URL 
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` 
+        : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://delpasqua.vercel.app");
+      
+      if (typeof window === "undefined") {
+        console.warn(`[SEO Warning] SITE_URL or NEXT_PUBLIC_SITE_URL is not configured in production! Using fallback: ${fallback}`);
+      }
+      url = fallback;
+    }
+  }
+
+  // Normalizza il dominio:
+  let normalized = url.trim();
+
+  // Rimuove eventuale protocollo per manipolazione
+  let protocol = "https://";
+  if (normalized.startsWith("http://")) {
+    protocol = "http://";
+    normalized = normalized.slice(7);
+  } else if (normalized.startsWith("https://")) {
+    protocol = "https://";
+    normalized = normalized.slice(8);
+  } else {
+    const isProd = process.env.NODE_ENV === "production";
+    protocol = isProd ? "https://" : "http://";
+  }
+
+  // Rimuove path, query string, hash
+  const slashIndex = normalized.indexOf("/");
+  if (slashIndex !== -1) {
+    normalized = normalized.slice(0, slashIndex);
+  }
+  const queryIndex = normalized.indexOf("?");
+  if (queryIndex !== -1) {
+    normalized = normalized.slice(0, queryIndex);
+  }
+  const hashIndex = normalized.indexOf("#");
+  if (hashIndex !== -1) {
+    normalized = normalized.slice(0, hashIndex);
+  }
+
+  // Rimuove slash finale
+  normalized = normalized.replace(/\/$/, "");
+
+  // Garantisce protocollo https:// in produzione se manca o è http ed è un dominio reale (non localhost)
+  if (process.env.NODE_ENV === "production" && !normalized.includes("localhost")) {
+    protocol = "https://";
+  }
+
+  return `${protocol}${normalized}`;
+}
+
+export const SITE_URL = getSiteUrl();
 export const SITE_NAME = "Frantoio Del Pasqua";
 
 const REQUIRED_CORE_INTERNAL_PATHS = [
@@ -43,6 +106,10 @@ const HREFLANG_CORE_PATHS = new Set([
   "/termini/",
   "/condizioni-generali-di-vendita/",
   "/degustazioni/",
+  "/parita-di-genere/",
+  "/resi/",
+  "/spedizioni/",
+  "/blog/",
 ]);
 
 const OG_LOCALES: Record<string, string> = {
@@ -82,6 +149,37 @@ export function absoluteUrl(path: string) {
   return `${SITE_URL}${normalizePath(path)}`;
 }
 
+export function getProductAlternateUrls(product: { id: string; slug?: string | null }) {
+  const urls: Record<string, string> = {};
+  for (const locale of locales) {
+    const slug = getLocalizedProductSlug(product, locale);
+    const template = localizedPathnames["/shop/[prodotto]"]?.[locale] || "/shop/[prodotto]";
+    const resolvedPath = template.replace("[prodotto]", slug);
+    const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
+    urls[locale] = absoluteUrl(fullPath);
+  }
+  urls["x-default"] = urls["it"];
+  return urls;
+}
+
+export function getBlogAlternateUrls(post: { id: string; slug?: string | null; category?: string | null }) {
+  const urls: Record<string, string> = {};
+  for (const locale of locales) {
+    if (!hasBlogPostTranslation(post as any, locale)) continue;
+
+    const categorySlug = getLocalizedBlogCategorySlug(post, locale);
+    const postSlug = getLocalizedBlogSlug(post, locale);
+    const template = localizedPathnames["/blog/category/[category]/[slug]"]?.[locale] || "/blog/category/[category]/[slug]";
+    const resolvedPath = template
+      .replace("[category]", categorySlug)
+      .replace("[slug]", postSlug);
+    const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
+    urls[locale] = absoluteUrl(fullPath);
+  }
+  urls["x-default"] = urls["it"];
+  return urls;
+}
+
 export function pageMetadata({
   title,
   description,
@@ -103,7 +201,7 @@ export function pageMetadata({
   const canonical = absoluteUrl(canonicalPath ?? localizedPath(normalizedPath, locale));
   const languages = hreflang
     ? Object.fromEntries([
-        ...locales.map((l) => [l === "it" ? "it-IT" : l, absoluteUrl(localizedPath(normalizedPath, l))]),
+        ...locales.map((l) => [l, absoluteUrl(localizedPath(normalizedPath, l))]),
         ["x-default", absoluteUrl(localizedPath(normalizedPath, "it"))],
       ])
     : undefined;
@@ -112,10 +210,12 @@ export function pageMetadata({
     metadataBase: new URL(SITE_URL),
     title,
     description,
-    alternates: {
-      canonical,
-      ...(languages ? { languages } : {}),
-    },
+    ...(index ? {
+      alternates: {
+        canonical,
+        ...(languages ? { languages } : {}),
+      }
+    } : {}),
     robots: index
       ? {
           index: true,
@@ -128,7 +228,7 @@ export function pageMetadata({
     openGraph: {
       title,
       description,
-      url: canonical,
+      ...(index ? { url: canonical } : {}),
       siteName: SITE_NAME,
       locale: OG_LOCALES[locale] ?? locale,
       type: "website",

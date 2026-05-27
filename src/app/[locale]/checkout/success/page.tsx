@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import Stripe from "stripe";
+import { getTranslations } from "next-intl/server";
 
 import SuccessAutoRefresh from "./SuccessAutoRefresh";
 import { prisma } from "@/lib/server/prisma";
@@ -148,12 +149,16 @@ function formatPaymentMethodLabelFromStripe(paymentIntent: Stripe.PaymentIntent 
 /** ------------------------------------------------------------------- **/
 
 export default async function CheckoutSuccessPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams:
   | Record<string, string | string[] | undefined>
   | Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Cart" });
   const sp = await Promise.resolve(searchParams);
   let orderId = getOne(sp.orderId);
   const sessionId = getOne(sp.session_id);
@@ -222,7 +227,7 @@ export default async function CheckoutSuccessPage({
                   href="/"
                   className="inline-flex items-center justify-center rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
                 >
-                  Torna allo shop
+                  {t("page.back_to_shop")}
                 </Link>
               </div>
             </div>
@@ -268,7 +273,7 @@ export default async function CheckoutSuccessPage({
                   href="/"
                   className="inline-flex items-center justify-center rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
                 >
-                  Torna allo shop
+                  {t("page.back_to_shop")}
                 </Link>
               </div>
             </div>
@@ -432,7 +437,7 @@ export default async function CheckoutSuccessPage({
                         href="/"
                         className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-neutral-900 px-4 text-sm font-medium text-white hover:opacity-90"
                       >
-                        Continua gli acquisti
+                        {t("common.continue_shopping")}
                       </Link>
 
                       <Link

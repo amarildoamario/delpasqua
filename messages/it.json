@@ -223,6 +223,12 @@
             "subtitle": "100% Sangiovese",
             "description": "Un rosso di carattere, espressione del nostro territorio.",
             "badge": "NOVITÀ"
+        },
+        "prodotto-test": {
+            "title": "Prodotto di Test",
+            "subtitle": "Spedizione gratuita per test pagamenti",
+            "description": "Questo è un prodotto di test a 0,50€ con spedizione gratuita per verificare il flusso di pagamento e il magazzino.",
+            "badge": "TEST"
         }
     },
     "ShopPage": {
@@ -890,7 +896,18 @@
             "opening_checkout": "Apertura checkout...",
             "go_to_checkout": "Vai al checkout",
             "secure_payment": "Pagamento sicuro.",
-            "email_confirmation": "Riceverai conferma via email."
+            "email_confirmation": "Riceverai conferma via email.",
+            "empty_title": "Il tuo carrello è vuoto",
+            "empty_desc": "Non hai ancora aggiunto prodotti al carrello. Scopri la nostra selezione speciale di oli pregiati.",
+            "bestsellers_title": "Bestseller consigliati",
+            "bestsellers_desc": "I nostri migliori prodotti selezionati direttamente dal Frantoio.",
+            "free_shipping_notice": "🚚 Consegna gratis da 69€",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Acquista +",
+            "free_shipping_progress": "Mancano {amount} alla spedizione gratuita",
+            "free_shipping_unlocked": "🎉 Spedizione gratuita sbloccata!",
+            "you_may_also_like": "Ti potrebbe interessare anche...",
+            "add_more": "Aggiungi +"
         },
         "errors": {
             "promo_invalid": "Codice non valido.",
@@ -908,6 +925,20 @@
             "checkout_unavailable": "Checkout non disponibile.",
             "missing_checkout_url": "URL checkout mancante.",
             "checkout_generic": "Errore checkout."
+        },
+        "panel": {
+            "bottle_format": "FORMATO BOTTIGLIA",
+            "select_format_aria": "Seleziona formato bottiglia",
+            "quantity": "QUANTITÀ",
+            "sold_out": "Esaurito",
+            "add_to_cart": "Aggiungi al carrello",
+            "selected_format": "Formato selezionato: ",
+            "added_to_cart_toast": "Aggiunto al carrello",
+            "out_of_stock_toast": "Prodotto esaurito.",
+            "close_toast_aria": "Chiudi",
+            "max_qty": "MAX {max}",
+            "available": "DISPONIBILE",
+            "plus_vat": "+ IVA"
         }
     }
 }

@@ -6,6 +6,7 @@ import type { Product } from "@/lib/shopTypes";
 import { formatEUR } from "@/lib/money";
 import AddToCartPanel from "@/components/AddToCartPanel";
 import { track } from "@/lib/analytics/track";
+import { useTranslations } from "next-intl";
 
 function buildQueryString(sp: URLSearchParams, key: string, value: string) {
   const next = new URLSearchParams(sp.toString());
@@ -19,6 +20,7 @@ type Props = {
 };
 
 function StockLine({ available }: { available: number }) {
+  const t = useTranslations("Cart");
   const ok = available > 0;
   return (
     <div className="mt-3 flex items-center gap-2 text-xs tracking-[0.18em]">
@@ -27,7 +29,7 @@ function StockLine({ available }: { available: number }) {
         aria-hidden="true"
       />
       <span className={ok ? "text-emerald-600" : "text-red-600"}>
-        {ok ? "DISPONIBILE" : "ESAURITO"}
+        {ok ? t("panel.available") : t("panel.sold_out").toUpperCase()}
       </span>
     </div>
   );
@@ -37,6 +39,7 @@ export default function ProductPurchaseDetails({ product, availabilityByVariantI
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
+  const t = useTranslations("Cart");
 
   const defaultVariantId = product.variants[0]?.id ?? "default";
 
@@ -69,7 +72,7 @@ export default function ProductPurchaseDetails({ product, availabilityByVariantI
     return Number.isFinite(n) ? Math.max(0, Math.trunc(n)) : 0;
   }, [availabilityByVariantId, variantId]);
 
-  const lastSentRef = useRef<string>("");
+  const lastSentRef = useRef<string>( "");
 
   useEffect(() => {
     if (!product?.id) return;
@@ -113,7 +116,7 @@ export default function ProductPurchaseDetails({ product, availabilityByVariantI
         <div className="font-serif text-3xl tracking-[0.06em] text-zinc-900">
           {variant ? formatEUR(variant.priceCents) : ""}
         </div>
-        <div className="text-xs tracking-[0.18em] text-zinc-500">+ IVA</div>
+        <div className="text-xs tracking-[0.18em] text-zinc-500">{t("panel.plus_vat")}</div>
       </div>
 
       {/* ✅ SOLO QUI: pallino + scritta verde/rossa */}

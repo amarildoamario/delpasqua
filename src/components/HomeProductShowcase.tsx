@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/routing";
+import IqoBadgePair from "@/components/IqoBadgePair";
 
 type ProductKey = "evo" | "magnifico" | "vittoria";
 
@@ -154,6 +155,14 @@ export default function HomeProductShowcase() {
             <p className="mt-5 max-w-[28rem] text-sm leading-8 text-[#5f554c] md:text-[15px]">
               {t("description")}
             </p>
+
+            <div className="mt-7 flex justify-center lg:justify-start">
+              <IqoBadgePair
+                badgeClassName="w-full max-w-[118px] sm:max-w-[132px] lg:max-w-[144px]"
+                dividerClassName="hidden h-20 w-px bg-[#dccbb5] md:block"
+                gapClassName="gap-4 sm:gap-5"
+              />
+            </div>
 
             <Link
               href="/shop"

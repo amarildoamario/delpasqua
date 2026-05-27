@@ -309,5 +309,29 @@
       "spedizione": "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50€.",
       "resi": "Reso gratuito entro 14 giorni. Rimborso completo senza domande."
     }
+  },
+  {
+    "id": "prodotto-test",
+    "variants": [
+      {
+        "id": "standard",
+        "label": "Standard",
+        "priceCents": 50,
+        "sku": "prodotto-test:standard",
+        "imageSrc": "/products/tartufo.jpg",
+        "imageAlt": "Prodotto di Test",
+        "specs": {}
+      }
+    ],
+    "slug": "prodotto-test",
+    "category": "Olio",
+    "title": "Prodotto di Test",
+    "subtitle": "Spedizione gratuita per test pagamenti",
+    "badge": "TEST",
+    "imageSrc": "/products/tartufo.jpg",
+    "imageAlt": "Prodotto di Test",
+    "description": "Prodotto di test a 0.50€ con spedizione gratuita.",
+    "specs": {},
+    "freeShipping": true
   }
 ]

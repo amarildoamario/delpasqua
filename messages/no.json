@@ -223,6 +223,12 @@
             "subtitle": "100% Sangiovese",
             "description": "En rødvin med karakter, et uttrykk for vårt territorium.",
             "badge": "NYHET"
+        },
+        "prodotto-test": {
+            "title": "Testprodukt",
+            "subtitle": "Gratis frakt for betalingstester",
+            "description": "Dette er et testprodukt for € 0,50 med gratis frakt for å sjekke betalingsflyt og lagerbeholdning.",
+            "badge": "TEST"
         }
     },
     "ShopPage": {
@@ -692,6 +698,10 @@
                     "Frantoio del Pasqua er sertifisert av Suolo e Salute for foredling og produksjon av økologiske produkter og er registrert i Det Toskanske Olivenoljekonsortiet for produksjon av Toscano BGB ekstra jomfru olivenolje."
                 ],
                 "placeholder": "BILDE — BGB/ØKOLOGISK"
+            },
+            "iqo": {
+                "title": "IQO-sertifisering",
+                "text": "Vår ekstra jomfru olivenolje er IQO-sertifisert; kjemiske og vitenskapelige analyser garanterer en høy naturlig næringsverdi, langsiktig stabilitet og garantert sporbarhet uten risiko for svindel."
             }
         },
         "shared": {
@@ -889,7 +899,18 @@
             "opening_checkout": "Åpner kassen...",
             "go_to_checkout": "Gå til kassen",
             "secure_payment": "Sikker betaling via Stripe.",
-            "email_confirmation": "Du vil motta bekreftelse på e-post."
+            "email_confirmation": "Du vil motta bekreftelse på e-post.",
+            "empty_title": "Handlekurven din er tom",
+            "empty_desc": "Du har ikke lagt til noen produkter i handlekurven ennå. Oppdag vårt spesielle utvalg av fine oljer.",
+            "bestsellers_title": "Anbefalte Bestsellere",
+            "bestsellers_desc": "Våre beste produkter valgt direkte fra Olivenmøllen.",
+            "free_shipping_notice": "🚚 Gratis frakt fra 69€",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Kjøp nå +",
+            "free_shipping_progress": "Du mangler {amount} for å få gratis frakt",
+            "free_shipping_unlocked": "🎉 Gratis frakt låst opp!",
+            "you_may_also_like": "Du vil kanskje også like...",
+            "add_more": "Legg til +"
         },
         "errors": {
             "promo_invalid": "Ugyldig kode.",
@@ -907,6 +928,20 @@
             "checkout_unavailable": "Kassen er ikke tilgjengelig.",
             "missing_checkout_url": "Kasse-URL mangler.",
             "checkout_generic": "Feil ved kassen."
+        },
+        "panel": {
+            "bottle_format": "FLASKEFORMAT",
+            "select_format_aria": "Velg flaskeformat",
+            "quantity": "ANTALL",
+            "sold_out": "Utsolgt",
+            "add_to_cart": "Legg i handlekurv",
+            "selected_format": "Valgt format: ",
+            "added_to_cart_toast": "Lagt i handlekurven",
+            "out_of_stock_toast": "Produkt utsolgt.",
+            "close_toast_aria": "Lukk",
+            "max_qty": "MAX {max}",
+            "available": "TILGJENGELIG",
+            "plus_vat": "+ mva."
         }
     }
 }

@@ -6,32 +6,19 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { companyInfo } from "@/lib/companyInfo";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "TastingsPage.metadata" });
 
-  return {
+  return pageMetadata({
     title: t("title"),
     description: t("description"),
-    keywords: t("keywords"),
-    openGraph: {
-      title: t("title"),
-      description: t("description"),
-      url: "https://www.delpasqua.com/degustazioni",
-      siteName: "Frantoio del Pasqua",
-      locale: locale,
-      type: "website",
-      images: [
-        {
-          url: "https://www.delpasqua.com/images/placeholder-degustazione.jpg", // Aggiornare URL con la foto reale
-          width: 1200,
-          height: 630,
-          alt: t("title"),
-        },
-      ],
-    },
-  };
+    path: "/degustazioni/",
+    locale,
+    hreflang: true,
+  });
 }
 
 export const dynamic = "force-dynamic";
