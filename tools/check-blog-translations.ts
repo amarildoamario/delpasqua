@@ -186,7 +186,7 @@ function buildLocalizedBlogUrl(locale: Locale, categorySlug: string, slug: strin
   return locale === "it" ? pathWithoutPrefix : `/${locale}${pathWithoutPrefix}`;
 }
 
-function getMissingFields(translation: BlogTranslation | undefined) {
+function getMissingFields(translation: BlogTranslation | undefined, postId: string, locale: string, postSlug: string) {
   if (!translation) {
     return ["translation", "slug", "title", "excerpt", "category", "content"];
   }
@@ -196,7 +196,19 @@ function getMissingFields(translation: BlogTranslation | undefined) {
   if (!isFilled(translation.title)) missing.push("title");
   if (!isFilled(translation.excerpt)) missing.push("excerpt");
   if (!isFilled(translation.category)) missing.push("category");
-  if (!isFilled(translation.content)) missing.push("content");
+
+  let hasContent = isFilled(translation.content);
+  if (!hasContent) {
+    const mdPath = path.join(process.cwd(), "content", "blog", postSlug, `${locale}.md`);
+    if (fs.existsSync(mdPath)) {
+      const fileContent = fs.readFileSync(mdPath, "utf8");
+      if (fileContent.trim().length > 0) {
+        hasContent = true;
+      }
+    }
+  }
+
+  if (!hasContent) missing.push("content");
   return missing;
 }
 
@@ -209,8 +221,19 @@ function getSourceUrl(post: BlogPost) {
 function inspectPostLocale(post: BlogPost, locale: CheckLocale): PostLocaleStatus {
   const translation = BLOG_POST_TRANSLATIONS[post.id]?.[locale];
   const translationExists = Boolean(translation);
-  const missingFields = getMissingFields(translation);
-  const contentTranslated = isFilled(translation?.content);
+  const missingFields = getMissingFields(translation, post.id, locale, post.slug);
+  
+  let contentTranslated = isFilled(translation?.content);
+  if (!contentTranslated) {
+    const mdPath = path.join(process.cwd(), "content", "blog", post.slug, `${locale}.md`);
+    if (fs.existsSync(mdPath)) {
+      const fileContent = fs.readFileSync(mdPath, "utf8");
+      if (fileContent.trim().length > 0) {
+        contentTranslated = true;
+      }
+    }
+  }
+  
   const hasOwnSlug = isFilled(translation?.slug);
   const hasOwnCategory = isFilled(translation?.category);
   const resolvedSlug = getLocalizedBlogSlug(post, locale);

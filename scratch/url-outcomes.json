@@ -1918,9 +1918,9 @@
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -1945,9 +1945,9 @@
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -1972,9 +1972,9 @@
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -2107,9 +2107,9 @@
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -2134,9 +2134,9 @@
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -2755,9 +2755,9 @@
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -4996,9 +4996,9 @@
     "hasOgUrl": false,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_INDEXABLE_200"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -13185,6 +13185,270 @@
     "environment": "local",
     "label": "New Local Project",
     "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-category/details/",
+    "inputPath": "/portfolio-category/details/",
+    "initialStatus": 301,
+    "initialLocation": "/produzione/",
+    "finalUrl": "http://localhost:3000/produzione/",
+    "finalPath": "/produzione/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-category/details/",
+        "status": 301,
+        "location": "/produzione/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/produzione/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-category/nature/",
+    "inputPath": "/portfolio-category/nature/",
+    "initialStatus": 301,
+    "initialLocation": "/storia/",
+    "finalUrl": "http://localhost:3000/storia/",
+    "finalPath": "/storia/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-category/nature/",
+        "status": 301,
+        "location": "/storia/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/storia/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-category/photogrpahy/",
+    "inputPath": "/portfolio-category/photogrpahy/",
+    "initialStatus": 301,
+    "initialLocation": "/storia/",
+    "finalUrl": "http://localhost:3000/storia/",
+    "finalPath": "/storia/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-category/photogrpahy/",
+        "status": 301,
+        "location": "/storia/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/storia/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-category/wine/",
+    "inputPath": "/portfolio-category/wine/",
+    "initialStatus": 308,
+    "initialLocation": "/shop/vino/",
+    "finalUrl": "http://localhost:3000/shop/vino/",
+    "finalPath": "/shop/vino/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-category/wine/",
+        "status": 308,
+        "location": "/shop/vino/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": false,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/shop/vino-vittoria/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": false,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-tag/blanc-winery/",
+    "inputPath": "/portfolio-tag/blanc-winery/",
+    "initialStatus": 301,
+    "initialLocation": "/produzione/",
+    "finalUrl": "http://localhost:3000/produzione/",
+    "finalPath": "/produzione/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-tag/blanc-winery/",
+        "status": 301,
+        "location": "/produzione/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/produzione/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-tag/countryside-bay/",
+    "inputPath": "/portfolio-tag/countryside-bay/",
+    "initialStatus": 301,
+    "initialLocation": "/storia/",
+    "finalUrl": "http://localhost:3000/storia/",
+    "finalPath": "/storia/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-tag/countryside-bay/",
+        "status": 301,
+        "location": "/storia/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/storia/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-tag/organic-company/",
+    "inputPath": "/portfolio-tag/organic-company/",
+    "initialStatus": 301,
+    "initialLocation": "/storia/",
+    "finalUrl": "http://localhost:3000/storia/",
+    "finalPath": "/storia/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-tag/organic-company/",
+        "status": 301,
+        "location": "/storia/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/storia/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-tag/organic-winery/",
+    "inputPath": "/portfolio-tag/organic-winery/",
+    "initialStatus": 301,
+    "initialLocation": "/produzione/",
+    "finalUrl": "http://localhost:3000/produzione/",
+    "finalPath": "/produzione/",
+    "finalStatus": 500,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-tag/organic-winery/",
+        "status": 301,
+        "location": "/produzione/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": true,
+    "canonicalUrl": "http://localhost:3000/produzione/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": true,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 3,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_TO_500_ERROR"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
     "inputUrl": "http://localhost:3000/portfolio-item/wine-shop/",
     "inputPath": "/portfolio-item/wine-shop/",
     "initialStatus": 301,
@@ -13243,9 +13507,9 @@
     "hasOgUrl": false,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 2,
-    "transientRecovered": false,
-    "classification": "LOCAL_REDIRECT_301_OK"
+    "attempts": 3,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -13492,6 +13756,39 @@
     "redirectChain": [
       {
         "url": "http://localhost:3000/portfolio-item/white-wine/",
+        "status": 301,
+        "location": "/shop/vino-vittoria/"
+      }
+    ],
+    "redirectCount": 1,
+    "redirectType": "permanent",
+    "isInSitemapInitial": false,
+    "isInSitemapFinal": true,
+    "hasNoindex": false,
+    "canonicalUrl": "http://localhost:3000/shop/vino-vittoria/",
+    "canonicalHostMatchesExpected": true,
+    "hasHreflang": true,
+    "hasOgUrl": false,
+    "contentType": "text/html; charset=utf-8",
+    "fetchError": "",
+    "attempts": 2,
+    "transientRecovered": false,
+    "classification": "LOCAL_REDIRECT_301_OK"
+  },
+  {
+    "environment": "local",
+    "label": "New Local Project",
+    "source": "local-legacy-redirects",
+    "inputUrl": "http://localhost:3000/portfolio-item/white-wine-2/",
+    "inputPath": "/portfolio-item/white-wine-2/",
+    "initialStatus": 301,
+    "initialLocation": "/shop/vino-vittoria/",
+    "finalUrl": "http://localhost:3000/shop/vino-vittoria/",
+    "finalPath": "/shop/vino-vittoria/",
+    "finalStatus": 200,
+    "redirectChain": [
+      {
+        "url": "http://localhost:3000/portfolio-item/white-wine-2/",
         "status": 301,
         "location": "/shop/vino-vittoria/"
       }
@@ -13771,9 +14068,9 @@
     "hasOgUrl": false,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 2,
-    "transientRecovered": false,
-    "classification": "LOCAL_REDIRECT_301_OK"
+    "attempts": 3,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",
@@ -14247,7 +14544,7 @@
     "initialLocation": "/shop/",
     "finalUrl": "http://localhost:3000/shop/",
     "finalPath": "/shop/",
-    "finalStatus": 200,
+    "finalStatus": 500,
     "redirectChain": [
       {
         "url": "http://localhost:3000/product-category/magnifico/",
@@ -14259,16 +14556,16 @@
     "redirectType": "permanent",
     "isInSitemapInitial": false,
     "isInSitemapFinal": true,
-    "hasNoindex": false,
+    "hasNoindex": true,
     "canonicalUrl": "http://localhost:3000/shop/",
     "canonicalHostMatchesExpected": true,
     "hasHreflang": true,
     "hasOgUrl": true,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 2,
+    "attempts": 3,
     "transientRecovered": false,
-    "classification": "LOCAL_REDIRECT_301_OK"
+    "classification": "LOCAL_REDIRECT_TO_500_ERROR"
   },
   {
     "environment": "local",
@@ -14359,9 +14656,9 @@
     "hasOgUrl": false,
     "contentType": "text/html; charset=utf-8",
     "fetchError": "",
-    "attempts": 1,
-    "transientRecovered": false,
-    "classification": "LOCAL_TECHNICAL_NOINDEX_OK"
+    "attempts": 2,
+    "transientRecovered": true,
+    "classification": "LOCAL_TRANSIENT_FETCH_WARN"
   },
   {
     "environment": "local",

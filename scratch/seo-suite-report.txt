@@ -1,14 +1,14 @@
 ========================================================================================
 SEO Suite Report
-Generated at: 2026-05-27T23:49:38.911Z
-Started at:   2026-05-27T23:41:49.555Z
+Generated at: 2026-05-28T00:11:43.872Z
+Started at:   2026-05-28T00:01:19.228Z
 Report file:  C:\Users\Utente\Desktop\React\delpasqua\scratch\seo-suite-report.txt
 ========================================================================================
 
 Summary:
 - Total tasks: 13
-- Passed: 8
-- Passed with warnings: 5
+- Passed: 7
+- Passed with warnings: 6
 - Failed: 0
 
 ========================================================================================
@@ -18,8 +18,8 @@ Summary:
 New Local Project :: Locale audit
 Description: Controlla le pagine localizzate principali e segnala stringhe UI della lingua sbagliata.
 Status: passed
-Started at: 2026-05-27T23:41:49.557Z
-Finished at: 2026-05-27T23:42:05.021Z
+Started at: 2026-05-28T00:01:19.230Z
+Finished at: 2026-05-28T00:01:26.241Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -32,7 +32,7 @@ Output:
 New Local Project :: Locale audit
 Descrizione: Controlla le pagine localizzate principali e segnala stringhe UI della lingua sbagliata.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-27T23:41:49.557Z
+Started at: 2026-05-28T00:01:19.230Z
 ----------------------------------------------------------------------------------------
 Route: /
 OK      [it] http://localhost:3000/
@@ -91,7 +91,7 @@ OK      [da] http://localhost:3000/da/kurv
 OK      [no] http://localhost:3000/no/handlekurv
 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:42:05.021Z
+Finished at: 2026-05-28T00:01:26.241Z
 Status: passed
 Metrics: routesChecked=7 | pagesChecked=42 | mixedLanguageViolations=0 | skippedPages=0
 ========================================================================================
@@ -101,8 +101,8 @@ Metrics: routesChecked=7 | pagesChecked=42 | mixedLanguageViolations=0 | skipped
 New Local Project :: Sitemap audit
 Description: Verifica indice sitemap, child sitemap, URL indicizzate, segmenti proibiti e homepage per locale.
 Status: passed
-Started at: 2026-05-27T23:42:05.021Z
-Finished at: 2026-05-27T23:43:30.881Z
+Started at: 2026-05-28T00:01:26.242Z
+Finished at: 2026-05-28T00:02:52.559Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -115,7 +115,7 @@ Output:
 New Local Project :: Sitemap audit
 Descrizione: Verifica indice sitemap, child sitemap, URL indicizzate, segmenti proibiti e homepage per locale.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-27T23:42:05.021Z
+Started at: 2026-05-28T00:01:26.242Z
 ----------------------------------------------------------------------------------------
 Sitemap index: http://localhost:3000/sitemap.xml
 Child sitemap trovate: 3
@@ -565,7 +565,7 @@ OK homepage locale nl -> /nl/
 OK homepage locale da -> /da/
 OK homepage locale no -> /no/
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:43:30.881Z
+Finished at: 2026-05-28T00:02:52.559Z
 Status: passed
 Metrics: childSitemaps=3 | uniqueUrls=433 | verificationFailures=0 | missingHomepages=0
 ========================================================================================
@@ -575,13 +575,13 @@ Metrics: childSitemaps=3 | uniqueUrls=433 | verificationFailures=0 | missingHome
 New Local Project :: Legacy routes audit
 Description: Controlla URL storiche, redirect 301/308 attesi e rotte tecniche che non devono entrare in sitemap.
 Status: passed
-Started at: 2026-05-27T23:43:30.882Z
-Finished at: 2026-05-27T23:43:38.221Z
+Started at: 2026-05-28T00:02:52.559Z
+Finished at: 2026-05-28T00:03:05.240Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
 - direct200Paths: 9
-- legacyRedirects: 34
+- legacyRedirects: 43
 - technicalPaths: 3
 - failures: 0
 Output:
@@ -589,7 +589,7 @@ Output:
 New Local Project :: Legacy routes audit
 Descrizione: Controlla URL storiche, redirect 301/308 attesi e rotte tecniche che non devono entrare in sitemap.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-27T23:43:30.882Z
+Started at: 2026-05-28T00:02:52.559Z
 ----------------------------------------------------------------------------------------
 Checking direct URLs (9)
 OK   / status=200 location=- final=/ finalStatus=200
@@ -602,7 +602,15 @@ OK   /privacy-policy/ status=200 location=- final=/privacy-policy/ finalStatus=2
 OK   /produzione/ status=200 location=- final=/produzione/ finalStatus=200
 OK   /storia/ status=200 location=- final=/storia/ finalStatus=200
 
-Checking legacy redirects (34)
+Checking legacy redirects (43)
+OK   /portfolio-category/details/ status=301 location=/produzione/ final=/produzione/ finalStatus=200
+OK   /portfolio-category/nature/ status=301 location=/storia/ final=/storia/ finalStatus=200
+OK   /portfolio-category/photogrpahy/ status=301 location=/storia/ final=/storia/ finalStatus=200
+OK   /portfolio-category/wine/ status=308 location=/shop/vino/ final=/shop/vino/ finalStatus=200
+OK   /portfolio-tag/blanc-winery/ status=301 location=/produzione/ final=/produzione/ finalStatus=200
+OK   /portfolio-tag/countryside-bay/ status=301 location=/storia/ final=/storia/ finalStatus=200
+OK   /portfolio-tag/organic-company/ status=301 location=/storia/ final=/storia/ finalStatus=200
+OK   /portfolio-tag/organic-winery/ status=301 location=/produzione/ final=/produzione/ finalStatus=200
 OK   /portfolio-item/wine-shop/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/wine-shop-2/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/wine-shop-4/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
@@ -613,6 +621,7 @@ OK   /portfolio-item/red-wine/ status=301 location=/shop/vino-vittoria/ final=/s
 OK   /portfolio-item/red-wine-2/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/red-wine-3/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/white-wine/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
+OK   /portfolio-item/white-wine-2/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/white-wine-3/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/white-wine-4/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
 OK   /portfolio-item/white-wine-4-2/ status=301 location=/shop/vino-vittoria/ final=/shop/vino-vittoria/ finalStatus=200
@@ -643,9 +652,9 @@ OK   /cart/ status=301 location=/carrello/ final=/carrello/ finalStatus=200 redi
 OK   /checkout/ status=200 location=- final=/checkout/ finalStatus=200 redirects=0 initialInSitemap=false finalInSitemap=false noindex=true
 OK   /my-account/ status=200 location=- final=/my-account/ finalStatus=200 redirects=0 initialInSitemap=false finalInSitemap=false noindex=true
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:43:38.221Z
+Finished at: 2026-05-28T00:03:05.240Z
 Status: passed
-Metrics: direct200Paths=9 | legacyRedirects=34 | technicalPaths=3 | failures=0
+Metrics: direct200Paths=9 | legacyRedirects=43 | technicalPaths=3 | failures=0
 ========================================================================================
 
 
@@ -653,8 +662,8 @@ Metrics: direct200Paths=9 | legacyRedirects=34 | technicalPaths=3 | failures=0
 New Local Project :: Technical noindex audit
 Description: Verifica cart, checkout e account: noindex attivo, niente canonical/hreflang/og:url e niente sitemap.
 Status: passed
-Started at: 2026-05-27T23:43:38.221Z
-Finished at: 2026-05-27T23:43:40.040Z
+Started at: 2026-05-28T00:03:05.241Z
+Finished at: 2026-05-28T00:03:07.829Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -668,7 +677,7 @@ Output:
 New Local Project :: Technical noindex audit
 Descrizione: Verifica cart, checkout e account: noindex attivo, niente canonical/hreflang/og:url e niente sitemap.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-27T23:43:38.221Z
+Started at: 2026-05-28T00:03:05.241Z
 ----------------------------------------------------------------------------------------
 OK   /cart/ status=301 location=/carrello/ final=/carrello/ finalStatus=200
 OK   /carrello/ status=200 location=- final=/carrello/ finalStatus=200
@@ -690,7 +699,7 @@ OK   /nl/my-account/ status=200 location=- final=/nl/my-account/ finalStatus=200
 OK   /da/my-account/ status=200 location=- final=/da/my-account/ finalStatus=200
 OK   /no/my-account/ status=200 location=- final=/no/my-account/ finalStatus=200
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:43:40.040Z
+Finished at: 2026-05-28T00:03:07.829Z
 Status: passed
 Metrics: technicalRoutesFound=19 | noindex200Routes=19 | redirectingRoutes=1 | failures=0 | carrelloItalianConfirmed=false
 ========================================================================================
@@ -700,8 +709,8 @@ Metrics: technicalRoutesFound=19 | noindex200Routes=19 | redirectingRoutes=1 | f
 New Local Project :: Hreflang audit
 Description: Controlla tag hreflang, x-default, self reference, URL assolute e bidirezionalita delle alternate.
 Status: passed
-Started at: 2026-05-27T23:43:40.040Z
-Finished at: 2026-05-27T23:45:06.455Z
+Started at: 2026-05-28T00:03:07.829Z
+Finished at: 2026-05-28T00:04:58.064Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -712,7 +721,7 @@ Output:
 New Local Project :: Hreflang audit
 Descrizione: Controlla tag hreflang, x-default, self reference, URL assolute e bidirezionalita delle alternate.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-27T23:43:40.040Z
+Started at: 2026-05-28T00:03:07.829Z
 ----------------------------------------------------------------------------------------
 Checking http://localhost:3000/
 OK   http://localhost:3000/
@@ -1581,7 +1590,7 @@ OK   http://localhost:3000/da/blog/kategori/olivenoliekemi/iso-metoder-til-olive
 Checking http://localhost:3000/no/blog/kategori/olivenoljekjemi/iso-metoder-for-olivenoljeanalyse-guide/
 OK   http://localhost:3000/no/blog/kategori/olivenoljekjemi/iso-metoder-for-olivenoljeanalyse-guide/
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:45:06.455Z
+Finished at: 2026-05-28T00:04:58.064Z
 Status: passed
 Metrics: urlsAudited=433 | pagesWithErrors=0
 ========================================================================================
@@ -1591,8 +1600,8 @@ Metrics: urlsAudited=433 | pagesWithErrors=0
 New Local Project :: Canonical audit
 Description: Verifica canonical unica, assoluta, coerente con localhost, locale, trailing slash e status 200.
 Status: passed
-Started at: 2026-05-27T23:45:06.456Z
-Finished at: 2026-05-27T23:47:53.602Z
+Started at: 2026-05-28T00:04:58.064Z
+Finished at: 2026-05-28T00:09:06.566Z
 Context:
 - BASE_URL: http://localhost:3000
 - EXPECTED_SITE_URL: http://localhost:3000
@@ -1605,7 +1614,7 @@ New Local Project :: Canonical audit
 Descrizione: Verifica canonical unica, assoluta, coerente con localhost, locale, trailing slash e status 200.
 BASE_URL: http://localhost:3000
 EXPECTED_SITE_URL: http://localhost:3000
-Started at: 2026-05-27T23:45:06.456Z
+Started at: 2026-05-28T00:04:58.064Z
 ----------------------------------------------------------------------------------------
 OK   http://localhost:3000/
 OK   http://localhost:3000/en/
@@ -2041,7 +2050,7 @@ OK   http://localhost:3000/nl/blog/categorie/olijfoliechemie/iso-methoden-olijfo
 OK   http://localhost:3000/da/blog/kategori/olivenoliekemi/iso-metoder-til-olivenolieanalyse-guide/
 OK   http://localhost:3000/no/blog/kategori/olivenoljekjemi/iso-metoder-for-olivenoljeanalyse-guide/
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:47:53.602Z
+Finished at: 2026-05-28T00:09:06.566Z
 Status: passed
 Metrics: urlsAudited=433 | pagesWithErrors=0
 ========================================================================================
@@ -2051,8 +2060,8 @@ Metrics: urlsAudited=433 | pagesWithErrors=0
 New Local Project :: Sitemap counts debug
 Description: Confronta i conteggi delle sitemap con catalogo locale, post blog, pattern URL e possibili anomalie.
 Status: passed
-Started at: 2026-05-27T23:47:53.603Z
-Finished at: 2026-05-27T23:47:53.637Z
+Started at: 2026-05-28T00:09:06.567Z
+Finished at: 2026-05-28T00:09:06.649Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -2067,7 +2076,7 @@ Output:
 New Local Project :: Sitemap counts debug
 Descrizione: Confronta i conteggi delle sitemap con catalogo locale, post blog, pattern URL e possibili anomalie.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-27T23:47:53.603Z
+Started at: 2026-05-28T00:09:06.567Z
 ----------------------------------------------------------------------------------------
 sitemap-pages.xml    : 90
 sitemap-products.xml : 42
@@ -2096,7 +2105,7 @@ Dati sorgente locali:
 - Articoli blog totali: 51
 - Categorie blog uniche: 9
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:47:53.637Z
+Finished at: 2026-05-28T00:09:06.649Z
 Status: passed
 Metrics: totalSitemapUrls=433 | suspiciousCount=0 | excludedProducts=1 | expectedProductUrls=42 | actualProductUrls=42 | productCountMismatch=false
 ========================================================================================
@@ -2109,8 +2118,8 @@ Metrics: totalSitemapUrls=433 | suspiciousCount=0 | excludedProducts=1 | expecte
 Old Live WordPress :: Current sitemap diagnostic
 Description: Legge l'inventario URL del vecchio sito WordPress live tramite wp-sitemap.xml e child sitemap collegate.
 Status: passed_with_warnings
-Started at: 2026-05-27T23:47:53.638Z
-Finished at: 2026-05-27T23:47:54.925Z
+Started at: 2026-05-28T00:09:06.650Z
+Finished at: 2026-05-28T00:09:08.041Z
 Context:
 - BASE_URL: https://delpasqua.com
 - WORDPRESS_SITEMAPS: https://delpasqua.com/wp-sitemap.xml
@@ -2130,7 +2139,7 @@ Old Live WordPress :: Current sitemap diagnostic
 Descrizione: Legge l'inventario URL del vecchio sito WordPress live tramite wp-sitemap.xml e child sitemap collegate.
 BASE_URL: https://delpasqua.com
 WORDPRESS_SITEMAPS: https://delpasqua.com/wp-sitemap.xml
-Started at: 2026-05-27T23:47:53.638Z
+Started at: 2026-05-28T00:09:06.650Z
 ----------------------------------------------------------------------------------------
 Live WordPress sitemap index https://delpasqua.com/wp-sitemap.xml -> 6 sitemap reference
 Live WordPress sitemap urlset https://delpasqua.com/wp-sitemap-posts-page-1.xml -> 13 URL
@@ -2147,7 +2156,7 @@ WordPress URL raccolte: 55
 - tecniche: 3
 Il live delpasqua.com viene usato solo come inventario WordPress corrente.
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:47:54.925Z
+Finished at: 2026-05-28T00:09:08.041Z
 Status: passed_with_warnings
 Metrics: wordpressSitemapUrls=1 | collectedUrls=55 | pages=10 | products=6 | portfolio=26 | taxonomies=10 | technical=3
 Warnings:
@@ -2159,8 +2168,8 @@ Warnings:
 Confronto localhost -> WordPress live
 Description: Confronta la sitemap del progetto locale con l'inventario URL corrente di WordPress live.
 Status: passed_with_warnings
-Started at: 2026-05-27T23:47:54.926Z
-Finished at: 2026-05-27T23:47:56.328Z
+Started at: 2026-05-28T00:09:08.041Z
+Finished at: 2026-05-28T00:09:09.298Z
 Context:
 - SOURCE_BASE_URL: http://localhost:3000
 - TARGET_BASE_URL: https://delpasqua.com
@@ -2181,7 +2190,7 @@ Descrizione: Confronta la sitemap del progetto locale con l'inventario URL corre
 SOURCE_BASE_URL: http://localhost:3000
 TARGET_BASE_URL: https://delpasqua.com
 TARGET_SITEMAP_URLS: https://delpasqua.com/wp-sitemap.xml
-Started at: 2026-05-27T23:47:54.926Z
+Started at: 2026-05-28T00:09:08.041Z
 ----------------------------------------------------------------------------------------
 WordPress live sitemaps:
 - https://delpasqua.com/wp-sitemap.xml
@@ -2472,7 +2481,7 @@ Path presenti solo nel nuovo progetto locale (424)
 ... altri 224 path non mostrati (DIFF_LIMIT=200)
 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:47:56.328Z
+Finished at: 2026-05-28T00:09:09.298Z
 Status: passed_with_warnings
 Metrics: wordpressLiveUrls=55 | localProjectUrls=433 | commonUrls=9 | onlyWordPress=46 | onlyLocal=424
 Warnings:
@@ -2488,41 +2497,43 @@ Warnings:
 Migration Readiness
 Description: Valuta la copertura della migrazione confrontando WordPress live con il progetto locale e testando i vecchi path su localhost.
 Status: passed_with_warnings
-Started at: 2026-05-27T23:49:38.885Z
-Finished at: 2026-05-27T23:49:38.893Z
+Started at: 2026-05-28T00:11:43.864Z
+Finished at: 2026-05-28T00:11:43.866Z
 Context:
 - LOCAL_BASE_URL: http://localhost:3000
 - LIVE_WORDPRESS_BASE_URL: https://delpasqua.com
 Metrics:
 - samePathOk: 9
-- coveredByLocalRedirect: 36
-- needsLocalRedirectOr410: 0
+- coveredByLocalRedirect: 43
+- needsLocalRedirectOr410: 1
 - technicalRouteIgnore: 2
-- taxonomyLegacyDecision: 7
+- taxonomyLegacyDecision: 0
 - productLegacyDecision: 0
-- portfolioLegacyDecision: 1
+- portfolioLegacyDecision: 0
 - pageLegacyDecision: 0
 - projectOnlyNewUrl: 424
+Warnings:
+- 1 URL live WordPress non risultano coperte dal progetto locale.
 Output:
 ========================================================================================
 Migration Readiness
 Descrizione: Valuta la copertura della migrazione confrontando WordPress live con il progetto locale e testando i vecchi path su localhost.
 LOCAL_BASE_URL: http://localhost:3000
 LIVE_WORDPRESS_BASE_URL: https://delpasqua.com
-Started at: 2026-05-27T23:49:38.885Z
+Started at: 2026-05-28T00:11:43.864Z
 ----------------------------------------------------------------------------------------
 Local -> WordPress Migration Readiness
 - samePathOk count: 9
-- coveredByLocalRedirect count: 36
-- needsLocalRedirectOr410 count: 0
+- coveredByLocalRedirect count: 43
+- needsLocalRedirectOr410 count: 1
 - technicalRouteIgnore count: 2
-- taxonomyLegacyDecision count: 7
+- taxonomyLegacyDecision count: 0
 - productLegacyDecision count: 0
-- portfolioLegacyDecision count: 1
+- portfolioLegacyDecision count: 0
 - pageLegacyDecision count: 0
 - projectOnlyNewUrl count: 424
 
-Old live URLs already covered (45)
+Old live URLs already covered (52)
 ----------------------------------
 /zblog-list-2/ -> /blog/ [COVERED_BY_LOCAL_REDIRECT]
 / -> / [SAME_PATH_OK]
@@ -2543,12 +2554,12 @@ Old live URLs already covered (45)
 /portfolio-item/wine-club-3/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/desert-wine-3-2/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/green-wine-2/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-item/white-wine-2/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/desert-wine/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/red-wine/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/wine-club/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/wineyards/ -> /storia/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/wine-shop/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
-/portfolio-item/the-winery/ -> /produzione/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/white-wine/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/desert-wine-3/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-item/green-wine/ -> /shop/vino-vittoria/ [COVERED_BY_LOCAL_REDIRECT]
@@ -2566,29 +2577,28 @@ Old live URLs already covered (45)
 /product/olio-aromatizzato-al-tartufo/ -> /shop/tartufo/ [COVERED_BY_LOCAL_REDIRECT]
 /product/olio-aromatico-al-limone/ -> /shop/ [COVERED_BY_LOCAL_REDIRECT]
 /product/olio-aromatico-al-peperoncino/ -> /shop/peperoncino/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-category/details/ -> /produzione/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-category/nature/ -> /storia/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-category/photogrpahy/ -> /storia/ [COVERED_BY_LOCAL_REDIRECT]
 /portfolio-category/wine/ -> /shop/vino/ [COVERED_BY_LOCAL_REDIRECT]
-/product-category/magnifico/ -> /shop/ [COVERED_BY_LOCAL_REDIRECT]
-/product-category/aromatici/ -> /shop/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-tag/blanc-winery/ -> /produzione/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-tag/countryside-bay/ -> /storia/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-tag/organic-company/ -> /storia/ [COVERED_BY_LOCAL_REDIRECT]
+/portfolio-tag/organic-winery/ -> /produzione/ [COVERED_BY_LOCAL_REDIRECT]
+... altri 2 path non mostrati (DIFF_LIMIT=50)
 
-Old live URLs needing redirect or 410 (0)
+Old live URLs needing redirect or 410 (1)
 -----------------------------------------
+/portfolio-item/the-winery/ [NEEDS_LOCAL_REDIRECT_OR_410] status=500
 
-Old WordPress taxonomies to decide (7)
+Old WordPress taxonomies to decide (0)
 --------------------------------------
-/portfolio-category/details/
-/portfolio-category/nature/
-/portfolio-category/photogrpahy/
-/portfolio-tag/blanc-winery/
-/portfolio-tag/countryside-bay/
-/portfolio-tag/organic-company/
-/portfolio-tag/organic-winery/
 
 Old WordPress products to decide (0)
 ------------------------------------
 
-Old WordPress portfolio items to decide (1)
+Old WordPress portfolio items to decide (0)
 -------------------------------------------
-/portfolio-item/white-wine-2/
 
 Technical old URLs ignored/noindex (2)
 --------------------------------------
@@ -2650,9 +2660,11 @@ New project-only URLs (424)
 ... altri 374 path non mostrati (DIFF_LIMIT=50)
 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:49:38.893Z
+Finished at: 2026-05-28T00:11:43.866Z
 Status: passed_with_warnings
-Metrics: samePathOk=9 | coveredByLocalRedirect=36 | needsLocalRedirectOr410=0 | technicalRouteIgnore=2 | taxonomyLegacyDecision=7 | productLegacyDecision=0 | portfolioLegacyDecision=1 | pageLegacyDecision=0 | projectOnlyNewUrl=424
+Metrics: samePathOk=9 | coveredByLocalRedirect=43 | needsLocalRedirectOr410=1 | technicalRouteIgnore=2 | taxonomyLegacyDecision=0 | productLegacyDecision=0 | portfolioLegacyDecision=0 | pageLegacyDecision=0 | projectOnlyNewUrl=424
+Warnings:
+- 1 URL live WordPress non risultano coperte dal progetto locale.
 ========================================================================================
 
 
@@ -2663,14 +2675,14 @@ Metrics: samePathOk=9 | coveredByLocalRedirect=36 | needsLocalRedirectOr410=0 | 
 URL Outcome Classifier
 Description: Classifica solo gli ambienti local e live-wordpress usando sitemap locale, redirect legacy locali e inventario WordPress corrente.
 Status: passed_with_warnings
-Started at: 2026-05-27T23:47:56.328Z
-Finished at: 2026-05-27T23:49:38.884Z
+Started at: 2026-05-28T00:09:09.298Z
+Finished at: 2026-05-28T00:11:43.864Z
 Context:
 - URL_OUTCOMES_JSON_FILE: C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.json
 - URL_OUTCOMES_CSV_FILE: C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.csv
 Metrics:
-- totalAnalyzed: 541
-- localProjectUrls: 486
+- totalAnalyzed: 550
+- localProjectUrls: 495
 - liveWordPressUrls: 55
 - localSitemapErrors: 0
 - localRedirectWarnings: 0
@@ -2682,7 +2694,7 @@ URL Outcome Classifier
 Descrizione: Classifica solo gli ambienti local e live-wordpress usando sitemap locale, redirect legacy locali e inventario WordPress corrente.
 URL_OUTCOMES_JSON_FILE: C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.json
 URL_OUTCOMES_CSV_FILE: C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.csv
-Started at: 2026-05-27T23:47:56.328Z
+Started at: 2026-05-28T00:09:09.298Z
 ----------------------------------------------------------------------------------------
 Live WordPress sitemap index https://delpasqua.com/wp-sitemap.xml -> 6 sitemap reference
 Live WordPress sitemap urlset https://delpasqua.com/wp-sitemap-posts-page-1.xml -> 13 URL
@@ -2692,12 +2704,14 @@ Live WordPress sitemap urlset https://delpasqua.com/wp-sitemap-taxonomies-portfo
 Live WordPress sitemap urlset https://delpasqua.com/wp-sitemap-taxonomies-portfolio-tag-1.xml -> 4 URL
 Live WordPress sitemap urlset https://delpasqua.com/wp-sitemap-taxonomies-product_cat-1.xml -> 2 URL
 URL Outcome Summary
-- Totale URL analizzate: 541
-- Local project URLs: 486
+- Totale URL analizzate: 550
+- Local project URLs: 495
 - Live WordPress URLs: 55
-- LOCAL_INDEXABLE_200: 433
-- LOCAL_REDIRECT_301_OK: 34
-- LOCAL_TECHNICAL_NOINDEX_OK: 19
+- LOCAL_INDEXABLE_200: 426
+- LOCAL_REDIRECT_301_OK: 39
+- LOCAL_REDIRECT_TO_500_ERROR: 2
+- LOCAL_TECHNICAL_NOINDEX_OK: 18
+- LOCAL_TRANSIENT_FETCH_WARN: 10
 - WP_CURRENT_PAGE: 10
 - WP_CURRENT_PORTFOLIO: 26
 - WP_CURRENT_PRODUCT: 6
@@ -2706,7 +2720,7 @@ URL Outcome Summary
 - WP_CURRENT_TECHNICAL_ROUTE: 2
 
 URL Outcome Groups
-LOCAL_INDEXABLE_200 (433)
+LOCAL_INDEXABLE_200 (426)
 [local] 200 -> 200 | / -> / | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/ | transientRecovered=false
 [local] 200 -> 200 | /en/ -> /en/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/ | transientRecovered=false
 [local] 200 -> 200 | /de/ -> /de/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/de/ | transientRecovered=false
@@ -2722,15 +2736,10 @@ LOCAL_INDEXABLE_200 (433)
 [local] 200 -> 200 | /produzione/ -> /produzione/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/produzione/ | transientRecovered=false
 [local] 200 -> 200 | /en/production/ -> /en/production/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/production/ | transientRecovered=false
 [local] 200 -> 200 | /de/produktion/ -> /de/produktion/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/de/produktion/ | transientRecovered=false
-[local] 200 -> 200 | /nl/productie/ -> /nl/productie/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/nl/productie/ | transientRecovered=false
-[local] 200 -> 200 | /da/produktion/ -> /da/produktion/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/produktion/ | transientRecovered=false
-[local] 200 -> 200 | /no/produksjon/ -> /no/produksjon/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/no/produksjon/ | transientRecovered=false
 [local] 200 -> 200 | /il-nostro-olio/ -> /il-nostro-olio/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/il-nostro-olio/ | transientRecovered=false
 [local] 200 -> 200 | /en/olive-oil/ -> /en/olive-oil/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/olive-oil/ | transientRecovered=false
 [local] 200 -> 200 | /de/olivenoel/ -> /de/olivenoel/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/de/olivenoel/ | transientRecovered=false
 [local] 200 -> 200 | /nl/olijfolie/ -> /nl/olijfolie/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/nl/olijfolie/ | transientRecovered=false
-[local] 200 -> 200 | /da/olivenolie/ -> /da/olivenolie/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/olivenolie/ | transientRecovered=false
-[local] 200 -> 200 | /no/olivenolje/ -> /no/olivenolje/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/no/olivenolje/ | transientRecovered=false
 [local] 200 -> 200 | /shop/ -> /shop/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/shop/ | transientRecovered=false
 [local] 200 -> 200 | /en/shop/ -> /en/shop/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/shop/ | transientRecovered=false
 [local] 200 -> 200 | /de/laden/ -> /de/laden/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/de/laden/ | transientRecovered=false
@@ -2753,15 +2762,26 @@ LOCAL_INDEXABLE_200 (433)
 [local] 200 -> 200 | /en/privacy-policy/ -> /en/privacy-policy/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/privacy-policy/ | transientRecovered=false
 [local] 200 -> 200 | /de/datenschutz/ -> /de/datenschutz/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/de/datenschutz/ | transientRecovered=false
 [local] 200 -> 200 | /nl/privacybeleid/ -> /nl/privacybeleid/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/nl/privacybeleid/ | transientRecovered=false
-[local] 200 -> 200 | /da/privatlivspolitik/ -> /da/privatlivspolitik/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/privatlivspolitik/ | transientRecovered=false
 [local] 200 -> 200 | /no/personvernerklaering/ -> /no/personvernerklaering/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/no/personvernerklaering/ | transientRecovered=false
 [local] 200 -> 200 | /cookie-policy/ -> /cookie-policy/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/cookie-policy/ | transientRecovered=false
 [local] 200 -> 200 | /en/cookie-policy/ -> /en/cookie-policy/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/cookie-policy/ | transientRecovered=false
-... altri 383 outcome non mostrati
+[local] 200 -> 200 | /de/cookie-richtlinie/ -> /de/cookie-richtlinie/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/de/cookie-richtlinie/ | transientRecovered=false
+[local] 200 -> 200 | /nl/cookiebeleid/ -> /nl/cookiebeleid/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/nl/cookiebeleid/ | transientRecovered=false
+[local] 200 -> 200 | /da/cookiepolitik/ -> /da/cookiepolitik/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/cookiepolitik/ | transientRecovered=false
+[local] 200 -> 200 | /no/cookiepolicy/ -> /no/cookiepolicy/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/no/cookiepolicy/ | transientRecovered=false
+[local] 200 -> 200 | /condizioni-generali-di-vendita/ -> /condizioni-generali-di-vendita/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/condizioni-generali-di-vendita/ | transientRecovered=false
+[local] 200 -> 200 | /en/terms/ -> /en/terms/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/en/terms/ | transientRecovered=false
+... altri 376 outcome non mostrati
 
-LOCAL_REDIRECT_301_OK (34)
+LOCAL_REDIRECT_301_OK (39)
+[local] 301 -> 200 | /portfolio-category/details/ -> /produzione/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/produzione/ | transientRecovered=false
+[local] 301 -> 200 | /portfolio-category/nature/ -> /storia/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/storia/ | transientRecovered=false
+[local] 301 -> 200 | /portfolio-category/photogrpahy/ -> /storia/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/storia/ | transientRecovered=false
+[local] 308 -> 200 | /portfolio-category/wine/ -> /shop/vino/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
+[local] 301 -> 200 | /portfolio-tag/blanc-winery/ -> /produzione/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/produzione/ | transientRecovered=false
+[local] 301 -> 200 | /portfolio-tag/countryside-bay/ -> /storia/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/storia/ | transientRecovered=false
+[local] 301 -> 200 | /portfolio-tag/organic-company/ -> /storia/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/storia/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/wine-shop/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
-[local] 301 -> 200 | /portfolio-item/wine-shop-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/wine-shop-4/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/wine-club/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/wine-club-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
@@ -2770,6 +2790,7 @@ LOCAL_REDIRECT_301_OK (34)
 [local] 301 -> 200 | /portfolio-item/red-wine-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/red-wine-3/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/white-wine/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
+[local] 301 -> 200 | /portfolio-item/white-wine-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/white-wine-3/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/white-wine-4/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/white-wine-4-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
@@ -2777,7 +2798,6 @@ LOCAL_REDIRECT_301_OK (34)
 [local] 301 -> 200 | /portfolio-item/desert-wine-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/desert-wine-3/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/desert-wine-3-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
-[local] 301 -> 200 | /portfolio-item/green-wine/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/green-wine-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/the-winery/ -> /produzione/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/produzione/ | transientRecovered=false
 [local] 301 -> 200 | /portfolio-item/the-winery-2/ -> /produzione/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/produzione/ | transientRecovered=false
@@ -2792,12 +2812,14 @@ LOCAL_REDIRECT_301_OK (34)
 [local] 301 -> 200 | /product/olio-aromatico-al-peperoncino/ -> /shop/peperoncino/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/peperoncino/ | transientRecovered=false
 [local] 301 -> 200 | /product/olio-aromatico-al-limone/ -> /shop/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/ | transientRecovered=false
 [local] 301 -> 200 | /product-category/aromatici/ -> /shop/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/ | transientRecovered=false
-[local] 301 -> 200 | /product-category/magnifico/ -> /shop/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/ | transientRecovered=false
 [local] 301 -> 200 | /zblog-list-2/ -> /blog/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/blog/ | transientRecovered=false
 
-LOCAL_TECHNICAL_NOINDEX_OK (19)
+LOCAL_REDIRECT_TO_500_ERROR (2)
+[local] 301 -> 500 | /portfolio-tag/organic-winery/ -> /produzione/ | source=local-legacy-redirects | redirects=1 | noindex=true | canonical=http://localhost:3000/produzione/ | transientRecovered=false
+[local] 301 -> 500 | /product-category/magnifico/ -> /shop/ | source=local-legacy-redirects | redirects=1 | noindex=true | canonical=http://localhost:3000/shop/ | transientRecovered=false
+
+LOCAL_TECHNICAL_NOINDEX_OK (18)
 [local] 301 -> 200 | /cart/ -> /carrello/ | source=local-technical-routes | redirects=1 | noindex=true | canonical=- | transientRecovered=false
-[local] 200 -> 200 | /carrello/ -> /carrello/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 [local] 200 -> 200 | /checkout/ -> /checkout/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 [local] 200 -> 200 | /my-account/ -> /my-account/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 [local] 200 -> 200 | /en/cart/ -> /en/cart/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
@@ -2815,6 +2837,18 @@ LOCAL_TECHNICAL_NOINDEX_OK (19)
 [local] 200 -> 200 | /nl/my-account/ -> /nl/my-account/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 [local] 200 -> 200 | /da/my-account/ -> /da/my-account/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 [local] 200 -> 200 | /no/my-account/ -> /no/my-account/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
+
+LOCAL_TRANSIENT_FETCH_WARN (10)
+[local] 200 -> 200 | /nl/productie/ -> /nl/productie/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/nl/productie/ | transientRecovered=true
+[local] 200 -> 200 | /da/produktion/ -> /da/produktion/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/produktion/ | transientRecovered=true
+[local] 200 -> 200 | /no/produksjon/ -> /no/produksjon/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/no/produksjon/ | transientRecovered=true
+[local] 200 -> 200 | /da/olivenolie/ -> /da/olivenolie/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/olivenolie/ | transientRecovered=true
+[local] 200 -> 200 | /no/olivenolje/ -> /no/olivenolje/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/no/olivenolje/ | transientRecovered=true
+[local] 200 -> 200 | /da/privatlivspolitik/ -> /da/privatlivspolitik/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/da/privatlivspolitik/ | transientRecovered=true
+[local] 200 -> 200 | /nl/winkel/vittoria-wijn/ -> /nl/winkel/vittoria-wijn/ | source=local-project-sitemap | redirects=0 | noindex=false | canonical=http://localhost:3000/nl/winkel/vittoria-wijn/ | transientRecovered=true
+[local] 301 -> 200 | /portfolio-item/wine-shop-2/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=true
+[local] 301 -> 200 | /portfolio-item/green-wine/ -> /shop/vino-vittoria/ | source=local-legacy-redirects | redirects=1 | noindex=false | canonical=http://localhost:3000/shop/vino-vittoria/ | transientRecovered=true
+[local] 200 -> 200 | /carrello/ -> /carrello/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=true
 
 WP_CURRENT_PAGE (10)
 [live-wordpress] 200 -> 200 | /zblog-list-2/ -> /zblog-list-2/ | source=wordpress-current-sitemap | redirects=0 | noindex=false | canonical=https://delpasqua.com/zblog-list-2/ | transientRecovered=false
@@ -2887,9 +2921,9 @@ CSV/JSON export
 - C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.json
 - C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.csv
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:49:38.884Z
+Finished at: 2026-05-28T00:11:43.864Z
 Status: passed_with_warnings
-Metrics: totalAnalyzed=541 | localProjectUrls=486 | liveWordPressUrls=55 | localSitemapErrors=0 | localRedirectWarnings=0
+Metrics: totalAnalyzed=550 | localProjectUrls=495 | liveWordPressUrls=55 | localSitemapErrors=0 | localRedirectWarnings=0
 Warnings:
 - Il classifier usa solo `environment=local` e `environment=live-wordpress`.
 ========================================================================================
@@ -2902,19 +2936,31 @@ Warnings:
 Warnings Explained
 Description: Spiega warning ed errori reali relativi a localhost, WordPress live diagnostico e readiness di migrazione.
 Status: passed_with_warnings
-Started at: 2026-05-27T23:49:38.893Z
-Finished at: 2026-05-27T23:49:38.904Z
+Started at: 2026-05-28T00:11:43.866Z
+Finished at: 2026-05-28T00:11:43.868Z
 Metrics:
-- explainedItems: 6
+- explainedItems: 7
 Warnings:
 - La sezione include warning, info e failure rilevanti per local, live-wordpress e migration.
 Output:
 ========================================================================================
 Warnings Explained
 Descrizione: Spiega warning ed errori reali relativi a localhost, WordPress live diagnostico e readiness di migrazione.
-Started at: 2026-05-27T23:49:38.893Z
+Started at: 2026-05-28T00:11:43.866Z
 ----------------------------------------------------------------------------------------
 Warnings Explained
+task: URL Outcome Classifier
+severity: critical
+environment: local
+cause: Redirect legacy locale che terminano su 500. Esempi: /portfolio-tag/organic-winery/, /product-category/magnifico/
+action: Correggere la destinazione finale o la logica di redirect.
+
+task: URL Outcome Classifier
+severity: warning
+environment: local
+cause: Fetch locale con errore transitorio risolto al retry. Esempi: /nl/productie/, /da/produktion/, /no/produksjon/
+action: Ricontrollare la stabilita del server locale se il warning si ripete.
+
 task: Old WordPress inventory
 severity: info
 environment: live-wordpress
@@ -2928,16 +2974,10 @@ cause: Il sito WordPress live contiene tassonomie legacy da valutare in migrazio
 action: Decidere se mappare, consolidare o dismettere queste tassonomie.
 
 task: Migration Readiness
-severity: warning
+severity: critical
 environment: migration
-cause: Tassonomie WordPress legacy da decidere. Esempi: /portfolio-category/details/, /portfolio-category/nature/, /portfolio-category/photogrpahy/
-action: Stabilire se mantenere, consolidare o dismettere via redirect/410.
-
-task: Migration Readiness
-severity: warning
-environment: migration
-cause: Vecchi portfolio item WordPress da decidere. Esempi: /portfolio-item/white-wine-2/
-action: Mappare verso pagine equivalenti o gestire con redirect/410.
+cause: Vecchi URL live WordPress senza copertura locale chiara. Esempi: /portfolio-item/the-winery/
+action: Aggiungere redirect locale o decidere un 410 esplicito.
 
 task: Migration Readiness
 severity: info
@@ -2952,9 +2992,9 @@ cause: URL presenti solo nel nuovo progetto locale. Esempi: /en/, /de/, /nl/
 action: Nessuna azione se il contenuto e nuovo e intenzionale.
 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:49:38.904Z
+Finished at: 2026-05-28T00:11:43.868Z
 Status: passed_with_warnings
-Metrics: explainedItems=6
+Metrics: explainedItems=7
 Warnings:
 - La sezione include warning, info e failure rilevanti per local, live-wordpress e migration.
 ========================================================================================
@@ -2966,45 +3006,52 @@ Warnings:
 ========================================================================================
 Go-live blockers
 Description: Tabella finale con blocker, severity, environment, why e action basata solo su local, live-wordpress e migration.
-Status: passed
-Started at: 2026-05-27T23:49:38.904Z
-Finished at: 2026-05-27T23:49:38.911Z
+Status: passed_with_warnings
+Started at: 2026-05-28T00:11:43.868Z
+Finished at: 2026-05-28T00:11:43.872Z
 Metrics:
-- totalBlockers: 446
-- critical: 0
-- warning: 18
-- info: 428
+- totalBlockers: 451
+- critical: 3
+- warning: 10
+- info: 438
+Warnings:
+- Sono presenti blocker critical sul progetto locale o sulla migration readiness.
 Output:
 ========================================================================================
 Go-live blockers
 Descrizione: Tabella finale con blocker, severity, environment, why e action basata solo su local, live-wordpress e migration.
-Started at: 2026-05-27T23:49:38.904Z
+Started at: 2026-05-28T00:11:43.868Z
 ----------------------------------------------------------------------------------------
 Go-live blockers
 blocker | severity | environment | why | action
 --- | --- | --- | --- | ---
 /my-account/ | info | live-wordpress | Rotta tecnica presente nell'inventario WordPress corrente. | Trattarla come problema del vecchio sito, non come blocker del nuovo progetto.
 /cart/ | info | live-wordpress | Rotta tecnica presente nell'inventario WordPress corrente. | Trattarla come problema del vecchio sito, non come blocker del nuovo progetto.
-/portfolio-category/details/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-category/nature/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-category/photogrpahy/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-category/wine/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-tag/blanc-winery/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-tag/countryside-bay/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-tag/organic-company/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/portfolio-tag/organic-winery/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/product-category/magnifico/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
-/product-category/aromatici/ | warning | live-wordpress | Tassonomia WordPress legacy nel sito corrente. | Decidere la strategia di migrazione o dismissione.
+/portfolio-category/details/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-category/nature/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-category/photogrpahy/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-category/wine/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-tag/blanc-winery/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-tag/countryside-bay/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-tag/organic-company/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/portfolio-tag/organic-winery/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/product-category/magnifico/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/product-category/aromatici/ | info | live-wordpress | Tassonomia WordPress legacy gia coperta da redirect locale. | Nessuna azione bloccante; verificare solo che la destinazione resti intenzionale.
+/nl/productie/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/da/produktion/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/no/produksjon/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/da/olivenolie/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/no/olivenolje/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/da/privatlivspolitik/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/nl/winkel/vittoria-wijn/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/portfolio-tag/organic-winery/ | critical | local | Classificazione LOCAL_REDIRECT_TO_500_ERROR. | Correggere su localhost prima del go-live.
+/portfolio-item/wine-shop-2/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/portfolio-item/green-wine/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
+/product-category/magnifico/ | critical | local | Classificazione LOCAL_REDIRECT_TO_500_ERROR. | Correggere su localhost prima del go-live.
+/carrello/ | warning | local | Errore transitorio risolto al retry durante l'audit locale. | Ricontrollare la stabilita del server locale.
 /checkout/ | info | migration | Vecchia URL tecnica WordPress da ignorare o mantenere noindex. | Confermare che sul progetto locale resti fuori sitemap e non indicizzabile.
 /my-account/ | info | migration | Vecchia URL tecnica WordPress da ignorare o mantenere noindex. | Confermare che sul progetto locale resti fuori sitemap e non indicizzabile.
-/portfolio-item/white-wine-2/ | warning | migration | Decisione legacy richiesta (PORTFOLIO_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-category/details/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-category/nature/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-category/photogrpahy/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-tag/blanc-winery/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-tag/countryside-bay/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-tag/organic-company/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
-/portfolio-tag/organic-winery/ | warning | migration | Decisione legacy richiesta (TAXONOMY_LEGACY_DECISION). | Definire redirect, consolidamento o 410 in base al contenuto.
+/portfolio-item/the-winery/ | critical | migration | Vecchio URL live importante non coperto dal progetto locale. | Aggiungere redirect locale o decidere 410 prima del go-live.
 /en/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
 /de/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
 /nl/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
@@ -3078,14 +3125,11 @@ blocker | severity | environment | why | action
 /en/spedizioni/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
 /de/spedizioni/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
 /nl/spedizioni/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
-/da/spedizioni/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
-/no/spedizioni/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
-/blog/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
-/en/blog/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
-/de/blog/ | info | migration | Nuova URL presente solo nel progetto locale. | Nessuna azione se il contenuto e nuovo e intenzionale.
-... altri 346 blocker non mostrati
+... altri 351 blocker non mostrati
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-27T23:49:38.911Z
-Status: passed
-Metrics: totalBlockers=446 | critical=0 | warning=18 | info=428
+Finished at: 2026-05-28T00:11:43.872Z
+Status: passed_with_warnings
+Metrics: totalBlockers=451 | critical=3 | warning=10 | info=438
+Warnings:
+- Sono presenti blocker critical sul progetto locale o sulla migration readiness.
 ========================================================================================
