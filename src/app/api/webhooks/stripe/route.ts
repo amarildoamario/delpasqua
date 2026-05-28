@@ -5,6 +5,7 @@ import { releaseReserved, commitReservedToSoldOrThrow } from "@/lib/server/inven
 import { processOutboxBatch } from "@/lib/server/outbox";
 import { allocateInvoiceNumberTx } from "@/lib/server/invoiceNumber";
 import { allocateOrderNumberTx } from "@/lib/server/orderNumber";
+import { sendTastingBookingAdminEmail, sendTastingConfirmedCustomerEmail } from "@/lib/server/tastingEmail";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -221,6 +222,72 @@ export async function POST(req: NextRequest) {
         });
 
         if (!order) {
+          // Check if it matches a TastingBooking!
+          const booking = await prisma.tastingBooking.findUnique({
+            where: { stripeSessionId: sessionId },
+          });
+
+          if (booking) {
+            await prisma.tastingBooking.update({
+              where: { id: booking.id },
+              data: { status: "CONFIRMED" },
+            });
+
+            console.log("[TASTING][WEBHOOK] booking paid and confirmed", {
+              bookingId: booking.id,
+              sessionId,
+            });
+
+            // Send notification emails after successful payment
+            const adminMail = await sendTastingBookingAdminEmail({
+              id: booking.id,
+              status: "CONFIRMED",
+              slotStart: booking.slotStart,
+              slotEnd: booking.slotEnd,
+              tastingType: booking.tastingType,
+              people: booking.people,
+              children: booking.children,
+              fullName: booking.fullName,
+              email: booking.email,
+              phone: booking.phone,
+              notes: booking.notes,
+            }).catch((err) => {
+              console.error("[TASTING][WEBHOOK] admin email dispatch failed", err);
+              return { ok: false as const, status: "failed" as const, error: String(err) };
+            });
+
+            const customerMail = await sendTastingConfirmedCustomerEmail({
+              toEmail: booking.email,
+              fullName: booking.fullName,
+              slotStart: booking.slotStart,
+              slotEnd: booking.slotEnd,
+              tastingType: booking.tastingType,
+              people: booking.people,
+              children: booking.children,
+            }).catch((err) => {
+              console.error("[TASTING][WEBHOOK] customer email dispatch failed", err);
+              return { ok: false as const, status: "failed" as const, error: String(err) };
+            });
+
+            console.log("[TASTING][WEBHOOK] email dispatch results", {
+              bookingId: booking.id,
+              adminMail,
+              customerMail,
+            });
+
+            await prisma.stripeWebhookEvent.update({
+              where: { eventId: event.id },
+              data: {
+                sessionId,
+                paymentIntentId,
+                outcome: "processed",
+                processedAt: new Date(),
+              },
+            });
+
+            return NextResponse.json({ received: true, type: "tasting_booking" }, { status: 200 });
+          }
+
           await prisma.stripeWebhookEvent.update({
             where: { eventId: event.id },
             data: {
@@ -228,7 +295,7 @@ export async function POST(req: NextRequest) {
               paymentIntentId,
               outcome: "review",
               processedAt: new Date(),
-              errorMessage: "Order not found for stripeCheckoutSessionId",
+              errorMessage: "Order or TastingBooking not found for stripeCheckoutSessionId",
             },
           });
           return NextResponse.json({ received: true }, { status: 200 });
@@ -434,6 +501,23 @@ export async function POST(req: NextRequest) {
               data: { status: "EXPIRED" },
             });
           });
+        } else {
+          // Check if it matches a TastingBooking!
+          const booking = await prisma.tastingBooking.findUnique({
+            where: { stripeSessionId: sessionId },
+          });
+
+          if (booking) {
+            await prisma.tastingBooking.update({
+              where: { id: booking.id },
+              data: { status: "CANCELED" },
+            });
+
+            console.log("[TASTING][WEBHOOK] booking session expired, status updated to CANCELED (slot released)", {
+              bookingId: booking.id,
+              sessionId,
+            });
+          }
         }
 
         await prisma.stripeWebhookEvent.update({

@@ -3,40 +3,17 @@
     "id": "evo",
     "variants": [
       {
-        "id": "750ml",
-        "label": "Bottiglia 750 ml",
-        "priceCents": 2200,
-        "sku": "EVO-B-750ML",
+        "id": "500ml",
+        "label": "Bottiglia 500 ml",
+        "priceCents": 1500,
+        "sku": "EVO-B-500ML",
         "imageSrc": "/products/EVO-750-ml-gpt.png",
-        "imageAlt": "EVO bottiglia 750 ml",
+        "imageAlt": "EVO bottiglia 500 ml",
         "specs": {
           "Weight": "—",
           "Dimensions": "—"
-        }
-      },
-      {
-        "id": "3lt",
-        "label": "Latta 3 L",
-        "priceCents": 7200,
-        "sku": "EVO-3LT",
-        "imageSrc": "/products/EVO-latta-3lt.png",
-        "imageAlt": "EVO latta 3 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        }
-      },
-      {
-        "id": "5lt",
-        "label": "Latta 5 L",
-        "priceCents": 12000,
-        "sku": "EVO-5LT",
-        "imageSrc": "/products/EVO-latta-5lt.png",
-        "imageAlt": "EVO latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        }
+        },
+        "description": "La bottiglia EVO da 500 ml e il formato ideale per la tavola: elegante, pratica e perfetta per chi vuole usare ogni giorno un extravergine italiano dal gusto armonico."
       }
     ],
     "slug": "evo",
@@ -46,7 +23,60 @@
     "badge": "EVO",
     "imageSrc": "/products/EVO-750-ml-gpt.png",
     "imageAlt": "Olio extravergine di oliva EVO",
-    "description": "Il classico EVO da tutti i giorni.",
+    "description": "EVO Del Pasqua e l'olio extravergine da tenere sempre in cucina: equilibrato, pulito e profumato, pensato per accompagnare ogni giorno piatti semplici e ricette curate.",
+    "specs": {}
+  },
+  {
+    "id": "evo-latta",
+    "variants": [
+      {
+        "id": "750ml",
+        "label": "Latta 750 ml",
+        "priceCents": 1800,
+        "sku": "EVO-L-750ML",
+        "imageSrc": "/products/EVO-latta-3lt.png",
+        "imageAlt": "EVO latta 750 ml",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta EVO da 750 ml e compatta e distintiva: un formato originale per chi cerca praticita, protezione e un olio extravergine italiano sempre pronto all'uso."
+      },
+      {
+        "id": "3lt",
+        "label": "Latta 3 L",
+        "priceCents": 7200,
+        "sku": "EVO-L-3LT",
+        "imageSrc": "/products/EVO-latta-3lt.png",
+        "imageAlt": "EVO latta 3 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta EVO da 3 L e pensata per chi usa olio ogni giorno e vuole una scorta pratica, protetta dalla luce e facile da gestire in cucina."
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 12000,
+        "sku": "EVO-L-5LT",
+        "imageSrc": "/products/EVO-latta-5lt.png",
+        "imageAlt": "EVO latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta EVO da 5 L e il formato famiglia per avere sempre a disposizione un extravergine equilibrato, profumato e versatile, ideale per cucina e condimenti a crudo."
+      }
+    ],
+    "slug": "olio-evo-latta",
+    "category": "Olio",
+    "title": "Extravergine - EVO Latta",
+    "subtitle": "Olio extravergine di oliva in latta",
+    "badge": "LATTA",
+    "imageSrc": "/products/EVO-latta-5lt.png",
+    "imageAlt": "Olio extravergine di oliva EVO in latta",
+    "description": "EVO Del Pasqua in latta protegge al meglio l'olio dalla luce e lo rende pratico da conservare, senza rinunciare al profilo equilibrato del nostro extravergine.",
     "specs": {}
   },
   {
@@ -59,7 +89,8 @@
         "sku": "FL-B-500ML",
         "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
         "imageAlt": "",
-        "specs": {}
+        "specs": {},
+        "description": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti."
       }
     ],
     "slug": "fruttato-leggero",
@@ -69,7 +100,7 @@
     "badge": "CLASSICO",
     "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
     "imageAlt": "Olio extravergine - fruttato leggero",
-    "description": "",
+    "description": "Il Fruttato Leggero e delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
     "specs": {},
     "purchaseInfo": {
       "caratteristiche": "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità <0,3%. Estratto a freddo per preservare tutte le proprietà organolettiche.",
@@ -77,6 +108,46 @@
       "spedizione": "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50€.",
       "resi": "Reso gratuito entro 14 giorni. Rimborso completo senza domande."
     }
+  },
+  {
+    "id": "fruttato-leggero-latta",
+    "variants": [
+      {
+        "id": "3lt",
+        "label": "Latta 3 L",
+        "priceCents": 6000,
+        "sku": "FL-L-3LT",
+        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+        "imageAlt": "Fruttato leggero latta 3 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta Fruttato Leggero da 3 L e ideale per chi cerca una scorta quotidiana di olio delicato, adatto a pesce, verdure e piatti freschi."
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 10000,
+        "sku": "FL-L-5LT",
+        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+        "imageAlt": "Fruttato leggero latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta Fruttato Leggero da 5 L offre piu autonomia in cucina mantenendo un profilo morbido, equilibrato e facile da abbinare."
+      }
+    ],
+    "slug": "olio-extra-vergine-di-oliva-fruttato-leggero-latta",
+    "category": "Olio",
+    "title": "Extravergine - Fruttato Leggero Latta",
+    "subtitle": "Olio extravergine di oliva fruttato leggero in latta",
+    "badge": "LATTA",
+    "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+    "imageAlt": "Olio extravergine fruttato leggero in latta",
+    "description": "Il Fruttato Leggero in latta mantiene la sua delicatezza in un formato pratico, protetto e conveniente per l'uso quotidiano.",
+    "specs": {}
   },
   {
     "id": "fruttato-medio",
@@ -93,7 +164,8 @@
           "Dimensions": "750 ml",
           "Harvest": "2026",
           "Prize": "IGP, Bio"
-        }
+        },
+        "description": "La bottiglia Fruttato Medio da 500 ml e perfetta per assaggiare o regalare un olio equilibrato, capace di valorizzare bruschette, verdure e primi piatti."
       },
       {
         "id": "750ml",
@@ -105,7 +177,8 @@
         "specs": {
           "Weight": "—",
           "Dimensions": "—"
-        }
+        },
+        "description": "La bottiglia Fruttato Medio da 750 ml e il formato quotidiano per chi vuole un extravergine versatile, intenso quanto basta e sempre elegante a tavola."
       },
       {
         "id": "1lt",
@@ -117,19 +190,8 @@
         "specs": {
           "Weight": "—",
           "Dimensions": "—"
-        }
-      },
-      {
-        "id": "5lt",
-        "label": "Latta 5 L",
-        "priceCents": 10000,
-        "sku": "FM-5LT",
-        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-        "imageAlt": "Fruttato medio latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        }
+        },
+        "description": "La bottiglia Fruttato Medio da 1 L offre piu continuita in cucina: un olio bilanciato, pratico e adatto a molti usi mediterranei."
       }
     ],
     "slug": "fruttato-medio",
@@ -139,11 +201,51 @@
     "badge": "CLASSICO",
     "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
     "imageAlt": "Olio extravergine - fruttato medio",
-    "description": "Blend equilibrato, ideale a crudo e in cucina.",
+    "description": "Il Fruttato Medio e l'equilibrio piu versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
     "specs": {},
     "purchaseInfo": {
       "caratteristiche": "questo è nuovo. inserido da admin!!!"
     }
+  },
+  {
+    "id": "fruttato-medio-latta",
+    "variants": [
+      {
+        "id": "3lt",
+        "label": "Latta 3 L",
+        "priceCents": 6000,
+        "sku": "FM-L-3LT",
+        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+        "imageAlt": "Fruttato medio latta 3 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta Fruttato Medio da 3 L e pensata per una cucina attiva: versatile, bilanciata e comoda per condire, cucinare e rifinire i piatti."
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 10000,
+        "sku": "FM-L-5LT",
+        "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+        "imageAlt": "Fruttato medio latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta Fruttato Medio da 5 L e il formato scorta per chi non vuole mai restare senza un extravergine affidabile, profumato e adatto a tutto pasto."
+      }
+    ],
+    "slug": "olio-extra-vergine-di-oliva-fruttato-medio-latta",
+    "category": "Olio",
+    "title": "Extravergine - Fruttato Medio Latta",
+    "subtitle": "Olio extravergine di oliva fruttato medio in latta",
+    "badge": "LATTA",
+    "imageSrc": "/products/fruttato-medio-latta-5lt.png",
+    "imageAlt": "Olio extravergine fruttato medio in latta",
+    "description": "Il Fruttato Medio in latta e la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
+    "specs": {}
   },
   {
     "id": "fruttato-intenso",
@@ -158,7 +260,8 @@
         "specs": {
           "Weight": "—",
           "Dimensions": "—"
-        }
+        },
+        "description": "La bottiglia Fruttato Intenso da 500 ml concentra personalita e profumo in un formato agile, perfetto su zuppe, legumi, carni e bruschette."
       },
       {
         "id": "750ml",
@@ -170,7 +273,8 @@
         "specs": {
           "Weight": "—",
           "Dimensions": "—"
-        }
+        },
+        "description": "La bottiglia Fruttato Intenso da 750 ml e il formato giusto per chi ama un extravergine energico, persistente e ricco di carattere."
       },
       {
         "id": "1lt",
@@ -182,19 +286,8 @@
         "specs": {
           "Weight": "—",
           "Dimensions": "—"
-        }
-      },
-      {
-        "id": "5lt",
-        "label": "Latta 5 L",
-        "priceCents": 10000,
-        "sku": "FI-5LT",
-        "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
-        "imageAlt": "Fruttato intenso latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        }
+        },
+        "description": "La bottiglia Fruttato Intenso da 1 L e pensata per chi usa spesso un olio deciso, ideale per ricette rustiche e piatti dal sapore importante."
       }
     ],
     "slug": "fruttato-intenso",
@@ -204,11 +297,51 @@
     "badge": "CLASSICO",
     "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
     "imageAlt": "Olio extravergine - fruttato intenso",
-    "description": "Sapore deciso, amaro e piccante più presenti.",
+    "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale piu marcato: ideale per chi cerca un olio capace di farsi sentire.",
     "specs": {
       "Harvest": "—",
       "Certification": "—"
     }
+  },
+  {
+    "id": "fruttato-intenso-latta",
+    "variants": [
+      {
+        "id": "3lt",
+        "label": "Latta 3 L",
+        "priceCents": 6000,
+        "sku": "FI-L-3LT",
+        "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
+        "imageAlt": "Fruttato intenso latta 3 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta Fruttato Intenso da 3 L e una scorta intelligente per chi cerca un olio pieno, verde e persistente, perfetto su piatti strutturati."
+      },
+      {
+        "id": "5lt",
+        "label": "Latta 5 L",
+        "priceCents": 10000,
+        "sku": "FI-L-5LT",
+        "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
+        "imageAlt": "Fruttato intenso latta 5 L",
+        "specs": {
+          "Weight": "—",
+          "Dimensions": "—"
+        },
+        "description": "La latta Fruttato Intenso da 5 L e il formato piu generoso per cucine che vogliono sempre a portata di mano un extravergine potente e riconoscibile."
+      }
+    ],
+    "slug": "olio-extra-vergine-di-oliva-fruttato-intenso-latta",
+    "category": "Olio",
+    "title": "Extravergine - Fruttato Intenso Latta",
+    "subtitle": "Olio extravergine di oliva fruttato intenso in latta",
+    "badge": "LATTA",
+    "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
+    "imageAlt": "Olio extravergine fruttato intenso in latta",
+    "description": "Il Fruttato Intenso in latta conserva forza e profumi in un formato pratico, ideale per chi usa con frequenza un olio dal profilo deciso.",
+    "specs": {}
   },
   {
     "id": "tartufo",

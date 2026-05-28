@@ -13,15 +13,26 @@
             "description": "En guidet sansereise for å lære å kjenne igjen aromaene og notene av ekstra jomfru olivenolje, oppdage våre sorter og oppleve møllen på nært hold.",
             "duration": "min",
             "from": "Fra",
+            "child_policy": "* Smaksprøver er gratis for barn opp til 12 år.",
             "types": {
                 "classica": {
-                    "title": "Besøk og smaking",
-                    "subtitle": "Besøk oss direkte på møllen i Monte San Savino og oppdag alt som er verdt å vite om ekstra jomfru olivenolje og oliven.",
+                    "title": "Klassisk Smaking",
+                    "subtitle": "Introduksjon til Delpasqua-oljer med guidet smaking.",
                     "includes": [
-                        "Beskrivelse og forklaring av olivendyrking og de typiske sortene i området",
-                        "Innføring i de ulike metodene for dyrking, høsting, produksjon og lagring",
-                        "Guidet smaking for å lære å kjenne igjen de sensoriske kvalitetene til olivenolje og identifisere eventuelle defekter",
-                        "Smaking av oljene våre kombinert med lokale produkter: bruschetta på steinovnsbakt brød, friske pinzimonio-grønnsaker og et glass Rosso di Sangiovese"
+                        "Smaking av 3 oljer",
+                        "Brød & vann",
+                        "Varianter og pressing"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Mellomliggende smaking",
+                    "subtitle": "En komplett opplevelse med smaksprøver av oljer og vin parret med lokale oster og spekemat.",
+                    "includes": [
+                        "Beskrivelse og forklaring av olivendyrking og typiske varianter i området",
+                        "Introduksjon til de forskjellige dyrkings-, høstings-, produksjons- og lagringsmetodene",
+                        "Guidet smaksprøve (sensorisk analyse)",
+                        "Service og paring av oljer og vin med lokale oster og spekemat",
+                        "Steinkvernet brødbruschetta, friske pinzimonio-grønnsaker og et glass Rosso di Sangiovese"
                     ]
                 },
                 "premium": {
@@ -96,6 +107,7 @@
                 "selected_date": "Valgt dato",
                 "type_label": "Smakingstype",
                 "people_label": "Antall personer",
+                "children_label": "Antall barn (gratis opp til 12 år)",
                 "time_label": "Foretrukket tidspunkt *",
                 "use_suggestion": "bruk {time}",
                 "name_label": "Fullt navn",
@@ -107,6 +119,7 @@
                 "notes_label": "Notater / Allergier",
                 "notes_placeholder": "Skriv her...",
                 "submit": "Send forespørsel",
+                "submit_pay": "Betal og send forespørsel",
                 "submitting": "Sender..."
             },
             "errors": {
@@ -153,7 +166,7 @@
             },
             "contacts": {
                 "title": "KONTAKT",
-                "address": "Via casacce 4 Pozzo della chiana 52045 (Ar)",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
                 "gender_policy": "Likestillingspolicy UNI PDR 125"
             },
             "info": {
@@ -170,6 +183,7 @@
             },
             "bottom": {
                 "rights": "© {year} Az. Agr. Del Pasqua — Alle rettigheter forbeholdt.",
+                "legal_office": "Juridisk adresse",
                 "back_to_top": "Tilbake til toppen",
                 "powered_by": "Powered by Modern Tech",
                 "secure_payments": "Sikker betaling"
@@ -180,31 +194,58 @@
         "evo": {
             "title": "Ekstra Jomfru - EVO",
             "subtitle": "Ekstra jomfru olivenolje",
-            "description": "Den klassiske hverdags-EVO-en. Kvalitet, eleganse og en ren smak: en flaske som ser bra ut på kjøkkenet og på bordet.",
+            "description": "Del Pasqua EVO er extra virgin olivenoljen for hverdagen: balansert, ren og aromatisk, laget for enkle retter og mer forseggjorte oppskrifter.",
             "badge": "EVO",
             "variants": {
-                "750ml": "Flaske 750 ml",
-                "3lt": "Kanne 3 L",
-                "5lt": "Kanne 5 L"
+                "500ml": "Flaske 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "EVO-flasken p? 500 ml er ideell p? bordet: elegant, praktisk og perfekt til daglig bruk med en harmonisk italiensk olivenolje."
             }
         },
         "fruttato-leggero": {
             "title": "Ekstra Jomfru - Lett Fruktig",
             "subtitle": "Ekstra jomfru olivenolje",
-            "description": "Delikat og harmonisk profil, ideell for fiskeretter og salater.",
-            "badge": "KLASSIKER"
+            "description": "Lett Fruktig er delikat, mild og lett ? bruke: den l?fter rettene uten ? dominere dem, ideell til fisk, gr?nnsaker og salater.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flaske 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "Flasken Lett Fruktig p? 500 ml gir en mild og aromatisk olje p? bordet, perfekt for elegante og diskrete smakstillegg."
+            }
         },
         "fruttato-medio": {
             "title": "Ekstra Jomfru - Medium Fruktig",
             "subtitle": "Ekstra jomfru olivenolje",
-            "description": "Balansert blanding, ideell for rå bruk og matlaging.",
-            "badge": "KLASSIKER"
+            "description": "Middels Fruktig er den mest allsidige balansen: urteaktig duft, fyldig smak og en harmonisk avslutning.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flaske 500 ml",
+                "750ml": "Flaske 750 ml",
+                "1lt": "Flaske 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "Flasken Middels Fruktig p? 500 ml er perfekt for ? smake eller gi bort en balansert olje til bruschetta, gr?nnsaker og pasta.",
+                "750ml": "Flasken Middels Fruktig p? 750 ml er hverdagsformatet for deg som vil ha en allsidig olivenolje med riktig intensitet.",
+                "1lt": "Flasken Middels Fruktig p? 1 L gir mer kontinuitet p? kj?kkenet: balansert, praktisk og egnet til mange middelhavsretter."
+            }
         },
         "fruttato-intenso": {
             "title": "Ekstra Jomfru - Intens Fruktig",
             "subtitle": "Ekstra jomfru olivenolje",
-            "description": "Kraftig smak, med mer markerte bitre og krydrede toner.",
-            "badge": "KLASSIKER"
+            "description": "Intens Fruktig har tydelig karakter, gr?nne toner og en mer markant avslutning: ideell for retter med kraftig smak.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flaske 500 ml",
+                "750ml": "Flaske 750 ml",
+                "1lt": "Flaske 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "Flasken Intens Fruktig p? 500 ml samler personlighet og duft i et praktisk format, perfekt til supper, belgfrukter, kj?tt og bruschetta.",
+                "750ml": "Flasken Intens Fruktig p? 750 ml passer for deg som liker en energisk og vedvarende extra virgin olivenolje.",
+                "1lt": "Flasken Intens Fruktig p? 1 L er laget for hyppig bruk i rustikke oppskrifter og smaksrike retter."
+            }
         },
         "tartufo": {
             "title": "Ekstra Jomfru - Trøffel",
@@ -229,6 +270,64 @@
             "subtitle": "Gratis frakt for betalingstester",
             "description": "Dette er et testprodukt for € 0,50 med gratis frakt for å sjekke betalingsflyt og lagerbeholdning.",
             "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Extra Virgin - EVO Kanne",
+            "subtitle": "Extra virgin olivenolje i kanne",
+            "description": "Del Pasqua EVO i kanne beskytter oljen mot lys og gj?r lagring praktisk, samtidig som den balanserte profilen beholdes.",
+            "badge": "KANNE",
+            "variants": {
+                "750ml": "Kanne 750 ml",
+                "3lt": "Kanne 3 L",
+                "5lt": "Kanne 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "EVO-kannen p? 750 ml er kompakt og s?rpreget: et originalt format for praktisk bruk, god beskyttelse og hverdagsmat.",
+                "3lt": "EVO-kannen p? 3 L er laget for deg som bruker olivenolje hver dag og vil ha en praktisk beholdning beskyttet mot lys.",
+                "5lt": "EVO-kannen p? 5 L er familieformatet for alltid ? ha en balansert, aromatisk og allsidig extra virgin olivenolje tilgjengelig."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Extra Virgin - Lett Fruktig Kanne",
+            "subtitle": "Lett fruktig extra virgin olivenolje i kanne",
+            "description": "Lett Fruktig i kanne bevarer sin delikate profil i et praktisk, beskyttet og ?konomisk hverdagsformat.",
+            "badge": "KANNE",
+            "variants": {
+                "3lt": "Kanne 3 L",
+                "5lt": "Kanne 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Kannen Lett Fruktig p? 3 L er ideell for en daglig beholdning av mild olje til fisk, gr?nnsaker og friske retter.",
+                "5lt": "Kannen Lett Fruktig p? 5 L gir mer frihet p? kj?kkenet med en myk, balansert olje som er lett ? kombinere."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Extra Virgin - Middels Fruktig Kanne",
+            "subtitle": "Middels fruktig extra virgin olivenolje i kanne",
+            "description": "Middels Fruktig i kanne er et praktisk valg for hyppig bruk, med balansert smak og bedre beskyttelse mot lys.",
+            "badge": "KANNE",
+            "variants": {
+                "3lt": "Kanne 3 L",
+                "5lt": "Kanne 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Kannen Middels Fruktig p? 3 L er laget for aktive kj?kken: allsidig, balansert og praktisk til matlaging og finish.",
+                "5lt": "Kannen Middels Fruktig p? 5 L er lagerformatet for deg som alltid vil ha en p?litelig og aromatisk olivenolje klar."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Extra Virgin - Intens Fruktig Kanne",
+            "subtitle": "Intens fruktig extra virgin olivenolje i kanne",
+            "description": "Intens Fruktig i kanne bevarer styrke og aroma i et praktisk format for hyppig bruk.",
+            "badge": "KANNE",
+            "variants": {
+                "3lt": "Kanne 3 L",
+                "5lt": "Kanne 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Kannen Intens Fruktig p? 3 L er en smart beholdning for deg som s?ker en fyldig, gr?nn og vedvarende olje.",
+                "5lt": "Kannen Intens Fruktig p? 5 L er det store formatet for kj?kken som alltid vil ha en kraftig og gjenkjennelig olivenolje tilgjengelig."
+            }
         }
     },
     "ShopPage": {
@@ -269,7 +368,7 @@
                 },
                 "oli": {
                     "title": "Våre Oljer",
-                    "excerpt": "Et utvalg av våre beste oljer, elsket og prisbelønnet: kvalitet, balanse og karakter.",
+                    "excerpt": "Et utvalg av våre beste oljer, elsket og sertifisert: kvalitet, balanse og karakter.",
                     "cta": "Oppdag",
                     "alt": "Grønne oliven i hånden (høst)"
                 },
@@ -475,7 +574,9 @@
             "subtitle": "Historie",
             "title_part1": "Vår ",
             "title_italic": "historie",
-            "description": "Del Pasqua ble grunnlagt på 1960-tallet i Valdichiana-regionen, og har utviklet seg gjennom årene ved å satse på mangfold. Vi fokuserer på produktkvalitet, innovasjon og miljøvennlig bærekraft, uten noen gang å miste verdiene og smakene fra ekte toskanske og italienske tradisjoner av syne. Denne tilnærmingen har åpnet nye veier innen både olivendyrking og vinproduksjon. Hele produksjonskjeden vår er lokal: fra dyrking av oliventrær og vinstokker til høsting og emballering av det ferdige produktet."
+            "description": "Del Pasqua ble grunnlagt på 1960-tallet i Valdichiana-regionen, og har utviklet seg gjennom årene ved å satse på mangfold. Vi fokuserer på produktkvalitet, innovasjon og miljøvennlig bærekraft, uten noen gang å miste verdiene og smakene fra ekte toskanske og italienske tradisjoner av syne. Denne tilnærmingen har åpnet nye veier innen både olivendyrking og vinproduksjon. Hele produksjonskjeden vår er lokal: fra dyrking av oliventrær og vinstokker til høsting og emballering av det ferdige produktet.",
+            "description_top": "Del Pasqua ble grunnlagt på 1960-tallet i Valdichiana og har over tid bygget sin identitet rundt diversifisering, produktkvalitet og innovasjon.",
+            "description_bottom": "Samtidig har vi holdt fast ved respekten for miljoet og ved verdiene og smakene fra ekte toskanske og italienske tradisjoner. Slik har nye veier apnet seg innen bade olivendyrking og vinproduksjon, med en produksjonskjede som forblir solid forankret i vart eget territorium."
         },
         "section1": {
             "subtitle": "Våre olivenlunder",
@@ -513,11 +614,26 @@
         "nav": {
             "section": "Seksjon",
             "sections": {
-                "capitolo-1": { "label": "Opprinnelsen", "kicker": "Håndhøsting" },
-                "capitolo-2": { "label": "Ekstraksjonen", "kicker": "De 6 Møllestegene" },
-                "capitolo-3": { "label": "Oppbevaringen", "kicker": "Stål & Nitrogen" },
-                "capitolo-4": { "label": "Forseglingen", "kicker": "Flaske & Sertifiseringer" },
-                "capitolo-5": { "label": "Tjenester & Besøk", "kicker": "Pressing & Smakinger" }
+                "capitolo-1": {
+                    "label": "Opprinnelsen",
+                    "kicker": "Håndhøsting"
+                },
+                "capitolo-2": {
+                    "label": "Ekstraksjonen",
+                    "kicker": "De 6 Møllestegene"
+                },
+                "capitolo-3": {
+                    "label": "Oppbevaringen",
+                    "kicker": "Stål & Nitrogen"
+                },
+                "capitolo-4": {
+                    "label": "Forseglingen",
+                    "kicker": "Flaske & Sertifiseringer"
+                },
+                "capitolo-5": {
+                    "label": "Tjenester & Besøk",
+                    "kicker": "Pressing & Smakinger"
+                }
             }
         },
         "origin": {
@@ -666,11 +782,11 @@
             "subtitle": "Høst, behandling og sertifiseringer: fasene som styrer kvaliteten på vår ekstra jomfru olivenolje."
         },
         "steps": {
-            "brucatura": {
+            "raccolta": {
                 "kicker": "HØST",
                 "title": "Håndhøsting",
                 "paragraphs": [
-                    "Selv i dag foregår en stor del av olivenhøstingen i Toscana på tradisjonelt vis med håndhøsting. Olivenene transporteres deretter til møllen og presses innen 12 timer for å bevare de aromatiske og fenoliske komponentene. Den familiedrevne møllen Del Pasqua, som ligger i nærheten av Monte San Savino, ble nylig renovert etter bærekraftige prinsipper og standarder for energisparing, og er utstyrt med et moderne olivenpressingsanlegg fra Alfa Laval med kaldpressing."
+                    "Selv i dag foregår olivenhøstingen i Toscana på tradisjonelt vis for hånd. De nyhøstede olivenene transporteres til møllen og presses innen 12 timer for å bevare de aromatiske og fenoliske komponentene, takket være et moderne Alfa Laval olivenpressingsanlegg med kaldpressing."
                 ],
                 "placeholder": "BILDE — HØST"
             },
@@ -770,8 +886,8 @@
                     "En autentisk og ekte olje, perfekt for daglig bruk på kjøkkenet."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml",
+                    "Dunk: 3/5L"
                 ],
                 "placeholder": "BILDE — EVO"
             },

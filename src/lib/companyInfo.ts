@@ -1,18 +1,19 @@
 export const companyInfo = {
+  brandName: "Frantoio Del Pasqua",
   companyName: "Az. Agr. Del Pasqua",
-  addressSingleLine: "Via casacce 4 Pozzo della chiana 52045 (Ar)",
-  addressLegal: "Via casacce 4, Pozzo della chiana, 52045 (AR), Italia",
-  addressMap: "Via casacce 4, Pozzo della Chiana, 52045, AR, Italia",
+  addressSingleLine: "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
+  addressLegal: "Via Casacce 4, Pozzo della Chiana, 52045 (AR), Italia",
+  addressMap: "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR), Italia",
   postalAddress: {
-    streetAddress: "Via casacce 4",
-    addressLocality: "Pozzo della chiana",
+    streetAddress: "Loc. Infernaccio, 510/B",
+    addressLocality: "Monte San Savino",
     addressRegion: "AR",
-    postalCode: "52045",
+    postalCode: "52048",
     addressCountry: "IT"
   },
   geo: {
-    latitude: 43.2929017,
-    longitude: 11.799742
+    latitude: 43.359897478894105,
+    longitude: 11.750180829591507
   },
   phone: "+39 0575 810065",
   mobile: "+39 338 811 0356",

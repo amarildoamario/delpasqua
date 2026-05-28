@@ -13,6 +13,7 @@ type Specs = Record<string, string>;
 type ProductVariant = {
   id: string;
   label: string;
+  description?: string;
   priceCents: number;
   sku?: string;
   imageSrc?: string;
@@ -33,6 +34,7 @@ type Product = {
   description: string;
   variants: ProductVariant[];
   specs?: Specs;
+  excludeFromSeo?: boolean;
 };
 
 function hasTranslation(t: { has?: (key: string) => boolean }, key: string) {
@@ -186,10 +188,36 @@ export default async function ProductPage({
       label: hasTranslation(tp, `${product.id}.variants.${variant.id}`)
         ? tp(`${product.id}.variants.${variant.id}`)
         : translateVariantLabel(variant.id, variant.label, locale),
+      description: hasTranslation(tp, `${product.id}.variantDescriptions.${variant.id}`)
+        ? tp(`${product.id}.variantDescriptions.${variant.id}`)
+        : variant.description,
     })),
   };
 
   const categoryLabel = translatedProduct.category ?? "";
+
+  // Traduce tutti gli altri prodotti per passarli come raccomandati
+  const relatedProducts: Product[] = list
+    .filter((p) => p.id !== product.id && p.excludeFromSeo !== true)
+    .map((p) => ({
+      ...p,
+      category: translateCategory(p.category, locale),
+      title: hasTranslation(tp, `${p.id}.title`) ? tp(`${p.id}.title`) : p.title,
+      subtitle: hasTranslation(tp, `${p.id}.subtitle`) ? tp(`${p.id}.subtitle`) : p.subtitle,
+      badge: hasTranslation(tp, `${p.id}.badge`) ? tp(`${p.id}.badge`) : p.badge,
+      description: hasTranslation(tp, `${p.id}.description`)
+        ? tp(`${p.id}.description`)
+        : p.description ?? "",
+      variants: p.variants.map((variant) => ({
+        ...variant,
+        label: hasTranslation(tp, `${p.id}.variants.${variant.id}`)
+          ? tp(`${p.id}.variants.${variant.id}`)
+          : translateVariantLabel(variant.id, variant.label, locale),
+        description: hasTranslation(tp, `${p.id}.variantDescriptions.${variant.id}`)
+          ? tp(`${p.id}.variantDescriptions.${variant.id}`)
+          : variant.description,
+      })),
+    }));
 
   return (
     <div className="min-h-screen bg-[#FDFCF8]">
@@ -201,32 +229,12 @@ export default async function ProductPage({
           <span className="text-[#57534E]">{categoryLabel}</span>
         </nav>
 
-        <header className="mb-12">
-          {/* Categoria */}
-          {categoryLabel ? (
-            <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-              <span className="h-px w-6 bg-[#8B7355]" />
-              {translatedProduct.badge || categoryLabel}
-            </div>
-          ) : null}
-
-          <h1 className="mt-4 font-serif text-4xl font-light leading-[1.1] tracking-tight text-[#1C1917] lg:text-5xl xl:text-6xl">
-            {translatedProduct.title}
-          </h1>
-
-          {translatedProduct.subtitle ? (
-            <p className="mt-4 text-lg font-light italic text-[#3D5A3D]">
-              {translatedProduct.subtitle}
-            </p>
-          ) : null}
-
-          <p className="mt-6 max-w-3xl text-base leading-relaxed text-[#57534E] lg:text-lg">
-            {translatedProduct.description}
-          </p>
-        </header>
-
         {/* Griglia client */}
-        <ProductDetailsClient product={translatedProduct} initialVariantId={sp?.v} />
+        <ProductDetailsClient 
+          product={translatedProduct} 
+          initialVariantId={sp?.v} 
+          relatedProducts={relatedProducts} 
+        />
       </div>
 
       <Footer />

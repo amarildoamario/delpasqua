@@ -13,6 +13,7 @@
             "description": "Eine geführte sensorische Reise, um die Aromen und Noten von nativem Olivenöl extra zu erkennen, unsere Sorten zu entdecken und die Mühle hautnah zu erleben.",
             "duration": "Min",
             "from": "Ab",
+            "child_policy": "* Die Verkostungen sind für Kinder bis 12 Jahre kostenlos.",
             "types": {
                 "classica": {
                     "title": "Klassische Verkostung",
@@ -21,6 +22,17 @@
                         "Verkostung von 3 Ölen",
                         "Brot & Wasser",
                         "Sorten und Pressung"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Mittlere Verkostung",
+                    "subtitle": "Ein komplettes Erlebnis mit Verkostung von Ölen und Wein gepaart mit lokalem Käse und Aufschnitt.",
+                    "includes": [
+                        "Erklärung des Olivenanbaus und der typischen Sorten der Region",
+                        "Einführung in Anbau-, Ernte-, Produktions- und Lagermethoden",
+                        "Geführtes Verkostungserlebnis (sensorische Analyse)",
+                        "Service und Paarung von Ölen und Wein mit lokalem Käse und Aufschnitt",
+                        "Steinofenbrot-Bruschetta, frisches Pinzimonio-Gemüse und ein Glas Rosso di Sangiovese"
                     ]
                 },
                 "premium": {
@@ -102,6 +114,7 @@
                 "selected_date": "Ausgewähltes Datum",
                 "type_label": "Verkostungsart",
                 "people_label": "Anzahl der Personen",
+                "children_label": "Anzahl der Kinder (kostenlos bis 12 Jahre)",
                 "time_label": "Bevorzugte Zeit *",
                 "use_suggestion": "{time} verwenden",
                 "name_label": "Vor- und Nachname",
@@ -113,6 +126,7 @@
                 "notes_label": "Notizen / Allergien",
                 "notes_placeholder": "Hier schreiben...",
                 "submit": "Anfrage senden",
+                "submit_pay": "Bezahlen und Anfrage senden",
                 "submitting": "Wird gesendet..."
             },
             "errors": {
@@ -159,7 +173,7 @@
             },
             "contacts": {
                 "title": "KONTAKT",
-                "address": "Via casacce 4 Pozzo della chiana 52045 (Ar)",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
                 "gender_policy": "Gleichstellungspolitik UNI PDR 125"
             },
             "info": {
@@ -176,6 +190,7 @@
             },
             "bottom": {
                 "rights": "© {year} Az. Agr. Del Pasqua — Alle Rechte vorbehalten.",
+                "legal_office": "Rechtssitz",
                 "back_to_top": "Nach oben",
                 "powered_by": "Powered by Modern Tech",
                 "secure_payments": "Sichere Zahlungen"
@@ -186,31 +201,58 @@
         "evo": {
             "title": "Natives Olivenöl Extra - EVO",
             "subtitle": "Natives Olivenöl Extra",
-            "description": "Das klassische EVO für jeden Tag. Qualität, Eleganz und reiner Geschmack: eine Flasche, die in der Küche und auf dem Tisch gut aussieht.",
+            "description": "Del Pasqua EVO ist das native Olivenoel extra fuer jeden Tag: ausgewogen, klar und aromatisch, passend zu einfachen Gerichten und raffinierten Rezepten.",
             "badge": "EVO",
             "variants": {
-                "750ml": "Flasche 750 ml",
-                "3lt": "Kanister 3 L",
-                "5lt": "Kanister 5 L"
+                "500ml": "Flasche 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "Die 500-ml-Flasche EVO ist ideal fuer den Tisch: elegant, praktisch und perfekt fuer ein harmonisches italienisches Olivenoel im Alltag."
             }
         },
         "fruttato-leggero": {
             "title": "Natives Olivenöl Extra - Leichtfruchtig",
             "subtitle": "Natives Olivenöl Extra",
-            "description": "Zartes und harmonisches Profil, ideal für Fischgerichte und Salate.",
-            "badge": "KLASSIKER"
+            "description": "Leicht Fruchtig ist fein, mild und angenehm: es verfeinert Gerichte, ohne sie zu ueberdecken, ideal fuer Fisch, Gemuese und Salate.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flasche 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "Die 500-ml-Flasche Leicht Fruchtig bringt ein sanftes, duftendes Oel auf den Tisch, perfekt fuer elegante und dezente Wuerze."
+            }
         },
         "fruttato-medio": {
             "title": "Natives Olivenöl Extra - Mittelfruchtig",
             "subtitle": "Natives Olivenöl Extra",
-            "description": "Ausgewogene Mischung, ideal zum rohen Verzehr und zum Kochen.",
-            "badge": "KLASSIKER"
+            "description": "Mittel Fruchtig ist der vielseitige Ausgleich: kraeuterige Aromen, voller Geschmack und harmonischer Abschluss.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flasche 500 ml",
+                "750ml": "Flasche 750 ml",
+                "1lt": "Flasche 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "Die 500-ml-Flasche Mittel Fruchtig ist ideal zum Probieren oder Verschenken eines ausgewogenen Oels.",
+                "750ml": "Die 750-ml-Flasche Mittel Fruchtig ist das Alltagsformat fuer ein vielseitiges Olivenoel mit genau richtiger Intensitaet.",
+                "1lt": "Die 1-L-Flasche Mittel Fruchtig bietet mehr Kontinuitaet in der Kueche: ausgewogen, praktisch und vielseitig."
+            }
         },
         "fruttato-intenso": {
             "title": "Natives Olivenöl Extra - Intensivfruchtig",
             "subtitle": "Natives Olivenöl Extra",
-            "description": "Kräftiger Geschmack, mit präsenteren bitteren und scharfen Noten.",
-            "badge": "KLASSIKER"
+            "description": "Intens Fruchtig hat deutlichen Charakter, gruene Noten und einen markanteren Abschluss: ideal fuer kraeftige Gerichte.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flasche 500 ml",
+                "750ml": "Flasche 750 ml",
+                "1lt": "Flasche 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "Die 500-ml-Flasche Intens Fruchtig buendelt Persoenlichkeit und Duft in einem handlichen Format.",
+                "750ml": "Die 750-ml-Flasche Intens Fruchtig ist fuer alle, die ein energisches und anhaltendes Olivenoel lieben.",
+                "1lt": "Die 1-L-Flasche Intens Fruchtig eignet sich fuer haeufige Nutzung in rustikalen Rezepten."
+            }
         },
         "tartufo": {
             "title": "Natives Olivenöl Extra - Trüffel",
@@ -235,6 +277,64 @@
             "subtitle": "Kostenloser Versand für Zahlungstests",
             "description": "Dies ist ein Testprodukt für 0,50 € mit kostenlosem Versand, um den Zahlungsfluss und den Lagerbestand zu überprüfen.",
             "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Natives Olivenoel Extra - EVO Kanister",
+            "subtitle": "Natives Olivenoel extra im Kanister",
+            "description": "Del Pasqua EVO im Kanister schuetzt das Oel vor Licht und macht die Aufbewahrung praktisch, ohne das ausgewogene Profil zu verlieren.",
+            "badge": "KANISTER",
+            "variants": {
+                "750ml": "Kanister 750 ml",
+                "3lt": "Kanister 3 L",
+                "5lt": "Kanister 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "Der 750-ml-EVO-Kanister ist kompakt und besonders: ein originelles Format fuer praktische Nutzung und besseren Schutz.",
+                "3lt": "Der 3-L-EVO-Kanister ist fuer den taeglichen Gebrauch gedacht: praktisch, lichtgeschuetzt und einfach in der Kueche zu handhaben.",
+                "5lt": "Der 5-L-EVO-Kanister ist das Familienformat fuer ein ausgewogenes, aromatisches und vielseitiges Olivenoel."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Natives Olivenoel Extra - Leicht Fruchtig Kanister",
+            "subtitle": "Leicht fruchtiges natives Olivenoel extra im Kanister",
+            "description": "Leicht Fruchtig im Kanister bewahrt seine Feinheit in einem praktischen und geschuetzten Alltagsformat.",
+            "badge": "KANISTER",
+            "variants": {
+                "3lt": "Kanister 3 L",
+                "5lt": "Kanister 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Der 3-L-Kanister Leicht Fruchtig ist ideal fuer eine taegliche Reserve eines milden Oels fuer Fisch, Gemuese und frische Gerichte.",
+                "5lt": "Der 5-L-Kanister Leicht Fruchtig bietet mehr Vorrat und bleibt weich, ausgewogen und leicht kombinierbar."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Natives Olivenoel Extra - Mittel Fruchtig Kanister",
+            "subtitle": "Mittel fruchtiges natives Olivenoel extra im Kanister",
+            "description": "Mittel Fruchtig im Kanister ist praktisch fuer haeufige Nutzung und schuetzt das ausgewogene Oel vor Licht.",
+            "badge": "KANISTER",
+            "variants": {
+                "3lt": "Kanister 3 L",
+                "5lt": "Kanister 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Der 3-L-Kanister Mittel Fruchtig ist fuer aktive Kuechen gemacht: vielseitig, ausgewogen und bequem.",
+                "5lt": "Der 5-L-Kanister Mittel Fruchtig ist das Vorratsformat fuer ein verlaessliches und aromatisches Olivenoel."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Natives Olivenoel Extra - Intens Fruchtig Kanister",
+            "subtitle": "Intens fruchtiges natives Olivenoel extra im Kanister",
+            "description": "Intens Fruchtig im Kanister bewahrt Kraft und Duft in einem praktischen Format fuer haeufige Nutzung.",
+            "badge": "KANISTER",
+            "variants": {
+                "3lt": "Kanister 3 L",
+                "5lt": "Kanister 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Der 3-L-Kanister Intens Fruchtig ist ein kluger Vorrat fuer ein volles, gruenes und anhaltendes Oel.",
+                "5lt": "Der 5-L-Kanister Intens Fruchtig ist das grosszuegige Format fuer Kuechen, die ein kraeftiges Oel griffbereit wollen."
+            }
         }
     },
     "ShopPage": {
@@ -275,7 +375,7 @@
                 },
                 "oli": {
                     "title": "Unsere Öle",
-                    "excerpt": "Eine Auswahl unserer besten Öle, geliebt und ausgezeichnet: Qualität, Ausgewogenheit und Charakter.",
+                    "excerpt": "Eine Auswahl unserer besten Öle, geliebt und zertifiziert: Qualität, Ausgewogenheit und Charakter.",
                     "cta": "Entdecken",
                     "alt": "Grüne Oliven in der Hand (Ernte)"
                 },
@@ -481,7 +581,9 @@
             "subtitle": "Geschichte",
             "title_part1": "Unsere ",
             "title_italic": "Geschichte",
-            "description": "Das Unternehmen Del Pasqua entstand in den 1960er Jahren aus der Arbeit des Vaters Sabatino. Im Laufe der Jahre trat auch sein Sohn Emanuele in den Familienbetrieb ein, mit dem Ziel, die Diversifizierung zu stärken, auf die Qualität der Produkte zu setzen und so dem Unternehmen neue Absatzmärkte und Richtungen zu eröffnen."
+            "description": "Das Unternehmen Del Pasqua entstand in den 1960er Jahren aus der Arbeit des Vaters Sabatino. Im Laufe der Jahre trat auch sein Sohn Emanuele in den Familienbetrieb ein, mit dem Ziel, die Diversifizierung zu stärken, auf die Qualität der Produkte zu setzen und so dem Unternehmen neue Absatzmärkte und Richtungen zu eröffnen.",
+            "description_top": "Das Unternehmen Del Pasqua entstand in den 1960er Jahren und hat seine Identität im Laufe der Zeit durch Diversifizierung, Produktqualität und Innovation gefestigt.",
+            "description_bottom": "Dabei blieb der Respekt vor der Umwelt ebenso zentral wie die Werte und Aromen der echten toskanischen und italienischen Tradition. So entwickelten sich neue Wege sowohl im Olivenanbau als auch im Weinbau, stets mit einer vollständig im eigenen Gebiet verankerten Produktionskette."
         },
         "section1": {
             "subtitle": "Unsere Olivenhaine",
@@ -519,11 +621,26 @@
         "nav": {
             "section": "Abschnitt",
             "sections": {
-                "capitolo-1": { "label": "Der Ursprung", "kicker": "Handlese" },
-                "capitolo-2": { "label": "Die Extraktion", "kicker": "Die 6 Mühlenschritte" },
-                "capitolo-3": { "label": "Die Aufbewahrung", "kicker": "Stahl & Stickstoff" },
-                "capitolo-4": { "label": "Das Siegel", "kicker": "Flasche & Zertifizierungen" },
-                "capitolo-5": { "label": "Service & Besuch", "kicker": "Mahlung & Verkostungen" }
+                "capitolo-1": {
+                    "label": "Der Ursprung",
+                    "kicker": "Handlese"
+                },
+                "capitolo-2": {
+                    "label": "Die Extraktion",
+                    "kicker": "Die 6 Mühlenschritte"
+                },
+                "capitolo-3": {
+                    "label": "Die Aufbewahrung",
+                    "kicker": "Stahl & Stickstoff"
+                },
+                "capitolo-4": {
+                    "label": "Das Siegel",
+                    "kicker": "Flasche & Zertifizierungen"
+                },
+                "capitolo-5": {
+                    "label": "Service & Besuch",
+                    "kicker": "Mahlung & Verkostungen"
+                }
             }
         },
         "origin": {
@@ -671,11 +788,11 @@
             "subtitle": "Ernte, Verarbeitung und Zertifizierungen: Die Phasen, die die Qualität unseres Olivenöls bestimmen."
         },
         "steps": {
-            "brucatura": {
+            "raccolta": {
                 "kicker": "ERNTE",
-                "title": "Handpflückung",
+                "title": "Handernte",
                 "paragraphs": [
-                    "Auch heute noch erfolgt in der Toskana ein Großteil der Olivenernte traditionell per Handpflückung. Die zur Mühle transportierten Oliven werden dann innerhalb von 24 Stunden verarbeitet, um die Integrität der aromatischen und phenolischen Komponenten zu bewahren. Das Frantoio del Pasqua ist mit einer modernen Alfalaval-Olivenverarbeitungsanlage mit Kaltextraktion ausgestattet."
+                    "Auch heute noch erfolgt in der Toskana die Olivenernte traditionell von Hand. Die frisch geernteten Oliven werden zur Mühle transportiert und innerhalb von 12 Stunden verarbeitet, um die Qualität der aromatischen und phenolischen Komponenten durch eine moderne Alfa-Laval-Kaltextraktionsanlage zu bewahren."
                 ],
                 "placeholder": "BILD — ERNTE"
             },
@@ -773,7 +890,8 @@
                     "Aus der Auswahl der besten Oliven entsteht unser 'EVO'-Öl, kalt extrahiert nach traditionellen Prinzipien und mit Blick auf Innovation. Leuchtend grüne Farbe und grasiger Duft mit Mandelnoten."
                 ],
                 "formats": [
-                    "Flasche: 500ml"
+                    "Flasche: 500ml",
+                    "Kanister: 3/5L"
                 ],
                 "placeholder": "BILD — EVO"
             },

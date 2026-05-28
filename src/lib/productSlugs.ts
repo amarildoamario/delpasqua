@@ -14,6 +14,14 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     da: "evo",
     no: "evo",
   },
+  "evo-latta": {
+    it: "olio-evo-latta",
+    en: "evo-oil-can",
+    de: "evo-olivenoel-kanister",
+    nl: "evo-olijfolie-blik",
+    da: "evo-olivenolie-dunk",
+    no: "evo-olivenolje-kanne",
+  },
   "fruttato-leggero": {
     it: "fruttato-leggero",
     en: "light-fruity",
@@ -21,6 +29,14 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "licht-fruitig",
     da: "let-frugtig",
     no: "lett-fruktig",
+  },
+  "fruttato-leggero-latta": {
+    it: "olio-extra-vergine-di-oliva-fruttato-leggero-latta",
+    en: "light-fruity-extra-virgin-olive-oil-can",
+    de: "leicht-fruchtiges-natives-olivenoel-extra-kanister",
+    nl: "licht-fruitige-extra-vierge-olijfolie-blik",
+    da: "let-frugtig-ekstra-jomfruolivenolie-dunk",
+    no: "lett-fruktig-extra-virgin-olivenolje-kanne",
   },
   "fruttato-medio": {
     it: "fruttato-medio",
@@ -30,6 +46,14 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     da: "medium-frugtig",
     no: "middels-fruktig",
   },
+  "fruttato-medio-latta": {
+    it: "olio-extra-vergine-di-oliva-fruttato-medio-latta",
+    en: "medium-fruity-extra-virgin-olive-oil-can",
+    de: "mittel-fruchtiges-natives-olivenoel-extra-kanister",
+    nl: "medium-fruitige-extra-vierge-olijfolie-blik",
+    da: "medium-frugtig-ekstra-jomfruolivenolie-dunk",
+    no: "middels-fruktig-extra-virgin-olivenolje-kanne",
+  },
   "fruttato-intenso": {
     it: "fruttato-intenso",
     en: "intense-fruity",
@@ -37,6 +61,14 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "intens-fruitig",
     da: "intens-frugtig",
     no: "intens-fruktig",
+  },
+  "fruttato-intenso-latta": {
+    it: "olio-extra-vergine-di-oliva-fruttato-intenso-latta",
+    en: "intense-fruity-extra-virgin-olive-oil-can",
+    de: "intens-fruchtiges-natives-olivenoel-extra-kanister",
+    nl: "intens-fruitige-extra-vierge-olijfolie-blik",
+    da: "intens-frugtig-ekstra-jomfruolivenolie-dunk",
+    no: "intens-fruktig-extra-virgin-olivenolje-kanne",
   },
   tartufo: {
     it: "tartufo",

@@ -135,6 +135,7 @@ export default function TastingsCalendar(props: {
 
   const [typeId, setTypeId] = useState(props.tastingTypes[0]?.id || "classica");
   const [people, setPeople] = useState(2);
+  const [children, setChildren] = useState(0);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -228,6 +229,7 @@ export default function TastingsCalendar(props: {
     setOpen(true);
     setSubmitError(null);
     setSuccess(null);
+    setChildren(0);
 
     // Auto-compila col primo slot libero
     const isMorn = new Date(s.start).getHours() < 14;
@@ -260,6 +262,7 @@ export default function TastingsCalendar(props: {
           slotEndIso: selected.end,
           tastingTypeId: typeId,
           people,
+          children,
           fullName,
           email,
           phone,
@@ -278,7 +281,13 @@ export default function TastingsCalendar(props: {
         return;
       }
 
-      const j: { bookingId: string; mail?: MailResult } = await r.json();
+      const j: { bookingId: string; mail?: MailResult; checkoutUrl?: string } = await r.json();
+      
+      if (j.checkoutUrl) {
+        window.location.href = j.checkoutUrl;
+        return;
+      }
+
       setSuccess({ bookingId: j.bookingId, mail: j.mail });
 
       await loadWeek(weekStart);
@@ -316,19 +325,19 @@ export default function TastingsCalendar(props: {
           <button
             type="button"
             onClick={() => loadWeek(addDays(weekStart, -7))}
-            className="inline-flex items-center justify-center w-12 h-12 rounded-2xl border border-[#E7E5E4] bg-white text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
+            className="inline-flex items-center justify-center w-12 h-12 rounded-[5px] border border-[#E7E5E4] bg-white text-[#44403C] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
 
-          <div className="px-5 py-3 bg-[#F5F5F4] rounded-2xl">
+          <div className="px-5 py-3 bg-[#F5F5F4] rounded-[5px]">
             <span className="text-sm font-medium text-[#1C1917]">{weekLabel}</span>
           </div>
 
           <button
             type="button"
             onClick={() => loadWeek(addDays(weekStart, 7))}
-            className="inline-flex items-center justify-center w-12 h-12 rounded-2xl border border-[#E7E5E4] bg-white text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
+            className="inline-flex items-center justify-center w-12 h-12 rounded-[5px] border border-[#E7E5E4] bg-white text-[#44403C] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -350,7 +359,7 @@ export default function TastingsCalendar(props: {
               return (
                 <div
                   key={toYmd(d)}
-                  className={`rounded-2xl border min-h-[380px] flex flex-col ${isToday ? "border-[#3D5A3D]/40 bg-[#3D5A3D]/[0.03]" : "border-[#E7E5E4] bg-white"
+                  className={`rounded-[5px] border min-h-[380px] flex flex-col ${isToday ? "border-[#3D5A3D]/40 bg-[#3D5A3D]/[0.03]" : "border-[#E7E5E4] bg-white"
                     }`}
                 >
                   {/* Day Header */}
@@ -385,7 +394,7 @@ export default function TastingsCalendar(props: {
                       <div className="h-full flex items-center justify-center">
                         <div className="text-center">
                           <div className="text-2xl mb-1">🌿</div>
-                          <div className="text-xs text-[#78716C]">{t("no_slots")}</div>
+                          <div className="text-xs text-[#44403C]">{t("no_slots")}</div>
                         </div>
                       </div>
                     ) : (
@@ -402,7 +411,7 @@ export default function TastingsCalendar(props: {
                             onClick={() => (!taken ? openBooking(s, d) : undefined)}
                             disabled={taken}
                             className={[
-                              "group w-full rounded-xl border-2 px-3 py-3.5 text-left transition-all duration-200",
+                              "group w-full rounded-[5px] border-2 px-3 py-3.5 text-left transition-all duration-200",
                               taken
                                 ? "cursor-not-allowed border-[#F0EEED] bg-[#FAFAF9]"
                                 : "border-[#E7E5E4] bg-white hover:border-[#3D5A3D] hover:shadow-md hover:-translate-y-0.5",
@@ -411,11 +420,11 @@ export default function TastingsCalendar(props: {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <Clock
-                                  className={`h-4 w-4 ${taken ? "text-[#D6D3D1]" : "text-[#8B7355]"
+                                  className={`h-4 w-4 ${taken ? "text-[#D6D3D1]" : "text-[#57534E]"
                                     }`}
                                 />
                                 <span
-                                  className={`text-sm font-bold ${taken ? "text-[#A8A29E]" : "text-[#1C1917]"
+                                  className={`text-sm font-bold ${taken ? "text-[#87807B]" : "text-[#1C1917]"
                                     }`}
                                 >
                                   {fmtTime(s.start)}
@@ -458,7 +467,7 @@ export default function TastingsCalendar(props: {
           return (
             <div
               key={toYmd(d)}
-              className={`rounded-2xl border overflow-hidden ${isToday ? "border-[#3D5A3D]/30 bg-[#3D5A3D]/[0.02]" : "border-[#E7E5E4] bg-white"
+              className={`rounded-[5px] border overflow-hidden ${isToday ? "border-[#3D5A3D]/30 bg-[#3D5A3D]/[0.02]" : "border-[#E7E5E4] bg-white"
                 }`}
             >
               {/* Mobile Day Header */}
@@ -480,7 +489,7 @@ export default function TastingsCalendar(props: {
                     >
                       {new Intl.DateTimeFormat(locale, { weekday: "long" }).format(d)}
                     </span>
-                    <span className="text-[10px] text-[#A8A29E]">
+                    <span className="text-[10px] text-[#57534E]">
                       {new Intl.DateTimeFormat(locale, { month: "long" }).format(d)}
                     </span>
                   </div>
@@ -507,7 +516,7 @@ export default function TastingsCalendar(props: {
                         onClick={() => (!taken ? openBooking(s, d) : undefined)}
                         disabled={taken}
                         className={[
-                          "relative rounded-xl border-2 px-2 py-3 text-center transition-all duration-200",
+                          "relative rounded-[5px] border-2 px-2 py-3 text-center transition-all duration-200",
                           taken
                             ? "cursor-not-allowed border-[#F0EEED] bg-[#FAFAF9]"
                             : "border-[#E7E5E4] bg-white hover:border-[#3D5A3D] active:scale-[0.98] shadow-sm",
@@ -519,7 +528,7 @@ export default function TastingsCalendar(props: {
                               }`}
                           />
                           <span
-                            className={`text-sm font-bold ${taken ? "text-[#A8A29E]" : "text-[#1C1917]"
+                            className={`text-sm font-bold ${taken ? "text-[#87807B]" : "text-[#1C1917]"
                               }`}
                           >
                             {fmtTime(s.start)}
@@ -550,19 +559,19 @@ export default function TastingsCalendar(props: {
 
       {/* Empty State */}
       {weekDays.every((d) => (slotsByDay.get(toYmd(d)) || []).length === 0) && (
-        <div className="mt-16 text-center py-16 bg-[#F5F5F4] rounded-3xl">
+        <div className="mt-16 text-center py-16 bg-[#F5F5F4] rounded-[5px]">
           <div className="text-4xl mb-3">🌿</div>
           <div className="font-serif text-xl text-[#1C1917] mb-1">
             {t("empty_state.title")}
           </div>
-          <div className="text-[#57534E]">{t("empty_state.desc")}</div>
+          <div className="text-[#292524]">{t("empty_state.desc")}</div>
         </div>
       )}
 
       {/* Modal */}
       {open ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1917]/60 px-3 pb-24 pt-3 backdrop-blur-sm sm:p-6 sm:pb-12">
-          <div className="flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-[#FDFCF8] shadow-2xl sm:max-h-[75vh]">
+          <div className="flex max-h-[90vh] sm:max-h-[85vh] w-full max-w-lg md:max-w-3xl flex-col overflow-hidden rounded-3xl bg-[#FDFCF8] shadow-2xl">
           {/* Header */}
           <div className="flex-shrink-0 flex items-center justify-between border-b border-[#E7E5E4] bg-white/80 px-4 py-3.5 backdrop-blur sm:px-6 sm:py-5">
             <div>
@@ -580,7 +589,7 @@ export default function TastingsCalendar(props: {
               variant="outline"
               size="icon-sm"
               onClick={closeModal}
-              className="rounded-2xl border-[#E7E5E4] bg-white text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+              className="rounded-[5px] border-[#E7E5E4] bg-white text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
               aria-label="Chiudi"
             >
               <X className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -610,7 +619,7 @@ export default function TastingsCalendar(props: {
                   <div className="font-serif text-xl font-light text-[#3D5A3D]">
                     {t("modal.success.title")}
                   </div>
-                  <div className="mt-2 text-sm text-[#57534E]">
+                  <div className="mt-2 text-sm text-[#292524]">
                     {t("modal.success.desc")}
                   </div>
                   <div className="mt-3 text-xs text-[#8B7355]">
@@ -673,9 +682,8 @@ export default function TastingsCalendar(props: {
                 <div className="space-y-2.5">
                   <Label>{t("modal.form.type_label")}</Label>
                   <div role="radiogroup" aria-label={t("modal.form.type_label")} className="grid gap-2">
-                    {props.tastingTypes.map((tastingType, idx) => {
-                      const accents = ["olive", "gold", "terracotta"] as const;
-                      const accent = accents[idx % 3];
+                    {props.tastingTypes.map((tastingType) => {
+                      const accent = tastingType.id === "premium" ? "gold" : tastingType.id === "intermedia" ? "terracotta" : "olive";
                       const accentClass =
                         accent === "olive"
                           ? "border-[#d8e3d4] bg-[#f5f9f3] text-[#3D5A3D]"
@@ -713,7 +721,7 @@ export default function TastingsCalendar(props: {
                               <span className="block font-serif text-[15px] font-light text-[#1C1917] sm:text-base">
                                 {tastingType.title}
                               </span>
-                              <span className="mt-1 block whitespace-normal text-[11px] leading-snug text-[#57534E] sm:text-xs">
+                              <span className="mt-1 block whitespace-normal text-[11px] leading-snug text-[#292524] sm:text-xs font-normal">
                                 {tastingType.subtitle}
                               </span>
                             </span>
@@ -743,11 +751,11 @@ export default function TastingsCalendar(props: {
                           size="icon"
                           onClick={() => setPeople(Math.max(1, people - 1))}
                           disabled={people <= 1}
-                          className="h-11 w-11 rounded-xl border-[#E7E5E4] bg-white text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                          className="h-11 w-11 rounded-[5px] border-[#E7E5E4] bg-white text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
-                        <div className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#E7E5E4] bg-white px-4">
+                        <div className="flex h-11 flex-1 items-center justify-center gap-2 rounded-[5px] border border-[#E7E5E4] bg-white px-4">
                           <Users className="h-4 w-4 text-[#8B7355]" />
                           <span className="text-lg font-semibold text-[#1C1917]">{people}</span>
                         </div>
@@ -757,7 +765,37 @@ export default function TastingsCalendar(props: {
                           size="icon"
                           onClick={() => setPeople(Math.min(20, people + 1))}
                           disabled={people >= 20}
-                          className="h-11 w-11 rounded-xl border-[#E7E5E4] bg-white text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                          className="h-11 w-11 rounded-[5px] border-[#E7E5E4] bg-white text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      <Label>{t("modal.form.children_label")}</Label>
+                      <div className="flex items-center gap-2.5">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setChildren(Math.max(0, children - 1))}
+                          disabled={children <= 0}
+                          className="h-11 w-11 rounded-[5px] border-[#E7E5E4] bg-white text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <div className="flex h-11 flex-1 items-center justify-center gap-2 rounded-[5px] border border-[#E7E5E4] bg-white px-4">
+                          <Users className="h-4 w-4 text-[#8B7355]" />
+                          <span className="text-lg font-semibold text-[#1C1917]">{children}</span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setChildren(Math.min(10, children + 1))}
+                          disabled={children >= 10}
+                          className="h-11 w-11 rounded-[5px] border-[#E7E5E4] bg-white text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -853,7 +891,7 @@ export default function TastingsCalendar(props: {
                     type="button"
                     variant="outline"
                     onClick={closeModal}
-                    className="rounded-2xl border-[#E7E5E4] bg-white px-5 text-sm font-medium text-[#57534E] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+                    className="rounded-[5px] border-[#E7E5E4] bg-white px-5 text-sm font-medium text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
                   >
                     {t("modal.close")}
                   </Button>
@@ -870,7 +908,7 @@ export default function TastingsCalendar(props: {
                       !!timeReqConflict
                     }
                     className={[
-                      "rounded-2xl bg-[#3D5A3D] px-5 text-sm font-medium text-white",
+                      "rounded-[5px] bg-[#3D5A3D] px-5 text-sm font-medium text-white",
                       submitLoading ||
                         !selected ||
                         !fullName.trim() ||
@@ -882,7 +920,13 @@ export default function TastingsCalendar(props: {
                         : "hover:bg-[#2D4A2D]",
                     ].join(" ")}
                   >
-                    {submitLoading ? t("modal.form.submitting") : t("modal.form.submit")}
+                    {submitLoading ? (
+                      t("modal.form.submitting")
+                    ) : typeId === "premium" ? (
+                      t("modal.form.submit")
+                    ) : (
+                      t("modal.form.submit_pay")
+                    )}
                   </Button>
                 </div>
               </div>

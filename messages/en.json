@@ -13,6 +13,7 @@
             "description": "A guided sensory journey to learn how to recognize the aromas and notes of extra virgin olive oil, discover our cultivars, and experience the mill up close.",
             "duration": "min",
             "from": "Starting from",
+            "child_policy": "* Tastings are free for children up to 12 years old.",
             "types": {
                 "classica": {
                     "title": "Visit and tasting",
@@ -22,6 +23,17 @@
                         "Introduction to the different methods of cultivation, harvesting, production, and storage",
                         "Guided tasting to learn how to recognize the sensory qualities of olive oil and identify any defects",
                         "Tasting of our oils paired with local products: stone-ground bread bruschetta, fresh pinzimonio vegetables, and a glass of Rosso di Sangiovese"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Intermediate tasting",
+                    "subtitle": "Service and pairing of oils and wine with local cheeses and cured meats, with guided tasting experience.",
+                    "includes": [
+                        "Description and explanation of olive cultivation and typical varieties of the area",
+                        "Introduction to cultivation, harvesting, production, and storage methods",
+                        "Guided tasting experience to recognize sensory qualities and identify any defects",
+                        "Service and pairing of oils and wine with local cheeses and cured meats",
+                        "Stone-ground bread bruschetta and fresh pinzimonio vegetables"
                     ]
                 },
                 "premium": {
@@ -96,6 +108,7 @@
                 "selected_date": "Selected Date",
                 "type_label": "Tasting Type",
                 "people_label": "Number of People",
+                "children_label": "Number of children (free up to 12 years)",
                 "time_label": "Preferred Time *",
                 "use_suggestion": "use {time}",
                 "name_label": "Full Name",
@@ -107,6 +120,7 @@
                 "notes_label": "Notes / Allergies",
                 "notes_placeholder": "Write here...",
                 "submit": "Submit Request",
+                "submit_pay": "Pay and send request",
                 "submitting": "Submitting..."
             },
             "errors": {
@@ -153,7 +167,7 @@
             },
             "contacts": {
                 "title": "CONTACTS",
-                "address": "Via casacce 4 Pozzo della chiana 52045 (Ar)",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
                 "gender_policy": "Gender Equality Policy UNI PDR 125"
             },
             "info": {
@@ -170,6 +184,7 @@
             },
             "bottom": {
                 "rights": "© {year} Az. Agr. Del Pasqua — All rights reserved.",
+                "legal_office": "Registered office",
                 "back_to_top": "Back to top",
                 "powered_by": "Powered by Modern Tech",
                 "secure_payments": "Secure Payments"
@@ -180,31 +195,58 @@
         "evo": {
             "title": "Extra Virgin - EVO",
             "subtitle": "Extra virgin olive oil",
-            "description": "The classic everyday EVO. Quality, elegance, and clean taste: a bottle that looks good in the kitchen and on the table.",
+            "description": "Del Pasqua EVO is the extra virgin olive oil to keep in the kitchen every day: balanced, clean and aromatic, made for simple meals and refined recipes alike.",
             "badge": "EVO",
             "variants": {
-                "750ml": "Bottle 750 ml",
-                "3lt": "Can 3 L",
-                "5lt": "Can 5 L"
+                "500ml": "500 ml bottle"
+            },
+            "variantDescriptions": {
+                "500ml": "The 500 ml EVO bottle is ideal for the table: elegant, practical and perfect for everyday use when you want a harmonious Italian extra virgin olive oil."
             }
         },
         "fruttato-leggero": {
             "title": "Extra Virgin - Light Fruity",
             "subtitle": "Extra virgin olive oil",
-            "description": "Delicate and harmonious profile, ideal for fish dishes and salads.",
-            "badge": "CLASSIC"
+            "description": "Light Fruity is delicate, soft and immediate: it enhances dishes without covering them, ideal for fish, vegetables, salads and refined recipes.",
+            "badge": "CLASSIC",
+            "variants": {
+                "500ml": "500 ml bottle"
+            },
+            "variantDescriptions": {
+                "500ml": "The 500 ml Light Fruity bottle brings a gentle, aromatic olive oil to the table, perfect for elegant and subtle seasoning."
+            }
         },
         "fruttato-medio": {
             "title": "Extra Virgin - Medium Fruity",
             "subtitle": "Extra virgin olive oil",
-            "description": "Balanced blend, ideal raw and for cooking.",
-            "badge": "CLASSIC"
+            "description": "Medium Fruity is the most versatile balance: grassy aromas, full taste and a harmonious finish, suitable both raw and in cooking.",
+            "badge": "CLASSIC",
+            "variants": {
+                "500ml": "500 ml bottle",
+                "750ml": "750 ml bottle",
+                "1lt": "1 L bottle"
+            },
+            "variantDescriptions": {
+                "500ml": "The 500 ml Medium Fruity bottle is perfect for tasting or gifting a balanced olive oil for bruschetta, vegetables and pasta dishes.",
+                "750ml": "The 750 ml Medium Fruity bottle is the everyday format for those who want a versatile extra virgin olive oil with just the right intensity.",
+                "1lt": "The 1 L Medium Fruity bottle offers more continuity in the kitchen: balanced, practical and suited to many Mediterranean uses."
+            }
         },
         "fruttato-intenso": {
             "title": "Extra Virgin - Intense Fruity",
             "subtitle": "Extra virgin olive oil",
-            "description": "Strong flavor, with more present bitter and spicy notes.",
-            "badge": "CLASSIC"
+            "description": "Intense Fruity has a bold character, green notes and a more marked finish: ideal for those who want an olive oil that stands out.",
+            "badge": "CLASSIC",
+            "variants": {
+                "500ml": "500 ml bottle",
+                "750ml": "750 ml bottle",
+                "1lt": "1 L bottle"
+            },
+            "variantDescriptions": {
+                "500ml": "The 500 ml Intense Fruity bottle concentrates personality and aroma in an agile format, perfect on soups, legumes, meats and bruschetta.",
+                "750ml": "The 750 ml Intense Fruity bottle is right for those who love an energetic, persistent extra virgin olive oil with real character.",
+                "1lt": "The 1 L Intense Fruity bottle is made for frequent use in rustic recipes and dishes with important flavor."
+            }
         },
         "tartufo": {
             "title": "Extra Virgin - Truffle",
@@ -229,6 +271,64 @@
             "subtitle": "Free shipping for payment testing",
             "description": "This is a test product for €0.50 with free shipping to check payment flow and inventory.",
             "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Extra Virgin - EVO Can",
+            "subtitle": "Extra virgin olive oil in can",
+            "description": "Del Pasqua EVO in can protects the oil from light and makes storage practical, while keeping the balanced profile of our extra virgin olive oil.",
+            "badge": "CAN",
+            "variants": {
+                "750ml": "750 ml can",
+                "3lt": "3 L can",
+                "5lt": "5 L can"
+            },
+            "variantDescriptions": {
+                "750ml": "The 750 ml EVO can is compact and distinctive: an original format for practical storage, better protection and everyday use.",
+                "3lt": "The 3 L EVO can is made for daily olive oil users who want a practical pantry size protected from light.",
+                "5lt": "The 5 L EVO can is the family format for keeping a balanced, aromatic and versatile extra virgin olive oil always available."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Extra Virgin - Light Fruity Can",
+            "subtitle": "Light fruity extra virgin olive oil in can",
+            "description": "Light Fruity in can keeps its delicate profile in a practical, protected and convenient everyday format.",
+            "badge": "CAN",
+            "variants": {
+                "3lt": "3 L can",
+                "5lt": "5 L can"
+            },
+            "variantDescriptions": {
+                "3lt": "The 3 L Light Fruity can is ideal for anyone who wants a daily supply of delicate olive oil for fish, vegetables and fresh dishes.",
+                "5lt": "The 5 L Light Fruity can gives more autonomy in the kitchen while keeping a soft, balanced and easy-to-pair profile."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Extra Virgin - Medium Fruity Can",
+            "subtitle": "Medium fruity extra virgin olive oil in can",
+            "description": "Medium Fruity in can is the practical choice for frequent use, with balanced flavor and better protection from light.",
+            "badge": "CAN",
+            "variants": {
+                "3lt": "3 L can",
+                "5lt": "5 L can"
+            },
+            "variantDescriptions": {
+                "3lt": "The 3 L Medium Fruity can is made for active kitchens: versatile, balanced and convenient for dressing, cooking and finishing dishes.",
+                "5lt": "The 5 L Medium Fruity can is the pantry format for those who never want to run out of a reliable, aromatic extra virgin olive oil."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Extra Virgin - Intense Fruity Can",
+            "subtitle": "Intense fruity extra virgin olive oil in can",
+            "description": "Intense Fruity in can preserves strength and aromas in a practical format for frequent use.",
+            "badge": "CAN",
+            "variants": {
+                "3lt": "3 L can",
+                "5lt": "5 L can"
+            },
+            "variantDescriptions": {
+                "3lt": "The 3 L Intense Fruity can is a smart supply for those seeking a full, green and persistent olive oil for structured dishes.",
+                "5lt": "The 5 L Intense Fruity can is the generous format for kitchens that always want a powerful, recognizable extra virgin olive oil at hand."
+            }
         }
     },
     "ShopPage": {
@@ -269,7 +369,7 @@
                 },
                 "oli": {
                     "title": "Our Oils",
-                    "excerpt": "A selection of our best oils, loved and awarded: quality, balance, and character.",
+                    "excerpt": "A selection of our best oils, loved and certified: quality, balance, and character.",
                     "cta": "Discover",
                     "alt": "Green olives in hand (harvesting)"
                 },
@@ -475,7 +575,9 @@
             "subtitle": "History",
             "title_part1": "Our ",
             "title_italic": "history",
-            "description": "Founded in the 1960s in the Valdichiana region, the Del Pasqua company has evolved over the years by embracing diversification. We focus on product quality, innovation, and environmental sustainability, without ever losing sight of the values and flavors of authentic Tuscan and Italian traditions. This approach has opened new pathways in both olive growing and winemaking. Our entire production chain is local: from cultivating olive trees and grapevines to harvesting and packaging the final product."
+            "description": "Founded in the 1960s in the Valdichiana region, the Del Pasqua company has evolved over the years by embracing diversification. We focus on product quality, innovation, and environmental sustainability, without ever losing sight of the values and flavors of authentic Tuscan and Italian traditions. This approach has opened new pathways in both olive growing and winemaking. Our entire production chain is local: from cultivating olive trees and grapevines to harvesting and packaging the final product.",
+            "description_top": "Founded in the 1960s in the Valdichiana region, the Del Pasqua company has gradually shaped its identity around diversification, product quality, and innovation.",
+            "description_bottom": "At the same time, it has remained faithful to environmental respect and to the values and flavors of true Tuscan and Italian tradition, opening new paths in both olive growing and winemaking. Our entire production chain stays rooted in our territory, from olive groves and vineyards to harvest and final packaging."
         },
         "section1": {
             "subtitle": "The olive groves",
@@ -513,11 +615,26 @@
         "nav": {
             "section": "Section",
             "sections": {
-                "capitolo-1": { "label": "The Origin", "kicker": "Hand Harvesting" },
-                "capitolo-2": { "label": "The Extraction", "kicker": "The 5 Mill Steps" },
-                "capitolo-3": { "label": "The Safekeeping", "kicker": "Steel & Nitrogen" },
-                "capitolo-4": { "label": "The Seal", "kicker": "Bottle & Certifications" },
-                "capitolo-5": { "label": "Services & Visits", "kicker": "Milling & Tastings" }
+                "capitolo-1": {
+                    "label": "The Origin",
+                    "kicker": "Hand Harvesting"
+                },
+                "capitolo-2": {
+                    "label": "The Extraction",
+                    "kicker": "The 5 Mill Steps"
+                },
+                "capitolo-3": {
+                    "label": "The Safekeeping",
+                    "kicker": "Steel & Nitrogen"
+                },
+                "capitolo-4": {
+                    "label": "The Seal",
+                    "kicker": "Bottle & Certifications"
+                },
+                "capitolo-5": {
+                    "label": "Services & Visits",
+                    "kicker": "Milling & Tastings"
+                }
             }
         },
         "origin": {
@@ -665,11 +782,11 @@
             "subtitle": "Harvest, processing, and certifications: the stages that guide the quality of our extra virgin olive oil."
         },
         "steps": {
-            "brucatura": {
+            "raccolta": {
                 "kicker": "HARVEST",
-                "title": "Hand picking",
+                "title": "Hand harvesting",
                 "paragraphs": [
-                    "Even today in Tuscany, much of the olive harvest is still done traditionally, by hand-picking. The harvested olives are transported to the mill and processed within 12 hours to safeguard the integrity of their aromatic and phenolic components. The family-run Del Pasqua Mill, located near Monte San Savino, was recently renovated using green building and energy-saving standards. It is equipped with a modern Alfa Laval olive processing system featuring cold extraction."
+                    "Even today in Tuscany, the olive harvest is still done traditionally by hand. The freshly harvested olives are transported to the mill and processed within 12 hours to safeguard the integrity of their aromatic and phenolic components, using a modern Alfa Laval cold extraction system."
                 ],
                 "placeholder": "Hand harvest of the olives"
             },
@@ -768,7 +885,8 @@
                     "With the selection of the best olives, our 'EVO' oil is born, cold-extracted according to the principles of tradition and with a focus on innovation. It features a bright green color and herbaceous scent with hints of almond."
                 ],
                 "formats": [
-                    "Bottle: 500ml"
+                    "Bottle: 500ml",
+                    "Can: 3/5L"
                 ],
                 "placeholder": "IMAGE — EVO"
             },

@@ -42,7 +42,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-3">
             <div className="font-serif text-2xl tracking-[0.08em] text-stone-100 uppercase leading-snug">
-              Az. Agr.
+              Frantoio
               <br />
               Del Pasqua
             </div>
@@ -195,7 +195,10 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="text-xs text-stone-500">
-            {t("bottom.rights", { year: new Date().getFullYear() })}
+            <div>{t("bottom.rights", { year: new Date().getFullYear() })}</div>
+            <div className="mt-1 text-[11px] leading-relaxed text-stone-600">
+              {t("bottom.legal_office")}: {companyInfo.addressLegal}
+            </div>
           </div>
 
           <button

@@ -418,16 +418,18 @@ model TastingBooking {
 
   tastingType String
   people      Int
+  children    Int @default(0)
 
   fullName String
   email    String
   phone    String
   notes    String?
 
+  stripeSessionId String? @unique
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([slotStart])
   @@index([status, slotStart])
-  @@unique([slotStart, slotEnd])
 }

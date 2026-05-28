@@ -169,6 +169,7 @@ export async function sendTastingBookingAdminEmail(args: {
   slotEnd: Date;
   tastingType: string;
   people: number;
+  children?: number | null;
   fullName: string;
   email: string;
   phone: string;
@@ -237,6 +238,7 @@ export async function sendTastingBookingAdminEmail(args: {
     `Slot: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
     `Tipo: ${args.tastingType}`,
     `Persone: ${args.people}`,
+    args.children ? `Bambini: ${args.children}` : "",
     `Nome: ${args.fullName}`,
     `Email: ${args.email}`,
     `Telefono: ${args.phone}`,
@@ -256,6 +258,11 @@ export async function sendTastingBookingAdminEmail(args: {
       )}</p>
       <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
       <p style="margin:0 0 8px 0;"><b>Persone:</b> ${args.people}</p>
+      ${
+        args.children
+          ? `<p style="margin:0 0 8px 0;"><b>Bambini:</b> ${args.children}</p>`
+          : ""
+      }
       <hr style="border:none;border-top:1px solid #e5e7eb;margin:12px 0;" />
       <p style="margin:0 0 6px 0;"><b>Nome:</b> ${escapeHtml(args.fullName)}</p>
       <p style="margin:0 0 6px 0;"><b>Email:</b> ${escapeHtml(args.email)}</p>
@@ -328,6 +335,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
   slotEnd: Date;
   tastingType: string;
   people: number;
+  children?: number | null;
 }): Promise<MailOk | MailFail> {
   const from = process.env.EMAIL_FROM;
   const resend = getResend();
@@ -388,6 +396,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
     `Quando: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
     `Tipo: ${args.tastingType}`,
     `Persone: ${args.people}`,
+    args.children ? `Bambini: ${args.children}` : "",
     "",
     "Se vuoi, puoi prenotare un nuovo slot dal sito.",
     "",
@@ -405,7 +414,12 @@ export async function sendTastingCanceledCustomerEmail(args: {
     fmtIt(args.slotEnd)
   )}</p>
         <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
-        <p style="margin:0;"><b>Persone:</b> ${args.people}</p>
+        <p style="margin:0 ${args.children ? "0 8px 0" : ""};"><b>Persone:</b> ${args.people}</p>
+        ${
+          args.children
+            ? `<p style="margin:0;"><b>Bambini:</b> ${args.children}</p>`
+            : ""
+        }
       </div>
       <p style="margin:14px 0 0 0;">Se vuoi, puoi prenotare un nuovo slot dal sito.</p>
       <div style="margin-top:14px;">
@@ -478,6 +492,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
   slotEnd: Date;
   tastingType: string;
   people: number;
+  children?: number | null;
 }): Promise<MailOk | MailFail> {
   const from = process.env.EMAIL_FROM;
   const resend = getResend();
@@ -530,6 +545,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
     `Quando: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
     `Tipo: ${args.tastingType}`,
     `Persone: ${args.people}`,
+    args.children ? `Bambini: ${args.children}` : "",
     "",
     "Se hai domande, rispondi a questa email.",
     "",
@@ -545,7 +561,12 @@ export async function sendTastingConfirmedCustomerEmail(args: {
     fmtIt(args.slotEnd)
   )}</p>
         <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
-        <p style="margin:0;"><b>Persone:</b> ${args.people}</p>
+        <p style="margin:0 ${args.children ? "0 8px 0" : ""};"><b>Persone:</b> ${args.people}</p>
+        ${
+          args.children
+            ? `<p style="margin:0;"><b>Bambini:</b> ${args.children}</p>`
+            : ""
+        }
       </div>
       <p style="margin:14px 0 0 0;">Se hai domande, rispondi a questa email.</p>
       <div style="margin-top:14px;">

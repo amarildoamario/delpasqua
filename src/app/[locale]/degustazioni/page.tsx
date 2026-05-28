@@ -82,23 +82,32 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                 {t("hero.title_part1")} <span className="italic text-[#3D5A3D]">{t("hero.title_italic")}</span> {t("hero.title_part2")}
               </h1>
 
-              <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#57534E] lg:text-lg">
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#292524] lg:text-lg">
                 {t("hero.description")}
               </p>
             </div>
 
             {/* Tasting Types Cards */}
-            <div className="mt-16 grid gap-8 md:grid-cols-2 max-w-5xl mx-auto">
+            <div className="mt-16 grid gap-8 lg:grid-cols-3 md:grid-cols-2 max-w-7xl mx-auto">
               {[...types]
                 .sort((a, b) => {
-                  const order: Record<string, number> = { classica: 1, premium: 2 };
+                  const order: Record<string, number> = { classica: 1, intermedia: 2, premium: 3 };
                   return (order[a.id] || 99) - (order[b.id] || 99);
                 })
                 .map((tastingType) => {
                   const isPremium = tastingType.id === "premium";
-                  const accentColor = isPremium ? "#B8860B" : "#3D5A3D";
-                  const accentBgLight = isPremium ? "bg-gradient-to-br from-white to-[#B8860B]/[0.02]" : "bg-gradient-to-br from-white to-[#3D5A3D]/[0.02]";
-                  const borderHoverClass = isPremium ? "hover:border-[#B8860B]/40 hover:shadow-[0_10px_30px_rgba(184,134,11,0.06)]" : "hover:border-[#3D5A3D]/40 hover:shadow-[0_10px_30px_rgba(61,90,61,0.06)]";
+                  const isIntermedia = tastingType.id === "intermedia";
+                  const accentColor = isPremium ? "#B8860B" : isIntermedia ? "#8B7355" : "#3D5A3D";
+                  const accentBgLight = isPremium 
+                    ? "bg-gradient-to-br from-white to-[#B8860B]/[0.02]" 
+                    : isIntermedia 
+                      ? "bg-gradient-to-br from-white to-[#8B7355]/[0.02]" 
+                      : "bg-gradient-to-br from-white to-[#3D5A3D]/[0.02]";
+                  const borderHoverClass = isPremium 
+                    ? "hover:border-[#B8860B]/40 hover:shadow-[0_10px_30px_rgba(184,134,11,0.06)]" 
+                    : isIntermedia 
+                      ? "hover:border-[#8B7355]/40 hover:shadow-[0_10px_30px_rgba(139,115,85,0.06)]" 
+                      : "hover:border-[#3D5A3D]/40 hover:shadow-[0_10px_30px_rgba(61,90,61,0.06)]";
 
                   return (
                     <div
@@ -120,13 +129,19 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                                 <circle cx="12" cy="6" r="2" />
                               </svg>
                             </div>
+                          ) : isIntermedia ? (
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#8B7355]/10 text-[#8B7355] mb-5">
+                              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M15.2 3a2 2 0 0 1 1.8 2v5.3a6.7 6.7 0 0 1-5 6.5V21h3a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2h3v-4.2a6.7 6.7 0 0 1-5-6.5V5a2 2 0 0 1 1.8-2h6.4Z" />
+                              </svg>
+                            </div>
                           ) : (
                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3D5A3D]/10 text-[#3D5A3D] mb-5">
                               <IconLeaf className="h-6 w-6" />
                             </div>
                           )}
                           <h3 className="font-serif text-2xl font-light tracking-tight text-[#1C1917]">{tastingType.title}</h3>
-                          <p className="mt-2 text-sm leading-relaxed text-[#57534E] min-h-[40px]">{tastingType.subtitle}</p>
+                          <p className="mt-2 text-sm leading-relaxed text-[#292524] min-h-[40px]">{tastingType.subtitle}</p>
                         </div>
                         <div
                           className="shrink-0 rounded-2xl px-3.5 py-2 text-xs font-bold text-white shadow-sm flex items-center gap-1.5"
@@ -141,7 +156,7 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
 
                       <ul className="mt-8 space-y-3.5">
                         {tastingType.includes.map((x: string) => (
-                          <li key={x} className="flex gap-3 text-sm leading-relaxed text-[#57534E]">
+                          <li key={x} className="flex gap-3 text-sm leading-relaxed text-[#292524]">
                             <svg className="h-5 w-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: accentColor }}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
@@ -160,12 +175,19 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                   );
                 })}
             </div>
+
+            {/* Child policy disclaimer */}
+            <div className="mt-12 text-center">
+              <span className="inline-block px-5 py-2.5 rounded-2xl border border-[#E7E5E4] bg-white text-xs font-semibold text-[#8B7355] tracking-wide shadow-sm">
+                🌿 {t("hero.child_policy")}
+              </span>
+            </div>
           </div>
         </section>
 
         {/* Calendar Section */}
         <section className="mx-auto max-w-7xl px-6 pb-20 lg:pb-28">
-          <div className="rounded-3xl border border-[#E7E5E4] bg-white p-6 shadow-sm lg:p-8">
+          <div className="rounded-[5px] border border-[#E7E5E4] bg-white p-6 shadow-sm lg:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
@@ -175,7 +197,7 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                 <h2 className="mt-3 font-serif text-2xl font-light tracking-tight text-[#1C1917] lg:text-3xl">
                   {t("calendar.title_part1")} <span className="italic text-[#3D5A3D]">{t("calendar.title_italic")}</span>
                 </h2>
-                <p className="mt-2 text-sm text-[#57534E]">
+                <p className="mt-2 text-sm text-[#292524]">
                   {t("calendar.description")}
                 </p>
               </div>

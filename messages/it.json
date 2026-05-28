@@ -13,6 +13,7 @@
             "description": "Un percorso sensoriale guidato per imparare a riconoscere profumi e note dell'extravergine, conoscere le nostre cultivar e vivere il frantoio da vicino.",
             "duration": "min",
             "from": "A partire da",
+            "child_policy": "* Le degustazioni sono gratuite per i bambini fino a 12 anni.",
             "types": {
                 "classica": {
                     "title": "Visita e degustazione",
@@ -22,6 +23,17 @@
                         "Metodi di coltivazione, raccolta, produzione e conservazione",
                         "Assaggio guidato per riconoscere qualità sensoriali ed eventuali difetti",
                         "Degustazione dei nostri oli abbinati a bruschetta con pane macinato a pietra, verdure fresche in pinzimonio e calice di Rosso di Sangiovese"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Degustazione intermedia",
+                    "subtitle": "Servizio e abbinamento di oli e vino con formaggi e salumi locali, con esperienza guidata all'assaggio.",
+                    "includes": [
+                        "Coltivazione dell'olivo e le diverse varietà tipiche della zona",
+                        "Metodi di coltivazione, raccolta, produzione e conservazione",
+                        "Esperienza guidata all'assaggio per riconoscere qualità sensoriali ed eventuali difetti",
+                        "Servizio e abbinamento di oli e vino con formaggi e salumi locali",
+                        "Bruschetta con pane macinato a pietra e verdure fresche in pinzimonio"
                     ]
                 },
                 "premium": {
@@ -96,6 +108,7 @@
                 "selected_date": "Data selezionata",
                 "type_label": "Tipo degustazione",
                 "people_label": "Numero persone",
+                "children_label": "Numero bambini (gratis fino a 12 anni)",
                 "time_label": "Orario di preferenza *",
                 "use_suggestion": "usa {time}",
                 "name_label": "Nome e cognome",
@@ -107,6 +120,7 @@
                 "notes_label": "Note / Intolleranze",
                 "notes_placeholder": "Scrivi qui...",
                 "submit": "Invia Richiesta",
+                "submit_pay": "Paga ed invia richiesta",
                 "submitting": "Invio in corso..."
             },
             "errors": {
@@ -153,7 +167,7 @@
             },
             "contacts": {
                 "title": "CONTATTI",
-                "address": "Via casacce 4 Pozzo della chiana 52045 (Ar)",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
                 "gender_policy": "Politica Parità di Genere UNI PDR 125"
             },
             "info": {
@@ -170,6 +184,7 @@
             },
             "bottom": {
                 "rights": "© {year} Az. Agr. Del Pasqua — Tutti i diritti riservati.",
+                "legal_office": "Sede legale",
                 "back_to_top": "Torna su",
                 "powered_by": "Powered by Modern Tech",
                 "secure_payments": "Pagamenti Sicuri"
@@ -180,31 +195,58 @@
         "evo": {
             "title": "Extravergine - EVO",
             "subtitle": "Olio extravergine di oliva",
-            "description": "Il classico EVO da tutti i giorni. Qualità, eleganza e gusto pulito: una bottiglia che sta bene in cucina e in tavola.",
+            "description": "EVO Del Pasqua e l'olio extravergine da tenere sempre in cucina: equilibrato, pulito e profumato, pensato per accompagnare ogni giorno piatti semplici e ricette curate.",
             "badge": "EVO",
             "variants": {
-                "750ml": "Bottiglia 750 ml",
-                "3lt": "Latta 3 L",
-                "5lt": "Latta 5 L"
+                "500ml": "Bottiglia 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia EVO da 500 ml e il formato ideale per la tavola: elegante, pratica e perfetta per chi vuole usare ogni giorno un extravergine italiano dal gusto armonico."
             }
         },
         "fruttato-leggero": {
             "title": "Extravergine - Fruttato Leggero",
             "subtitle": "Olio extravergine di oliva",
-            "description": "Profilo delicato e armonico, ideale per piatti di pesce e insalate.",
-            "badge": "CLASSICO"
+            "description": "Il Fruttato Leggero e delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
+            "badge": "CLASSICO",
+            "variants": {
+                "500ml": "Bottiglia 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti."
+            }
         },
         "fruttato-medio": {
             "title": "Extravergine - Fruttato Medio",
             "subtitle": "Olio Extravergine di oliva",
-            "description": "Blend equilibrato, ideale a crudo e in cucina.",
-            "badge": "CLASSICO"
+            "description": "Il Fruttato Medio e l'equilibrio piu versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
+            "badge": "CLASSICO",
+            "variants": {
+                "500ml": "Bottiglia 500 ml",
+                "750ml": "Bottiglia 750 ml",
+                "1lt": "Bottiglia 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia Fruttato Medio da 500 ml e perfetta per assaggiare o regalare un olio equilibrato, capace di valorizzare bruschette, verdure e primi piatti.",
+                "750ml": "La bottiglia Fruttato Medio da 750 ml e il formato quotidiano per chi vuole un extravergine versatile, intenso quanto basta e sempre elegante a tavola.",
+                "1lt": "La bottiglia Fruttato Medio da 1 L offre piu continuita in cucina: un olio bilanciato, pratico e adatto a molti usi mediterranei."
+            }
         },
         "fruttato-intenso": {
             "title": "Extravergine - Fruttato Intenso",
             "subtitle": "Olio Extravergine di oliva",
-            "description": "Sapore deciso, amaro e piccante più presenti.",
-            "badge": "CLASSICO"
+            "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale piu marcato: ideale per chi cerca un olio capace di farsi sentire.",
+            "badge": "CLASSICO",
+            "variants": {
+                "500ml": "Bottiglia 500 ml",
+                "750ml": "Bottiglia 750 ml",
+                "1lt": "Bottiglia 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia Fruttato Intenso da 500 ml concentra personalita e profumo in un formato agile, perfetto su zuppe, legumi, carni e bruschette.",
+                "750ml": "La bottiglia Fruttato Intenso da 750 ml e il formato giusto per chi ama un extravergine energico, persistente e ricco di carattere.",
+                "1lt": "La bottiglia Fruttato Intenso da 1 L e pensata per chi usa spesso un olio deciso, ideale per ricette rustiche e piatti dal sapore importante."
+            }
         },
         "tartufo": {
             "title": "Extravergine - Tartufo",
@@ -229,6 +271,64 @@
             "subtitle": "Spedizione gratuita per test pagamenti",
             "description": "Questo è un prodotto di test a 0,50€ con spedizione gratuita per verificare il flusso di pagamento e il magazzino.",
             "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Extravergine - EVO Latta",
+            "subtitle": "Olio extravergine di oliva in latta",
+            "description": "EVO Del Pasqua in latta protegge al meglio l'olio dalla luce e lo rende pratico da conservare, senza rinunciare al profilo equilibrato del nostro extravergine.",
+            "badge": "LATTA",
+            "variants": {
+                "750ml": "Latta 750 ml",
+                "3lt": "Latta 3 L",
+                "5lt": "Latta 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "La latta EVO da 750 ml e compatta e distintiva: un formato originale per chi cerca praticita, protezione e un olio extravergine italiano sempre pronto all'uso.",
+                "3lt": "La latta EVO da 3 L e pensata per chi usa olio ogni giorno e vuole una scorta pratica, protetta dalla luce e facile da gestire in cucina.",
+                "5lt": "La latta EVO da 5 L e il formato famiglia per avere sempre a disposizione un extravergine equilibrato, profumato e versatile, ideale per cucina e condimenti a crudo."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Extravergine - Fruttato Leggero Latta",
+            "subtitle": "Olio extravergine di oliva fruttato leggero in latta",
+            "description": "Il Fruttato Leggero in latta mantiene la sua delicatezza in un formato pratico, protetto e conveniente per l'uso quotidiano.",
+            "badge": "LATTA",
+            "variants": {
+                "3lt": "Latta 3 L",
+                "5lt": "Latta 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "La latta Fruttato Leggero da 3 L e ideale per chi cerca una scorta quotidiana di olio delicato, adatto a pesce, verdure e piatti freschi.",
+                "5lt": "La latta Fruttato Leggero da 5 L offre piu autonomia in cucina mantenendo un profilo morbido, equilibrato e facile da abbinare."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Extravergine - Fruttato Medio Latta",
+            "subtitle": "Olio extravergine di oliva fruttato medio in latta",
+            "description": "Il Fruttato Medio in latta e la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
+            "badge": "LATTA",
+            "variants": {
+                "3lt": "Latta 3 L",
+                "5lt": "Latta 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "La latta Fruttato Medio da 3 L e pensata per una cucina attiva: versatile, bilanciata e comoda per condire, cucinare e rifinire i piatti.",
+                "5lt": "La latta Fruttato Medio da 5 L e il formato scorta per chi non vuole mai restare senza un extravergine affidabile, profumato e adatto a tutto pasto."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Extravergine - Fruttato Intenso Latta",
+            "subtitle": "Olio extravergine di oliva fruttato intenso in latta",
+            "description": "Il Fruttato Intenso in latta conserva forza e profumi in un formato pratico, ideale per chi usa con frequenza un olio dal profilo deciso.",
+            "badge": "LATTA",
+            "variants": {
+                "3lt": "Latta 3 L",
+                "5lt": "Latta 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "La latta Fruttato Intenso da 3 L e una scorta intelligente per chi cerca un olio pieno, verde e persistente, perfetto su piatti strutturati.",
+                "5lt": "La latta Fruttato Intenso da 5 L e il formato piu generoso per cucine che vogliono sempre a portata di mano un extravergine potente e riconoscibile."
+            }
         }
     },
     "ShopPage": {
@@ -269,7 +369,7 @@
                 },
                 "oli": {
                     "title": "I Nostri Oli",
-                    "excerpt": "Una selezione dei nostri migliori oli, amati e premiati: qualità, equilibrio e carattere.",
+                    "excerpt": "Una selezione dei nostri migliori oli, amati e certificati: qualità, equilibrio e carattere.",
                     "cta": "Scopri",
                     "alt": "Olive verdi in mano (raccolta)"
                 },
@@ -404,7 +504,7 @@
         "HomeAboutTerritory": {
             "label": "IL FRANTOIO",
             "title": "Una Tradizione che continua",
-            "description": "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell'arco delle 24 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche...",
+            "description": "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente a mano; le olive trasportate in frantoio vengono poi lavorate nell'arco delle 24 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche...",
             "cta": "SCOPRI DI PIU'"
         },
         "HomeUniqueness": {
@@ -475,7 +575,9 @@
             "subtitle": "Storia",
             "title_part1": "La nostra ",
             "title_italic": "storia",
-            "description": "L’azienda Del Pasqua nasce intorno agli anni ’60 in Valdichiana, modificatasi nel tempo, evolvendosi e prefissandosi l'obbiettivo di fare forza sulla diversificazione, puntando sulla qualità dei prodotti, sull'innovazione, rispettando l'ambiente, senza perdere di vista i valori e i sapori della vera tradizione Toscana e italiana,aprendosi a nuovi sbocchi e direzioni sia in campo olivicolo che vitivinicolo. Tutta la filiera di produzione è realizzata nel nostro territorio, dalla coltivazione degli olivi e delle viti, passando per la raccolta fino ad arrivare al confezionamento del prodotto finito."
+            "description": "L’azienda Del Pasqua nasce intorno agli anni ’60 in Valdichiana; nel tempo si è evoluta prefissandosi l'obiettivo di puntare sulla diversificazione, sulla qualità dei prodotti e sull'innovazione, nel pieno rispetto dell'ambiente e senza perdere di vista i valori e i sapori della vera tradizione toscana e italiana, aprendosi a nuovi sbocchi sia in campo olivicolo sia vitivinicolo. Tutta la filiera produttiva si svolge nel nostro territorio: dalla coltivazione degli olivi e delle viti, passando per la raccolta fino ad arrivare al confezionamento del prodotto finito.",
+            "description_top": "L’azienda Del Pasqua nasce intorno agli anni ’60 in Valdichiana e, nel tempo, evolve la propria identità puntando sulla diversificazione, sulla qualità dei prodotti e sull’innovazione.",
+            "description_bottom": "Nel farlo, mantiene saldi il rispetto per l’ambiente, i valori e i sapori della vera tradizione toscana e italiana, aprendosi a nuovi percorsi sia in campo olivicolo sia vitivinicolo. Tutta la filiera produttiva si svolge nel nostro territorio: dalla coltivazione di olivi e viti fino alla raccolta e al confezionamento del prodotto finito."
         },
         "section1": {
             "subtitle": "Gli oliveti",
@@ -513,11 +615,26 @@
         "nav": {
             "section": "Sezione",
             "sections": {
-                "capitolo-1": { "label": "L'Origine", "kicker": "La Raccolta a Mano" },
-                "capitolo-2": { "label": "L'Estrazione", "kicker": "I 5 Step in Frantoio" },
-                "capitolo-3": { "label": "La Custodia", "kicker": "Acciaio & Azoto" },
-                "capitolo-4": { "label": "Il Sigillo", "kicker": "Bottiglia & Certificazioni" },
-                "capitolo-5": { "label": "Servizi e Visite", "kicker": "Molitura & Degustazioni" }
+                "capitolo-1": {
+                    "label": "L'Origine",
+                    "kicker": "La Raccolta a Mano"
+                },
+                "capitolo-2": {
+                    "label": "L'Estrazione",
+                    "kicker": "I 5 Step in Frantoio"
+                },
+                "capitolo-3": {
+                    "label": "La Custodia",
+                    "kicker": "Acciaio & Azoto"
+                },
+                "capitolo-4": {
+                    "label": "Il Sigillo",
+                    "kicker": "Bottiglia & Certificazioni"
+                },
+                "capitolo-5": {
+                    "label": "Servizi e Visite",
+                    "kicker": "Molitura & Degustazioni"
+                }
             }
         },
         "origin": {
@@ -665,11 +782,11 @@
             "subtitle": "Raccolta, lavorazione e certificazioni: le fasi che guidano la qualità del nostro olio extravergine."
         },
         "steps": {
-            "brucatura": {
+            "raccolta": {
                 "kicker": "RACCOLTA",
-                "title": "La brucatura a mano",
+                "title": "La raccolta a mano",
                 "paragraphs": [
-                    "Ancora oggi in Toscana, buona parte della raccolta delle olive avviene tradizionalmente, con brucatura a mano; le olive trasportate in frantoio vengono poi lavorate nell’arco delle 12 ore per salvaguardare l’integrità delle componenti aromatiche e fenoliche. Il Frantoio del Pasqua, di recente ristrutturazione a conduzione familiare presso monte San Savino, di recente costruzione, con criteri di bioedilizia e risparmio energetico è dotato di un moderno impianto di lavorazione delle olive Alfalaval con estrazione a freddo."
+                    "Ancora oggi in Toscana, la raccolta delle olive avviene tradizionalmente a mano. Le olive appena raccolte vengono trasportate al frantoio e lavorate nell'arco di 12 ore per salvaguardare l'integrità delle componenti aromatiche e fenoliche, grazie a un moderno impianto di lavorazione Alfa Laval ad estrazione a freddo."
                 ],
                 "placeholder": "Raccolta manuale delle olive"
             },
@@ -768,7 +885,8 @@
                     "Con la selezione delle olive migliori nasce il nostro olio 'EVO', estratto a freddo secondo i principi della tradizione e con uno sguardo all'innovazione. Dal colore verde brillante e il profumo erbaceo con sentori di mandorla."
                 ],
                 "formats": [
-                    "Bottiglia: 500ml"
+                    "Bottiglia: 500ml",
+                    "Lattina: 3/5L"
                 ],
                 "placeholder": "IMMAGINE — EVO"
             },

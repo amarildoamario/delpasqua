@@ -54,9 +54,10 @@ export default function StoriaPage() {
               {t("header.title_part1")}<span className="italic text-[#3D5A3D]">{t("header.title_italic")}</span>
             </h1>
 
-            <p className="mt-6 max-w-4xl text-sm sm:text-base lg:text-lg leading-relaxed text-[#57534E]">
-              {t("header.description")}
-            </p>
+            <div className="mt-6 max-w-4xl space-y-4 text-sm sm:text-base lg:text-lg leading-relaxed text-[#57534E]">
+              <p>{t("header.description_top")}</p>
+              <p>{t("header.description_bottom")}</p>
+            </div>
           </div>
 
           {/* Section 1 - Oliveti */}

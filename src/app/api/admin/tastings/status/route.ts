@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       slotEnd: existing.slotEnd,
       tastingType: existing.tastingType,
       people: existing.people,
+      children: existing.children,
     });
     console.log("[TASTING][ADMIN] Customer confirm mail result:", customerMail);
   } else if (existing.status !== "CANCELED" && nextStatus === "CANCELED") {
@@ -69,6 +70,7 @@ export async function POST(req: Request) {
       slotEnd: existing.slotEnd,
       tastingType: existing.tastingType,
       people: existing.people,
+      children: existing.children,
     });
     console.log("[TASTING][ADMIN] Customer cancel mail result:", customerMail);
   } else {

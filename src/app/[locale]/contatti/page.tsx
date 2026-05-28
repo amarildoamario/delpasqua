@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default function ContattiPage() {
   const t = useTranslations("ContactPage");
+  const tFooter = useTranslations("Common.footer.bottom");
   return (
     <>
       <section className="bg-[#FDFCF8] min-h-screen">
@@ -85,7 +86,7 @@ export default function ContattiPage() {
                 </div>
 
                 <h2 className="mt-4 font-serif text-2xl font-light tracking-tight text-[#1C1917]">
-                  Az. Agr. Del Pasqua
+                  {companyInfo.brandName}
                 </h2>
 
                 <div className="mt-8 space-y-5">
@@ -200,9 +201,13 @@ export default function ContattiPage() {
               </div>
 
               <div className="mt-6">
-                <GoogleMapEmbed address={CONTACT_ADDRESS} />
+                <GoogleMapEmbed address={CONTACT_ADDRESS} latitude={CONTACT_LAT} longitude={CONTACT_LNG} />
               </div>
             </div>
+          </div>
+
+          <div className="mt-8 border-t border-[#E7E5E4] pt-5 text-xs leading-relaxed text-[#78716C]">
+            {tFooter("legal_office")}: {companyInfo.addressLegal}
           </div>
         </div>
       </section>
@@ -236,10 +241,14 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
 
 function GoogleMapEmbed({
   address,
+  latitude,
+  longitude,
 }: {
   address: string;
+  latitude: number;
+  longitude: number;
 }) {
-  const src = `https://maps.google.com/maps?hl=it&q=${encodeURIComponent(address)}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
+  const src = `https://maps.google.com/maps?hl=it&q=${latitude},${longitude}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-[#E7E5E4] bg-[#F5F5F4]">

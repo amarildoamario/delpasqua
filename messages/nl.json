@@ -13,6 +13,7 @@
             "description": "Een begeleide zintuiglijke reis om de aroma's en tonen van extra vierge olijfolie te herkennen, onze cultivars te ontdekken en de olijfpers van dichtbij te ervaren.",
             "duration": "min",
             "from": "Vanaf",
+            "child_policy": "* Proeverijen zijn gratis voor kinderen tot 12 jaar.",
             "types": {
                 "classica": {
                     "title": "Klassieke Proeverij",
@@ -21,6 +22,17 @@
                         "Proeverij van 3 oliën",
                         "Brood & water",
                         "Cultivars en persproces"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Tussentijdse proeverij",
+                    "subtitle": "Een complete ervaring met pairing van oliën en wijn met lokale kazen en vleeswaren.",
+                    "includes": [
+                        "Beschrijving en uitleg van olijventeelt en typische variëteiten van de streek",
+                        "Inleiding tot de verschillende methoden van teelt, oogst, productie en opslag",
+                        "Begeleide proeverijervaring (sensorische analyse)",
+                        "Service en pairing van oliën en wijn met lokale kazen en vleeswaren",
+                        "Steengemalen broodbruschetta, verse pinzimonio groenten en een glas Rosso di Sangiovese"
                     ]
                 },
                 "premium": {
@@ -102,7 +114,8 @@
                 "selected_date": "Geselecteerde datum",
                 "type_label": "Type proeverij",
                 "people_label": "Aantal personen",
-                "time_label": "Voorkeurstijd *",
+                "children_label": "Aantal kinderen (gratis tot 12 jaar)",
+                "time_label": "Gewenste tijd *",
                 "use_suggestion": "gebruik {time}",
                 "name_label": "Naam en achternaam",
                 "name_placeholder": "Jan Jansen",
@@ -113,6 +126,7 @@
                 "notes_label": "Opmerkingen / Allergieën",
                 "notes_placeholder": "Schrijf hier...",
                 "submit": "Aanvraag indienen",
+                "submit_pay": "Betalen en verzoek verzenden",
                 "submitting": "Bezig met verzenden..."
             },
             "errors": {
@@ -159,7 +173,7 @@
             },
             "contacts": {
                 "title": "CONTACT",
-                "address": "Via casacce 4 Pozzo della chiana 52045 (Ar)",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
                 "gender_policy": "Gelijkheidbeleid UNI PDR 125"
             },
             "info": {
@@ -176,6 +190,7 @@
             },
             "bottom": {
                 "rights": "© {year} Az. Agr. Del Pasqua — Alle rechten voorbehouden.",
+                "legal_office": "Maatschappelijke zetel",
                 "back_to_top": "Terug naar boven",
                 "powered_by": "Powered by Modern Tech",
                 "secure_payments": "Veilige betalingen"
@@ -186,31 +201,58 @@
         "evo": {
             "title": "Extra Vierge - EVO",
             "subtitle": "Extra vierge olijfolie",
-            "description": "De klassieke dagelijkse EVO. Kwaliteit, elegantie en een schone smaak: een fles die er goed uitziet in de keuken en op tafel.",
+            "description": "Del Pasqua EVO is de extra vierge olijfolie voor elke dag: evenwichtig, zuiver en aromatisch, geschikt voor eenvoudige gerechten en verfijnde recepten.",
             "badge": "EVO",
             "variants": {
-                "750ml": "Fles 750 ml",
-                "3lt": "Blik 3 L",
-                "5lt": "Blik 5 L"
+                "500ml": "Fles 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "De EVO fles van 500 ml is ideaal voor op tafel: elegant, praktisch en perfect voor dagelijks gebruik met een harmonieuze Italiaanse extra vierge olijfolie."
             }
         },
         "fruttato-leggero": {
             "title": "Extra Vierge - Licht Fruitig",
             "subtitle": "Extra vierge olijfolie",
-            "description": "Verfijnd en harmonieus profiel, ideaal voor visgerechten en salades.",
-            "badge": "KLASSIEK"
+            "description": "Licht Fruitig is delicaat, zacht en toegankelijk: het versterkt gerechten zonder ze te overheersen, ideaal voor vis, groenten, salades en lichte recepten.",
+            "badge": "KLASSIEK",
+            "variants": {
+                "500ml": "Fles 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "De fles Licht Fruitig van 500 ml brengt een zachte en geurige olie op tafel, perfect voor elegante en subtiele smaakaccenten."
+            }
         },
         "fruttato-medio": {
             "title": "Extra Vierge - Gemiddeld Fruitig",
             "subtitle": "Extra vierge olijfolie",
-            "description": "Gebalanceerde blend, ideaal rauw en om mee te koken.",
-            "badge": "KLASSIEK"
+            "description": "Medium Fruitig is de meest veelzijdige balans: kruidige aroma?s, volle smaak en een harmonieuze afdronk, geschikt rauw en in de keuken.",
+            "badge": "KLASSIEK",
+            "variants": {
+                "500ml": "Fles 500 ml",
+                "750ml": "Fles 750 ml",
+                "1lt": "Fles 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "De fles Medium Fruitig van 500 ml is perfect om te proeven of cadeau te geven: een evenwichtige olie voor bruschetta, groenten en pasta.",
+                "750ml": "De fles Medium Fruitig van 750 ml is het dagelijkse formaat voor wie een veelzijdige extra vierge olijfolie met precies genoeg intensiteit wil.",
+                "1lt": "De fles Medium Fruitig van 1 L biedt meer continuiteit in de keuken: evenwichtig, praktisch en geschikt voor veel mediterrane gerechten."
+            }
         },
         "fruttato-intenso": {
             "title": "Extra Vierge - Intens Fruitig",
             "subtitle": "Extra vierge olijfolie",
-            "description": "Sterke smaak, met meer aanwezige bittere en pittige tonen.",
-            "badge": "KLASSIEK"
+            "description": "Intens Fruitig heeft een uitgesproken karakter, groene tonen en een krachtigere afdronk: ideaal voor wie een olie zoekt die aanwezig is.",
+            "badge": "KLASSIEK",
+            "variants": {
+                "500ml": "Fles 500 ml",
+                "750ml": "Fles 750 ml",
+                "1lt": "Fles 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "De fles Intens Fruitig van 500 ml bundelt persoonlijkheid en geur in een handig formaat, perfect op soepen, peulvruchten, vlees en bruschetta.",
+                "750ml": "De fles Intens Fruitig van 750 ml is het juiste formaat voor wie houdt van een energieke, aanhoudende extra vierge olijfolie.",
+                "1lt": "De fles Intens Fruitig van 1 L is bedoeld voor wie vaak een krachtige olie gebruikt bij rustieke en smaakvolle gerechten."
+            }
         },
         "tartufo": {
             "title": "Extra Vierge - Truffel",
@@ -235,6 +277,64 @@
             "subtitle": "Gratis verzending voor betalingstesten",
             "description": "Dit is een testproduct voor € 0,50 met gratis verzending om de betalingsstroom en de voorraad te controleren.",
             "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Extra Vergine - EVO Blik",
+            "subtitle": "Extra vierge olijfolie in blik",
+            "description": "Del Pasqua EVO in blik beschermt de olie beter tegen licht en is praktisch te bewaren, met hetzelfde evenwichtige karakter van onze extra vierge olijfolie.",
+            "badge": "BLIK",
+            "variants": {
+                "750ml": "Blik 750 ml",
+                "3lt": "Blik 3 L",
+                "5lt": "Blik 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "Het EVO blik van 750 ml is compact en onderscheidend: een origineel formaat voor wie gemak, bescherming en dagelijks gebruik zoekt.",
+                "3lt": "Het EVO blik van 3 L is bedoeld voor wie elke dag olijfolie gebruikt en een praktische voorraad wil die goed beschermd blijft tegen licht.",
+                "5lt": "Het EVO blik van 5 L is het familieformaat om altijd een evenwichtige, geurige en veelzijdige extra vierge olijfolie in huis te hebben."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Extra Vergine - Licht Fruitig Blik",
+            "subtitle": "Licht fruitige extra vierge olijfolie in blik",
+            "description": "Licht Fruitig in blik behoudt zijn delicate profiel in een praktisch, beschermd en voordelig formaat voor dagelijks gebruik.",
+            "badge": "BLIK",
+            "variants": {
+                "3lt": "Blik 3 L",
+                "5lt": "Blik 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Het blik Licht Fruitig van 3 L is ideaal voor wie een dagelijkse voorraad delicate olie zoekt voor vis, groenten en frisse gerechten.",
+                "5lt": "Het blik Licht Fruitig van 5 L geeft meer autonomie in de keuken, met een zachte, evenwichtige olie die makkelijk te combineren is."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Extra Vergine - Medium Fruitig Blik",
+            "subtitle": "Medium fruitige extra vierge olijfolie in blik",
+            "description": "Medium Fruitig in blik is de praktische keuze voor wie vaak een evenwichtige olie gebruikt en die goed beschermd wil bewaren.",
+            "badge": "BLIK",
+            "variants": {
+                "3lt": "Blik 3 L",
+                "5lt": "Blik 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Het blik Medium Fruitig van 3 L is gemaakt voor actieve keukens: veelzijdig, evenwichtig en handig voor koken en afwerken.",
+                "5lt": "Het blik Medium Fruitig van 5 L is het voorraadformaat voor wie nooit zonder een betrouwbare en geurige extra vierge olijfolie wil zitten."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Extra Vergine - Intens Fruitig Blik",
+            "subtitle": "Intens fruitige extra vierge olijfolie in blik",
+            "description": "Intens Fruitig in blik bewaart kracht en aroma in een praktisch formaat voor wie vaak een uitgesproken olie gebruikt.",
+            "badge": "BLIK",
+            "variants": {
+                "3lt": "Blik 3 L",
+                "5lt": "Blik 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Het blik Intens Fruitig van 3 L is een slimme voorraad voor wie een volle, groene en aanhoudende olie zoekt.",
+                "5lt": "Het blik Intens Fruitig van 5 L is het royale formaat voor keukens die altijd een krachtige en herkenbare extra vierge olijfolie willen."
+            }
         }
     },
     "ShopPage": {
@@ -275,7 +375,7 @@
                 },
                 "oli": {
                     "title": "Onze Oliën",
-                    "excerpt": "Een selectie van onze beste oliën, geliefd en bekroond: kwaliteit, balans en karakter.",
+                    "excerpt": "Een selectie van onze beste oliën, geliefd en gecertificeerd: kwaliteit, balans en karakter.",
                     "cta": "Ontdek",
                     "alt": "Groene olijven in de hand (oogst)"
                 },
@@ -480,11 +580,26 @@
         "nav": {
             "section": "Sectie",
             "sections": {
-                "capitolo-1": { "label": "De Oorsprong", "kicker": "Handpluk" },
-                "capitolo-2": { "label": "De Extractie", "kicker": "De 6 Stappen" },
-                "capitolo-3": { "label": "De Bewaring", "kicker": "Staal & Stikstof" },
-                "capitolo-4": { "label": "Het Zegel", "kicker": "Fles & Certificeringen" },
-                "capitolo-5": { "label": "Diensten & Bezoeken", "kicker": "Maling & Proeverijen" }
+                "capitolo-1": {
+                    "label": "De Oorsprong",
+                    "kicker": "Handpluk"
+                },
+                "capitolo-2": {
+                    "label": "De Extractie",
+                    "kicker": "De 6 Stappen"
+                },
+                "capitolo-3": {
+                    "label": "De Bewaring",
+                    "kicker": "Staal & Stikstof"
+                },
+                "capitolo-4": {
+                    "label": "Het Zegel",
+                    "kicker": "Fles & Certificeringen"
+                },
+                "capitolo-5": {
+                    "label": "Diensten & Bezoeken",
+                    "kicker": "Maling & Proeverijen"
+                }
             }
         },
         "origin": {
@@ -632,11 +747,11 @@
             "subtitle": "Oogst, verwerking en certificeringen: de fasen die de kwaliteit van onze extra vierge olijfolie bepalen."
         },
         "steps": {
-            "brucatura": {
+            "raccolta": {
                 "kicker": "OOGST",
                 "title": "Handmatige pluk",
                 "paragraphs": [
-                    "Zelfs vandaag de dag vindt in Toscane een groot deel van de olijfoogst traditioneel met de hand plaats. De naar de molen getransporteerde olijven worden vervolgens binnen 24 uur verwerkt om de integriteit van de aromatische en fenolische componenten te waarborgen. De Del Pasqua-molen is uitgerust met een moderne Alfalaval-olijfverwerkingsinstallatie met koude extractie."
+                    "Zelfs vandaag de dag vindt in Toscane de olijfoogst traditioneel met de hand plaats. De vers geoogste olijven worden naar de molen getransporteerd en binnen 12 uur verwerkt om de aromatische en fenolische eigenschappen te behouden, dankzij een modern Alfa Laval-olijfverwerkingssysteem met koude extractie."
                 ],
                 "placeholder": "AFBEELDING — OOGST"
             },
@@ -734,7 +849,8 @@
                     "Met de selectie van de beste olijven ontstaat onze 'EVO'-olie, koud geëxtraheerd volgens de principes van traditie en met een oog voor innovatie. Heldergroene kleur en grasgeur met hints van amandel."
                 ],
                 "formats": [
-                    "Fles: 500ml"
+                    "Fles: 500ml",
+                    "Blik: 3/5L"
                 ],
                 "placeholder": "AFBEELDING — EVO"
             },
@@ -766,7 +882,9 @@
             "subtitle": "Geschiedenis",
             "title_part1": "Onze ",
             "title_italic": "geschiedenis",
-            "description": "Het bedrijf Del Pasqua werd in de jaren '60 opgericht door het werk van vader Sabatino. In de loop der jaren trad ook zoon Emanuele toe tot het familiebedrijf, met als doel de diversificatie te versterken, in te zetten op de kwaliteit van de producten en het bedrijf zo open te stellen voor nieuwe mogelijkheden en richtingen."
+            "description": "Het bedrijf Del Pasqua werd in de jaren '60 opgericht door het werk van vader Sabatino. In de loop der jaren trad ook zoon Emanuele toe tot het familiebedrijf, met als doel de diversificatie te versterken, in te zetten op de kwaliteit van de producten en het bedrijf zo open te stellen voor nieuwe mogelijkheden en richtingen.",
+            "description_top": "Del Pasqua ontstond in de jaren zestig en heeft zijn identiteit in de loop van de tijd opgebouwd rond diversificatie, productkwaliteit en innovatie.",
+            "description_bottom": "Daarbij bleef het bedrijf trouw aan respect voor het milieu en aan de waarden en smaken van de echte Toscaanse en Italiaanse traditie. Zo ontstonden nieuwe richtingen in zowel de olijventeelt als de wijnbouw, met een volledige productieketen die in het eigen gebied verankerd blijft."
         },
         "section1": {
             "subtitle": "Onze olijfgaarden",

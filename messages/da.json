@@ -13,6 +13,7 @@
             "description": "En guidet sanserejse for at lære at genkende aromaerne og noterne af ekstra jomfru olivenolie, opdage vores sorter og opleve møllen tæt på.",
             "duration": "min",
             "from": "Fra",
+            "child_policy": "* Smagninger er gratis for børn op til 12 år.",
             "types": {
                 "classica": {
                     "title": "Klassisk Smagning",
@@ -21,6 +22,17 @@
                         "Smagning af 3 olier",
                         "Brød & vand",
                         "Sorter og presning"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Mellemliggende smagning",
+                    "subtitle": "En komplet oplevelse med parring af olier og vin med lokale oste og pålæg.",
+                    "includes": [
+                        "Beskrivelse og forklaring af olivendyrkning og typiske sorter i området",
+                        "Introduktion til dyrknings-, høst-, produktions- og opbevaringsmetoder",
+                        "Guidet smagsoplevelse (sanseanalyse)",
+                        "Service og parring af olier og vin med lokale oste og pålæg",
+                        "Stenkværnet brødbruschetta, friske pinzimonio-grøntsager og et glas Rosso di Sangiovese"
                     ]
                 },
                 "premium": {
@@ -102,6 +114,7 @@
                 "selected_date": "Valgt dato",
                 "type_label": "Smagningstype",
                 "people_label": "Antal personer",
+                "children_label": "Antal børn (gratis op til 12 år)",
                 "time_label": "Foretrukne tidspunkt *",
                 "use_suggestion": "brug {time}",
                 "name_label": "Fuldt navn",
@@ -113,6 +126,7 @@
                 "notes_label": "Noter / Allergier",
                 "notes_placeholder": "Skriv her...",
                 "submit": "Send anmodning",
+                "submit_pay": "Betal og send anmodning",
                 "submitting": "Sender..."
             },
             "errors": {
@@ -186,31 +200,58 @@
         "evo": {
             "title": "Ekstra Jomfru - EVO",
             "subtitle": "Ekstra jomfru olivenolie",
-            "description": "Den klassiske hverdags EVO. Kvalitet, elegance og en ren smag: en flaske, der ser godt ud i køkkenet og på bordet.",
+            "description": "Del Pasqua EVO er ekstra jomfruolivenolien til hverdagen: balanceret, ren og aromatisk, velegnet til enkle retter og mere gennemarbejdede opskrifter.",
             "badge": "EVO",
             "variants": {
-                "750ml": "Flaske 750 ml",
-                "3lt": "Dunk 3 L",
-                "5lt": "Dunk 5 L"
+                "500ml": "Flaske 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "EVO-flasken p? 500 ml er ideel til bordet: elegant, praktisk og perfekt til daglig brug med en harmonisk italiensk olivenolie."
             }
         },
         "fruttato-leggero": {
             "title": "Ekstra Jomfru - Let Frugtig",
             "subtitle": "Ekstra jomfru olivenolie",
-            "description": "Delikat og harmonisk profil, ideel til fiskeretter og salater.",
-            "badge": "KLASSIKER"
+            "description": "Let Frugtig er delikat, mild og umiddelbar: den l?fter retter uden at overd?ve dem, ideel til fisk, gr?ntsager og salater.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flaske 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "Flasken Let Frugtig p? 500 ml giver en mild og aromatisk olie p? bordet, perfekt til elegante og diskrete krydringer."
+            }
         },
         "fruttato-medio": {
             "title": "Ekstra Jomfru - Medium Frugtig",
             "subtitle": "Ekstra jomfru olivenolie",
-            "description": "Balanceret blanding, ideel rå og til madlavning.",
-            "badge": "KLASSIKER"
+            "description": "Medium Frugtig er den mest alsidige balance: urteagtig duft, fyldig smag og en harmonisk afslutning.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flaske 500 ml",
+                "750ml": "Flaske 750 ml",
+                "1lt": "Flaske 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "Flasken Medium Frugtig p? 500 ml er perfekt til at smage eller give som gave: en balanceret olie til bruschetta, gr?ntsager og pasta.",
+                "750ml": "Flasken Medium Frugtig p? 750 ml er hverdagsformatet til dig, der vil have en alsidig olivenolie med netop den rette intensitet.",
+                "1lt": "Flasken Medium Frugtig p? 1 L giver mere kontinuitet i k?kkenet: balanceret, praktisk og egnet til mange middelhavsretter."
+            }
         },
         "fruttato-intenso": {
             "title": "Ekstra Jomfru - Intens Frugtig",
             "subtitle": "Ekstra jomfru olivenolie",
-            "description": "Kraftig smag, med mere markante bitre og krydrede noter.",
-            "badge": "KLASSIKER"
+            "description": "Intens Frugtig har tydelig karakter, gr?nne noter og en mere markant afslutning: ideel til retter med kraftig smag.",
+            "badge": "KLASSIKER",
+            "variants": {
+                "500ml": "Flaske 500 ml",
+                "750ml": "Flaske 750 ml",
+                "1lt": "Flaske 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "Flasken Intens Frugtig p? 500 ml samler personlighed og duft i et praktisk format, perfekt til supper, b?lgfrugter, k?d og bruschetta.",
+                "750ml": "Flasken Intens Frugtig p? 750 ml er til dig, der elsker en energisk og vedvarende ekstra jomfruolivenolie.",
+                "1lt": "Flasken Intens Frugtig p? 1 L er skabt til hyppig brug i rustikke opskrifter og smagfulde retter."
+            }
         },
         "tartufo": {
             "title": "Ekstra Jomfru - Trøffel",
@@ -235,6 +276,64 @@
             "subtitle": "Gratis fragt til betalingstest",
             "description": "Dette er et testprodukt til € 0,50 med gratis forsendelse for at kontrollere betalingsflowet og lagerbeholdningen.",
             "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Ekstra Jomfru - EVO Dunk",
+            "subtitle": "Ekstra jomfruolivenolie i dunk",
+            "description": "Del Pasqua EVO i dunk beskytter olien mod lys og g?r opbevaring praktisk, uden at miste den balancerede profil.",
+            "badge": "DUNK",
+            "variants": {
+                "750ml": "Dunk 750 ml",
+                "3lt": "Dunk 3 L",
+                "5lt": "Dunk 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "EVO-dunken p? 750 ml er kompakt og s?rpr?get: et originalt format til praktisk brug, god beskyttelse og hverdagsmad.",
+                "3lt": "EVO-dunken p? 3 L er til dig, der bruger olivenolie hver dag og vil have en praktisk beholdning beskyttet mod lys.",
+                "5lt": "EVO-dunken p? 5 L er familieformatet til altid at have en balanceret, aromatisk og alsidig ekstra jomfruolivenolie i k?kkenet."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Ekstra Jomfru - Let Frugtig Dunk",
+            "subtitle": "Let frugtig ekstra jomfruolivenolie i dunk",
+            "description": "Let Frugtig i dunk bevarer sin fine profil i et praktisk, beskyttet og ?konomisk hverdagsformat.",
+            "badge": "DUNK",
+            "variants": {
+                "3lt": "Dunk 3 L",
+                "5lt": "Dunk 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Dunken Let Frugtig p? 3 L er ideel til en daglig beholdning af mild olie til fisk, gr?ntsager og friske retter.",
+                "5lt": "Dunken Let Frugtig p? 5 L giver mere frihed i k?kkenet med en bl?d, balanceret olie, der er nem at kombinere."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Ekstra Jomfru - Medium Frugtig Dunk",
+            "subtitle": "Medium frugtig ekstra jomfruolivenolie i dunk",
+            "description": "Medium Frugtig i dunk er det praktiske valg til hyppig brug, med balanceret smag og bedre beskyttelse mod lys.",
+            "badge": "DUNK",
+            "variants": {
+                "3lt": "Dunk 3 L",
+                "5lt": "Dunk 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Dunken Medium Frugtig p? 3 L er lavet til aktive k?kkener: alsidig, balanceret og praktisk til madlavning og finish.",
+                "5lt": "Dunken Medium Frugtig p? 5 L er lagerformatet til dig, der altid vil have en p?lidelig og aromatisk olivenolie klar."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Ekstra Jomfru - Intens Frugtig Dunk",
+            "subtitle": "Intens frugtig ekstra jomfruolivenolie i dunk",
+            "description": "Intens Frugtig i dunk bevarer styrke og aroma i et praktisk format til hyppig brug.",
+            "badge": "DUNK",
+            "variants": {
+                "3lt": "Dunk 3 L",
+                "5lt": "Dunk 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Dunken Intens Frugtig p? 3 L er en smart beholdning til dig, der s?ger en fyldig, gr?n og vedvarende olie.",
+                "5lt": "Dunken Intens Frugtig p? 5 L er det store format til k?kkener, der altid vil have en kraftig og genkendelig olivenolie ved h?nden."
+            }
         }
     },
     "ShopPage": {
@@ -410,7 +509,7 @@
         "HomeAboutTerritory": {
             "label": "MØLLEN",
             "title": "En tradition der fortsætter",
-            "description": "Selv i dag i Toscana foregår en stor del af olivensmalingen traditionelt ved håndhøstning; olivenerne transporteres til møllen og behandles inden for 24 timer for at bevare de aromatiske og fenoliske komponenter...",
+            "description": "Selv i dag i Toscana foregår en stor del af olivenhøsten traditionelt ved håndhøstning; olivenerne transporteres til møllen og behandles inden for 24 timer for at bevare de aromatiske og fenoliske komponenter...",
             "cta": "LÆS MERE"
         },
         "HomeUniqueness": {
@@ -519,11 +618,26 @@
         "nav": {
             "section": "Sektion",
             "sections": {
-                "capitolo-1": { "label": "Oprindelse", "kicker": "Håndhøstning" },
-                "capitolo-2": { "label": "Ekstraktionen", "kicker": "De 6 Mølletrin" },
-                "capitolo-3": { "label": "Opbevaringen", "kicker": "Stål & Nitrogen" },
-                "capitolo-4": { "label": "Forseglingen", "kicker": "Flaske & Certificeringer" },
-                "capitolo-5": { "label": "Service & Besøg", "kicker": "Maling & Smagninger" }
+                "capitolo-1": {
+                    "label": "Oprindelse",
+                    "kicker": "Håndhøstning"
+                },
+                "capitolo-2": {
+                    "label": "Ekstraktionen",
+                    "kicker": "De 6 Mølletrin"
+                },
+                "capitolo-3": {
+                    "label": "Opbevaringen",
+                    "kicker": "Stål & Nitrogen"
+                },
+                "capitolo-4": {
+                    "label": "Forseglingen",
+                    "kicker": "Flaske & Certificeringer"
+                },
+                "capitolo-5": {
+                    "label": "Service & Besøg",
+                    "kicker": "Maling & Smagninger"
+                }
             }
         },
         "origin": {
@@ -672,11 +786,11 @@
             "subtitle": "Høst, behandling og certificeringer: de faser, der styrer kvaliteten af vores ekstra jomfru olivenolie."
         },
         "steps": {
-            "brucatura": {
+            "raccolta": {
                 "kicker": "HØST",
                 "title": "Håndhøstning",
                 "paragraphs": [
-                    "Selv i dag sker en stor del af olivinhøsten i Toscana traditionelt ved håndhøstning; olivenerne transporteres til møllen og behandles inden for 24 timer for at bevare de aromatiske og fenoliske komponenter. Frantoio del Pasqua er udstyret med et moderne Alfalaval olivenbehandlingsanlæg med koldpresning."
+                    "Selv i dag sker olivinhøsten i Toscana traditionelt ved håndkraft. De nyligt høstede olivener transporteres til møllen og behandles inden for 12 timer for at bevare de aromatiske og fenoliske komponenter, takket være et moderne Alfa Laval olivenbehandlingsanlæg med koldpresning."
                 ],
                 "placeholder": "BILLEDE — HØST"
             },
@@ -776,8 +890,8 @@
                     "En autentisk og ægte olie, perfekt til daglig brug i køkkenet."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml",
+                    "Dunk: 3/5L"
                 ],
                 "placeholder": "BILLEDE — EVO"
             },

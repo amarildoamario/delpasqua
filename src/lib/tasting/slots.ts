@@ -28,6 +28,20 @@ const defaultTypes: TastingType[] = [
     ],
   },
   {
+    id: "intermedia",
+    title: "Degustazione intermedia",
+    subtitle: "Servizio e abbinamento di oli e vino con formaggi e salumi locali, con esperienza guidata all'assaggio.",
+    durationMinutes: 90,
+    priceFrom: "da €35/persona",
+    includes: [
+      "Coltivazione dell'olivo e le diverse varietà tipiche della zona",
+      "Metodi di coltivazione, raccolta, produzione e conservazione",
+      "Esperienza guidata all'assaggio per riconoscere qualità sensoriali ed eventuali difetti",
+      "Servizio e abbinamento di oli e vino con formaggi e salumi locali",
+      "Bruschetta con pane macinato a pietra e verdure fresche in pinzimonio",
+    ],
+  },
+  {
     id: "premium",
     title: "Esperienza in campo",
     subtitle: "Un'esperienza unica nell'oliveto a Pozzo della Chiana con pic-nic BBQ e molitura in frantoio.",

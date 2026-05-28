@@ -23,7 +23,7 @@ const FRANTOIO_IMAGES = {
   tracciabilita: "/frantoio/tracciabilita.jpg",
 
   // timeline produzione
-  brucatura: "/frantoio/brucatura.jpg",
+  raccolta: "/frantoio/brucatura.jpg",
   imbottigliamento: "/frantoio/imbottigliamento.jpg",
   evo: "/frantoio/evo.png",
   igpBio: "/frantoio/igp-bio.png",
@@ -265,8 +265,8 @@ export default function ProduzionePageClient() {
                 <div className="absolute -bottom-4 -right-4 h-full w-full border border-[#B8860B]/20 rounded-[5px] pointer-events-none transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                 <div className="relative overflow-hidden border border-[#E7E5E4] bg-[#F5F5F4] rounded-[5px] aspect-[16/11] shadow-lg">
                   <Image
-                    src={FRANTOIO_IMAGES.brucatura}
-                    alt={t("steps.brucatura.title")}
+                    src={FRANTOIO_IMAGES.raccolta}
+                    alt={t("steps.raccolta.title")}
                     fill
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
                     sizes="(max-width: 1024px) 100vw, 550px"
@@ -281,17 +281,17 @@ export default function ProduzionePageClient() {
                     {t("nav.section")} I
                   </span>
                   <span className="text-[11px] font-bold tracking-[0.25em] text-[#8B7355] uppercase">
-                    {t("steps.brucatura.kicker")}
+                    {t("steps.raccolta.kicker")}
                   </span>
                 </div>
 
                 <h2 className="font-serif text-3xl font-light tracking-tight text-[#1C1917] sm:text-4xl lg:text-[2.75rem] leading-tight">
-                  {t("steps.brucatura.title")}
+                  {t("steps.raccolta.title")}
                 </h2>
 
                 <div className="mt-8 space-y-5 text-base leading-relaxed text-[#57534E]">
-                  {/* Brucatura translation paragraphs mapping */}
-                  {((t.raw("steps.brucatura.paragraphs") as string[]) || []).map((p, i) => (
+                  {/* Raccolta translation paragraphs mapping */}
+                  {((t.raw("steps.raccolta.paragraphs") as string[]) || []).map((p, i) => (
                     <p key={i} className={i === 0 ? "text-lg text-[#1C1917] font-light leading-relaxed first-letter:text-4xl first-letter:font-serif first-letter:text-[#3D5A3D] first-letter:float-left first-letter:mr-2" : ""}>
                       {p}
                     </p>

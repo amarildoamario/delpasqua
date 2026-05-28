@@ -17,42 +17,42 @@ const TERRITORY_COPY: Record<string, TerritoryCopy> = {
     titleStart: "La Toscana e il nostro ",
     titleAccent: "territorio",
     description:
-      "Nel cuore della Toscana, tra colline, oliveti e tradizioni tramandate nel tempo, nasce il carattere autentico del nostro olio. Ogni raccolta racconta una storia vera fatta di paesaggio, persone e gesti ripetuti bene.",
+      "Nel cuore della Toscana, tra colline, oliveti e tradizioni tramandate nel tempo, nasce il carattere autentico del nostro olio e del nostro vino. Ogni raccolta racconta una storia vera fatta di paesaggio, persone e gesti ripetuti bene.",
   },
   en: {
     label: "About us",
     titleStart: "Tuscany and our ",
     titleAccent: "territory",
     description:
-      "In the heart of Tuscany, among hills, olive groves, and traditions handed down over time, the authentic character of our oil takes shape. Every harvest tells a real story of landscape, people, and carefully repeated gestures.",
+      "In the heart of Tuscany, among hills, olive groves, and traditions handed down over time, the authentic character of our oil and our wine takes shape. Every harvest tells a real story of landscape, people, and carefully repeated gestures.",
   },
   de: {
     label: "Uber uns",
     titleStart: "Die Toskana und unser ",
     titleAccent: "Gebiet",
     description:
-      "Im Herzen der Toskana, zwischen Hugeln, Olivenhainen und uberlieferten Traditionen, entsteht der authentische Charakter unseres Ols. Jede Ernte erzahlt eine echte Geschichte aus Landschaft, Menschen und sorgfaltig wiederholten Handgriffen.",
+      "Im Herzen der Toskana, zwischen Hugeln, Olivenhainen und uberlieferten Traditionen, entsteht der authentische Charakter unseres Ols und unseres Weins. Jede Ernte erzahlt eine echte Geschichte aus Landschaft, Menschen und sorgfaltig wiederholten Handgriffen.",
   },
   nl: {
     label: "Over ons",
     titleStart: "Toscane en ons ",
     titleAccent: "territorium",
     description:
-      "In het hart van Toscane, tussen heuvels, olijfgaarden en doorgegeven tradities, ontstaat het authentieke karakter van onze olie. Elke oogst vertelt een echt verhaal van landschap, mensen en zorgvuldig herhaalde gebaren.",
+      "In het hart van Toscane, tussen heuvels, olijfgaarden en doorgegeven tradities, ontstaat het authentieke karakter van onze olie en onze wijn. Elke oogst vertelt een echt verhaal van landschap, mensen en zorgvuldig herhaalde gebaren.",
   },
   no: {
     label: "Om oss",
     titleStart: "Toscana og vart ",
     titleAccent: "territorium",
     description:
-      "I hjertet av Toscana, mellom aaser, olivenlunder og tradisjoner som er fort videre, formes den autentiske karakteren til oljen var. Hver innhosting forteller en ekte historie om landskap, mennesker og velutforte bevegelser.",
+      "I hjertet av Toscana, mellom aaser, olivenlunder og tradisjoner som er fort videre, formes den autentiske karakteren til oljen og vinen var. Hver innhosting forteller en ekte historie om landskap, mennesker og velutforte bevegelser.",
   },
   da: {
     label: "Om os",
     titleStart: "Toscana og vores ",
     titleAccent: "territorium",
     description:
-      "I hjertet af Toscana, mellem bakker, olivenlunde og traditioner givet videre gennem tiden, formes den autentiske karakter i vores olie. Hver host fortaeller en aekte historie om landskab, mennesker og veludforte bevagelser.",
+      "I hjertet af Toscana, mellem bakker, olivenlunde og traditioner givet videre gennem tiden, formes den autentiske karakter i vores olie og vores vin. Hver host fortaeller en aekte historie om landskab, mennesker og veludforte bevagelser.",
   },
 };
 

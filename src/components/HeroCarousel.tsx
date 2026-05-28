@@ -29,7 +29,7 @@ export default function HeroCarousel() {
         excerpt: t("slides.oli.excerpt"),
         cta: t("slides.oli.cta"),
         href: "/shop",
-        imageSrc: "/hero/oli.jpg",
+        imageSrc: "/hero/oli.png",
         imageAlt: t("slides.oli.alt"),
       },
       {
@@ -47,7 +47,7 @@ export default function HeroCarousel() {
         excerpt: t("slides.tradizione.excerpt"),
         cta: t("slides.tradizione.cta"),
         href: "/produzione",
-        imageSrc: "/hero/tradizione.jpg",
+        imageSrc: "/hero/tradizione.png",
         imageAlt: t("slides.tradizione.alt"),
       },
     ],

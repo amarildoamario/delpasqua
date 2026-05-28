@@ -108,7 +108,12 @@ export default async function AdminDegustazioniPage() {
                     <div className="text-neutral-700">{b.phone}</div>
                   </td>
 
-                  <td className="px-4 py-3 font-semibold text-neutral-900">{b.people}</td>
+                  <td className="px-4 py-3 text-neutral-900">
+                    <div className="font-semibold">Adulti: {b.people}</div>
+                    {b.children > 0 && (
+                      <div className="text-xs text-neutral-500 font-medium mt-0.5">Bambini: {b.children}</div>
+                    )}
+                  </td>
 
                   <td className="px-4 py-3">
                     <TastingStatusActions id={b.id} status={b.status} />
