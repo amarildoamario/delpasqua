@@ -13,6 +13,14 @@ const DIRECT_200_PATHS = [
 ];
 
 const LEGACY_301_REDIRECTS = new Map([
+  ["/portfolio-category/details/", "/produzione/"],
+  ["/portfolio-category/nature/", "/storia/"],
+  ["/portfolio-category/photogrpahy/", "/storia/"],
+  ["/portfolio-category/wine/", "/shop/vino/"],
+  ["/portfolio-tag/blanc-winery/", "/produzione/"],
+  ["/portfolio-tag/countryside-bay/", "/storia/"],
+  ["/portfolio-tag/organic-company/", "/storia/"],
+  ["/portfolio-tag/organic-winery/", "/produzione/"],
   ["/portfolio-item/wine-shop/", "/shop/vino-vittoria/"],
   ["/portfolio-item/wine-shop-2/", "/shop/vino-vittoria/"],
   ["/portfolio-item/wine-shop-4/", "/shop/vino-vittoria/"],
@@ -23,6 +31,7 @@ const LEGACY_301_REDIRECTS = new Map([
   ["/portfolio-item/red-wine-2/", "/shop/vino-vittoria/"],
   ["/portfolio-item/red-wine-3/", "/shop/vino-vittoria/"],
   ["/portfolio-item/white-wine/", "/shop/vino-vittoria/"],
+  ["/portfolio-item/white-wine-2/", "/shop/vino-vittoria/"],
   ["/portfolio-item/white-wine-3/", "/shop/vino-vittoria/"],
   ["/portfolio-item/white-wine-4/", "/shop/vino-vittoria/"],
   ["/portfolio-item/white-wine-4-2/", "/shop/vino-vittoria/"],
@@ -68,6 +77,10 @@ function normalizePath(value) {
 
 function isRedirectStatus(status) {
   return status >= 300 && status < 400;
+}
+
+function isPermanentRedirect(status) {
+  return status === 301 || status === 308;
 }
 
 function pathIsEnglish(path) {
@@ -192,7 +205,7 @@ async function auditLegacyRedirects(failuresRef) {
       const first = trace.hops[0];
       const ok =
         first &&
-        first.status === 301 &&
+        isPermanentRedirect(first.status) &&
         normalizePath(trace.finalPath) === normalizePath(expectedDestination) &&
         trace.hops.length <= 2 &&
         !pathIsEnglish(trace.finalPath) &&

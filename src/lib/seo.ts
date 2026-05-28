@@ -4,17 +4,32 @@ import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { getLocalizedBlogSlug, getLocalizedBlogCategorySlug } from "@/lib/blogSlugs";
 import { hasBlogPostTranslation } from "@/lib/blog-data";
 
+const PRODUCTION_SITE_URL = "https://delpasqua.com";
+const LOCAL_SITE_URL = "http://localhost:3000";
+
+function isPrivateLanHost(hostname: string) {
+  return (
+    hostname === "0.0.0.0" ||
+    hostname === "127.0.0.1" ||
+    /^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+    /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+    /^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(hostname)
+  );
+}
+
 export function getSiteUrl(): string {
   let url = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
   
   if (!url) {
     if (process.env.NODE_ENV === "development") {
-      url = "http://localhost:3000";
+      url = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     } else {
-      // In production, fallback to Vercel env vars if available, but log a warning
-      const fallback = process.env.VERCEL_PROJECT_PRODUCTION_URL 
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` 
-        : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://delpasqua.vercel.app");
+      const fallback =
+        process.env.VERCEL_ENV === "production" || process.env.VERCEL_ENV === "preview"
+          ? PRODUCTION_SITE_URL
+          : process.env.VERCEL_PROJECT_PRODUCTION_URL
+              ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+              : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : PRODUCTION_SITE_URL);
       
       if (typeof window === "undefined") {
         console.warn(`[SEO Warning] SITE_URL or NEXT_PUBLIC_SITE_URL is not configured in production! Using fallback: ${fallback}`);
@@ -55,6 +70,13 @@ export function getSiteUrl(): string {
 
   // Rimuove slash finale
   normalized = normalized.replace(/\/$/, "");
+
+  if (process.env.NODE_ENV === "development") {
+    const hostname = normalized.split(":")[0];
+    if (isPrivateLanHost(hostname)) {
+      return LOCAL_SITE_URL;
+    }
+  }
 
   // Garantisce protocollo https:// in produzione se manca o è http ed è un dominio reale (non localhost)
   if (process.env.NODE_ENV === "production" && !normalized.includes("localhost")) {

@@ -20,6 +20,22 @@ function getIP(req: Request) {
   return (xf?.split(",")[0] ?? "unknown").trim();
 }
 
+function resolveAppUrl(req: Request) {
+  const requestOrigin = new URL(req.url).origin;
+  const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const isLocalRequest = requestOrigin.includes("localhost:");
+
+  if (process.env.NODE_ENV !== "production") {
+    return (configuredAppUrl || requestOrigin || "http://localhost:3000").replace(/\/$/, "");
+  }
+
+  if (process.env.VERCEL_ENV === "production" && configuredAppUrl) {
+    return configuredAppUrl.replace(/\/$/, "");
+  }
+
+  return (isLocalRequest ? "http://localhost:3000" : requestOrigin).replace(/\/$/, "");
+}
+
 export async function POST(req: Request) {
   try {
     // basic hardening
@@ -168,12 +184,7 @@ export async function POST(req: Request) {
     });
 
     // Stripe checkout
-    // Use true incoming origin dynamically 
-    const isLocal = req.url.includes("localhost:");
-    let appUrl = isLocal ? "http://localhost:3000" : new URL(req.url).origin;
-    if (process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL !== "http://localhost:3000") {
-      appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    }
+    const appUrl = resolveAppUrl(req);
     const vatRatePct = Math.round(getVatRate() * 100);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [

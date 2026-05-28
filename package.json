@@ -22,7 +22,8 @@
     "seo:compare-sitemaps": "node scripts/compare-sitemaps.mjs",
     "seo:audit-hreflang": "node scripts/audit-hreflang.mjs",
     "seo:audit-canonical": "node scripts/audit-canonical.mjs",
-    "seo:debug-sitemap-counts": "node scripts/debug-sitemap-counts.mjs"
+    "seo:debug-sitemap-counts": "node scripts/debug-sitemap-counts.mjs",
+    "seo:all": "tsx scripts/run-seo-suite.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -62,6 +63,6 @@
     "playwright": "^1.58.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^6.0.3"
   }
 }

@@ -207,7 +207,11 @@ export function enforceAdminCsrf(req: Request) {
 
   const host = h.get("x-forwarded-host") || h.get("host") || "";
   const proto = h.get("x-forwarded-proto") || "https";
-  const expected = process.env.APP_ORIGIN || (host ? `${proto}://${host}` : "");
+  const configuredOrigin = process.env.APP_ORIGIN?.trim();
+  const expected =
+    process.env.VERCEL_ENV === "production" && configuredOrigin
+      ? configuredOrigin
+      : (host ? `${proto}://${host}` : "");
 
   const originOk = !origin || !expected ? true : origin === expected;
   const refererOk = !referer || !expected ? true : referer.startsWith(expected);
