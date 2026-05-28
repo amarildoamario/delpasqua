@@ -53,10 +53,6 @@ const SHOP_HIGHLIGHTS_COPY = {
   },
 } as const;
 
-
-
-
-
 export default function ShopHighlights() {
   const tp = useTranslations("Products");
   const locale = useLocale();
@@ -88,6 +84,21 @@ export default function ShopHighlights() {
         currency: "EUR",
       }).format(minPriceCents / 100);
 
+      // Build variant images list with deduplication
+      const seenSrcs = new Set<string>();
+      const variantImages = (p.variants ?? [])
+        .filter((v) => typeof v.id === "string" && !!v.imageSrc)
+        .filter((v) => {
+          if (seenSrcs.has(v.imageSrc!)) return false;
+          seenSrcs.add(v.imageSrc!);
+          return true;
+        })
+        .map((v) => ({
+          variantId: v.id!,
+          imageSrc: v.imageSrc!,
+          imageAlt: v.imageAlt ?? p.imageAlt ?? "",
+        }));
+
       return {
         id: p.id,
         slug: getLocalizedProductSlug(p, locale),
@@ -101,11 +112,10 @@ export default function ShopHighlights() {
         imageSrc: p.imageSrc,
         imageAlt: p.imageAlt,
         variantsCount: p.variants?.length ?? 1,
+        variantImages: variantImages.length > 1 ? variantImages : undefined,
       };
     });
   }, [copy.from, copy.price, tp, locale]);
-
-
 
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);

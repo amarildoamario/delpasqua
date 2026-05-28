@@ -25,16 +25,7 @@ export default function HomeProductShowcase() {
         fill
         priority
         sizes="100vw"
-        className="hidden object-cover object-center lg:block"
-      />
-
-      <Image
-        src={SHOWCASE_BACKGROUND}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="hidden object-contain object-left lg:block"
+        className="hidden object-cover object-left lg:block"
       />
 
       <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(247,241,232,0)_0%,rgba(247,241,232,0)_50%,rgba(247,241,232,0.34)_68%,rgba(247,241,232,0.78)_100%)] lg:block" />

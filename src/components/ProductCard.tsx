@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Heart, ShoppingCart } from "lucide-react"
+import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import { useCallback, useState } from "react"
 import { useLocale } from "next-intl"
@@ -12,6 +12,12 @@ import { getOrCreateCartId } from "@/lib/analytics/cartId"
 import { track } from "@/lib/analytics/track"
 import { shouldContainProductImage } from "@/lib/productImageFit"
 import { getLocalizedProductHref } from "@/lib/productSlugs"
+
+export type ProductCardVariantImage = {
+  variantId: string
+  imageSrc: string
+  imageAlt?: string
+}
 
 export type ProductCardProduct = {
   id: string
@@ -27,6 +33,7 @@ export type ProductCardProduct = {
   priceCents?: number
   defaultVariantId?: string
   variantsCount?: number
+  variantImages?: ProductCardVariantImage[]
 }
 
 const shellClassName =
@@ -153,7 +160,17 @@ export default function ProductCard({
   const [toastMsg, setToastMsg] = useState("")
   const locale = useLocale()
   const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
-  const href = getLocalizedProductHref(product, locale)
+
+  // Track which variant image is currently shown
+  const variantImages = product.variantImages ?? []
+  const [activeVariantIdx, setActiveVariantIdx] = useState(0)
+  const activeVariantImage = variantImages[activeVariantIdx]
+  const activeVariantId = activeVariantImage?.variantId ?? product.defaultVariantId
+
+  const hrefBase = getLocalizedProductHref(product, locale)
+  const href = activeVariantId
+    ? { ...hrefBase, query: { v: activeVariantId } }
+    : hrefBase
 
   const showToast = useCallback((message: string) => {
     setToastMsg(message)
@@ -170,18 +187,19 @@ export default function ProductCard({
       event.preventDefault()
       event.stopPropagation()
 
-      if (!product.defaultVariantId) {
+      const variantIdToAdd = activeVariantId
+      if (!variantIdToAdd) {
         showToast(text.chooseSize)
         return
       }
 
-      add({ productId: product.id, variantId: product.defaultVariantId, qty: 1 })
+      add({ productId: product.id, variantId: variantIdToAdd, qty: 1 })
 
       track({
         type: "add_to_cart",
         cartId: getOrCreateCartId(),
         productKey: product.id,
-        variantKey: product.defaultVariantId,
+        variantKey: variantIdToAdd,
         data: {
           qty: 1,
           unitPriceCents: typeof product.priceCents === "number" ? product.priceCents : null,
@@ -191,8 +209,20 @@ export default function ProductCard({
 
       showToast(text.added(product.title))
     },
-    [add, product.defaultVariantId, product.id, product.priceCents, product.slug, product.title, showToast, text]
+    [add, activeVariantId, product.id, product.priceCents, product.slug, product.title, showToast, text]
   )
+
+  const handlePrevImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setActiveVariantIdx((i) => (i - 1 + variantImages.length) % variantImages.length)
+  }, [variantImages.length])
+
+  const handleNextImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setActiveVariantIdx((i) => (i + 1) % variantImages.length)
+  }, [variantImages.length])
 
   if (onOpen) {
     return (
@@ -208,7 +238,13 @@ export default function ProductCard({
               aria-label={product.title}
               className="flex flex-1 flex-col text-left focus:outline-none w-full"
             >
-              <CardInner product={product} />
+              <CardInner
+                product={product}
+                activeVariantIdx={activeVariantIdx}
+                onPrev={handlePrevImage}
+                onNext={handleNextImage}
+                onDotClick={setActiveVariantIdx}
+              />
             </button>
             <div className="px-3 pb-3 bg-white">
               <CardActionsButton onOpen={handleOpen} onAdd={handleAdd} locale={locale} />
@@ -232,7 +268,13 @@ export default function ProductCard({
             aria-label={product.title}
             className="flex flex-1 flex-col w-full"
           >
-            <CardInner product={product} />
+            <CardInner
+              product={product}
+              activeVariantIdx={activeVariantIdx}
+              onPrev={handlePrevImage}
+              onNext={handleNextImage}
+              onDotClick={setActiveVariantIdx}
+            />
           </Link>
           <div className="px-3 pb-3 bg-white">
             <CardActionsLink href={href} onClick={onClick} onAdd={handleAdd} locale={locale} />
@@ -243,11 +285,35 @@ export default function ProductCard({
   )
 }
 
-function CardInner({ product }: { product: ProductCardProduct }) {
+function CardInner({
+  product,
+  activeVariantIdx = 0,
+  onPrev,
+  onNext,
+  onDotClick,
+}: {
+  product: ProductCardProduct
+  activeVariantIdx?: number
+  onPrev?: (e: React.MouseEvent) => void
+  onNext?: (e: React.MouseEvent) => void
+  onDotClick?: (idx: number) => void
+}) {
   const locale = useLocale()
   const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
   const [isFavorite, setIsFavorite] = useState(false)
-  const usesContainedImage = shouldContainProductImage(product.imageSrc)
+
+  const variantImages = product.variantImages ?? []
+  const hasVariantImages = variantImages.length > 1
+
+  // Determine which image to show
+  const currentImage = hasVariantImages
+    ? variantImages[activeVariantIdx]?.imageSrc ?? product.imageSrc
+    : product.imageSrc
+  const currentAlt = hasVariantImages
+    ? variantImages[activeVariantIdx]?.imageAlt ?? product.imageAlt
+    : product.imageAlt
+
+  const usesContainedImage = shouldContainProductImage(currentImage)
 
   // Clean title: rimuovi il prefisso "Extravergine - "
   let cleanTitle = product.title
@@ -298,12 +364,12 @@ function CardInner({ product }: { product: ProductCardProduct }) {
 
   return (
     <div className="flex h-full w-full flex-col">
-      {/* Foto prodotto: object-cover, badges in overlay a 10px dal bordo */}
+      {/* Foto prodotto */}
       <div className="relative aspect-[4/4.3] w-full overflow-hidden bg-white transform-gpu backface-hidden">
-        {product.imageSrc ? (
+        {currentImage ? (
           <Image
-            src={product.imageSrc}
-            alt={product.imageAlt || cleanTitle}
+            src={currentImage}
+            alt={currentAlt || cleanTitle}
             fill
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className={
@@ -333,38 +399,77 @@ function CardInner({ product }: { product: ProductCardProduct }) {
             </div>
           ) : null}
         </div>
+
+        {/* Variant image navigation arrows */}
+        {hasVariantImages && onPrev && onNext && (
+          <>
+            <button
+              type="button"
+              onClick={onPrev}
+              className="absolute left-1.5 top-1/2 z-20 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full bg-white/85 text-[#1f1a17] shadow-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-sm pointer-events-auto"
+              aria-label="Immagine precedente"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </button>
+            <button
+              type="button"
+              onClick={onNext}
+              className="absolute right-1.5 top-1/2 z-20 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full bg-white/85 text-[#1f1a17] shadow-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-sm pointer-events-auto"
+              aria-label="Immagine successiva"
+            >
+              <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </button>
+
+            {/* Dot indicators */}
+            <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 pointer-events-auto">
+              {variantImages.map((vi, idx) => (
+                <button
+                  key={vi.variantId}
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDotClick?.(idx); }}
+                  className={`h-1.5 rounded-full transition-all duration-200 ${
+                    idx === activeVariantIdx
+                      ? "w-4 bg-[#1f1a17]"
+                      : "w-1.5 bg-[#1f1a17]/40 hover:bg-[#1f1a17]/70"
+                  }`}
+                  aria-label={`Variante ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Favorite button */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setIsFavorite(!isFavorite)
+          }}
+          className="absolute bottom-2 right-2 z-20 shrink-0 focus:outline-none transition-transform active:scale-90 hover:scale-110 p-0.5 pointer-events-auto"
+          aria-label={isFavorite ? text.favoriteRemove : text.favoriteAdd}
+        >
+          <Heart
+            className={`h-4 w-4 transition-all duration-300 ${
+              isFavorite
+                ? "fill-[#d29b46] text-[#d29b46]"
+                : "text-[#b0a090] hover:text-[#d29b46]"
+            }`}
+            strokeWidth={1.5}
+          />
+        </button>
       </div>
 
       {/*
-        AREA CONTENUTO:
-        - px-3 py-3: spaziatura confortevole, non troppo stretta
-        - testi ben leggibili e spaziati
+        AREA CONTENUTO
       */}
       <div className="flex flex-1 flex-col px-3 pt-2 pb-0.5 bg-white">
-        {/* Categoria + Wishlist */}
+        {/* Categoria */}
         <div className="flex items-center justify-between gap-2">
           <span className="text-[9px] font-semibold tracking-[0.12em] text-[#8a7c6e] uppercase truncate">
             {product.id === "vino" ? text.wineCategory : text.oilCategory}
           </span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setIsFavorite(!isFavorite)
-            }}
-            className="shrink-0 focus:outline-none transition-transform active:scale-90 hover:scale-110 p-0.5"
-            aria-label={isFavorite ? text.favoriteRemove : text.favoriteAdd}
-          >
-            <Heart
-              className={`h-4 w-4 transition-all duration-300 ${
-                isFavorite
-                  ? "fill-[#d29b46] text-[#d29b46]"
-                  : "text-[#b0a090] hover:text-[#d29b46]"
-              }`}
-              strokeWidth={1.5}
-            />
-          </button>
         </div>
 
         {/* Titolo prodotto */}
@@ -372,10 +477,24 @@ function CardInner({ product }: { product: ProductCardProduct }) {
           {cleanTitle}
         </h3>
 
+        {/* Variante attiva (se ci sono variant images) */}
+        {hasVariantImages && (
+          <div className="mt-0.5 text-[9px] font-semibold tracking-[0.06em] text-[#8f6d4c] uppercase">
+            {variantImages[activeVariantIdx]?.variantId
+              ? variantImages[activeVariantIdx].variantId
+                  .replace("ml", " ml")
+                  .replace("lt", " L")
+                  .replace(/^(\d)/, (m) => m)
+              : ""}
+          </div>
+        )}
+
         {/* Formati disponibili */}
-        <div className="mt-1 text-[9px] font-medium tracking-[0.06em] text-[#a09282] uppercase">
-          {formatsText}
-        </div>
+        {!hasVariantImages && (
+          <div className="mt-1 text-[9px] font-medium tracking-[0.06em] text-[#a09282] uppercase">
+            {formatsText}
+          </div>
+        )}
 
         {/* Prezzo */}
         <div className="mt-auto pt-1.5 pb-0.5">

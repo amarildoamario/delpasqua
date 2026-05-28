@@ -85,6 +85,14 @@ type FormatNavGroups = {
   can: FormatNavItem[];
 };
 
+type GalleryImageItem = {
+  src: string;
+  alt: string;
+  productId: string;
+  variantId: string;
+  label: string;
+};
+
 const FORMAT_FAMILY_BY_PRODUCT_ID: Record<string, string> = {
   evo: "evo",
   "evo-latta": "evo",
@@ -141,12 +149,19 @@ function getFormatNavGroups(productId: string) {
   return familyId ? FORMAT_NAV_GROUPS[familyId] : null;
 }
 
-function getProductPath(productId: string, locale: string) {
+function getProductParams(productId: string, locale: string) {
+  return { prodotto: getLocalizedProductSlug({ id: productId }, locale) };
+}
+
+function buildProductUrl(productId: string, locale: string, variantId?: string) {
+  // Builds the full URL for cross-product navigation.
+  // We use window.location.origin as base since router.push would double-add the locale prefix.
   const supportedLocale = locale as Locale;
   const localePrefix = supportedLocale === "it" ? "" : `/${supportedLocale}`;
   const shopPath = localizedPathnames["/shop"]?.[supportedLocale] ?? "/shop";
   const slug = getLocalizedProductSlug({ id: productId }, locale);
-  return `${localePrefix}${shopPath}/${slug}/`;
+  const base = `${localePrefix}${shopPath}/${slug}`;
+  return variantId ? `${base}?v=${variantId}` : base;
 }
 
 function getStaticPath(routeKey: string, locale: string) {
@@ -472,8 +487,14 @@ export default function ProductDetailsClient({
   const router = useRouter();
   const text = copy[locale as PageLocale] ?? copy.it;
 
+  const [currentProduct, setCurrentProduct] = useState<Product>(product);
+
+  useEffect(() => {
+    setCurrentProduct(product);
+  }, [product]);
+
   // Varianti e logica di selezione iniziale
-  const variants = useMemo(() => (product.variants?.length ? product.variants : []), [product.variants]);
+  const variants = useMemo(() => (currentProduct.variants?.length ? currentProduct.variants : []), [currentProduct.variants]);
   const firstVariantId = variants[0]?.id;
   const safeInitialVariantId =
     initialVariantId && variants.some((v) => String(v.id) === String(initialVariantId))
@@ -485,62 +506,118 @@ export default function ProductDetailsClient({
     return variants.find((v) => String(v.id) === String(selectedVariantId)) ?? variants[0];
   }, [variants, selectedVariantId]);
 
-  const formatNavGroups = useMemo(() => getFormatNavGroups(product.id), [product.id]);
+  const formatNavGroups = useMemo(() => getFormatNavGroups(currentProduct.id), [currentProduct.id]);
 
   function handleFormatSelect(item: FormatNavItem) {
-    if (item.productId === product.id) {
-      setSelectedVariantId(item.variantId);
-      router.replace(
-        {
-          pathname: getProductPath(product.id, locale),
-          query: { v: item.variantId },
-        },
-        { scroll: false }
-      );
-      return;
-    }
+    const allTranslatedProducts = [product, ...relatedProducts];
+    const targetProduct = allTranslatedProducts.find((p) => p.id === item.productId);
 
-    router.push(
-      {
-        pathname: getProductPath(item.productId, locale),
-        query: { v: item.variantId },
-      },
-      { scroll: false }
-    );
+    if (targetProduct) {
+      setCurrentProduct(targetProduct);
+      setSelectedVariantId(item.variantId);
+      const newPath = buildProductUrl(item.productId, locale, item.variantId);
+      window.history.replaceState(null, "", newPath);
+    }
   }
 
   function handleVariantSelect(variant: ProductVariant) {
     setSelectedVariantId(variant.id);
+    // Sync image with this variant
+    if (variant.imageSrc) setActiveImage(variant.imageSrc);
+    // Sync URL query param
+    const url = new URL(window.location.href);
+    url.searchParams.set("v", variant.id);
+    window.history.replaceState(null, "", url.pathname + url.search);
+  }
+
+  // Clicking a gallery image selects the matching variant (and product)
+  function handleImageClick(item: GalleryImageItem) {
+    const allTranslatedProducts = [product, ...relatedProducts];
+    const targetProduct = allTranslatedProducts.find((p) => p.id === item.productId);
+
+    if (targetProduct) {
+      setCurrentProduct(targetProduct);
+      setSelectedVariantId(item.variantId);
+      setActiveImage(item.src);
+      const newPath = buildProductUrl(item.productId, locale, item.variantId);
+      window.history.replaceState(null, "", newPath);
+    }
   }
 
   // Gestione Galleria Immagini
-  const galleryImages = useMemo(() => {
-    if (product.id === "evo") {
-      return [
-        "/products/del_pasqua_evo_bottle.png",
-        "/products/del_pasqua_evo_pour.png",
-        "/products/del_pasqua_evo_cap.png",
-        "/products/del_pasqua_evo_nature.png",
-        "/products/del_pasqua_olive_grove.png",
+  const galleryItems = useMemo<GalleryImageItem[]>(() => {
+    const items: GalleryImageItem[] = [];
+    const addedSrcs = new Set<string>();
+
+    const addImage = (src: string, alt: string, prodId: string, varId: string, label: string) => {
+      if (!src || addedSrcs.has(src)) return;
+      addedSrcs.add(src);
+      items.push({ src, alt, productId: prodId, variantId: varId, label });
+    };
+
+    if (formatNavGroups) {
+      // It belongs to a format family! Let's pull from all family items
+      const allFamilyItems: FormatNavItem[] = [
+        ...(formatNavGroups.bottle || []),
+        ...(formatNavGroups.can || []),
       ];
-    }
-    const imgs = [product.imageSrc];
-    variants.forEach((v) => {
-      if (v.imageSrc && !imgs.includes(v.imageSrc)) {
-        imgs.push(v.imageSrc);
+
+      allFamilyItems.forEach((item) => {
+        // Find corresponding product in productsRaw
+        const rawProd = (productsRaw as Product[]).find((p) => p.id === item.productId);
+        if (!rawProd) return;
+        const rawVar = rawProd.variants?.find((v) => String(v.id) === String(item.variantId));
+        if (rawVar && rawVar.imageSrc) {
+          addImage(
+            rawVar.imageSrc,
+            rawVar.imageAlt || rawVar.label || rawProd.title,
+            item.productId,
+            item.variantId,
+            item.label
+          );
+        } else if (rawProd.imageSrc) {
+          addImage(
+            rawProd.imageSrc,
+            rawProd.imageAlt || rawProd.title,
+            item.productId,
+            item.variantId,
+            item.label
+          );
+        }
+      });
+    } else {
+      // Normal single product, just map its own variants
+      variants.forEach((v) => {
+        if (v.imageSrc) {
+          const cleanLabel = v.label
+            .replace(/Bottiglia|Latta|Can/gi, "")
+            .replace("ml", " ml")
+            .replace("lt", " L")
+            .replace("L", " L")
+            .trim();
+          addImage(v.imageSrc, v.imageAlt || v.label, currentProduct.id, v.id, cleanLabel);
+        }
+      });
+      // Fallback to main product image if no images added
+      if (items.length === 0 && currentProduct.imageSrc) {
+        addImage(currentProduct.imageSrc, currentProduct.imageAlt || currentProduct.title, currentProduct.id, selectedVariantId || "", "");
       }
-    });
-    return imgs;
-  }, [product, variants]);
-
-  const [activeImage, setActiveImage] = useState(galleryImages[0]);
-
-  // Quando cambia la variante, se ha un'immagine specifica aggiorniamo la principale
-  useEffect(() => {
-    if (selectedVariant?.imageSrc) {
-      setActiveImage(selectedVariant.imageSrc);
     }
-  }, [selectedVariant]);
+
+    return items;
+  }, [formatNavGroups, currentProduct, variants, selectedVariantId]);
+
+  const galleryImages = useMemo(() => galleryItems.map((item) => item.src), [galleryItems]);
+
+  const [activeImage, setActiveImage] = useState(
+    selectedVariant?.imageSrc || (galleryImages.length > 0 ? galleryImages[0] : currentProduct.imageSrc)
+  );
+
+  // Quando cambia la variante, aggiorniamo l'immagine attiva
+  useEffect(() => {
+    const img = selectedVariant?.imageSrc || currentProduct.imageSrc;
+    if (img) setActiveImage(img);
+  }, [selectedVariant, currentProduct.imageSrc]);
 
   // Gestione Quantità
   const [qty, setQty] = useState(1);
@@ -565,11 +642,11 @@ export default function ProductDetailsClient({
 
   useEffect(() => {
     let alive = true;
-    if (!product.id || variants.length === 0) {
+    if (!currentProduct.id || variants.length === 0) {
       setAvailMap({});
       return;
     }
-    const skus = variants.map((v) => makeSku(product.id, v.id));
+    const skus = variants.map((v) => makeSku(currentProduct.id, v.id));
     setLoadingAvail(true);
 
     fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`)
@@ -593,9 +670,9 @@ export default function ProductDetailsClient({
     return () => {
       alive = false;
     };
-  }, [product.id, variants]);
+  }, [currentProduct.id, variants]);
 
-  const selectedSku = selectedVariant ? makeSku(product.id, selectedVariant.id) : "";
+  const selectedSku = selectedVariant ? makeSku(currentProduct.id, selectedVariant.id) : "";
   const availableStock = availMap ? availMap[selectedSku] ?? 0 : null;
   const maxQty = availableStock == null ? 99 : Math.max(0, availableStock);
   const isOutOfStock = availableStock != null && availableStock <= 0;
@@ -622,7 +699,7 @@ export default function ProductDetailsClient({
     await new Promise((r) => setTimeout(r, 450));
 
     add({
-      productId: product.id,
+      productId: currentProduct.id,
       variantId: selectedVariant.id,
       qty: safeQty,
     });
@@ -742,12 +819,12 @@ export default function ProductDetailsClient({
   };
 
   // Dati statici personalizzati per gli oli principali
-  const isEvo = product.id === "evo" || product.id === "evo-latta";
+  const isEvo = currentProduct.id === "evo" || currentProduct.id === "evo-latta";
   const hasOilInfoLayout = Boolean(formatNavGroups);
 
-  const descriptionParagraph = selectedVariant?.description || product.description;
+  const descriptionParagraph = selectedVariant?.description || currentProduct.description;
 
-  const taglineText = product.id === "evo" ? "Prestazioni. Controllo. Evoluzione." : product.subtitle;
+  const taglineText = currentProduct.id === "evo" ? "Prestazioni. Controllo. Evoluzione." : currentProduct.subtitle;
 
   // Icona personalizzata dell'Italia in SVG circolare ad alta qualità
   const ItalyIcon = (
@@ -916,8 +993,8 @@ export default function ProductDetailsClient({
     } else {
       // Fallback per altri prodotti
       const defaults = {
-        descrizione: product.description,
-        caratteristiche: product.purchaseInfo?.caratteristiche || "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità estremamente contenuta. Estratto a freddo per preservare tutte le proprietà organolettiche.",
+        descrizione: currentProduct.description,
+        caratteristiche: currentProduct.purchaseInfo?.caratteristiche || "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità estremamente contenuta. Estratto a freddo per preservare tutte le proprietà organolettiche.",
         abbinamenti: "Ideale a crudo e come condimento di pregio in ogni tipo di cucina mediterranea.",
         ingredienti: "Olive 100% italiane estratte unicamente mediante processi meccanici.",
         "valori nutrizionali": "Valori nutrizionali tipici per 100ml di olio extravergine: Energia 828 kcal / 3404 kJ, Grassi 92g (saturi 14g), Carboidrati 0g, Proteine 0g, Sale 0g.",
@@ -931,62 +1008,29 @@ export default function ProductDetailsClient({
         </p>
       );
     }
-  }, [activeTab, descriptionParagraph, hasOilInfoLayout, product, text]);
+  }, [activeTab, descriptionParagraph, hasOilInfoLayout, currentProduct, text]);
 
   const recommendations = useMemo<ProductCardProduct[]>(() => {
     if (isEvo) {
-      return [
-        {
-          id: "evo-confezione-regalo",
-          slug: "evo",
-          title: "EVO - Confezione Regalo",
-          subtitle: "500 ml",
-          badge: "EVO",
-          imageSrc: "/products/del_pasqua_gift_box.png",
-          imageAlt: "EVO - Confezione Regalo",
-          priceLabel: formatEUR(2600, locale),
-          priceCents: 2600,
-          variantsCount: 1,
-        },
-        {
-          id: "evo-500ml",
-          slug: "evo",
-          title: "Olio EVO Del Pasqua",
-          subtitle: "500 ml",
-          badge: "EVO",
-          imageSrc: "/products/del_pasqua_evo_nature.png",
-          imageAlt: "Olio EVO Del Pasqua",
-          priceLabel: formatEUR(1500, locale),
-          priceCents: 1500,
-          variantsCount: 1,
-        },
-        {
-          id: "evo-latta",
-          slug: "olio-evo-latta",
-          title: "Latta EVO Del Pasqua",
-          subtitle: "3 L / 5 L",
-          badge: "LATTA",
-          imageSrc: "/products/EVO-latta-5lt.png",
-          imageAlt: "Latta EVO Del Pasqua",
-          priceLabel: formatEUR(1800, locale),
-          priceCents: 1800,
-          defaultVariantId: "750ml",
-          variantsCount: 3,
-        },
-        {
-          id: "fruttato-medio-latta",
-          slug: "olio-extra-vergine-di-oliva-fruttato-medio-latta",
-          title: "Latta Fruttato Medio",
-          subtitle: "3 L / 5 L",
-          badge: "LATTA",
-          imageSrc: "/products/fruttato-medio-latta-5lt.png",
-          imageAlt: "Latta Fruttato Medio",
-          priceLabel: formatEUR(6000, locale),
-          priceCents: 6000,
-          defaultVariantId: "3lt",
-          variantsCount: 2,
-        },
-      ];
+      // Use real related products plus EVO latta as a recommendation
+      const evoRelated = relatedProducts.slice(0, 3).map((p) => {
+        const cheapestVariant = p.variants?.reduce((min, cur) => (cur.priceCents < min.priceCents ? cur : min), p.variants[0]);
+        const priceCents = cheapestVariant ? cheapestVariant.priceCents : 1500;
+        return {
+          id: p.id,
+          slug: p.slug,
+          title: p.title,
+          subtitle: p.subtitle ?? (cheapestVariant ? formatSizeLabel(cheapestVariant) : ""),
+          badge: p.badge,
+          imageSrc: p.imageSrc,
+          imageAlt: p.imageAlt,
+          priceLabel: formatEUR(priceCents, locale),
+          priceCents,
+          defaultVariantId: cheapestVariant?.id,
+          variantsCount: p.variants?.length ?? 1,
+        };
+      });
+      return evoRelated;
     }
 
     return relatedProducts.slice(0, 4).map((p) => {
@@ -1041,7 +1085,7 @@ export default function ProductDetailsClient({
             {activeImage ? (
               <Image
                 src={activeImage}
-                alt={product.imageAlt || product.title}
+                alt={currentProduct.imageAlt || currentProduct.title}
                 fill
                 className="object-cover cursor-zoom-in transition-transform duration-500 group-hover:scale-[1.02]"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -1058,39 +1102,38 @@ export default function ProductDetailsClient({
           </div>
 
           {/* Miniature (Thumbnails - object-cover) */}
-          {galleryImages.length > 1 && (
-            <div className="grid grid-cols-5 gap-3 mt-4">
-              {galleryImages.slice(0, 5).map((imgSrc, idx) => {
-                const isActive = imgSrc === activeImage;
-                const isLast = idx === 4 && galleryImages.length > 5;
+          {galleryItems.length > 1 && (
+            <div className="flex flex-wrap gap-2.5 mt-4">
+              {galleryItems.map((item, idx) => {
+                const isActive = item.src === activeImage;
+                const thumbLabel = item.label
+                  .replace(/Bottiglia|Latta|Can/gi, "")
+                  .trim();
                 
                 return (
                   <button
                     key={idx}
-                    onClick={() => setActiveImage(imgSrc)}
-                    className={`relative aspect-square overflow-hidden rounded-[5px] bg-[#F5F4EE] border transition-all cursor-pointer ${
-                      isActive ? "border-2 border-[#3D5A3D] scale-95" : "border-neutral-200 hover:border-neutral-400"
-                    }`}
+                    type="button"
+                    onClick={() => handleImageClick(item)}
+                    className="relative flex flex-col items-center gap-1 cursor-pointer group/thumb w-[72px]"
                   >
-                    <Image
-                      src={imgSrc}
-                      alt={`Miniatura ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="15vw"
-                    />
-                    
-                    {/* Sovrapposizione +2 sull'ultimo */}
-                    {isLast && (
-                      <div 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openLightbox(4);
-                        }}
-                        className="absolute inset-0 bg-black/45 flex items-center justify-center text-white text-xs font-semibold rounded-[5px]"
-                      >
-                        +{galleryImages.length - 4}
-                      </div>
+                    <div className={`relative aspect-square w-full overflow-hidden rounded-[5px] bg-[#F5F4EE] border transition-all ${
+                      isActive ? "border-2 border-[#3D5A3D] ring-1 ring-[#3D5A3D]/20" : "border-neutral-200 hover:border-neutral-400"
+                    }`}>
+                      <Image
+                        src={item.src}
+                        alt={item.alt || `Miniatura ${idx + 1}`}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover/thumb:scale-105"
+                        sizes="72px"
+                      />
+                    </div>
+                    {thumbLabel && (
+                      <span className={`text-[9px] font-semibold tracking-wide text-center truncate w-full transition-colors ${
+                        isActive ? "text-[#3D5A3D] font-bold" : "text-neutral-500 group-hover/thumb:text-neutral-700"
+                      }`}>
+                        {thumbLabel}
+                      </span>
                     )}
                   </button>
                 );
@@ -1103,12 +1146,12 @@ export default function ProductDetailsClient({
         <div className="flex flex-col">
           {/* Badge */}
           <span className="text-[10px] font-bold tracking-[0.25em] text-[#8B7355] uppercase">
-            {product.badge || product.category}
+            {currentProduct.badge || currentProduct.category}
           </span>
           
           {/* Titolo */}
           <h1 className="mt-2 font-serif text-4xl lg:text-5xl font-light leading-none tracking-tight text-neutral-900">
-            {product.title}
+            {currentProduct.title}
           </h1>
 
           {/* Sottotitolo / Tagline */}
@@ -1187,7 +1230,7 @@ export default function ProductDetailsClient({
                   <div className="flex flex-wrap gap-2.5">
                     {items.map((item) => {
                       const isSelected =
-                        item.productId === product.id && String(item.variantId) === String(selectedVariantId);
+                        item.productId === currentProduct.id && String(item.variantId) === String(selectedVariantId);
 
                       return (
                         <button
@@ -1217,7 +1260,7 @@ export default function ProductDetailsClient({
               <div className="grid grid-cols-3 gap-3">
                 {variants.map((v) => {
                   const isSelected = String(v.id) === String(selectedVariantId);
-                  const isVarOut = availMap ? (availMap[makeSku(product.id, v.id)] ?? 0) <= 0 : false;
+                  const isVarOut = availMap ? (availMap[makeSku(currentProduct.id, v.id)] ?? 0) <= 0 : false;
 
                   return (
                     <button

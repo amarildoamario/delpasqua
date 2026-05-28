@@ -14,7 +14,7 @@ type ApiProduct = {
   badge?: string | null;
   imageSrc?: string | null;
   imageAlt?: string | null;
-  variants?: { id?: string; priceCents: number }[] | null;
+  variants?: { id?: string; priceCents: number; imageSrc?: string | null; imageAlt?: string | null }[] | null;
   category?: string | null;
 };
 
@@ -148,6 +148,21 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
       const minPriceCents = prices.length > 0 ? Math.min(...prices) : null;
       const hasManyVariants = prices.length > 1;
 
+      // Build variant images list (one per variant with a unique image)
+      const seenSrcs = new Set<string>();
+      const variantImages = (p.variants ?? [])
+        .filter((v): v is typeof v & { id: string } => typeof v.id === "string" && !!v.imageSrc)
+        .filter((v) => {
+          if (seenSrcs.has(v.imageSrc!)) return false;
+          seenSrcs.add(v.imageSrc!);
+          return true;
+        })
+        .map((v) => ({
+          variantId: v.id,
+          imageSrc: v.imageSrc!,
+          imageAlt: v.imageAlt ?? p.imageAlt ?? "",
+        }));
+
       return {
         id: p.id,
         slug: p.slug,
@@ -171,6 +186,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
         category: p.category ?? "all",
         filterTags: inferFilterTags(p),
         variantsCount: p.variants?.length ?? 1,
+        variantImages: variantImages.length > 1 ? variantImages : undefined,
       };
     });
   }, [copy, initialProducts, locale, tp]);

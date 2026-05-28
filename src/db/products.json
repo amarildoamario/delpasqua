@@ -87,7 +87,7 @@
         "label": "Variante 1",
         "priceCents": 1200,
         "sku": "FL-B-500ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
         "imageAlt": "",
         "specs": {},
         "description": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti."
@@ -98,7 +98,7 @@
     "category": "Olio",
     "subtitle": "Olio extravergine di oliva",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
     "imageAlt": "Olio extravergine - fruttato leggero",
     "description": "Il Fruttato Leggero e delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
     "specs": {},
@@ -157,7 +157,7 @@
         "label": "Bottiglia 500 ml",
         "priceCents": 1200,
         "sku": "FM-B-500ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-medio-bottiglia-500ml.jpg",
         "imageAlt": "Fruttato medio bottiglia 500 ml",
         "specs": {
           "Weight": "1.5 kg",
@@ -172,7 +172,7 @@
         "label": "Bottiglia 750 ml",
         "priceCents": 1800,
         "sku": "FM-B-750ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
         "imageAlt": "Fruttato medio bottiglia 750 ml",
         "specs": {
           "Weight": "—",
@@ -185,7 +185,7 @@
         "label": "Bottiglia 1 L",
         "priceCents": 2200,
         "sku": "FM-B-1LT",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-medio-bottiglia-1lt.jpg",
         "imageAlt": "Fruttato medio bottiglia 1 L",
         "specs": {
           "Weight": "—",
@@ -199,7 +199,7 @@
     "title": "Extravergine - Fruttato Medio",
     "subtitle": "Olio Extravergine di oliva",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+    "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
     "imageAlt": "Olio extravergine - fruttato medio",
     "description": "Il Fruttato Medio e l'equilibrio piu versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
     "specs": {},
@@ -255,7 +255,7 @@
         "label": "Bottiglia 500 ml",
         "priceCents": 1200,
         "sku": "FI-B-500ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-500ml.jpg",
         "imageAlt": "Fruttato intenso bottiglia 500 ml",
         "specs": {
           "Weight": "—",
@@ -268,7 +268,7 @@
         "label": "Bottiglia 750 ml",
         "priceCents": 1800,
         "sku": "FI-B-750ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
         "imageAlt": "Fruttato intenso bottiglia 750 ml",
         "specs": {
           "Weight": "—",
@@ -281,7 +281,7 @@
         "label": "Bottiglia 1 L",
         "priceCents": 2200,
         "sku": "FI-B-1LT",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
         "imageAlt": "Fruttato intenso bottiglia 1 L",
         "specs": {
           "Weight": "—",
@@ -295,7 +295,7 @@
     "title": "Extravergine - Fruttato Intenso",
     "subtitle": "Olio Extravergine di oliva ",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt-gpt.png",
+    "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
     "imageAlt": "Olio extravergine - fruttato intenso",
     "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale piu marcato: ideale per chi cerca un olio capace di farsi sentire.",
     "specs": {
