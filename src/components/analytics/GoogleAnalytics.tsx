@@ -2,10 +2,6 @@
 
 import Script from "next/script";
 
-function hasAnalyticsConsent(): boolean {
-  if (typeof document === "undefined") return false;
-  return /(?:^|;\s*)analytics_consent=1(?:;|$)/.test(document.cookie);
-}
 
 export default function GoogleAnalytics() {
   const GA_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID;

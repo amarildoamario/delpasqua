@@ -71,7 +71,10 @@ export default async function CancelPage({
     await prisma.$transaction(async (tx) => {
       await releaseReserved(
         tx,
-        order.items.map((it) => ({ sku: it.sku, qty: it.qty }))
+        {
+          orderId: order.id,
+          lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+        }
       );
 
       await tx.order.update({
@@ -262,7 +265,7 @@ export default async function CancelPage({
                 Modifica carrello
               </Link>
               <Link
-                href="/support"
+                href="/contatti"
                 className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-medium text-white hover:opacity-90"
               >
                 Serve aiuto?

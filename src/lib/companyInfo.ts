@@ -1,6 +1,6 @@
 export const companyInfo = {
   brandName: "Frantoio Del Pasqua",
-  companyName: "Az. Agr. Del Pasqua",
+  companyName: "Az. Agr. Del Pasqua Emanuele",
   addressSingleLine: "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
   addressLegal: "Via Casacce 4, Pozzo della Chiana, 52045 (AR), Italia",
   addressMap: "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR), Italia",

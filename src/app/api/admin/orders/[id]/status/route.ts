@@ -9,6 +9,8 @@ import { rateLimit } from "@/lib/server/rateLimit";
 import { NextResponse } from "next/server";
 import { processOutboxBatch } from "@/lib/server/outbox";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
+import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
+import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
 import { AdminOrderStatusPatchSchema } from "@/lib/server/schemas";
 
 function now() {
@@ -74,7 +76,10 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     const isFlagged = typeof parsed.data.isFlagged === "boolean" ? parsed.data.isFlagged : undefined;
     const riskScore = typeof parsed.data.riskScore === "number" ? parsed.data.riskScore : undefined;
 
-    const order = await prisma.order.findUnique({ where: { id } });
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { items: true },
+    });
     if (!order) return new Response("Not found", { status: 404 });
 
     if (restore) {
@@ -89,9 +94,18 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
       const restoreTo: OrderStatus = (lastCancel?.fromStatus as OrderStatus | null) ?? "PENDING";
 
-      const updated = await prisma.order.update({
-        where: { id },
-        data: { status: restoreTo, canceledAt: null },
+      const updated = await prisma.$transaction(async (tx) => {
+        if (restoreTo === "PENDING") {
+          await reserveStockOrThrow(tx, {
+            orderId: id,
+            lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+          });
+        }
+
+        return tx.order.update({
+          where: { id },
+          data: { status: restoreTo, canceledAt: null },
+        });
       });
 
       await createOrderEvent({
@@ -124,9 +138,18 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     if (nextStatus) {
       // CANCEL resta com’era (senza email qui se non ti serve)
       if (nextStatus === "CANCELED") {
-        updated = await prisma.order.update({
-          where: { id },
-          data: { status: "CANCELED", canceledAt: now() },
+        updated = await prisma.$transaction(async (tx) => {
+          if (current === "PENDING") {
+            await releaseReserved(tx, {
+              orderId: id,
+              lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+            });
+          }
+
+          return tx.order.update({
+            where: { id },
+            data: { status: "CANCELED", canceledAt: now() },
+          });
         });
 
         await createOrderEvent({
@@ -145,14 +168,32 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         return new Response(`Invalid transition ${current} -> ${nextStatus}`, { status: 400 });
       }
 
-      const patch: Prisma.Prisma.OrderUpdateInput = { status: nextStatus };
-      if (nextStatus === "PAID") patch.paidAt = now();
-      if (nextStatus === "PREPARING") patch.preparingAt = now();
-      if (nextStatus === "SHIPPED") patch.shippedAt = now();
-      if (nextStatus === "DELIVERED") patch.deliveredAt = now();
-      if (nextStatus === "REFUNDED") patch.refundedAt = now();
+      if (nextStatus === "PAID") {
+        updated = await prisma.$transaction((tx) =>
+          applyPaidOrderInvariantsTx(tx, {
+            orderId: id,
+            actor,
+            source: "admin_manual",
+          })
+        );
+      } else {
+        const patch: Prisma.Prisma.OrderUpdateInput = { status: nextStatus };
+        if (nextStatus === "PREPARING") patch.preparingAt = now();
+        if (nextStatus === "SHIPPED") patch.shippedAt = now();
+        if (nextStatus === "DELIVERED") patch.deliveredAt = now();
+        if (nextStatus === "REFUNDED") patch.refundedAt = now();
 
-      updated = await prisma.order.update({ where: { id }, data: patch });
+        updated = await prisma.$transaction(async (tx) => {
+          if (current === "PENDING" && (nextStatus === "EXPIRED" || nextStatus === "FAILED")) {
+            await releaseReserved(tx, {
+              orderId: id,
+              lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+            });
+          }
+
+          return tx.order.update({ where: { id }, data: patch });
+        });
+      }
     }
 
     // Storico + AUTO outbox REFUNDED
@@ -169,6 +210,11 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
       // ✅ SOLO REFUNDED
       if (nextStatus === "REFUNDED") {
         await enqueueRefundedEmailOutbox({ orderId: id, actor });
+      }
+      if (nextStatus === "PAID") {
+        processOutboxBatch({ limit: 10 }).catch((e) => {
+          console.error("outbox auto-process failed (PAID manual):", e);
+        });
       }
     } else {
       if (typeof notes !== "undefined" || typeof isFlagged !== "undefined" || typeof riskScore !== "undefined") {

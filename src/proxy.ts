@@ -10,7 +10,7 @@ const LEGACY_301_REDIRECTS = new Map<string, string>([
     ["/portfolio-category/details", "/produzione/"],
     ["/portfolio-category/nature", "/storia/"],
     ["/portfolio-category/photogrpahy", "/storia/"],
-    ["/portfolio-category/wine", "/shop/vino/"],
+    ["/portfolio-category/wine", "/shop/vino-vittoria/"],
     ["/portfolio-tag/blanc-winery", "/produzione/"],
     ["/portfolio-tag/countryside-bay", "/storia/"],
     ["/portfolio-tag/organic-company", "/storia/"],
@@ -52,16 +52,42 @@ const LEGACY_301_REDIRECTS = new Map<string, string>([
     ["/zblog-list-2", "/blog/"],
 ]);
 
+const LOCALES_WITH_PREFIX = ["en", "de", "nl", "da", "no"];
+
+function extractLocaleAndPath(pathname: string): { locale: string | null; cleanPath: string } {
+    const segments = pathname.split('/').filter(Boolean);
+    if (segments.length > 0 && LOCALES_WITH_PREFIX.includes(segments[0])) {
+        const locale = segments[0];
+        const cleanPath = '/' + segments.slice(1).join('/');
+        return { locale, cleanPath };
+    }
+    return { locale: null, cleanPath: pathname };
+}
+
 function normalizeLegacyPath(pathname: string) {
     if (pathname === "/") return pathname;
     return pathname.replace(/\/+$/, "");
 }
 
 export async function proxy(request: NextRequest) {
-    const legacyDestination = LEGACY_301_REDIRECTS.get(normalizeLegacyPath(request.nextUrl.pathname));
+    const { locale, cleanPath } = extractLocaleAndPath(request.nextUrl.pathname);
+    const normalizedPath = normalizeLegacyPath(cleanPath);
+    const legacyDestination = LEGACY_301_REDIRECTS.get(normalizedPath);
+
     if (legacyDestination) {
-        const redirectUrl = new URL(legacyDestination, request.url);
-        return NextResponse.redirect(redirectUrl, 301);
+        // If it's the English cart (which is a valid native route /en/cart in Next.js),
+        // bypass the legacy redirect to avoid an infinite loop with next-intl.
+        if (locale === 'en' && normalizedPath === '/cart') {
+            // Proceed to intlMiddleware
+        } else {
+            let finalDestination = legacyDestination;
+            if (locale) {
+                // Prepend the locale code back (e.g. /en/shop/evo/ or /en/produzione/)
+                finalDestination = `/${locale}${legacyDestination}`;
+            }
+            const redirectUrl = new URL(finalDestination, request.url);
+            return NextResponse.redirect(redirectUrl, 301);
+        }
     }
 
     const response = await intlMiddleware(request);

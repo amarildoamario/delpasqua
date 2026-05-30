@@ -1,22 +1,10 @@
-import products from "@/db/products.json";
-import type { Product } from "@/lib/shopTypes";
+import type { ProductMerch } from "@/generated/prisma";
+import { makeInventorySku } from "@/lib/inventorySku";
+import { readCatalog } from "@/lib/server/catalog";
 import { prisma } from "@/lib/server/prisma";
-import { calcVatCentsFromSubtotal, getVatRate } from "@/lib/server/vat";
-import type { Promotion } from "@/generated/prisma";
-
-// ─── Promotion cache (in-memory, TTL 60s) ──────────────────────────────────
-// Evita una query findUnique per ogni tentativo di checkout con codice promo.
-const PROMO_CACHE_TTL_MS = 60_000;
-interface PromoCacheEntry { promo: Promotion | null; cachedAt: number }
-const promoCache = new Map<string, PromoCacheEntry>();
-
-async function findPromotion(code: string): Promise<Promotion | null> {
-  const entry = promoCache.get(code);
-  if (entry && Date.now() - entry.cachedAt < PROMO_CACHE_TTL_MS) return entry.promo;
-  const promo = await prisma.promotion.findUnique({ where: { code } });
-  promoCache.set(code, { promo, cachedAt: Date.now() });
-  return promo;
-}
+import { getStoreSettings } from "@/lib/server/settings";
+import { calcVatCentsFromSubtotal } from "@/lib/server/vat";
+import type { Product } from "@/lib/shopTypes";
 
 export type PricingInputLine = {
   productId: string;
@@ -73,7 +61,6 @@ function clampInt(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.trunc(n)));
 }
 
-/** Allocazione proporzionale mantenendo somma esatta (largest remainder). */
 function allocateProportionally(total: number, weights: number[]) {
   if (total <= 0) return weights.map(() => 0);
   const sumW = weights.reduce((a, b) => a + b, 0);
@@ -95,24 +82,69 @@ function allocateProportionally(total: number, weights: number[]) {
   return out;
 }
 
-function makeSku(productId: string, variantId: string) {
-  // SKU deterministico e stabile anche se cambi catalogo: ottimo baseline
-  return `${productId}:${variantId}`;
-}
-
 function getOptionalString(obj: unknown, key: string): string | null {
   if (!obj || typeof obj !== "object") return null;
   const v = (obj as Record<string, unknown>)[key];
   return typeof v === "string" && v.length > 0 ? v : null;
 }
 
+function getOptionalBoolean(obj: unknown, key: string): boolean | null {
+  if (!obj || typeof obj !== "object") return null;
+  const v = (obj as Record<string, unknown>)[key];
+  return typeof v === "boolean" ? v : null;
+}
+
+function isActiveWithinWindow(args: {
+  startsAt: Date | null;
+  endsAt: Date | null;
+  now?: Date;
+}) {
+  const now = args.now ?? new Date();
+  const startsOk = !args.startsAt || args.startsAt <= now;
+  const endsOk = !args.endsAt || args.endsAt >= now;
+  return startsOk && endsOk;
+}
+
+function applyProductMerchDiscount(unitPriceCents: number, merch: ProductMerch | null) {
+  if (!merch) return unitPriceCents;
+
+  let next = unitPriceCents;
+  const percent = clampInt(merch.discountPercent ?? 0, 0, 100);
+  const fixed = clampInt(merch.discountCents ?? 0, 0, 10_000_000);
+
+  if (percent > 0) {
+    next = Math.round((next * (100 - percent)) / 100);
+  }
+
+  if (fixed > 0) {
+    next = Math.max(0, next - fixed);
+  }
+
+  return clampInt(next, 0, 10_000_000);
+}
+
 export async function computeOrderPricing(args: {
   lines: PricingInputLine[];
   promotionCode?: string;
 }): Promise<PricingResult> {
-  const catalog = products as unknown as Product[];
+  const catalog = (await readCatalog()) as unknown as Product[];
+  const now = new Date();
+  const productKeys = [...new Set(args.lines.map((line) => line.productId))];
+  const merchRows = productKeys.length
+    ? await prisma.productMerch.findMany({
+        where: {
+          productKey: {
+            in: productKeys,
+          },
+        },
+      })
+    : [];
+  const merchByProductKey = new Map(
+    merchRows
+      .filter((row) => isActiveWithinWindow({ startsAt: row.startsAt, endsAt: row.endsAt, now }))
+      .map((row) => [row.productKey, row])
+  );
 
-  // 1) righe base (snapshot da catalogo)
   const baseItems: PricingResultItem[] = args.lines.map((it) => {
     const p = catalog.find((x) => x.id === it.productId);
     if (!p) throw Object.assign(new Error("Product not found"), { status: 400 });
@@ -121,12 +153,12 @@ export async function computeOrderPricing(args: {
     if (!v) throw Object.assign(new Error("Variant not found"), { status: 400 });
 
     const qty = clampInt(it.qty, 1, 99);
-    const unitPriceCents = clampInt(v.priceCents, 0, 10_000_000);
+    const baseUnitPriceCents = clampInt(v.priceCents, 0, 10_000_000);
+    const merch = merchByProductKey.get(p.id) ?? null;
+    const unitPriceCents = applyProductMerchDiscount(baseUnitPriceCents, merch);
     const lineSubtotalCents = unitPriceCents * qty;
 
-    const sku = makeSku(p.id, v.id);
-
-    // ✅ FIX: immagine variante -> fallback prodotto (senza any)
+    const sku = makeInventorySku(p.id, v.id);
     const variantImageSrc = getOptionalString(v as unknown, "imageSrc");
     const productImageSrc = getOptionalString(p as unknown, "imageSrc");
 
@@ -138,13 +170,9 @@ export async function computeOrderPricing(args: {
       title: p.title,
       subtitle: getOptionalString(p as unknown, "subtitle"),
       badge: getOptionalString(p as unknown, "badge"),
-
       imageSrc: productImageSrc ?? null,
       imageAlt: getOptionalString(p as unknown, "imageAlt"),
-
-      // ✅ aggiungo anche la variante nello snapshot
       variantImageSrc: variantImageSrc ?? null,
-
       variantLabel: v.label,
     };
 
@@ -152,44 +180,55 @@ export async function computeOrderPricing(args: {
       productId: p.id,
       variantId: v.id,
       sku,
-
-      // ✅ qui ora salva la variante corretta
       imageUrl: variantImageSrc ?? productImageSrc ?? null,
-
       title: p.title,
       variantLabel: v.label,
-
       unitPriceCents,
       qty,
-
       lineSubtotalCents,
       lineDiscountCents: 0,
       lineVatCents: 0,
       lineTaxCents: 0,
       lineTotalCents: lineSubtotalCents,
-
       productSnapshot,
-      pricingSnapshot: {},
+      pricingSnapshot: {
+        baseUnitPriceCents,
+        productMerch: merch
+          ? {
+              productKey: merch.productKey,
+              discountPercent: merch.discountPercent,
+              discountCents: merch.discountCents,
+              promoLabel: merch.promoLabel,
+              startsAt: merch.startsAt?.toISOString() ?? null,
+              endsAt: merch.endsAt?.toISOString() ?? null,
+            }
+          : null,
+      },
     };
   });
 
   const subtotalCents = baseItems.reduce((s, x) => s + x.lineSubtotalCents, 0);
 
-  // 2) Promo (se presente)
   let promotionApplied: PricingResult["promotionApplied"] = null;
   let discountCents = 0;
   let freeShipping = false;
 
   if (args.promotionCode) {
     const code = args.promotionCode.trim().toUpperCase();
-    const promo = await findPromotion(code);
+    const promo = await prisma.promotion.findUnique({ where: { code } });
 
     if (promo && promo.isActive) {
-      const now = new Date();
       const startsOk = !promo.startsAt || promo.startsAt <= now;
       const endsOk = !promo.endsAt || promo.endsAt >= now;
       const minOk = !promo.minOrderCents || subtotalCents >= promo.minOrderCents;
-      const usageOk = !promo.usageLimit || promo.usedCount < promo.usageLimit;
+
+      const pendingCount = await prisma.order.count({
+        where: {
+          promotionCode: code,
+          status: "PENDING",
+        },
+      });
+      const usageOk = !promo.usageLimit || promo.usedCount + pendingCount < promo.usageLimit;
 
       if (startsOk && endsOk && minOk && usageOk) {
         if (promo.freeShipping || promo.type === "free_shipping") freeShipping = true;
@@ -213,45 +252,49 @@ export async function computeOrderPricing(args: {
     }
   }
 
-  // 3) Shipping
+  const settings = await getStoreSettings();
+
   const hasProductWithFreeShipping = baseItems.some((item) => {
     const prod = catalog.find((x) => x.id === item.productId);
-    return prod && (prod as any).freeShipping === true;
+    return getOptionalBoolean(prod, "freeShipping") === true;
   });
   const orderFreeShipping = freeShipping || hasProductWithFreeShipping;
-  const shippingCents = orderFreeShipping ? 0 : subtotalCents >= 6900 ? 0 : 590;
+  const shippingCents = orderFreeShipping
+    ? 0
+    : subtotalCents >= settings.freeShippingThresholdCents
+      ? 0
+      : settings.shippingFlatCents;
 
-  // 4) Allocazione sconto per riga
   const weights = baseItems.map((x) => x.lineSubtotalCents);
   const discountAlloc = allocateProportionally(discountCents, weights);
   for (let i = 0; i < baseItems.length; i++) {
     baseItems[i].lineDiscountCents = discountAlloc[i];
   }
 
-  // 5) IVA (come prima: su subtotal)
-  const baseVat = subtotalCents;
-  const vatCents = calcVatCentsFromSubtotal(baseVat);
+  const baseVat = Math.max(0, subtotalCents - discountCents);
+  const vatRate = settings.vatRatePercent / 100;
+  const vatCents = calcVatCentsFromSubtotal(baseVat, vatRate);
 
-  const vatAlloc = allocateProportionally(vatCents, weights);
+  const netWeights = baseItems.map((x) => x.lineSubtotalCents - x.lineDiscountCents);
+  const vatAlloc = allocateProportionally(vatCents, netWeights);
   for (let i = 0; i < baseItems.length; i++) {
     baseItems[i].lineVatCents = vatAlloc[i];
   }
 
-  // 6) Tax extra (placeholder)
   const taxCents = 0;
   const taxAlloc = allocateProportionally(taxCents, weights);
   for (let i = 0; i < baseItems.length; i++) {
     baseItems[i].lineTaxCents = taxAlloc[i];
   }
 
-  // 7) Totali riga + pricing snapshot
-  const vatRateBps = Math.round(getVatRate() * 10_000);
+  const vatRateBps = Math.round(vatRate * 10_000);
   for (const it of baseItems) {
-    const lineNetCents = it.lineSubtotalCents - it.lineDiscountCents;
-    const lineTotalCents = lineNetCents + it.lineVatCents + it.lineTaxCents;
+    const lineTotalCents = it.lineSubtotalCents - it.lineDiscountCents + it.lineTaxCents;
+    const lineNetCents = lineTotalCents - it.lineVatCents - it.lineTaxCents;
 
     it.lineTotalCents = lineTotalCents;
     it.pricingSnapshot = {
+      ...(it.pricingSnapshot as JsonObject),
       unitPriceCents: it.unitPriceCents,
       qty: it.qty,
       lineSubtotalCents: it.lineSubtotalCents,
@@ -265,7 +308,7 @@ export async function computeOrderPricing(args: {
     };
   }
 
-  const totalCents = subtotalCents + vatCents + shippingCents - discountCents + taxCents;
+  const totalCents = subtotalCents + shippingCents - discountCents + taxCents;
 
   return {
     items: baseItems,

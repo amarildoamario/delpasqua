@@ -351,7 +351,7 @@
         },
         "info": {
             "shipping": "Free shipping on orders over €50",
-            "notes": "Prices are indicative and do not include VAT. Contact us for custom orders."
+            "notes": "Prices are indicative and include VAT. Contact us for custom orders."
         },
         "filters": {
             "from": "From "
@@ -1056,7 +1056,7 @@
             "close_toast_aria": "Close",
             "max_qty": "MAX {max}",
             "available": "AVAILABLE",
-            "plus_vat": "+ VAT"
+            "plus_vat": "VAT incl."
         }
     }
 }

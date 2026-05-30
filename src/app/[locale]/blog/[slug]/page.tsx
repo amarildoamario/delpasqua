@@ -8,11 +8,10 @@ import {
     getBlogCategoryHref,
     getLocalizedBlogCategorySlug,
     getLocalizedBlogHref,
-    getLocalizedBlogSlug,
     normalizeBlogSlug,
 } from "@/lib/blogSlugs";
 import { Metadata } from 'next';
-import { getBlogAlternateUrls, SITE_URL } from "@/lib/seo";
+import { getBlogAlternateUrls, SITE_URL, absoluteUrl, localizedPath } from "@/lib/seo";
 
 export async function generateMetadata(
     { params }: { params: Promise<{ slug: string, locale: string, category?: string }> }
@@ -392,11 +391,43 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         }
     };
 
+    const homeUrl = absoluteUrl(localizedPath("/", locale));
+    const blogUrl = absoluteUrl(localizedPath("/blog", locale));
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": ui.home,
+                "item": homeUrl
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": ui.magazine,
+                "item": blogUrl
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": post.title,
+                "item": postUrl
+            }
+        ]
+    };
+
     return (
         <div className="bg-white min-h-screen flex flex-col">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
             <main className="flex-1 pt-20 sm:pt-28 pb-24 sm:pb-32">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

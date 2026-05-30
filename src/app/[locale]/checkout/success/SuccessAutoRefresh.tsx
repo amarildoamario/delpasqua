@@ -36,23 +36,23 @@ export default function SuccessAutoRefresh({
 
     const startedAt = Date.now();
 
-    const t = setInterval(() => {
-      const e = Math.floor((Date.now() - startedAt) / 1000);
-      setElapsed(e);
+    const timer = setInterval(() => {
+      const nextElapsed = Math.floor((Date.now() - startedAt) / 1000);
+      setElapsed(nextElapsed);
       router.refresh();
 
-      if (e >= maxAutoSeconds) {
+      if (nextElapsed >= maxAutoSeconds) {
         setPhase("manual");
-        clearInterval(t);
+        clearInterval(timer);
         return;
       }
 
-      if (e >= 60) setPhase("slow");
-      else if (e >= 20) setPhase("medium");
+      if (nextElapsed >= 60) setPhase("slow");
+      else if (nextElapsed >= 20) setPhase("medium");
       else setPhase("fast");
     }, intervalMs);
 
-    return () => clearInterval(t);
+    return () => clearInterval(timer);
   }, [router, isPaid, phase, intervalMs, maxAutoSeconds]);
 
   if (isPaid) return null;
@@ -74,12 +74,12 @@ export default function SuccessAutoRefresh({
               <div className="mt-1 text-neutral-600">
                 {delayed ? (
                   <>
-                    Hai scelto un metodo lento (es. bonifico). La conferma può arrivare anche dopo 1–3 giorni lavorativi.
-                    Riceverai un’email quando il pagamento sarà confermato.
+                    Hai scelto un metodo non immediato, come SEPA. La conferma puo arrivare anche dopo 1-3 giorni lavorativi.
+                    Riceverai un&apos;email quando il pagamento sara confermato.
                   </>
                 ) : (
                   <>
-                    A volte la conferma richiede più tempo. Puoi controllare manualmente quando vuoi.
+                    A volte la conferma richiede piu tempo. Puoi controllare manualmente quando vuoi.
                   </>
                 )}
               </div>
@@ -103,7 +103,7 @@ export default function SuccessAutoRefresh({
           {stripePaymentStatus ? (
             <>
               {" "}
-              • Stato pagamento:{" "}
+              - Stato pagamento:{" "}
               <code className="rounded bg-neutral-100 px-1.5 py-0.5">
                 {stripePaymentStatus}
               </code>
@@ -119,7 +119,7 @@ export default function SuccessAutoRefresh({
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-amber-100 text-amber-900">
-            ⏳
+            ...
           </div>
           <div className="text-sm">
             <div className="font-semibold text-neutral-900">
@@ -127,7 +127,7 @@ export default function SuccessAutoRefresh({
             </div>
             <div className="text-neutral-600">
               {delayed
-                ? "Se è un bonifico può richiedere tempo. Controllo automatico breve…"
+                ? "Se e un pagamento SEPA o altro metodo non immediato puo richiedere tempo. Controllo automatico breve..."
                 : "Aggiorniamo automaticamente lo stato."}{" "}
               ({remaining}s)
             </div>

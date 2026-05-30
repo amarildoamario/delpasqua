@@ -5,13 +5,12 @@ import { ChevronRight, FilterX, Clock, ArrowRight } from "lucide-react";
 import Footer from "@/components/Footer";
 import {
     getBlogCategoryHref,
-    getBlogCategorySlug,
     getLocalizedBlogHref,
     safeDecodeURIComponent,
     findCategoryNameBySlug,
     normalizeBlogSlug,
 } from "@/lib/blogSlugs";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -50,6 +49,28 @@ export default async function BlogPage({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
     const { locale, category } = await params;
+    
+    const homeUrl = absoluteUrl(localizedPath("/", locale));
+    const blogUrl = absoluteUrl(localizedPath("/blog", locale));
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": homeUrl
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": locale === "en" ? "Magazine" : "Il Magazine",
+                "item": blogUrl
+            }
+        ]
+    };
     const resolvedSearchParams = await searchParams;
     const categoryParam = resolvedSearchParams.category;
     const legacyCategory = typeof categoryParam === "string" ? safeDecodeURIComponent(categoryParam) : undefined;
@@ -207,6 +228,10 @@ export default async function BlogPage({
 
     return (
         <div className="bg-white min-h-screen flex flex-col">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
             <main className="flex-1 pt-24 pb-24 sm:pt-32 sm:pb-32">
 
                 {/* Page Header */}

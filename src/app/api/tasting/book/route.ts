@@ -4,12 +4,20 @@ import Stripe from "stripe";
 import { prisma } from "@/lib/server/prisma";
 import { getTastingTypes } from "@/lib/tasting/slots";
 import { sendTastingBookingAdminEmail } from "@/lib/server/tastingEmail";
+import { rateLimitOrThrow } from "@/lib/server/rateLimit";
+import { enforceBodyLimit } from "@/lib/server/bodyLimit";
+import { TASTING_CHECKOUT_PAYMENT_METHOD_TYPES } from "@/lib/paymentMethods";
 
 export const dynamic = "force-dynamic";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
 });
+
+function getIP(req: Request) {
+  const xf = req.headers.get("x-forwarded-for");
+  return (xf?.split(",")[0] ?? "unknown").trim();
+}
 
 const BodySchema = z.object({
   slotStartIso: z.string().min(10),
@@ -47,8 +55,12 @@ function resolveAppUrl(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const json: unknown = await req.json().catch(() => null);
-  const parsed = BodySchema.safeParse(json);
+  try {
+    enforceBodyLimit(req, 8_000);
+    rateLimitOrThrow({ key: `tasting-book:${getIP(req)}`, limit: 10, windowSeconds: 60 });
+
+    const json: unknown = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(json);
 
   if (!parsed.success) {
     console.warn("[TASTING][BOOK] validation error", parsed.error.issues);
@@ -82,74 +94,66 @@ export async function POST(req: Request) {
     slotEnd = new Date(slotStart.getTime() + type.durationMinutes * 60000);
   }
 
-  // ✅ Preveniamo doppie prenotazioni per la stessa esatta fascia oraria (Overlap)
-  const dayStart = new Date(slotStart);
-  dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(slotStart);
-  dayEnd.setHours(23, 59, 59, 999);
+    // ✅ Preveniamo doppie prenotazioni per la stessa esatta fascia oraria (Overlap) tramite transazione con table lock pessimistico
+    const booking = await prisma.$transaction(async (tx) => {
+      // Lock di tabella esclusivo per impedire ad altre transazioni concorrenti di scrivere/controllare slot contemporaneamente
+      await tx.$executeRaw`LOCK TABLE "TastingBooking" IN EXCLUSIVE MODE`;
 
-  const existingForDay = await prisma.tastingBooking.findMany({
-    where: {
-      status: { not: "CANCELED" },
-      slotStart: { gte: dayStart, lte: dayEnd },
-    },
-    select: { slotStart: true, slotEnd: true },
-  });
+      const dayStart = new Date(slotStart);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(slotStart);
+      dayEnd.setHours(23, 59, 59, 999);
 
-  const conflict = existingForDay.find(b => slotStart < b.slotEnd && slotEnd > b.slotStart);
+      const existingForDay = await tx.tastingBooking.findMany({
+        where: {
+          status: { not: "CANCELED" },
+          slotStart: { gte: dayStart, lte: dayEnd },
+        },
+        select: { slotStart: true, slotEnd: true },
+      });
 
-  if (conflict) {
-    console.warn("[TASTING][BOOK] slot conflict (manual check)", { slotStart: slotStart.toISOString() });
-    return NextResponse.json({ error: "L'orario richiesto si accavalla con una prenotazione esistente in questo lasso di tempo. Riprova con un outro orario." }, { status: 409 });
-  }
+      const conflict = existingForDay.find(b => slotStart < b.slotEnd && slotEnd > b.slotStart);
 
-  console.log("[TASTING][BOOK] request", {
-    tastingTypeId: data.tastingTypeId,
-    people: data.people,
-    email: data.email,
-    slotStart: slotStart.toISOString(),
-    slotEnd: slotEnd.toISOString(),
-  });
+      if (conflict) {
+        throw Object.assign(new Error("L'orario richiesto si accavalla con una prenotazione esistente in questo lasso di tempo. Riprova con un altro orario."), { status: 409, code: "SLOT_CONFLICT" });
+      }
 
-  let booking;
-  try {
-    booking = await prisma.tastingBooking.create({
-      data: {
-        slotStart,
-        slotEnd,
-        tastingType: type.title,
+      console.log("[TASTING][BOOK] request inside transaction", {
+        tastingTypeId: data.tastingTypeId,
         people: data.people,
-        children: data.children ?? 0,
-        fullName: data.fullName.trim(),
-        email: data.email.trim().toLowerCase(),
-        phone: data.phone.trim(),
-        notes: (data.notes || "").trim() || null,
-        status: "PENDING",
-      },
-      select: {
-        id: true,
-        status: true,
-        slotStart: true,
-        slotEnd: true,
-        tastingType: true,
-        people: true,
-        children: true,
-        fullName: true,
-        email: true,
-        phone: true,
-        notes: true,
-      },
+        email: data.email,
+        slotStart: slotStart.toISOString(),
+        slotEnd: slotEnd.toISOString(),
+      });
+
+      return tx.tastingBooking.create({
+        data: {
+          slotStart,
+          slotEnd,
+          tastingType: type.title,
+          people: data.people,
+          children: data.children ?? 0,
+          fullName: data.fullName.trim(),
+          email: data.email.trim().toLowerCase(),
+          phone: data.phone.trim(),
+          notes: (data.notes || "").trim() || null,
+          status: "PENDING",
+        },
+        select: {
+          id: true,
+          status: true,
+          slotStart: true,
+          slotEnd: true,
+          tastingType: true,
+          people: true,
+          children: true,
+          fullName: true,
+          email: true,
+          phone: true,
+          notes: true,
+        },
+      });
     });
-  } catch (err: unknown) {
-    const e = err as { code?: string; meta?: unknown; message?: string };
-    if (e?.code === "P2002") {
-      console.warn("[TASTING][BOOK] slot conflict (P2002)", e?.meta);
-      return NextResponse.json({ error: "Slot not available" }, { status: 409 });
-    }
-    console.error("[TASTING][BOOK] create failed", err);
-    const errMsg = e?.message || String(err);
-    return NextResponse.json({ error: `Booking failed: ${errMsg}` }, { status: 500 });
-  }
 
   const isPaid = type.id === "classica" || type.id === "intermedia";
   const pricePerPerson = type.id === "classica" ? 20 : type.id === "intermedia" ? 35 : 0;
@@ -174,7 +178,7 @@ export async function POST(req: Request) {
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        payment_method_types: ["card"],
+        payment_method_types: [...TASTING_CHECKOUT_PAYMENT_METHOD_TYPES],
         customer_email: data.email.trim().toLowerCase(),
         line_items: lineItems,
         success_url: `${appUrl}/degustazioni?success=true&booking_id=${booking.id}`,
@@ -235,9 +239,38 @@ export async function POST(req: Request) {
 
   console.log("[TASTING][BOOK] admin mail result (premium inquiry)", mail);
 
-  return NextResponse.json({
-    ok: true,
-    bookingId: booking.id,
-    mail,
-  });
+    return NextResponse.json({
+      ok: true,
+      bookingId: booking.id,
+      mail,
+    });
+  } catch (e: unknown) {
+    const err = e as Error & { status?: number; statusCode?: number; retryAfterSec?: number; code?: string; meta?: unknown };
+    const status = err?.status ?? err?.statusCode;
+
+    if (status === 429) {
+      return new Response("Too Many Requests", {
+        status: 429,
+        headers: { "Retry-After": String(err.retryAfterSec ?? 30) },
+      });
+    }
+
+    if (status === 413) return new Response("Payload Too Large", { status: 413 });
+    if (status === 400) return new Response(err.message ?? "Bad Request", { status: 400 });
+
+    if (status === 409 || err.code === "SLOT_CONFLICT") {
+      return NextResponse.json(
+        { error: err.message ?? "L'orario richiesto si accavalla con una prenotazione esistente in questo lasso di tempo. Riprova con un altro orario." },
+        { status: 409 }
+      );
+    }
+
+    if (err.code === "P2002") {
+      console.warn("[TASTING][BOOK] slot conflict (P2002)", err.meta);
+      return NextResponse.json({ error: "Slot not available" }, { status: 409 });
+    }
+
+    console.error("[TASTING][BOOK] create failed", err);
+    return new Response("Server Error", { status: 500 });
+  }
 }

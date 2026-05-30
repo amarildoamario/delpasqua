@@ -1,5 +1,6 @@
-import productsRaw from "@/db/products.json";
+import { readCatalog } from "@/lib/server/catalog";
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
+import { makeInventorySku } from "@/lib/inventorySku";
 import { prisma } from "@/lib/server/prisma";
 import InventoryManager from "./InventoryManager";
 
@@ -17,17 +18,13 @@ type CatalogProduct = {
   }[];
 };
 
-function makeSku(productId: string, variantId: string) {
-  return `${productId}:${variantId}`;
-}
-
 export default async function AdminInventoryPage() {
-  const catalog = productsRaw as CatalogProduct[];
+  const catalog = (await readCatalog()) as CatalogProduct[];
   const skus: string[] = [];
   for (const p of catalog) {
     for (const v of p.variants || []) {
       if (!p?.id || !v?.id) continue;
-      skus.push(makeSku(p.id, v.id));
+      skus.push(makeInventorySku(p.id, v.id));
     }
   }
 

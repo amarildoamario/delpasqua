@@ -1,6 +1,6 @@
 import { readCatalog } from "@/lib/server/catalog";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import ShopPageClient from "./ShopPageClient";
 
 export const dynamic = "force-dynamic";
@@ -57,10 +57,42 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
     imageAlt: product.imageAlt ?? product.title ?? product.id,
     variants: product.variants?.map((variant) => ({
       id: variant.id,
+      label: variant.label ?? null,
       priceCents: Number(variant.priceCents ?? 0),
+      imageSrc: variant.imageSrc ?? null,
+      imageAlt: variant.imageAlt ?? null,
     })) ?? [],
     category: product.category ?? null,
   }));
 
-  return <ShopPageClient initialProducts={initialProducts} />;
+  const metadata = SHOP_METADATA[locale] ?? SHOP_METADATA.it;
+  const shopLabel = metadata.title ?? "Shop";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": absoluteUrl(localizedPath("/", locale))
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": shopLabel,
+        "item": absoluteUrl(localizedPath("/shop", locale))
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <ShopPageClient initialProducts={initialProducts} />
+    </>
+  );
 }

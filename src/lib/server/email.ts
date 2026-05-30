@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { prisma } from "@/lib/server/prisma";
-import type { TransactionalEmailType, Prisma } from "@/generated/prisma/client";
+import type { TransactionalEmailType } from "@/generated/prisma/client";
 
 /**
  * NOTE:
@@ -81,6 +81,13 @@ type ItemLike = {
   variantLabel?: unknown;
   qty?: unknown;
   unitPriceCents?: unknown;
+};
+
+type EmailOrderItem = {
+  title: string;
+  variantLabel: string;
+  qty: number;
+  unitPriceCents: number;
 };
 
 function asItemLike(x: unknown): ItemLike {
@@ -390,15 +397,41 @@ function totalsCardHtml(o: unknown) {
 
 /** ---------- BUILD EMAILS (HTML + TEXT) ---------- **/
 
-type OrderEmailPayload = Prisma.OrderGetPayload<{
-  include: {
-    items: { select: { title: true; variantLabel: true; qty: true; unitPriceCents: true } };
-  };
-}>;
+export type TransactionalEmailPreviewPayload = {
+  id: string;
+  orderNumber: string | null;
+  status: string;
+  email: string;
+  fullName: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  postalCode: string;
+  city: string;
+  province: string | null;
+  countryCode: string;
+  phone: string | null;
+  subtotalCents: number;
+  discountCents: number;
+  shippingCents: number;
+  taxCents: number;
+  totalCents: number;
+  items: EmailOrderItem[];
+};
 
-function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
+export type BuiltTransactionalEmail = {
+  subject: string;
+  html: string;
+  text: string;
+};
+
+export const PREVIEWABLE_TRANSACTIONAL_EMAIL_TYPES = [
+  "ORDER_PAID",
+  "ORDER_SHIPPED",
+  "ORDER_REFUNDED",
+] as const satisfies readonly TransactionalEmailType[];
+
+function buildEmail(type: TransactionalEmailType, o: TransactionalEmailPreviewPayload): BuiltTransactionalEmail {
   const orderNumber = String(o.orderNumber ?? o.id);
-  const url = baseUrl();
 
   const itemsText = itemsToText(o.items ?? []);
   const totalsText = totalsToText(o);
@@ -418,7 +451,6 @@ function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
         totalsCardHtml(o) +
         shippingCardHtml(o) +
         `<p class="p muted">Se hai inserito note per la consegna, le abbiamo ricevute.</p>`,
-      cta: { label: "Vedi dettagli ordine", href: `${url}/orders/${encodeURIComponent(orderNumber)}` },
       footerNote: "Conserva questa email come ricevuta d’ordine.",
     });
 
@@ -452,8 +484,7 @@ function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
     const html = htmlShell({
       title,
       intro,
-      bodyHtml: orderSummaryCardHtml(o) + shippingCardHtml(o),
-      cta: { label: "Vedi dettagli ordine", href: `${url}/orders/${encodeURIComponent(orderNumber)}` },
+      bodyHtml: orderSummaryCardHtml(o) + itemsTableHtml(o.items ?? []) + shippingCardHtml(o),
       footerNote: "Conserva questa email per riferimento.",
     });
 
@@ -463,11 +494,12 @@ function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
       "Il tuo pacco è stato spedito 🚚.",
       `Numero ordine: ${orderNumber}`,
       "",
+      "Articoli:",
+      itemsText,
+      "",
       "Spedizione a:",
       shippingText,
       "",
-      "Se vuoi, puoi rivedere i dettagli dal tuo account/ordine.",
-      `${url}/orders/${encodeURIComponent(orderNumber)}`,
       policiesFooterText(),
     ]
       .filter(Boolean)
@@ -484,8 +516,7 @@ function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
     const html = htmlShell({
       title,
       intro,
-      bodyHtml: orderSummaryCardHtml(o) + totalsCardHtml(o),
-      cta: { label: "Vedi dettagli ordine", href: `${url}/orders/${encodeURIComponent(orderNumber)}` },
+      bodyHtml: orderSummaryCardHtml(o) + itemsTableHtml(o.items ?? []) + totalsCardHtml(o),
       footerNote: "I tempi di accredito dipendono dal metodo di pagamento e dalla banca.",
     });
 
@@ -494,6 +525,9 @@ function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
       "",
       "Abbiamo registrato un rimborso per il tuo ordine.",
       `Numero ordine: ${orderNumber}`,
+      "",
+      "Articoli:",
+      itemsText,
       "",
       "Totali ordine:",
       totalsText,
@@ -519,6 +553,60 @@ function buildEmail(type: TransactionalEmailType, o: OrderEmailPayload) {
       "\n"
     ),
   };
+}
+
+export function buildTransactionalEmailPreview(
+  type: (typeof PREVIEWABLE_TRANSACTIONAL_EMAIL_TYPES)[number],
+  payload?: Partial<TransactionalEmailPreviewPayload>
+): BuiltTransactionalEmail {
+  const sampleOrder: TransactionalEmailPreviewPayload = {
+    id: "ord_preview_20260529",
+    orderNumber: "DP-2026-0042",
+    status:
+      type === "ORDER_SHIPPED" ? "SHIPPED" : type === "ORDER_REFUNDED" ? "REFUNDED" : "PAID",
+    email: "cliente@example.com",
+    fullName: "Mario Rossi",
+    addressLine1: "Via delle Colline 15",
+    addressLine2: "Interno 4",
+    postalCode: "70121",
+    city: "Bari",
+    province: "BA",
+    countryCode: "IT",
+    phone: "+39 333 123 4567",
+    subtotalCents: 7800,
+    discountCents: 900,
+    shippingCents: 0,
+    taxCents: 0,
+    totalCents: 6900,
+    items: [
+      {
+        title: "Olio EVO Fruttato Medio",
+        variantLabel: "Bottiglia 500 ml",
+        qty: 2,
+        unitPriceCents: 1450,
+      },
+      {
+        title: "Olio EVO Fruttato Intenso",
+        variantLabel: "Bottiglia 750 ml",
+        qty: 1,
+        unitPriceCents: 4000,
+      },
+      {
+        title: "Olio al Limone",
+        variantLabel: "Bottiglia 250 ml",
+        qty: 1,
+        unitPriceCents: 900,
+      },
+    ],
+  };
+
+  const merged: TransactionalEmailPreviewPayload = {
+    ...sampleOrder,
+    ...payload,
+    items: payload?.items ?? sampleOrder.items,
+  };
+
+  return buildEmail(type, merged);
 }
 
 /** ---------- SENDER + LOGGING ---------- **/

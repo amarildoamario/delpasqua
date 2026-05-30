@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
+import { enforceBodyLimit } from "@/lib/server/bodyLimit";
+import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -21,7 +23,11 @@ function getClientIp(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const json = await req.json();
+    enforceBodyLimit(req, 10_000);
+    const ip = getClientIp(req);
+    await rateLimitOrThrow({ key: `contact-form:${ip}`, limit: 5, windowSeconds: 60 });
+
+    const json = await req.json().catch(() => null);
     const parsed = ContactSchema.safeParse(json);
 
     if (!parsed.success) {
@@ -44,29 +50,19 @@ export async function POST(req: Request) {
     const EMAIL_FROM = process.env.EMAIL_FROM;
     const ADMIN_TO = process.env.ADMIN_NOTIFY_EMAIL || process.env.EMAIL_NOTIFY;
 
-    if (!RESEND_API_KEY) {
+    if (!RESEND_API_KEY || !EMAIL_FROM || !ADMIN_TO) {
+      console.error("[CONTACT][CONFIG] Missing env configurations:", {
+        hasApiKey: !!RESEND_API_KEY,
+        hasEmailFrom: !!EMAIL_FROM,
+        hasAdminTo: !!ADMIN_TO,
+      });
       return NextResponse.json(
-        { ok: false, error: "RESEND_API_KEY mancante in env" },
-        { status: 500 }
-      );
-    }
-    if (!EMAIL_FROM) {
-      return NextResponse.json(
-        { ok: false, error: "EMAIL_FROM mancante in env" },
-        { status: 500 }
-      );
-    }
-    if (!ADMIN_TO) {
-      return NextResponse.json(
-        { ok: false, error: "ADMIN_NOTIFY_EMAIL (o EMAIL_NOTIFY) mancante in env" },
+        { ok: false, error: "Si è verificato un errore di configurazione del server. Riprova più tardi." },
         { status: 500 }
       );
     }
 
     const resend = new Resend(RESEND_API_KEY);
-
-    const ip = getClientIp(req);
-    const ua = req.headers.get("user-agent") ?? "unknown";
     const now = new Date().toISOString();
 
     const adminSubject = `📩 Contatti — ${subject}`;
@@ -81,9 +77,6 @@ Messaggio:
 ${message}
 
 ---
-Meta:
-IP: ${ip}
-UA: ${ua}
 Time: ${now}
 `;
 
@@ -100,8 +93,6 @@ Time: ${now}
 
         <hr style="margin:18px 0; border:none; border-top:1px solid #e5e5e5" />
         <p style="margin:0; color:#666; font-size:12px">
-          <b>IP:</b> ${escapeHtml(ip)}<br/>
-          <b>UA:</b> ${escapeHtml(ua)}<br/>
           <b>Time:</b> ${escapeHtml(now)}
         </p>
       </div>
@@ -119,13 +110,14 @@ Time: ${now}
 
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
-    const msg =
-      (e as Error)?.message ||
-      (e as { error?: { message?: string } })?.error?.message ||
-      (typeof e === "string" ? e : null) ||
-      "Errore invio email";
-
-    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+    if (e instanceof Response) {
+      return e;
+    }
+    console.error("[CONTACT][POST] failed to process contact form", e);
+    return NextResponse.json(
+      { ok: false, error: "Errore nell'invio del messaggio. Riprova più tardi." },
+      { status: 500 }
+    );
   }
 }
 
@@ -136,4 +128,4 @@ function escapeHtml(s: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
+}

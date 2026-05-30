@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { useCart } from "@/context/CartContext";
+import { makeInventorySku } from "@/lib/inventorySku";
 import {
   Minus,
   Plus,
@@ -41,10 +42,6 @@ function formatEUR(cents: number, locale: string) {
   }).format(cents / 100);
 }
 
-function makeSku(productId: string, variantId: string) {
-  return `${productId}:${variantId}`;
-}
-
 function pickText(custom: unknown, fallback: string) {
   const s = typeof custom === "string" ? custom.trim() : "";
   return s.length ? s : fallback;
@@ -64,6 +61,10 @@ const labels = {
     max: (count: number) => `Max ${count}`,
     add: "Aggiungi",
     added: (qty: number) => `Aggiunto al carrello (${qty})`,
+    adjusted: (addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `Disponibili solo ${availableQty} pezzi. Aggiunti ${addedQty}.`
+        : `Aggiunti ${addedQty}. Quantita ridotta per disponibilita limitata.`,
     freeShipping: "Spedizione gratis",
     freeShippingSub: "Sopra i 50 euro",
     quality: "Qualita garantita",
@@ -95,6 +96,10 @@ const labels = {
     max: (count: number) => `Max ${count}`,
     add: "Add",
     added: (qty: number) => `Added to cart (${qty})`,
+    adjusted: (addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `Only ${availableQty} items available. Added ${addedQty}.`
+        : `Added ${addedQty}. Quantity reduced because of limited availability.`,
     freeShipping: "Free shipping",
     freeShippingSub: "Over EUR 50",
     quality: "Guaranteed quality",
@@ -126,6 +131,10 @@ const labels = {
     max: (count: number) => `Max ${count}`,
     add: "Hinzufuegen",
     added: (qty: number) => `In den Warenkorb gelegt (${qty})`,
+    adjusted: (addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `Nur ${availableQty} Stueck verfuegbar. ${addedQty} hinzugefuegt.`
+        : `${addedQty} hinzugefuegt. Menge wegen begrenztem Bestand reduziert.`,
     freeShipping: "Kostenloser Versand",
     freeShippingSub: "Ab EUR 50",
     quality: "Garantierte Qualitaet",
@@ -157,6 +166,10 @@ const labels = {
     max: (count: number) => `Max ${count}`,
     add: "Toevoegen",
     added: (qty: number) => `Toegevoegd aan winkelwagen (${qty})`,
+    adjusted: (addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `Nog maar ${availableQty} beschikbaar. ${addedQty} toegevoegd.`
+        : `${addedQty} toegevoegd. Aantal verlaagd door beperkte voorraad.`,
     freeShipping: "Gratis verzending",
     freeShippingSub: "Boven EUR 50",
     quality: "Gegarandeerde kwaliteit",
@@ -188,6 +201,10 @@ const labels = {
     max: (count: number) => `Maks ${count}`,
     add: "Tilfoej",
     added: (qty: number) => `Tilfoejet til kurv (${qty})`,
+    adjusted: (addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `Kun ${availableQty} tilbage. ${addedQty} tilfoejet.`
+        : `${addedQty} tilfoejet. Antallet blev reduceret pga. begraenset lager.`,
     freeShipping: "Gratis fragt",
     freeShippingSub: "Over EUR 50",
     quality: "Garanteret kvalitet",
@@ -219,6 +236,10 @@ const labels = {
     max: (count: number) => `Maks ${count}`,
     add: "Legg til",
     added: (qty: number) => `Lagt i handlekurven (${qty})`,
+    adjusted: (addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `Bare ${availableQty} tilgjengelig. ${addedQty} lagt til.`
+        : `${addedQty} lagt til. Antallet ble redusert paa grunn av begrenset lager.`,
     freeShipping: "Gratis frakt",
     freeShippingSub: "Over EUR 50",
     quality: "Garantert kvalitet",
@@ -267,10 +288,11 @@ export default function ProductPurchaseBox({
 
   const priceCents = selected?.priceCents ?? variants[0]?.priceCents ?? 0;
 
-  const { add } = useCart();
+  const { add, getLineQty } = useCart();
 
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [addedMessage, setAddedMessage] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [showVariantDropdown, setShowVariantDropdown] = useState(false);
   const [showMobileDetails, setShowMobileDetails] = useState(false);
@@ -288,7 +310,7 @@ export default function ProductPurchaseBox({
       return;
     }
 
-    const skus = variants.map((v) => makeSku(productId, v.id));
+    const skus = variants.map((v) => makeInventorySku(productId, v.id));
     queueMicrotask(() => setLoadingAvail(true));
 
     fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`)
@@ -314,9 +336,11 @@ export default function ProductPurchaseBox({
     };
   }, [productId, variants]);
 
-  const selectedSku = selected ? makeSku(productId, selected.id) : "";
+  const selectedSku = selected ? makeInventorySku(productId, selected.id) : "";
   const selectedAvailable = availMap ? (availMap[selectedSku] ?? 0) : null;
-  const maxQty = selectedAvailable == null ? 99 : Math.max(0, selectedAvailable);
+  const qtyAlreadyInCart = selected ? getLineQty(productId, selected.id) : 0;
+  const maxQty =
+    selectedAvailable == null ? 99 : Math.max(0, selectedAvailable - qtyAlreadyInCart);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -387,14 +411,27 @@ export default function ProductPurchaseBox({
 
     await new Promise((r) => setTimeout(r, 400));
 
-    add({
+    const result = await add({
       productId,
       variantId: selected.id,
       qty: safeQty,
     });
 
     setIsAdding(false);
+    if (result.status === "rejected") {
+      setAdded(false);
+      return;
+    }
+    setAddedMessage(
+      result.status === "adjusted"
+        ? text.adjusted(result.addedQty, result.availableQty)
+        : text.added(result.addedQty)
+    );
     setAdded(true);
+    if (result.status === "adjusted") {
+      setTimeout(() => setAdded(false), 2500);
+      return;
+    }
     setTimeout(() => setAdded(false), 2000);
   };
 
@@ -550,7 +587,7 @@ export default function ProductPurchaseBox({
             {showVariantDropdown && (
               <div style={{ borderRadius: '5px' }} className="absolute z-20 mt-1 w-full border border-neutral-200 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
                 {variants.map((variant) => {
-                  const sku = makeSku(productId, variant.id);
+                  const sku = makeInventorySku(productId, variant.id);
                   const avail = availMap ? (availMap[sku] ?? 0) : null;
                   const out = avail != null && avail <= 0;
                   const isSelected = String(variant.id) === String(selected?.id);
@@ -646,7 +683,7 @@ export default function ProductPurchaseBox({
         {added && (
           <div style={{ borderRadius: '5px' }} className="mt-3 flex items-center justify-center gap-2 bg-emerald-50 py-3 text-sm text-emerald-700 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <Check className="h-4 w-4" />
-            {text.added(qty)}
+            {addedMessage}
           </div>
         )}
 

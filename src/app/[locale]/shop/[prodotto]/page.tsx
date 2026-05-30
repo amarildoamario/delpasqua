@@ -3,9 +3,12 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { readCatalog } from "@/lib/server/catalog";
 import { findProductBySlug } from "@/lib/productSlugs";
+import { makeInventorySku } from "@/lib/inventorySku";
+import { getAvailableBySku } from "@/lib/server/inventoryRead";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
-import { getProductAlternateUrls } from "@/lib/seo";
+import { Link } from "@/i18n/routing";
+import { getProductAlternateUrls, absoluteUrl, localizedPath, SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
 type Specs = Record<string, string>;
@@ -140,7 +143,7 @@ export async function generateMetadata({
   const languages = getProductAlternateUrls(product);
   const canonical = languages[locale];
 
-  if ((product as any).excludeFromSeo === true) {
+  if (product.excludeFromSeo === true) {
     return {
       title: `${title} | Frantoio Del Pasqua`,
       description,
@@ -194,8 +197,6 @@ export default async function ProductPage({
     })),
   };
 
-  const categoryLabel = translatedProduct.category ?? "";
-
   // Traduce tutti gli altri prodotti per passarli come raccomandati
   const relatedProducts: Product[] = list
     .filter((p) => p.id !== product.id && p.excludeFromSeo !== true)
@@ -219,14 +220,140 @@ export default async function ProductPage({
       })),
     }));
 
+  const languages = getProductAlternateUrls(product);
+  const canonical = languages[locale];
+  const homeUrl = absoluteUrl(localizedPath("/", locale));
+  const shopUrl = absoluteUrl(localizedPath("/shop", locale));
+
+  const shopLabelMap: Record<string, string> = {
+    it: "Shop",
+    en: "Shop",
+    de: "Online-Shop",
+    nl: "Winkel",
+    da: "Butik",
+    no: "Butikk",
+  };
+  const shopLabel = shopLabelMap[locale] ?? "Shop";
+  const homeLabel = "Home";
+
+  const variants = translatedProduct.variants || [];
+  const prices = variants.map(v => v.priceCents);
+  const lowPrice = prices.length > 0 ? (Math.min(...prices) / 100).toFixed(2) : "0.00";
+  const highPrice = prices.length > 0 ? (Math.max(...prices) / 100).toFixed(2) : "0.00";
+  const offerCount = prices.length;
+
+  const mainImageAbsolute = translatedProduct.imageSrc
+    ? (translatedProduct.imageSrc.startsWith("http") ? translatedProduct.imageSrc : `${SITE_URL}${translatedProduct.imageSrc}`)
+    : "";
+
+  const variantImageAbsolute = (vSrc: string | undefined) => {
+    if (!vSrc) return mainImageAbsolute;
+    return vSrc.startsWith("http") ? vSrc : `${SITE_URL}${vSrc}`;
+  };
+
+  const availabilityPromises = variants.map(async (variant) => {
+    const sku = makeInventorySku(product.id, variant.id);
+    const avail = await getAvailableBySku(sku);
+    return { variantId: variant.id, available: avail > 0 };
+  });
+  const availabilityList = await Promise.all(availabilityPromises);
+  const availabilityMap = new Map(availabilityList.map(x => [x.variantId, x.available]));
+
+  const offersList = variants.map((variant) => {
+    const variantUrl = `${canonical}?v=${variant.id}`;
+    const variantSku = variant.sku || `${product.id}-${variant.id}`;
+    const variantImage = variantImageAbsolute(variant.imageSrc);
+    const isAvailable = availabilityMap.get(variant.id) ?? true;
+    return {
+      "@type": "Offer",
+      "sku": variantSku,
+      "price": (variant.priceCents / 100).toFixed(2),
+      "priceCurrency": "EUR",
+      "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "url": variantUrl,
+      "image": variantImage,
+      "itemCondition": "https://schema.org/NewCondition",
+      "priceValidUntil": new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split("T")[0]
+    };
+  });
+
+  const offersJson = variants.length === 1 ? {
+    "@type": "Offer",
+    "sku": offersList[0].sku,
+    "price": offersList[0].price,
+    "priceCurrency": "EUR",
+    "availability": offersList[0].availability,
+    "url": offersList[0].url,
+    "image": offersList[0].image,
+    "itemCondition": "https://schema.org/NewCondition",
+    "priceValidUntil": offersList[0].priceValidUntil
+  } : {
+    "@type": "AggregateOffer",
+    "priceCurrency": "EUR",
+    "lowPrice": lowPrice,
+    "highPrice": highPrice,
+    "offerCount": offerCount,
+    "offers": offersList
+  };
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": translatedProduct.title,
+    "image": mainImageAbsolute,
+    "description": translatedProduct.description,
+    "sku": product.id,
+    "category": translatedProduct.category,
+    "brand": {
+      "@type": "Brand",
+      "name": "Frantoio Del Pasqua"
+    },
+    "offers": offersJson
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": homeLabel,
+        "item": homeUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": shopLabel,
+        "item": shopUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": translatedProduct.title,
+        "item": canonical
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-[#FDFCF8]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-6 py-12 lg:py-20">
         {/* Breadcrumb sottile */}
         <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-          <span>Shop</span>
+          <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
           <span className="text-[#D6D3D1]">/</span>
-          <span className="text-[#57534E]">{categoryLabel}</span>
+          <Link href="/shop" className="hover:text-[#3D5A3D] transition-colors">{shopLabel}</Link>
+          <span className="text-[#D6D3D1]">/</span>
+          <span className="text-[#57534E]">{translatedProduct.title}</span>
         </nav>
 
         {/* Griglia client */}

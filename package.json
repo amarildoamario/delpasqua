@@ -13,6 +13,7 @@
     "sync:blog-images": "tsx tools/sync-blog-images.ts",
     "check:blog-translations": "tsx tools/check-blog-translations.ts --full",
     "typecheck": "tsc --noEmit",
+    "test:server": "node --import tsx --test src/lib/server/orderFlow.test.ts",
     "verify:migration": "node scripts/verify-migration.mjs",
     "migrate:prod": "prisma migrate deploy",
     "seo:audit-locales": "node scripts/audit-locales.mjs",

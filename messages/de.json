@@ -357,7 +357,7 @@
         },
         "info": {
             "shipping": "Kostenloser Versand ab einem Bestellwert von 50 €",
-            "notes": "Die Preise sind Richtwerte und enthalten keine Mehrwertsteuer. Kontaktieren Sie uns für individuelle Bestellungen."
+            "notes": "Die Preise sind Richtwerte und verstehen sich inklusive Mehrwertsteuer. Kontaktieren Sie uns für individuelle Bestellungen."
         },
         "filters": {
             "from": "Ab "
@@ -1061,7 +1061,7 @@
             "close_toast_aria": "Schließen",
             "max_qty": "MAX {max}",
             "available": "VERFÜGBAR",
-            "plus_vat": "+ MwSt."
+            "plus_vat": "inkl. MwSt."
         }
     }
 }

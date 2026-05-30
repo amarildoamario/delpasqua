@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/server/prisma";
 import SalesTable from "./sales-table";
-import productsJson from "@/db/products.json";
+import { readCatalog } from "@/lib/server/catalog";
 import PageHeader from "../_components/PageHeader";
 
 
@@ -21,7 +21,7 @@ function minVariantPriceCents(p: Product) {
 }
 
 export default async function AdminSalesPage() {
-  const products = productsJson as unknown as Product[];
+  const products = (await readCatalog()) as unknown as Product[];
 
   const merch = await prisma.productMerch.findMany({
     orderBy: { updatedAt: "desc" },

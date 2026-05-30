@@ -350,7 +350,7 @@
         },
         "info": {
             "shipping": "Gratis frakt på bestillinger over 50 €",
-            "notes": "Prisene er veiledende og ekskl. mva. Kontakt oss for spesialbestillinger."
+            "notes": "Prisene er veiledende og inkl. mva. Kontakt oss for spesialbestillinger."
         },
         "filters": {
             "from": "Fra "
@@ -1057,7 +1057,7 @@
             "close_toast_aria": "Lukk",
             "max_qty": "MAX {max}",
             "available": "TILGJENGELIG",
-            "plus_vat": "+ mva."
+            "plus_vat": "mva. inkl."
         }
     }
 }

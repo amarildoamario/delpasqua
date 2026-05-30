@@ -11,7 +11,7 @@ export async function GET() {
   const urls: string[] = [];
 
   for (const product of products) {
-    if ((product as any).excludeFromSeo === true) {
+    if (product.excludeFromSeo === true) {
       continue;
     }
     for (const locale of locales) {

@@ -246,7 +246,7 @@ export const mockBlogPosts: BlogPost[] = [
     ...postsTecnici,
 ];
 
-export function hasBlogPostTranslation(post: BlogPost, locale: string): boolean {
+export function hasBlogPostTranslation(post: { id: string }, locale: string): boolean {
     if (locale === "it") return true;
     const trans = BLOG_POST_TRANSLATIONS[post.id];
     return !!(trans && trans[locale as Locale]);

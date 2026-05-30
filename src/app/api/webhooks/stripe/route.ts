@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/server/prisma";
-import { releaseReserved, commitReservedToSoldOrThrow } from "@/lib/server/inventory";
+import { releaseReserved } from "@/lib/server/inventory";
 import { processOutboxBatch } from "@/lib/server/outbox";
-import { allocateInvoiceNumberTx } from "@/lib/server/invoiceNumber";
-import { allocateOrderNumberTx } from "@/lib/server/orderNumber";
+import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
 import { sendTastingBookingAdminEmail, sendTastingConfirmedCustomerEmail } from "@/lib/server/tastingEmail";
 
 export const runtime = "nodejs";
@@ -312,12 +311,17 @@ export async function POST(req: NextRequest) {
           else if (types.length > 1) paymentMethodLabel = types.map(titleCase).join(", ");
         }
 
+        const isPaidCheckout = (session.payment_status ?? "").toLowerCase() === "paid";
+
         // Validazione address+name
         if (!name || !isValidAddress(addr)) {
           await prisma.$transaction(async (tx) => {
             await releaseReserved(
               tx,
-              order.items.map((it) => ({ sku: it.sku, qty: it.qty }))
+              {
+                orderId: order.id,
+                lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+              }
             );
 
             await tx.order.update({
@@ -356,84 +360,84 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ received: true }, { status: 200 });
         }
 
+        if (!isPaidCheckout) {
+          await prisma.$transaction(async (tx) => {
+            if (order.status === "PENDING") {
+              await tx.order.update({
+                where: { id: order.id },
+                data: {
+                  ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
+                  ...(email ? { email } : {}),
+                  ...(name ? { fullName: name } : {}),
+                  ...(phone ? { phone } : {}),
+                  ...(addr?.line1
+                    ? {
+                      addressLine1: addr.line1,
+                      address: addr.line1,
+                    }
+                    : {}),
+                  ...(typeof addr?.line2 !== "undefined" ? { addressLine2: addr?.line2 ?? null } : {}),
+                  ...(addr?.city ? { city: addr.city } : {}),
+                  ...(addr?.state ? { province: addr.state } : {}),
+                  ...(addr?.postal_code
+                    ? {
+                      postalCode: addr.postal_code,
+                      zip: addr.postal_code,
+                    }
+                    : {}),
+                  ...(addr?.country ? { countryCode: addr.country } : {}),
+                },
+              });
+            }
+
+            await tx.orderEvent.create({
+              data: {
+                orderId: order.id,
+                type: "STRIPE_CHECKOUT_PENDING",
+                message: "Checkout completato, pagamento in attesa di conferma",
+                metaJson: JSON.stringify({
+                  sessionId,
+                  paymentIntentId,
+                  paymentStatus: session.payment_status ?? null,
+                  paymentMethod: paymentMethodLabel ?? null,
+                }),
+              },
+            });
+          });
+
+          await prisma.stripeWebhookEvent.update({
+            where: { eventId: event.id },
+            data: {
+              orderId: order.id,
+              sessionId,
+              paymentIntentId,
+              outcome: "processed",
+              processedAt: new Date(),
+            },
+          });
+
+          return NextResponse.json({ received: true, pending: true }, { status: 200 });
+        }
+
         // Commit inventario + update ordine + enqueue ORDER_PAID
         await prisma.$transaction(async (tx) => {
-          let currentOrderNumber = order.orderNumber;
-          if (!currentOrderNumber) {
-            currentOrderNumber = await allocateOrderNumberTx(tx);
-          }
-
-          await commitReservedToSoldOrThrow(
-            tx,
-            order.items.map((it) => ({ sku: it.sku, qty: it.qty }))
-          );
-
-          await tx.order.update({
-            where: { id: order.id },
-            data: {
-              status: "PAID",
-              orderNumber: currentOrderNumber,
-              paidAt: new Date(),
-              stripePaymentIntentId: paymentIntentId ?? null,
-
-              // ✅ SALVA METODO DI PAGAMENTO USATO
-              ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
-
-              // ✅ fondamentale: salva email Stripe
-              ...(email ? { email } : {}),
-              ...(name ? { fullName: name } : {}),
-
+          await applyPaidOrderInvariantsTx(tx, {
+            orderId: order.id,
+            source: "stripe_webhook",
+            paymentIntentId,
+            paymentMethod: paymentMethodLabel,
+            stripeEventId: event.id,
+            stripeSessionId: sessionId,
+            customer: {
+              email,
+              fullName: name,
+              phone,
               addressLine1: addr!.line1!,
               addressLine2: addr!.line2 ?? null,
               city: addr!.city!,
               province: addr!.state ?? "",
               postalCode: addr!.postal_code!,
               countryCode: addr!.country!,
-              phone,
-
-              // legacy compat
-              address: addr!.line1!,
-              zip: addr!.postal_code!,
-            },
-          });
-
-          // ✅ assegna progressivo fattura al pagamento (idempotente)
-          const alreadyAssigned = await tx.orderEvent.findFirst({
-            where: { orderId: order.id, type: "INVOICE_ASSIGNED" },
-            select: { id: true },
-          });
-
-          if (!alreadyAssigned) {
-            const invoiceNumber = await allocateInvoiceNumberTx(tx);
-
-            await tx.orderEvent.create({
-              data: {
-                orderId: order.id,
-                type: "INVOICE_ASSIGNED",
-                message: `Invoice assigned: ${invoiceNumber}`,
-                metaJson: JSON.stringify({
-                  invoiceNumber,
-                  invoiceYear: new Date().getFullYear(),
-                  assignedAt: new Date().toISOString(),
-                  stripeSessionId: sessionId,
-                  stripeEventId: event.id,
-                }),
-              },
-            });
-          }
-
-          await tx.outboxEvent.create({
-            data: {
-              type: "ORDER_PAID",
-              payload: {
-                orderId: order.id,
-                stripeEventId: event.id,
-                stripeSessionId: sessionId,
-                paymentIntentId,
-                paymentMethod: paymentMethodLabel ?? null,
-                at: new Date().toISOString(),
-              },
-              runAt: new Date(),
             },
           });
 
@@ -449,15 +453,6 @@ export async function POST(req: NextRequest) {
               }),
             },
           });
-
-          // ✅ Incrementa usedCount promozione (dentro tx = atomico con il PAID)
-          const promoCode = (session.metadata?.promotionCode ?? "").trim().toUpperCase();
-          if (promoCode) {
-            await tx.promotion.updateMany({
-              where: { code: promoCode },
-              data: { usedCount: { increment: 1 } },
-            });
-          }
         });
 
         await prisma.stripeWebhookEvent.update({
@@ -480,6 +475,190 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true }, { status: 200 });
       }
 
+      case "checkout.session.async_payment_succeeded": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const { sessionId, paymentIntentId } = getSessionIds(session);
+        const { email, name, phone, addr } = getCustomerFromSession(session);
+
+        const order = await prisma.order.findUnique({
+          where: { stripeCheckoutSessionId: sessionId },
+          include: { items: true },
+        });
+
+        if (!order) {
+          await prisma.stripeWebhookEvent.update({
+            where: { eventId: event.id },
+            data: {
+              sessionId,
+              paymentIntentId,
+              outcome: "review",
+              processedAt: new Date(),
+              errorMessage: "Order not found for async payment success",
+            },
+          });
+          return NextResponse.json({ received: true }, { status: 200 });
+        }
+
+        let paymentMethodLabel = await getRealPaymentMethodLabelFromPaymentIntent(paymentIntentId);
+        if (!paymentMethodLabel) {
+          const types = (session.payment_method_types ?? []) as string[];
+          if (types.length === 1) paymentMethodLabel = titleCase(types[0]);
+          else if (types.length > 1) paymentMethodLabel = types.map(titleCase).join(", ");
+        }
+
+        if (!name || !isValidAddress(addr)) {
+          await prisma.$transaction(async (tx) => {
+            if (order.status === "PENDING") {
+              await releaseReserved(
+                tx,
+                {
+                  orderId: order.id,
+                  lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+                }
+              );
+
+              await tx.order.update({
+                where: { id: order.id },
+                data: {
+                  status: "FAILED",
+                  isFlagged: true,
+                  notes: "Invalid/missing address from Stripe customer_details",
+                  ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
+                },
+              });
+            }
+
+            await tx.orderEvent.create({
+              data: {
+                orderId: order.id,
+                type: "STRIPE_ASYNC_VALIDATION_FAILED",
+                message: "Missing required shipping fields after async payment success",
+                metaJson: JSON.stringify({ sessionId }),
+              },
+            });
+          });
+
+          await prisma.stripeWebhookEvent.update({
+            where: { eventId: event.id },
+            data: {
+              orderId: order.id,
+              sessionId,
+              paymentIntentId,
+              outcome: "failed_validation",
+              processedAt: new Date(),
+              errorMessage: "Invalid customer_details.address/name after async payment success",
+            },
+          });
+
+          return NextResponse.json({ received: true }, { status: 200 });
+        }
+
+        await prisma.$transaction(async (tx) => {
+          await applyPaidOrderInvariantsTx(tx, {
+            orderId: order.id,
+            source: "stripe_webhook",
+            paymentIntentId,
+            paymentMethod: paymentMethodLabel,
+            stripeEventId: event.id,
+            stripeSessionId: sessionId,
+            customer: {
+              email,
+              fullName: name,
+              phone,
+              addressLine1: addr!.line1!,
+              addressLine2: addr!.line2 ?? null,
+              city: addr!.city!,
+              province: addr!.state ?? "",
+              postalCode: addr!.postal_code!,
+              countryCode: addr!.country!,
+            },
+          });
+
+          await tx.orderEvent.create({
+            data: {
+              orderId: order.id,
+              type: "STRIPE_ASYNC_PAYMENT_SUCCEEDED",
+              message: "Processed checkout.session.async_payment_succeeded",
+              metaJson: JSON.stringify({
+                sessionId,
+                paymentIntentId,
+                paymentMethod: paymentMethodLabel ?? null,
+              }),
+            },
+          });
+        });
+
+        await prisma.stripeWebhookEvent.update({
+          where: { eventId: event.id },
+          data: {
+            orderId: order.id,
+            sessionId,
+            paymentIntentId,
+            outcome: "processed",
+            processedAt: new Date(),
+          },
+        });
+
+        processOutboxBatch({ limit: 5 }).catch((e: unknown) => {
+          console.error("❌ outbox inline failed (stripe async success):", e);
+        });
+
+        return NextResponse.json({ received: true }, { status: 200 });
+      }
+
+      case "checkout.session.async_payment_failed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const { sessionId, paymentIntentId } = getSessionIds(session);
+
+        const order = await prisma.order.findUnique({
+          where: { stripeCheckoutSessionId: sessionId },
+          include: { items: true },
+        });
+
+        if (order && order.status === "PENDING") {
+          await prisma.$transaction(async (tx) => {
+            await releaseReserved(
+              tx,
+              {
+                orderId: order.id,
+                lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+              }
+            );
+
+            await tx.order.update({
+              where: { id: order.id },
+              data: { status: "FAILED" },
+            });
+
+            await tx.orderEvent.create({
+              data: {
+                orderId: order.id,
+                type: "STRIPE_ASYNC_PAYMENT_FAILED",
+                message: "Pagamento Stripe fallito dopo autorizzazione iniziale",
+                metaJson: JSON.stringify({
+                  sessionId,
+                  paymentIntentId,
+                  paymentStatus: session.payment_status ?? null,
+                }),
+              },
+            });
+          });
+        }
+
+        await prisma.stripeWebhookEvent.update({
+          where: { eventId: event.id },
+          data: {
+            orderId: order?.id ?? null,
+            sessionId,
+            paymentIntentId,
+            outcome: "processed",
+            processedAt: new Date(),
+          },
+        });
+
+        return NextResponse.json({ received: true }, { status: 200 });
+      }
+
       case "checkout.session.expired": {
         const session = event.data.object as Stripe.Checkout.Session;
         const { sessionId, paymentIntentId } = getSessionIds(session);
@@ -493,7 +672,10 @@ export async function POST(req: NextRequest) {
           await prisma.$transaction(async (tx) => {
             await releaseReserved(
               tx,
-              order.items.map((it) => ({ sku: it.sku, qty: it.qty }))
+              {
+                orderId: order.id,
+                lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+              }
             );
 
             await tx.order.update({

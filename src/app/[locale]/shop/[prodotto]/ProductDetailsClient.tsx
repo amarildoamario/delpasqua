@@ -16,15 +16,14 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowRight,
-  Sparkles,
   ChevronDown,
   Leaf,
 } from "lucide-react";
 import Link from "next/link";
-import productsRaw from "@/db/products.json";
-import { useRouter } from "@/i18n/routing";
+
 import { localizedPathnames, type Locale } from "@/i18n/pathnames";
 import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
+import { makeInventorySku } from "@/lib/inventorySku";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 
 type Specs = Record<string, string>;
@@ -68,10 +67,6 @@ function formatEUR(cents: number, locale: string) {
     style: "currency",
     currency: "EUR",
   }).format(cents / 100);
-}
-
-function makeSku(productId: string, variantId: string) {
-  return `${productId}:${variantId}`;
 }
 
 type FormatNavItem = {
@@ -149,10 +144,6 @@ function getFormatNavGroups(productId: string) {
   return familyId ? FORMAT_NAV_GROUPS[familyId] : null;
 }
 
-function getProductParams(productId: string, locale: string) {
-  return { prodotto: getLocalizedProductSlug({ id: productId }, locale) };
-}
-
 function buildProductUrl(productId: string, locale: string, variantId?: string) {
   // Builds the full URL for cross-product navigation.
   // We use window.location.origin as base since router.push would double-add the locale prefix.
@@ -162,13 +153,6 @@ function buildProductUrl(productId: string, locale: string, variantId?: string) 
   const slug = getLocalizedProductSlug({ id: productId }, locale);
   const base = `${localePrefix}${shopPath}/${slug}`;
   return variantId ? `${base}?v=${variantId}` : base;
-}
-
-function getStaticPath(routeKey: string, locale: string) {
-  const supportedLocale = locale as Locale;
-  const localePrefix = supportedLocale === "it" ? "" : `/${supportedLocale}`;
-  const routePath = localizedPathnames[routeKey]?.[supportedLocale] ?? routeKey;
-  return `${localePrefix}${routePath}/`;
 }
 
 const copy = {
@@ -484,8 +468,9 @@ export default function ProductDetailsClient({
   relatedProducts?: Product[];
 }) {
   const locale = useLocale();
-  const router = useRouter();
   const text = copy[locale as PageLocale] ?? copy.it;
+
+  const { add, lines, count: cartCount, catalog } = useCart();
 
   const [currentProduct, setCurrentProduct] = useState<Product>(product);
 
@@ -563,8 +548,8 @@ export default function ProductDetailsClient({
       ];
 
       allFamilyItems.forEach((item) => {
-        // Find corresponding product in productsRaw
-        const rawProd = (productsRaw as Product[]).find((p) => p.id === item.productId);
+        // Find corresponding product in catalog
+        const rawProd = (catalog as Product[]).find((p) => p.id === item.productId);
         if (!rawProd) return;
         const rawVar = rawProd.variants?.find((v) => String(v.id) === String(item.variantId));
         if (rawVar && rawVar.imageSrc) {
@@ -605,7 +590,7 @@ export default function ProductDetailsClient({
     }
 
     return items;
-  }, [formatNavGroups, currentProduct, variants, selectedVariantId]);
+  }, [formatNavGroups, currentProduct, variants, selectedVariantId, catalog]);
 
   const galleryImages = useMemo(() => galleryItems.map((item) => item.src), [galleryItems]);
 
@@ -626,15 +611,14 @@ export default function ProductDetailsClient({
   const [errorMessage, setErrorMessage] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const { add, lines, count: cartCount } = useCart();
+
   const cartTotalCents = useMemo(() => {
-    const catalog = productsRaw as Product[];
     return lines.reduce((sum, line) => {
       const cartProduct = catalog.find((item) => item.id === line.productId);
       const cartVariant = cartProduct?.variants.find((item) => item.id === line.variantId);
       return sum + (cartVariant?.priceCents ?? 0) * line.qty;
     }, 0);
-  }, [lines]);
+  }, [lines, catalog]);
 
   // Controllo disponibilità in tempo reale
   const [loadingAvail, setLoadingAvail] = useState(false);
@@ -646,7 +630,7 @@ export default function ProductDetailsClient({
       setAvailMap({});
       return;
     }
-    const skus = variants.map((v) => makeSku(currentProduct.id, v.id));
+    const skus = variants.map((v) => makeInventorySku(currentProduct.id, v.id));
     setLoadingAvail(true);
 
     fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`)
@@ -672,7 +656,7 @@ export default function ProductDetailsClient({
     };
   }, [currentProduct.id, variants]);
 
-  const selectedSku = selectedVariant ? makeSku(currentProduct.id, selectedVariant.id) : "";
+  const selectedSku = selectedVariant ? makeInventorySku(currentProduct.id, selectedVariant.id) : "";
   const availableStock = availMap ? availMap[selectedSku] ?? 0 : null;
   const maxQty = availableStock == null ? 99 : Math.max(0, availableStock);
   const isOutOfStock = availableStock != null && availableStock <= 0;
@@ -744,6 +728,7 @@ export default function ProductDetailsClient({
           variantId: item.variantId,
           qty: item.qty,
         })),
+        locale,
       };
 
       const response = await fetch("/api/order", {
@@ -773,9 +758,10 @@ export default function ProductDetailsClient({
           ? "Sessione di pagamento non disponibile."
           : "Checkout session is not available."
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : null;
       setErrorMessage(
-        error?.message ||
+        message ||
           (locale === "it"
             ? "Si è verificato un errore durante il reindirizzamento alla cassa."
             : "An error occurred while redirecting to checkout.")
@@ -905,7 +891,7 @@ export default function ProductDetailsClient({
               <div className="grid grid-cols-3 gap-6 pt-2">
                 <div>
                   <div className="text-[11px] font-bold text-neutral-500 tracking-wider">{text.technicalSpecs.cultivar}</div>
-                  <div className="text-sm font-bold text-neutral-900 mt-1">Coratina, Ogliarola</div>
+                  <div className="text-sm font-bold text-neutral-900 mt-1">Frantoio, Moraiolo, Leccino</div>
                 </div>
                 <div>
                   <div className="text-[11px] font-bold text-neutral-500 tracking-wider">{text.technicalSpecs.raccolta}</div>
@@ -913,7 +899,7 @@ export default function ProductDetailsClient({
                 </div>
                 <div>
                   <div className="text-[11px] font-bold text-neutral-500 tracking-wider">{text.technicalSpecs.origine}</div>
-                  <div className="text-sm font-bold text-neutral-900 mt-1">Puglia, Italia</div>
+                  <div className="text-sm font-bold text-neutral-900 mt-1">Toscana, Italia</div>
                 </div>
               </div>
             </div>
@@ -1260,7 +1246,7 @@ export default function ProductDetailsClient({
               <div className="grid grid-cols-3 gap-3">
                 {variants.map((v) => {
                   const isSelected = String(v.id) === String(selectedVariantId);
-                  const isVarOut = availMap ? (availMap[makeSku(currentProduct.id, v.id)] ?? 0) <= 0 : false;
+                  const isVarOut = availMap ? (availMap[makeInventorySku(currentProduct.id, v.id)] ?? 0) <= 0 : false;
 
                   return (
                     <button

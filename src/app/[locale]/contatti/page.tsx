@@ -2,8 +2,8 @@ import Footer from "@/components/Footer";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import ContactForm from "./ContactForm";
-import { useTranslations } from "next-intl";
-import { pageMetadata } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
+import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
 
 const CONTACT_ADDRESS = companyInfo.addressMap;
@@ -24,13 +24,44 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default function ContattiPage() {
-  const t = useTranslations("ContactPage");
-  const tFooter = useTranslations("Common.footer.bottom");
+export default async function ContattiPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "ContactPage" });
+  const tFooter = await getTranslations({ locale, namespace: "Common.footer.bottom" });
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": absoluteUrl(localizedPath("/", locale))
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": locale === "en" ? "Contact" : "Contatti",
+        "item": absoluteUrl(localizedPath("/contatti", locale))
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="bg-[#FDFCF8] min-h-screen">
         <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
+          {/* Breadcrumb sottile */}
+          <nav className="mb-12 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+            <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
+            <span className="text-[#D6D3D1]">/</span>
+            <span className="text-[#57534E]">{locale === "en" ? "Contact" : "Contatti"}</span>
+          </nav>
           {/* HERO */}
           <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>

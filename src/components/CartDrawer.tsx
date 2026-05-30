@@ -3,17 +3,18 @@
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useEffect, useMemo, useState } from "react";
+import { useLocale } from "next-intl";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 
-import products from "@/db/products.json";
+import ToggleMessage from "@/components/ui/ToggleMessage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "@/context/CartContext";
 import { translateCartCheckoutError, translateCartPromoError } from "@/lib/cartI18n";
 import { goToCassa } from "@/lib/client/goToCassa";
 import { formatEUR } from "@/lib/money";
-import type { CartLine, Product } from "@/lib/shopTypes";
+import type { CartLine } from "@/lib/shopTypes";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight,
@@ -27,9 +28,7 @@ import {
   X,
 } from "lucide-react";
 
-const VAT_RATE = 0.04;
-const FREE_SHIPPING_THRESHOLD_CENTS = 6900;
-const SHIPPING_CENTS = 590;
+import { FREE_SHIPPING_THRESHOLD_CENTS, SHIPPING_FLAT_CENTS as SHIPPING_CENTS } from "@/lib/constants";
 
 type PromoResult = {
   code: string;
@@ -37,6 +36,53 @@ type PromoResult = {
   percent: number | null;
   freeShipping: boolean;
 };
+
+type CheckoutPricingItem = {
+  productId: string;
+  variantId: string;
+  unitPriceCents: number;
+  qty: number;
+  lineSubtotalCents: number;
+  lineDiscountCents: number;
+  lineTotalCents: number;
+};
+
+type Totals = {
+  items: CheckoutPricingItem[];
+  subtotalCents: number;
+  discountCents: number;
+  vatCents: number;
+  shippingCents: number;
+  totalCents: number;
+  promotionApplied?: { code: string; percent?: number | null } | null;
+};
+
+const drawerStatusCopy = {
+  it: {
+    lineReduced: (title: string, qty: number) => `${title} aggiornato a ${qty} per disponibilita limitata.`,
+    lineRemoved: (title: string) => `${title} rimosso dal carrello per esaurimento stock.`,
+  },
+  en: {
+    lineReduced: (title: string, qty: number) => `${title} updated to ${qty} because of limited stock.`,
+    lineRemoved: (title: string) => `${title} was removed from the cart because it is sold out.`,
+  },
+  de: {
+    lineReduced: (title: string, qty: number) => `${title} wurde wegen begrenztem Bestand auf ${qty} angepasst.`,
+    lineRemoved: (title: string) => `${title} wurde aus dem Warenkorb entfernt, da es ausverkauft ist.`,
+  },
+  nl: {
+    lineReduced: (title: string, qty: number) => `${title} aangepast naar ${qty} vanwege beperkte voorraad.`,
+    lineRemoved: (title: string) => `${title} is uit de winkelwagen verwijderd omdat het is uitverkocht.`,
+  },
+  da: {
+    lineReduced: (title: string, qty: number) => `${title} blev justeret til ${qty} pga. begraenset lager.`,
+    lineRemoved: (title: string) => `${title} blev fjernet fra kurven, fordi varen er udsolgt.`,
+  },
+  no: {
+    lineReduced: (title: string, qty: number) => `${title} ble justert til ${qty} paa grunn av begrenset lager.`,
+    lineRemoved: (title: string) => `${title} ble fjernet fra handlekurven fordi varen er utsolgt.`,
+  },
+} as const;
 
 export default function CartDrawer({
   open,
@@ -46,8 +92,19 @@ export default function CartDrawer({
   onClose: () => void;
 }) {
   const t = useTranslations("Cart");
-  const { lines, remove, setQty, clear } = useCart();
-  const catalog = products as unknown as Product[];
+  const locale = useLocale();
+  const {
+    lines,
+    remove,
+    setQty,
+    clear,
+    getAvailableQty,
+    refreshAvailability,
+    catalog,
+    lastAvailabilityNotice,
+    clearAvailabilityNotice,
+  } = useCart();
+  const statusText = drawerStatusCopy[(locale as keyof typeof drawerStatusCopy)] ?? drawerStatusCopy.it;
 
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
@@ -56,6 +113,16 @@ export default function CartDrawer({
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoApplied, setPromoApplied] = useState<PromoResult | null>(null);
+  const [stockToast, setStockToast] = useState("");
+  const [stockToastOpen, setStockToastOpen] = useState(false);
+  const [totals, setTotals] = useState<Totals>({
+    items: [],
+    subtotalCents: 0,
+    discountCents: 0,
+    vatCents: 0,
+    shippingCents: 0,
+    totalCents: 0,
+  });
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -64,7 +131,11 @@ export default function CartDrawer({
 
   useEffect(() => {
     if (!open) return;
+    void refreshAvailability();
+  }, [open, refreshAvailability]);
 
+  useEffect(() => {
+    if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -77,7 +148,7 @@ export default function CartDrawer({
       window.removeEventListener("keydown", onKeyDown);
       document.documentElement.style.overflow = prevOverflow;
     };
-  }, [open, onClose]);
+  }, [onClose, open]);
 
   const viewLines = useMemo(() => {
     return lines.map((line) => {
@@ -86,17 +157,92 @@ export default function CartDrawer({
       return { line, product, variant };
     });
   }, [lines, catalog]);
+  const pricingItemsByKey = useMemo(() => {
+    return new Map(
+      totals.items.map((item) => [`${item.productId}:${item.variantId}`, item] as const)
+    );
+  }, [totals.items]);
 
-  const subtotal = useMemo(() => {
-    return viewLines.reduce((sum, x) => sum + (x.variant?.priceCents ?? 0) * x.line.qty, 0);
-  }, [viewLines]);
+  useEffect(() => {
+    if (!lastAvailabilityNotice || !open) return;
+    const product = catalog.find((item) => item.id === lastAvailabilityNotice.productId);
+    const variant = product?.variants.find((item) => item.id === lastAvailabilityNotice.variantId);
+    const title = [product?.title, variant?.label].filter(Boolean).join(" - ") || t("common.product_fallback");
+    const message =
+      lastAvailabilityNotice.kind === "removed"
+        ? statusText.lineRemoved(title)
+        : statusText.lineReduced(title, lastAvailabilityNotice.nextQty);
 
-  const vat = Math.round(subtotal * VAT_RATE);
+    setStockToast(message);
+    setStockToastOpen(true);
+    clearAvailabilityNotice();
+  }, [catalog, clearAvailabilityNotice, lastAvailabilityNotice, open, statusText, t]);
+
+  const subtotal = totals.subtotalCents;
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_CENTS - subtotal);
-  const shippingPreview =
-    promoApplied?.freeShipping || subtotal >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : SHIPPING_CENTS;
-  const discountCents = promoApplied?.discountCents ?? 0;
-  const totalWithDiscount = subtotal + vat + shippingPreview - discountCents;
+  const shippingPreview = totals.shippingCents;
+  const discountCents = totals.discountCents;
+  const total = totals.totalCents;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function refreshTotals() {
+      if (lines.length === 0) {
+        if (!cancelled) {
+          setTotals({
+            items: [],
+            subtotalCents: 0,
+            discountCents: 0,
+            vatCents: 0,
+            shippingCents: 0,
+            totalCents: 0,
+          });
+        }
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: lines.map((item) => ({
+              productId: item.productId,
+              variantId: item.variantId,
+              qty: item.qty,
+            })),
+            promotionCode: promoApplied?.code,
+          }),
+        });
+
+        if (!response.ok) return;
+
+        const data = (await response.json()) as Totals;
+        if (!cancelled) {
+          if (promoApplied?.code && !(data as Totals & { promotionApplied?: { code: string } | null }).promotionApplied) {
+            setPromoApplied(null);
+          }
+          setTotals({
+            items: Array.isArray(data.items) ? data.items : [],
+            subtotalCents: Number(data.subtotalCents ?? 0),
+            discountCents: Number(data.discountCents ?? 0),
+            vatCents: Number(data.vatCents ?? 0),
+            shippingCents: Number(data.shippingCents ?? 0),
+            totalCents: Number(data.totalCents ?? 0),
+            promotionApplied: data.promotionApplied ?? null,
+          });
+        }
+      } catch {
+        // ignore preview failures in drawer
+      }
+    }
+
+    void refreshTotals();
+    return () => {
+      cancelled = true;
+    };
+  }, [lines, promoApplied]);
 
   async function handleApplyPromo() {
     const code = promoInput.trim();
@@ -110,7 +256,14 @@ export default function CartDrawer({
       const res = await fetch("/api/promotions/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, subtotalCents: subtotal }),
+        body: JSON.stringify({
+          code,
+          items: lines.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId,
+            qty: item.qty,
+          })),
+        }),
       });
       const data = await res.json();
 
@@ -160,6 +313,7 @@ export default function CartDrawer({
         style={{ height: "var(--viewport-height)", maxHeight: "var(--viewport-height)" }}
       >
         <div className="flex h-full flex-col">
+          <ToggleMessage open={stockToastOpen} message={stockToast} onClose={() => setStockToastOpen(false)} />
           <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
             <div className="flex items-center gap-3">
               <ShoppingCart className="h-6 w-6 text-zinc-700" strokeWidth={1.5} />
@@ -245,10 +399,13 @@ export default function CartDrawer({
             ) : (
               <div className="space-y-4">
                 {viewLines.map(({ line, product, variant }) => {
-                  const unit = variant?.priceCents ?? 0;
-                  const lineTotal = unit * line.qty;
+                  const pricingItem = pricingItemsByKey.get(`${line.productId}:${line.variantId}`);
+                  const unit = pricingItem?.unitPriceCents ?? variant?.priceCents ?? 0;
+                  const lineTotal = pricingItem?.lineSubtotalCents ?? unit * line.qty;
                   const imageSrc = variant?.imageSrc ?? product?.imageSrc;
                   const imageAlt = variant?.imageAlt ?? product?.imageAlt ?? product?.title ?? t("common.product_fallback");
+                  const available = getAvailableQty(line.productId, line.variantId);
+                  const maxQty = available === null ? 99 : Math.max(0, available);
 
                   return (
                     <CartLineCard
@@ -260,9 +417,10 @@ export default function CartDrawer({
                       lineTotal={lineTotal}
                       imageSrc={imageSrc}
                       imageAlt={imageAlt}
+                      maxQty={maxQty}
                       onRemove={() => remove(line.productId, line.variantId)}
                       onDec={() => setQty(line.productId, line.variantId, Math.max(1, line.qty - 1))}
-                      onInc={() => setQty(line.productId, line.variantId, Math.min(99, line.qty + 1))}
+                      onInc={() => setQty(line.productId, line.variantId, Math.min(maxQty, line.qty + 1))}
                       onChange={(next) => setQty(line.productId, line.variantId, next)}
                     />
                   );
@@ -337,21 +495,15 @@ export default function CartDrawer({
                 </div>
               )}
               <div className="flex items-center justify-between text-zinc-600">
-                <span>{t("common.vat_estimate")}</span>
-                <span className="text-zinc-900">{formatEUR(vat)}</span>
-              </div>
-              <div className="flex items-center justify-between text-zinc-600">
                 <span>{t("common.shipping_estimate")}</span>
                 <span className={shippingPreview === 0 ? "font-medium text-emerald-600" : "text-zinc-900"}>
                   {shippingPreview === 0 ? t("common.free") : formatEUR(shippingPreview)}
                 </span>
               </div>
-              {discountCents > 0 && (
-                <div className="flex items-center justify-between border-t border-black/10 pt-2 font-medium text-zinc-900">
-                  <span>{t("drawer.discounted_total")}</span>
-                  <span>{formatEUR(totalWithDiscount)}</span>
-                </div>
-              )}
+              <div className="flex items-center justify-between border-t border-black/10 pt-2 font-medium text-zinc-900">
+                <span>{t("common.total")}</span>
+                <span>{formatEUR(total)}</span>
+              </div>
             </div>
 
             <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:gap-3">
@@ -427,6 +579,7 @@ function CartLineCard({
   lineTotal,
   imageSrc,
   imageAlt,
+  maxQty,
   onRemove,
   onDec,
   onInc,
@@ -439,6 +592,7 @@ function CartLineCard({
   lineTotal: number;
   imageSrc?: string;
   imageAlt: string;
+  maxQty: number;
   onRemove: () => void;
   onDec: () => void;
   onInc: () => void;
@@ -499,7 +653,7 @@ function CartLineCard({
 
             <div className="mt-auto pt-4">
               <div className="flex items-center justify-between gap-3 border-t border-[#eee6dc] pt-3">
-                <QtyStepper qty={line.qty} onDec={onDec} onInc={onInc} onChange={onChange} />
+                <QtyStepper qty={line.qty} maxQty={maxQty} onDec={onDec} onInc={onInc} onChange={onChange} />
                 <div className="text-right">
                   <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{t("common.total")}</div>
                   <div className="mt-1 font-medium tracking-[0.03em] text-zinc-900">{formatEUR(lineTotal)}</div>
@@ -515,11 +669,13 @@ function CartLineCard({
 
 function QtyStepper({
   qty,
+  maxQty,
   onDec,
   onInc,
   onChange,
 }: {
   qty: number;
+  maxQty: number;
   onDec: () => void;
   onInc: () => void;
   onChange: (next: number) => void;
@@ -544,11 +700,11 @@ function QtyStepper({
       <input
         type="number"
         min={1}
-        max={99}
+        max={Math.max(1, maxQty)}
         value={qty}
         onChange={(e) => {
           const v = Number(e.target.value);
-          onChange(Number.isFinite(v) ? Math.min(99, Math.max(1, v)) : 1);
+          onChange(Number.isFinite(v) ? Math.min(Math.max(1, maxQty), Math.max(1, v)) : 1);
         }}
         className={cn(
           "h-9 w-11 bg-transparent text-center text-sm text-zinc-900 focus:outline-none",
@@ -562,7 +718,7 @@ function QtyStepper({
         variant="ghost"
         size="icon-sm"
         onClick={onInc}
-        disabled={qty >= 99}
+        disabled={qty >= maxQty}
         className="h-9 w-9 rounded-none border-l border-black/5 text-zinc-700 hover:bg-black/5 disabled:opacity-30"
         aria-label={t("actions.increase_quantity")}
         data-testid="qty-inc"

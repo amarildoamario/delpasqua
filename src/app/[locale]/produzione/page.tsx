@@ -1,4 +1,4 @@
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import ProduzionePageClient from "./ProduzionePageClient";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -15,6 +15,35 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default function ProduzionePage() {
-  return <ProduzionePageClient />;
+export default async function ProduzionePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": absoluteUrl(localizedPath("/", locale))
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": locale === "en" ? "Production and Oil Mill" : "Produzione e Frantoio",
+        "item": absoluteUrl(localizedPath("/produzione", locale))
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <ProduzionePageClient />
+    </>
+  );
 }

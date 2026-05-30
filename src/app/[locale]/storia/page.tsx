@@ -1,7 +1,8 @@
 import Footer from "@/components/Footer";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { pageMetadata } from "@/lib/seo";
+import { Link } from "@/i18n/routing";
+import { getTranslations } from "next-intl/server";
+import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 
 const STORIA_IMAGES = {
   iniziale: "/storia/sezione_iniziale.jpg",
@@ -25,11 +26,35 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default function StoriaPage() {
-  const t = useTranslations("StoriaPage");
+export default async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "StoriaPage" });
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": absoluteUrl(localizedPath("/", locale))
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": locale === "en" ? "Our Story" : "Storia",
+        "item": absoluteUrl(localizedPath("/storia", locale))
+      }
+    ]
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Hero Background Photo Section (Parallax / Copertura Ferma) */}
       <section className="relative h-[65vh] lg:h-[80vh] overflow-hidden bg-[#1C1917]">
         <div
@@ -43,6 +68,13 @@ export default function StoriaPage() {
       {/* Main Content Sections */}
       <section className="bg-[#FDFCF8] py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-6">
+          {/* Breadcrumb sottile */}
+          <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+            <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
+            <span className="text-[#D6D3D1]">/</span>
+            <span className="text-[#57534E]">{locale === "en" ? "Our Story" : "Storia"}</span>
+          </nav>
+
           {/* Header (Messo Sotto, Fuori dalla Foto) */}
           <div className="max-w-5xl mb-20">
             <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">

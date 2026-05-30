@@ -26,6 +26,15 @@ export async function POST(req: Request) {
 
     return Response.json(
       {
+        items: pricing.items.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId,
+          unitPriceCents: item.unitPriceCents,
+          qty: item.qty,
+          lineSubtotalCents: item.lineSubtotalCents,
+          lineDiscountCents: item.lineDiscountCents,
+          lineTotalCents: item.lineTotalCents,
+        })),
         subtotalCents: pricing.subtotalCents,
         discountCents: pricing.discountCents,
         vatCents: pricing.vatCents,

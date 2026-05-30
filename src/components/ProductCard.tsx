@@ -20,6 +20,7 @@ export type ProductCardVariantImage = {
 }
 
 export type ProductCardProduct = {
+  cardKey?: string
   id: string
   slug: string
   title: string
@@ -33,6 +34,7 @@ export type ProductCardProduct = {
   priceCents?: number
   defaultVariantId?: string
   variantsCount?: number
+  variantLabel?: string
   variantImages?: ProductCardVariantImage[]
 }
 
@@ -43,13 +45,18 @@ const cardCopy = {
   it: {
     chooseSize: "Apri il prodotto per scegliere il formato.",
     added: (title: string) => `${title} aggiunto al carrello`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Disponibili solo ${available} pezzi. Carrello aggiornato.`
+        : "Quantita ridotta in base alla disponibilita.",
+    rejected: "Prodotto esaurito.",
     oilCategory: "OLIO EXTRAVERGINE DI OLIVA",
     wineCategory: "VINO",
     oneFormat: "DISPONIBILE IN UN SOLO FORMATO",
     manyFormats: (count: number) => `DISPONIBILE IN ${count} FORMATI DIVERSI`,
     from: "A partire da",
     price: "Prezzo",
-    vat: "+ iva",
+    vat: "IVA incl.",
     details: "Vedi i dettagli",
     productImage: "Immagine Prodotto",
     addToCart: "Aggiungi al carrello",
@@ -60,13 +67,18 @@ const cardCopy = {
   en: {
     chooseSize: "Open the product to choose the size.",
     added: (title: string) => `${title} added to cart`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Only ${available} items available. Cart updated.`
+        : "Quantity reduced based on availability.",
+    rejected: "Product sold out.",
     oilCategory: "EXTRA VIRGIN OLIVE OIL",
     wineCategory: "WINE",
     oneFormat: "AVAILABLE IN ONE FORMAT ONLY",
     manyFormats: (count: number) => `AVAILABLE IN ${count} DIFFERENT FORMATS`,
     from: "From",
     price: "Price",
-    vat: "+ VAT",
+    vat: "VAT incl.",
     details: "View details",
     productImage: "Product Image",
     addToCart: "Add to cart",
@@ -77,13 +89,18 @@ const cardCopy = {
   de: {
     chooseSize: "Produkt oeffnen, um das Format zu waehlen.",
     added: (title: string) => `${title} wurde in den Warenkorb gelegt`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Nur noch ${available} Stueck verfuegbar. Warenkorb aktualisiert.`
+        : "Menge an die Verfuegbarkeit angepasst.",
+    rejected: "Produkt ausverkauft.",
     oilCategory: "NATIVES OLIVENOEL EXTRA",
     wineCategory: "WEIN",
     oneFormat: "IN EINEM FORMAT VERFUEGBAR",
     manyFormats: (count: number) => `IN ${count} FORMATEN VERFUEGBAR`,
     from: "Ab",
     price: "Preis",
-    vat: "+ MwSt.",
+    vat: "inkl. MwSt.",
     details: "Details ansehen",
     productImage: "Produktbild",
     addToCart: "In den Warenkorb",
@@ -94,13 +111,18 @@ const cardCopy = {
   nl: {
     chooseSize: "Open het product om het formaat te kiezen.",
     added: (title: string) => `${title} toegevoegd aan winkelwagen`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Nog maar ${available} beschikbaar. Winkelwagen bijgewerkt.`
+        : "Aantal aangepast op basis van beschikbaarheid.",
+    rejected: "Product uitverkocht.",
     oilCategory: "EXTRA VIERGE OLIJFOLIE",
     wineCategory: "WIJN",
     oneFormat: "BESCHIKBAAR IN EEN FORMAAT",
     manyFormats: (count: number) => `BESCHIKBAAR IN ${count} FORMATEN`,
     from: "Vanaf",
     price: "Prijs",
-    vat: "+ btw",
+    vat: "btw incl.",
     details: "Details bekijken",
     productImage: "Productafbeelding",
     addToCart: "Toevoegen aan winkelwagen",
@@ -111,13 +133,18 @@ const cardCopy = {
   da: {
     chooseSize: "Aabn produktet for at vaelge format.",
     added: (title: string) => `${title} tilfoejet til kurv`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Kun ${available} tilbage. Kurven er opdateret.`
+        : "Antallet er justeret efter lagerstatus.",
+    rejected: "Produkt udsolgt.",
     oilCategory: "EKSTRA JOMFRUOLIVENOLIE",
     wineCategory: "VIN",
     oneFormat: "FAAS I ET FORMAT",
     manyFormats: (count: number) => `FAAS I ${count} FORMATER`,
     from: "Fra",
     price: "Pris",
-    vat: "+ moms",
+    vat: "moms inkl.",
     details: "Se detaljer",
     productImage: "Produktbillede",
     addToCart: "Tilfoej til kurv",
@@ -128,13 +155,18 @@ const cardCopy = {
   no: {
     chooseSize: "Aapne produktet for aa velge format.",
     added: (title: string) => `${title} lagt i handlekurven`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Bare ${available} tilgjengelig. Handlekurven er oppdatert.`
+        : "Antallet ble justert etter tilgjengelighet.",
+    rejected: "Produkt utsolgt.",
     oilCategory: "EXTRA VIRGIN OLIVENOLJE",
     wineCategory: "VIN",
     oneFormat: "TILGJENGELIG I ETT FORMAT",
     manyFormats: (count: number) => `TILGJENGELIG I ${count} FORMATER`,
     from: "Fra",
     price: "Pris",
-    vat: "+ mva.",
+    vat: "mva. inkl.",
     details: "Se detaljer",
     productImage: "Produktbilde",
     addToCart: "Legg i handlekurv",
@@ -183,7 +215,7 @@ export default function ProductCard({
   }
 
   const handleAdd = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       event.stopPropagation()
 
@@ -193,7 +225,7 @@ export default function ProductCard({
         return
       }
 
-      add({ productId: product.id, variantId: variantIdToAdd, qty: 1 })
+      const result = await add({ productId: product.id, variantId: variantIdToAdd, qty: 1 })
 
       track({
         type: "add_to_cart",
@@ -207,9 +239,20 @@ export default function ProductCard({
         },
       })
 
-      showToast(text.added(product.title))
+      if (result.status === "rejected") {
+        showToast(text.rejected)
+        return
+      }
+
+      if (result.status === "adjusted") {
+        showToast(text.adjusted(result.availableQty))
+        return
+      }
+
+      const toastTitle = product.variantLabel ? `${product.title} ${product.variantLabel}` : product.title
+      showToast(text.added(toastTitle))
     },
-    [add, activeVariantId, product.id, product.priceCents, product.slug, product.title, showToast, text]
+    [add, activeVariantId, product.id, product.priceCents, product.slug, product.title, product.variantLabel, showToast, text]
   )
 
   const handlePrevImage = useCallback((e: React.MouseEvent) => {
@@ -224,60 +267,45 @@ export default function ProductCard({
     setActiveVariantIdx((i) => (i + 1) % variantImages.length)
   }, [variantImages.length])
 
-  if (onOpen) {
-    return (
-      <>
-        <ToggleMessage open={toastOpen} message={toastMsg} onClose={() => setToastOpen(false)} />
-        <div className={shellClassName}>
-          <div className="flex h-full w-full flex-col">
-            <button
-              type="button"
-              data-slug={product.slug}
-              data-testid="product-card"
-              onClick={handleOpen}
-              aria-label={product.title}
-              className="flex flex-1 flex-col text-left focus:outline-none w-full"
-            >
-              <CardInner
-                product={product}
-                activeVariantIdx={activeVariantIdx}
-                onPrev={handlePrevImage}
-                onNext={handleNextImage}
-                onDotClick={setActiveVariantIdx}
-              />
-            </button>
-            <div className="px-3 pb-3 bg-white">
-              <CardActionsButton onOpen={handleOpen} onAdd={handleAdd} locale={locale} />
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
-
   return (
     <>
       <ToggleMessage open={toastOpen} message={toastMsg} onClose={() => setToastOpen(false)} />
       <div className={shellClassName}>
-        <div className="flex h-full w-full flex-col">
+        {/* Main interactive overlay for the entire card (stretched link/button) */}
+        {onOpen ? (
+          <button
+            type="button"
+            data-slug={product.slug}
+            data-testid="product-card"
+            onClick={handleOpen}
+            aria-label={product.title}
+            className="absolute inset-0 z-10 block h-full w-full opacity-0 cursor-pointer"
+          />
+        ) : (
           <Link
             href={href}
             data-slug={product.slug}
             data-testid="product-card"
             onClick={onClick}
             aria-label={product.title}
-            className="flex flex-1 flex-col w-full"
-          >
-            <CardInner
-              product={product}
-              activeVariantIdx={activeVariantIdx}
-              onPrev={handlePrevImage}
-              onNext={handleNextImage}
-              onDotClick={setActiveVariantIdx}
-            />
-          </Link>
-          <div className="px-3 pb-3 bg-white">
-            <CardActionsLink href={href} onClick={onClick} onAdd={handleAdd} locale={locale} />
+            className="absolute inset-0 z-10 block h-full w-full opacity-0"
+          />
+        )}
+
+        <div className="flex h-full w-full flex-col">
+          <CardInner
+            product={product}
+            activeVariantIdx={activeVariantIdx}
+            onPrev={handlePrevImage}
+            onNext={handleNextImage}
+            onDotClick={setActiveVariantIdx}
+          />
+          <div className="px-3 pb-3 bg-white relative z-20">
+            {onOpen ? (
+              <CardActionsButton onOpen={handleOpen} onAdd={handleAdd} locale={locale} />
+            ) : (
+              <CardActionsLink href={href} onClick={onClick} onAdd={handleAdd} locale={locale} />
+            )}
           </div>
         </div>
       </div>
@@ -361,6 +389,8 @@ function CardInner({
     variantsCount <= 1
       ? text.oneFormat
       : text.manyFormats(variantsCount)
+
+  const variantLabel = product.variantLabel?.trim() || null
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -477,6 +507,13 @@ function CardInner({
           {cleanTitle}
         </h3>
 
+        {/* Variante card univoca */}
+        {variantLabel && !hasVariantImages && (
+          <div className="mt-1 text-[9px] font-semibold tracking-[0.08em] text-[#8f6d4c] uppercase">
+            {variantLabel}
+          </div>
+        )}
+
         {/* Variante attiva (se ci sono variant images) */}
         {hasVariantImages && (
           <div className="mt-0.5 text-[9px] font-semibold tracking-[0.06em] text-[#8f6d4c] uppercase">
@@ -490,7 +527,7 @@ function CardInner({
         )}
 
         {/* Formati disponibili */}
-        {!hasVariantImages && (
+        {!hasVariantImages && !variantLabel && (
           <div className="mt-1 text-[9px] font-medium tracking-[0.06em] text-[#a09282] uppercase">
             {formatsText}
           </div>

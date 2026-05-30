@@ -1,194 +1,136 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown } from "lucide-react";
+import { PUBLIC_PAYMENT_METHOD_BADGES } from "@/lib/paymentMethods";
 
-export default function PaymentMethodsBadges({ 
-  className = "",
-  dark = false,
-  collapsible = false
-}: { 
+type BadgeProps = {
   className?: string;
   dark?: boolean;
   collapsible?: boolean;
-}) {
-  const t = useTranslations("Common.footer.bottom");
-  const [isExpanded, setIsExpanded] = useState(false);
+};
 
-  const cardBaseClass = `flex px-3.5 h-8 items-center justify-center rounded-md transition-all shadow-sm ${
-    dark 
-      ? "bg-[#0d0d0d] hover:bg-[#141414] border-0" 
+function ApplePayLogo({ dark }: { dark: boolean }) {
+  return (
+    <svg viewBox="0 0 52 20" width="40" height="15" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fill={dark ? "#FFFFFF" : "#111111"}
+        d="M13.3 10.8c0 2 1.7 2.7 1.8 2.7-.1.2-.4 1-.9 1.8-.5.8-1.1 1.5-1.9 1.5-.8 0-1-.5-2-.5s-1.3.5-2.1.5c-.8 0-1.5-.8-2-1.6-1.1-1.6-1.9-4.4-.8-6.4.6-1 1.6-1.6 2.6-1.6.8 0 1.6.5 2 .5.5 0 1.4-.7 2.4-.6.4 0 1.6.2 2.3 1.3-.1 0-1.4.8-1.4 2.4Zm-1.8-4.9c.4-.5.7-1.3.6-2-.6 0-1.4.4-1.8 1-.4.5-.8 1.2-.7 2 .7.1 1.5-.4 1.9-1Zm7.7 8.7V6.1h3.2c1.7 0 2.8 1.2 2.8 2.8 0 1.7-1.2 2.8-2.9 2.8h-1.9v2.9h-1.2Zm1.2-7.5v3.5h1.7c1.3 0 2-.7 2-1.8s-.7-1.8-2-1.8h-1.7Zm9.2 7.7c-.8 0-1.4-.2-1.8-.7-.4-.4-.7-1-.7-1.6 0-1 .6-1.7 1.8-1.8l2-.1v-.6c0-.8-.5-1.2-1.4-1.2-.7 0-1.3.3-1.4.9H27c.1-1.2 1.1-2 2.7-2 1.7 0 2.7.9 2.7 2.3v4.7h-1.1v-1.1h-.1c-.4.7-1.1 1.2-2 1.2Zm.3-1c.6 0 1.1-.2 1.5-.6.4-.4.6-.8.6-1.3v-.5l-1.8.1c-.9.1-1.4.4-1.4 1.1 0 .4.1.7.4.9.2.2.5.3.9.3Zm5.2 3.3c-.3 0-.5 0-.7-.1v-1c.1 0 .3.1.6.1.4 0 .8-.2 1-.8l.2-.6-2.5-7h1.2l1.9 5.7h.1l1.9-5.7h1.2l-2.6 7.3c-.5 1.5-1.2 2.1-2.3 2.1Zm8.2-2.3V6.1h3.1c1.5 0 2.4.9 2.4 2.2 0 .9-.5 1.6-1.4 1.9v.1c1.1.2 1.8 1 1.8 2.1 0 1.4-1.1 2.4-2.8 2.4h-3.1Zm1.2-4.9h1.4c1.1 0 1.7-.5 1.7-1.3 0-.8-.6-1.3-1.6-1.3h-1.5v2.6Zm0 3.9h1.7c1.2 0 1.8-.5 1.8-1.4 0-.9-.7-1.4-1.9-1.4h-1.6v2.8Z"
+      />
+    </svg>
+  );
+}
+
+function GooglePayLogo() {
+  return (
+    <svg viewBox="0 0 64 24" width="48" height="18" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#4285F4" d="M18.52 9.76c0-.66-.06-1.3-.17-1.9H9.6v3.59h5.02a4.29 4.29 0 0 1-1.86 2.81v2.34h3.01c1.76-1.62 2.75-4 2.75-6.84Z"/>
+      <path fill="#34A853" d="M9.6 18.8c2.49 0 4.58-.82 6.11-2.2l-3.01-2.34c-.84.56-1.9.89-3.1.89-2.38 0-4.4-1.61-5.12-3.77H1.37v2.44A9.22 9.22 0 0 0 9.6 18.8Z"/>
+      <path fill="#FBBC04" d="M4.48 11.38a5.54 5.54 0 0 1 0-3.55V5.39H1.37a9.22 9.22 0 0 0 0 8.43l3.11-2.44Z"/>
+      <path fill="#EA4335" d="M9.6 4.06c1.35 0 2.56.46 3.52 1.38l2.63-2.63C14.18 1.34 12.09.5 9.6.5A9.22 9.22 0 0 0 1.37 5.39l3.11 2.44c.72-2.16 2.74-3.77 5.12-3.77Z"/>
+      <path fill="#5F6368" d="M27.96 8.1c-2.42 0-4.38 1.9-4.38 4.43 0 2.51 1.96 4.43 4.38 4.43 2.42 0 4.38-1.92 4.38-4.43 0-2.53-1.96-4.43-4.38-4.43Zm0 7.16c-1.32 0-2.45-1.09-2.45-2.73 0-1.65 1.13-2.73 2.45-2.73 1.31 0 2.45 1.08 2.45 2.73 0 1.64-1.14 2.73-2.45 2.73Z"/>
+      <path fill="#5F6368" d="M37.55 8.1c-2.42 0-4.38 1.9-4.38 4.43 0 2.51 1.96 4.43 4.38 4.43 2.42 0 4.38-1.92 4.38-4.43 0-2.53-1.96-4.43-4.38-4.43Zm0 7.16c-1.32 0-2.45-1.09-2.45-2.73 0-1.65 1.13-2.73 2.45-2.73 1.31 0 2.45 1.08 2.45 2.73 0 1.64-1.14 2.73-2.45 2.73Z"/>
+      <path fill="#5F6368" d="M51.1 8.36v.7h-.07c-.43-.52-1.25-.96-2.28-.96-2.16 0-4.14 1.89-4.14 4.44 0 2.53 1.98 4.42 4.14 4.42 1.03 0 1.85-.44 2.28-.98h.07v.62c0 1.65-.88 2.54-2.31 2.54-1.16 0-1.89-.83-2.18-1.54l-1.68.7c.48 1.16 1.76 2.59 3.86 2.59 2.25 0 4.14-1.32 4.14-4.55V8.36H51.1Zm-2.18 6.9c-1.32 0-2.43-1.11-2.43-2.72 0-1.63 1.11-2.74 2.43-2.74 1.3 0 2.35 1.11 2.35 2.74 0 1.61-1.05 2.72-2.35 2.72Z"/>
+      <path fill="#5F6368" d="M56.06 3.7h-1.89v12.99h1.89Z"/>
+      <path fill="#5F6368" d="M61.26 15.26c-.97 0-1.65-.44-2.09-1.31l5.92-2.45-.2-.48c-.37-.99-1.5-2.92-3.81-2.92-2.29 0-4.2 1.8-4.2 4.43 0 2.48 1.88 4.43 4.42 4.43 2.05 0 3.24-1.25 3.73-1.98l-1.46-.98c-.49.72-1.15 1.26-2.31 1.26Zm-.14-5.53c.77 0 1.42.39 1.64.93l-4 1.66c-.05-1.78 1.32-2.59 2.36-2.59Z"/>
+    </svg>
+  );
+}
+
+function CardLogo({ dark }: { dark: boolean }) {
+  const stroke = dark ? "#FFFFFF" : "#2F2F2F";
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke={stroke} strokeWidth="1.8" />
+      <path d="M3 9.5h18" fill="none" stroke={stroke} strokeWidth="1.8" />
+      <path d="M7 15h4" fill="none" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function VisaLogo() {
+  return (
+    <svg viewBox="0 0 32 12" width="34" height="13" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#1434CB" d="M13.43 11.56H10.7l1.71-10.9h2.73l-1.71 10.9Zm11.47-10.63a6.8 6.8 0 0 0-2.45-.43c-2.7 0-4.6 1.43-4.62 3.49-.02 1.52 1.36 2.36 2.39 2.86 1.05.51 1.4.84 1.39 1.3 0 .7-.84 1.02-1.62 1.02-1.08 0-1.66-.17-2.55-.56l-.35-.16-.38 2.39c.63.29 1.8.54 3 .55 2.87 0 4.74-1.42 4.76-3.62.01-1.2-.72-2.11-2.3-2.86-.96-.47-1.55-.78-1.54-1.25 0-.42.47-.87 1.5-.87.85-.01 1.47.18 1.95.39l.23.11.35-2.32Zm3.62 6.78c.23-.62 1.11-3 1.11-3s.23-.62.37-1.03l.19.93s.53 2.58.64 3.1h-2.31Zm3.37-7.05h-2.11c-.65 0-1.13.19-1.42.88l-4.05 10.02h2.86s.47-1.33.57-1.62h3.5c.08.38.33 1.62.33 1.62h2.52L31.89.66ZM8.43.66 5.76 8.08 5.48 6.7C4.99 5.04 3.46 3.24 1.75 2.34l2.44 9.2h2.88L11.35.66H8.43Z" />
+      <path fill="#F7A600" d="M3.29.66H.02L0 .82c2.55.65 4.24 2.23 4.94 4.12L4.23 1.32c-.12-.68-.59-.63-.94-.66Z" />
+    </svg>
+  );
+}
+
+function MastercardLogo() {
+  return (
+    <svg viewBox="0 0 24 16" width="26" height="16" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="9" cy="8" r="5.2" fill="#EB001B" />
+      <circle cx="15" cy="8" r="5.2" fill="#F79E1B" />
+      <path fill="#FF5F00" d="M12 3.3a5.16 5.16 0 0 0 0 9.4 5.16 5.16 0 0 0 0-9.4Z" />
+    </svg>
+  );
+}
+
+function AmexLogo() {
+  return (
+    <svg viewBox="0 0 40 16" width="38" height="15" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <rect width="40" height="16" rx="2" fill="#006FCF" />
+      <path fill="#FFF" d="M4 11.8V4.2h6.8l.74.85.77-.85H36v2.05h-2.09l1.2 1.34-1.2 1.37H36v2.82H24.56l-.79-.9-.8.9H4Zm2.2-1.74h3.08V8.88H6.2v1.18Zm0-2.82h3.19V6.05H6.2v1.19Zm5.75 2.82h2.46l.45-.54.45.54h4.8V8.82H16.8V7.64h3.39V6.45H15.8l-1.39 1.61-1.28-1.61h-1.18v3.61Zm10.79 0h1.4V6.86h-1.4v3.2Zm2.43 0h2.28V8.96h-1.4v-.63h1.36V7.3h-1.36v-.62h1.4V5.64h-2.28v4.42Zm3.33 0h1.1l1.75-2.03v2.03h1.88V5.64h-1.1l-1.74 2.01V5.64H30.5v4.42Z" />
+    </svg>
+  );
+}
+
+function SepaLogo({ dark }: { dark: boolean }) {
+  return (
+    <div className="flex items-center gap-1">
+      <span className={`text-[10px] font-extrabold italic tracking-tight ${dark ? "text-[#8CC7FF]" : "text-[#0055A5]"}`}>SEPA</span>
+      <span className={`grid h-3.5 w-3.5 place-items-center rounded-full text-[8px] font-bold text-white ${dark ? "bg-[#3B82F6]" : "bg-[#0055A5]"}`}>E</span>
+    </div>
+  );
+}
+
+function PaymentMethodLogo({ id, dark }: { id: string; dark: boolean }) {
+  switch (id) {
+    case "apple-pay":
+      return <ApplePayLogo dark={dark} />;
+    case "google-pay":
+      return <GooglePayLogo />;
+    case "sepa":
+      return <SepaLogo dark={dark} />;
+    case "card":
+      return <CardLogo dark={dark} />;
+    case "visa":
+      return <VisaLogo />;
+    case "mastercard":
+      return <MastercardLogo />;
+    case "amex":
+      return <AmexLogo />;
+    default:
+      return null;
+  }
+}
+
+export default function PaymentMethodsBadges({
+  className = "",
+  dark = false,
+  collapsible = false,
+}: BadgeProps) {
+  const t = useTranslations("Common.footer.bottom");
+
+  const badgeClass = `flex h-10 min-w-[52px] items-center justify-center rounded-md px-2.5 shadow-sm transition-all ${
+    dark
+      ? "bg-[#0d0d0d] border border-stone-800 hover:bg-[#141414]"
       : "border border-neutral-200 bg-white hover:border-neutral-300"
   }`;
 
-  const expandedCardClass = `${cardBaseClass} animate-in fade-in zoom-in-95 duration-200`;
-
   return (
     <div className={className}>
-      <p className={`text-center text-[10px] uppercase tracking-widest mb-4.5 ${dark ? "text-stone-500 font-medium" : "text-neutral-400"}`}>
+      <p className={`mb-4.5 text-center text-[10px] font-medium uppercase tracking-widest ${dark ? "text-stone-500" : "text-neutral-400"}`}>
         {t("secure_payments")}
       </p>
 
-      {/* Reduced spacing for collapsible/product view: gap-2 md:gap-2.5 (8px-10px) */}
-      <div className={`flex flex-wrap items-center justify-center transition-all duration-300 ${collapsible ? "gap-2 md:gap-2.5" : "gap-6 md:gap-7"}`}>
-        
-        {/* ========================================================= */}
-        {/* ALWAYS VISIBLE: Mastercard, Visa, Revolut, PayPal, Sepa   */}
-        {/* ========================================================= */}
-
-        {/* Visa */}
-        <div className={cardBaseClass} title="Visa">
-          <svg role="img" viewBox="0 0 24 24" height="13" fill={dark ? "white" : "#142663"} xmlns="http://www.w3.org/2000/svg">
-            <title>Visa</title>
-            <path d="M21.9 5.1H18c-.6 0-1.1.3-1.4.9l-5.6 12.9h3.7l.7-2.1h4.5l.4 2.1H24L21.9 5.1zM16.1 13.9l1.9-5.1 1.1 5.1h-3zm-9.3-8.8H3.1L0 18.9h3.6l4.3-10.2c.1-.3.2-.5.5-.6.3-.2.6-.2.8-.2l3.4.1L8.8 18.9h3.7L18.1 5.1H14.5L11.7 13.9 10 5.1H6.8z"/>
-          </svg>
-        </div>
-
-        {/* Mastercard */}
-        <div className={cardBaseClass} title="Mastercard">
-          <svg role="img" viewBox="0 0 24 24" height="20" xmlns="http://www.w3.org/2000/svg">
-            <title>MasterCard</title>
-            <path
-              d="M11.343 18.031c.058.049.12.098.181.146-1.177.783-2.59 1.238-4.107 1.238C3.32 19.416 0 16.096 0 12c0-4.095 3.32-7.416 7.416-7.416 1.518 0 2.931.456 4.105 1.238-.06.051-.12.098-.165.15C9.6 7.489 8.595 9.688 8.595 12c0 2.31 1.001 4.51 2.748 6.031zm5.241-13.447c-1.52 0-2.931.456-4.105 1.238.06.051.12.098.165.15C14.4 7.489 15.405 9.688 15.405 12c0 2.31-1.001 4.507-2.748 6.031-.058.049-.12.098-.181.146 1.177.783 2.588 1.238 4.107 1.238C20.68 19.416 24 16.096 24 12c0-4.094-3.32-7.416-7.416-7.416z"
-              fill="#EB001B"
-            />
-            <path
-              d="M12 6.174c-.096.075-.189.15-.28.231C10.156 7.764 9.169 9.765 9.169 12c0 2.236.987 4.236 2.551 5.595.09.08.185.158.28.232.096-.074.189-.152.28-.232 1.563-1.359 2.551-3.359 2.551-5.595 0-2.235-.987-4.236-2.551-5.595-.09-.08-.184-.156-.28-.231z"
-              fill="#FF5F00"
-            />
-          </svg>
-        </div>
-
-        {/* Revolut */}
-        <div className={cardBaseClass} title="Revolut">
-          <svg role="img" viewBox="0 0 24 24" height="18" fill={dark ? "white" : "black"} xmlns="http://www.w3.org/2000/svg">
-            <title>Revolut</title>
-            <path d="M20.9133 6.9566C20.9133 3.1208 17.7898 0 13.9503 0H2.424v3.8605h10.9782c1.7376 0 3.177 1.3651 3.2087 3.043.016.84-.2994 1.633-.8878 2.2324-.5886.5998-1.375.9303-2.2144.9303H9.2322a.2756.2756 0 0 0-.2755.2752v3.431c0 .0585.018.1142.052.1612L16.2646 24h5.3114l-7.2727-10.094c3.6625-.1838 6.61-3.2612 6.61-6.9494zM6.8943 5.9229H2.424V24h4.4704z" />
-          </svg>
-        </div>
-
-        {/* PayPal */}
-        <div className={cardBaseClass} title="PayPal">
-          <svg role="img" viewBox="0 0 24 24" height="18" xmlns="http://www.w3.org/2000/svg">
-            <title>PayPal</title>
-            <path
-              d="M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86"
-              fill="#003087"
-            />
-            <path
-              d="M13.604 17.052h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686 c0 3.41-3.01 6.853-6.958 6.853"
-              fill="#009CDE"
-            />
-            <path d="M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z" fill="#012169" />
-          </svg>
-        </div>
-
-        {/* SEPA */}
-        <div className={cardBaseClass} title="Bonifico SEPA">
-          <span className={`font-extrabold text-[11px] tracking-tight italic ${dark ? "text-blue-400" : "text-[#0055A5]"}`}>SEPA</span>
-          <span className={`ml-1 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-bold text-white ${dark ? "bg-blue-400" : "bg-[#0055A5]"}`}>€</span>
-        </div>
-
-        {/* ========================================================= */}
-        {/* COLLAPSED OTHERS: shown only when expanded                */}
-        {/* ========================================================= */}
-        {(!collapsible || isExpanded) && (
-          <>
-            {/* Apple Pay */}
-            <div className={expandedCardClass} title="Apple Pay">
-              <svg role="img" viewBox="0 0 24 24" height="18" fill={dark ? "white" : "black"} xmlns="http://www.w3.org/2000/svg">
-                <title>Apple Pay</title>
-                <path d="M2.15 4.318a42.16 42.16 0 0 0-.454.003c-.15.005-.303.013-.452.04a1.44 1.44 0 0 0-1.06.772c-.07.138-.114.278-.14.43-.028.148-.037.3-.04.45A10.2 10.2 0 0 0 0 6.222v11.557c0 .07.002.138.003.207.004.15.013.303.04.452.027.15.072.291.142.429a1.436 1.436 0 0 0 .63.63c.138.07.278.115.43.142.148.027.3.036.45.04l.208.003h20.194l.207-.003c.15-.004.303-.013.452-.04.15-.027.291-.071.428-.141a1.432 1.432 0 0 0 .631-.631c.07-.138.115-.278.141-.43.027-.148.036-.3.04-.45.002-.07.003-.138.003-.208l.001-.246V6.221c0-.07-.002-.138-.004-.207a2.995 2.995 0 0 0-.04-.452 1.446 1.446 0 0 0-1.2-1.201 3.022 3.022 0 0 0-.452-.04 10.448 10.448 0 0 0-.453-.003zm0 .512h19.942c.066 0 .131.002.197.003.115.004.25.01.375.032.109.02.2.05.287.094a.927.927 0 0 1 .407.407.997.997 0 0 1 .094.288c.022.123.028.258.031.374.002.065.003.13.003.197v11.552c0 .065 0 .13-.003.196-.003.115-.009.25-.032.375a.927.927 0 0 1-.5.693 1.002 1.002 0 0 1-.286.094 2.598 2.598 0 0 1-.373.032l-.2.003H1.906c-.066 0-.133-.002-.196-.003a2.61 2.61 0 0 1-.375-.032c-.109-.02-.2-.05-.288-.094a.918.918 0 0 1-.406-.407 1.006 1.006 0 0 1-.094-.288 2.531 2.531 0 0 1-.032-.373 9.588 9.588 0 0 1-.002-.197V6.224c0-.065 0-.131.002-.197.004-.114.01-.248.032-.375.02-.108.05-.199.094-.287a.925.925 0 0 1 .407-.406 1.03 1.03 0 0 1 .287-.094c.125-.022.26-.029.375-.032.065-.002.131-.002.196-.003zm4.71 3.7c-.3.016-.668.199-.88.456-.191.22-.36.58-.316.918.338.03.675-.169.888-.418.205-.258.345-.603.308-.955zm2.207.42v5.493h.852v-1.877h1.18c1.078 0 1.835-.739 1.835-1.812 0-1.07-.742-1.805-1.808-1.805zm.852.719h.982c.739 0 1.161.396 1.161 1.089 0 .692-.422 1.092-1.164 1.092h-.979zm-3.154.3c-.45.01-.83.28-1.05.28-.235 0-.593-.264-.981-.257a1.446 1.446 0 0 0-1.23.747c-.527.908-.139 2.255.374 2.995.249.366.549.769.944.754.373-.014.52-.242.973-.242.454 0 .586.242.98.235.41-.007.667-.366.915-.733.286-.417.403-.82.41-.841-.007-.008-.79-.308-.797-1.209-.008-.754.615-1.113.644-1.135-.352-.52-.9-.578-1.09-.593a1.123 1.123 0 0 0-.092-.002zm8.204.397c-.99 0-1.606.533-1.652 1.256h.777c.072-.358.369-.586.845-.586.502 0 .803.266.803.711v.309l-1.097.064c-.951.054-1.488.484-1.488 1.184 0 .72.548 1.207 1.332 1.207.526 0 1.032-.281 1.264-.727h.019v.659h.788v-2.76c0-.803-.62-1.317-1.591-1.317zm1.94.072l1.446 4.009c0 .003-.073.24-.073.247-.125.41-.33.571-.711.571-.069 0-.206 0-.267-.015v.666c.06.011.267.019.335.019.83 0 1.226-.312 1.568-1.283l1.5-4.214h-.868l-1.012 3.259h-.015l-1.013-3.26zm-1.167 2.189v.316c0 .521-.45.917-1.024.917-.442 0-.731-.228-.731-.579 0-.342.278-.56.769-.593z" />
-              </svg>
-            </div>
-
-            {/* Google Pay */}
-            <div className={expandedCardClass} title="Google Pay">
-              <svg role="img" viewBox="0 0 24 24" height="14" fill={dark ? "white" : "black"} className="mr-1" xmlns="http://www.w3.org/2000/svg">
-                <title>Google</title>
-                <path d="M12.24 10.285V14.4h6.887C18.2 16.57 15.645 18 12.24 18c-4.32 0-7.854-3.535-7.854-7.857s3.534-7.857 7.854-7.857c2.345 0 4.137.95 5.378 2.14l3.228-3.228C18.845.895 15.825 0 12.24 0 5.48 0 0 5.48 0 12.24c0 6.758 5.48 12.24 12.24 12.24 7.07 0 11.758-4.975 11.758-11.96 0-.81-.08-1.585-.24-2.235H12.24z" />
-              </svg>
-              <span className={`text-[10px] font-bold ${dark ? "text-stone-300" : "text-neutral-700"}`}>Pay</span>
-            </div>
-
-            {/* American Express */}
-            <div className={expandedCardClass} title="American Express">
-              <svg role="img" viewBox="0 0 24 24" height="15" fill={dark ? "white" : "#006fcf"} xmlns="http://www.w3.org/2000/svg">
-                <title>American Express</title>
-                <path d="M22 3H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5.5 15.5H3.1l2.4-7h2.4l2.4 7H7.9l-.6-1.8H4.7l-.6 1.8zm8.5 0h-3.9V8.5h3.9V10h-2.4v1.2h2.1V13h-2.1v1.3h2.4v1.2zm7.6 0h-2.1l-1.4-2.5-1.4 2.5h-2.1l2.3-4.1-2.1-3.9h2.1l1.2 2.3 1.2-2.3h2.1l-2.1 3.9 2.3 4.1z" />
-              </svg>
-            </div>
-
-            {/* Klarna */}
-            <div className={expandedCardClass} title="Klarna">
-              <span className="font-extrabold text-[#ffb3c6] text-[10px] tracking-wider italic">Klarna.</span>
-            </div>
-
-            {/* Shop Pay */}
-            <div className={expandedCardClass} title="Shop Pay">
-              <span className={`font-black text-[11px] tracking-tight ${dark ? "text-[#9672ff]" : "text-[#5a31f4]"}`}>shop</span>
-              <span className={`ml-0.5 font-bold text-[11px] tracking-tight ${dark ? "text-stone-200" : "text-neutral-700"}`}>Pay</span>
-            </div>
-
-            {/* iDEAL */}
-            <div className={expandedCardClass} title="iDEAL">
-              <span className={`font-black text-[11px] tracking-tight ${dark ? "text-[#ff4da6]" : "text-[#cc0066]"}`}>iDEAL</span>
-            </div>
-
-            {/* Bancontact */}
-            <div className={expandedCardClass} title="Bancontact">
-              <span className="font-extrabold text-[10px] tracking-tight text-yellow-500">Ban</span>
-              <span className="font-bold text-[10px] tracking-tight text-blue-500">contact</span>
-            </div>
-
-            {/* Sofort */}
-            <div className={expandedCardClass} title="Sofort">
-              <span className="font-extrabold text-[#ff5b00] text-[10px] tracking-tight uppercase">Sofort.</span>
-            </div>
-
-            {/* EPS */}
-            <div className={expandedCardClass} title="EPS">
-              <span className="font-black text-[11px] tracking-tighter text-[#0066b2]">eps</span>
-            </div>
-
-            {/* Giropay */}
-            <div className={expandedCardClass} title="Giropay">
-              <span className={`font-bold text-[10px] tracking-tight ${dark ? "text-stone-300" : "text-blue-900"}`}>giro</span>
-              <span className="font-extrabold text-[10px] tracking-tight text-blue-500">pay</span>
-            </div>
-
-            {/* UnionPay */}
-            <div className={expandedCardClass} title="UnionPay">
-              <span className="font-extrabold text-[10px] tracking-tight text-[#00478b]">Union</span>
-              <span className="font-extrabold text-[10px] tracking-tight text-[#ff3333]">Pay</span>
-            </div>
-
-            {/* Alipay */}
-            <div className={expandedCardClass} title="Alipay">
-              <span className="font-extrabold text-[11px] tracking-tight text-[#00a0e9]">Alipay</span>
-            </div>
-
-            {/* WeChat Pay */}
-            <div className={expandedCardClass} title="WeChat Pay">
-              <span className="font-extrabold text-[9.5px] tracking-tight text-[#09b83e]">WeChat Pay</span>
-            </div>
-          </>
-        )}
+      <div className={`flex flex-wrap items-center justify-center transition-all duration-300 ${collapsible ? "gap-2 md:gap-2.5" : "gap-2.5 md:gap-3"}`}>
+        {PUBLIC_PAYMENT_METHOD_BADGES.map((method) => (
+          <div key={method.id} className={badgeClass} title={method.label} aria-label={method.label}>
+            <PaymentMethodLogo id={method.id} dark={dark} />
+          </div>
+        ))}
       </div>
-
-      {collapsible && (
-        <div className="mt-3 flex justify-center">
-          <button
-            type="button"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1.5 rounded-full border border-neutral-200/80 bg-neutral-50/50 px-3.5 py-1.5 text-[10px] font-medium tracking-wide text-neutral-600 hover:bg-neutral-100/70 hover:text-neutral-900 transition-all select-none shadow-sm cursor-pointer"
-          >
-            {isExpanded ? "Vedi meno" : "Vedi altri metodi"}
-            <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -7,12 +7,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, Tag, ShoppingCart } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ToggleMessage from "@/components/ui/ToggleMessage";
 import { useCart } from "@/context/CartContext";
-import products from "@/db/products.json";
 import { track } from "@/lib/analytics/track";
 import { translateCartCheckoutError, translateCartPromoError } from "@/lib/cartI18n";
 import { getLocalizedProductHref } from "@/lib/productSlugs";
 import type { Product } from "@/lib/shopTypes";
+import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/constants";
 
 function formatEUR(cents: number) {
   const sign = cents < 0 ? "-" : "";
@@ -25,12 +26,23 @@ function formatEUR(cents: number) {
 }
 
 type Totals = {
+  items: CheckoutPricingItem[];
   subtotalCents: number;
   discountCents: number;
   vatCents: number;
   shippingCents: number;
   totalCents: number;
   promotionApplied?: { code: string; percent?: number | null } | null;
+};
+
+type CheckoutPricingItem = {
+  productId: string;
+  variantId: string;
+  unitPriceCents: number;
+  qty: number;
+  lineSubtotalCents: number;
+  lineDiscountCents: number;
+  lineTotalCents: number;
 };
 
 type PromoResult = {
@@ -40,6 +52,63 @@ type PromoResult = {
   freeShipping: boolean;
 };
 
+const cartStatusCopy = {
+  it: {
+    lineReduced: (title: string, qty: number) => `${title} aggiornato a ${qty} per disponibilita limitata.`,
+    lineRemoved: (title: string) => `${title} rimosso dal carrello per esaurimento stock.`,
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `${title}: disponibili solo ${availableQty} pezzi. Aggiunti ${addedQty}.`
+        : `${title}: quantita ridotta per disponibilita limitata.`,
+    addRejected: (title: string) => `${title} non disponibile.`,
+  },
+  en: {
+    lineReduced: (title: string, qty: number) => `${title} updated to ${qty} because of limited stock.`,
+    lineRemoved: (title: string) => `${title} was removed from the cart because it is sold out.`,
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `${title}: only ${availableQty} available. Added ${addedQty}.`
+        : `${title}: quantity reduced because of limited stock.`,
+    addRejected: (title: string) => `${title} is unavailable.`,
+  },
+  de: {
+    lineReduced: (title: string, qty: number) => `${title} wurde wegen begrenztem Bestand auf ${qty} angepasst.`,
+    lineRemoved: (title: string) => `${title} wurde aus dem Warenkorb entfernt, da es ausverkauft ist.`,
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `${title}: nur ${availableQty} verfuegbar. ${addedQty} hinzugefuegt.`
+        : `${title}: Menge wegen begrenztem Bestand reduziert.`,
+    addRejected: (title: string) => `${title} ist nicht verfuegbar.`,
+  },
+  nl: {
+    lineReduced: (title: string, qty: number) => `${title} aangepast naar ${qty} vanwege beperkte voorraad.`,
+    lineRemoved: (title: string) => `${title} is uit de winkelwagen verwijderd omdat het is uitverkocht.`,
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `${title}: nog maar ${availableQty} beschikbaar. ${addedQty} toegevoegd.`
+        : `${title}: aantal verlaagd door beperkte voorraad.`,
+    addRejected: (title: string) => `${title} is niet beschikbaar.`,
+  },
+  da: {
+    lineReduced: (title: string, qty: number) => `${title} blev justeret til ${qty} pga. begraenset lager.`,
+    lineRemoved: (title: string) => `${title} blev fjernet fra kurven, fordi varen er udsolgt.`,
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `${title}: kun ${availableQty} tilbage. ${addedQty} tilfoejet.`
+        : `${title}: antallet blev reduceret pga. begraenset lager.`,
+    addRejected: (title: string) => `${title} er ikke tilgaengelig.`,
+  },
+  no: {
+    lineReduced: (title: string, qty: number) => `${title} ble justert til ${qty} paa grunn av begrenset lager.`,
+    lineRemoved: (title: string) => `${title} ble fjernet fra handlekurven fordi varen er utsolgt.`,
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
+      availableQty != null
+        ? `${title}: bare ${availableQty} tilgjengelig. ${addedQty} lagt til.`
+        : `${title}: antallet ble redusert paa grunn av begrenset lager.`,
+    addRejected: (title: string) => `${title} er ikke tilgjengelig.`,
+  },
+} as const;
+
 function productHref(product: Product | undefined, locale: string) {
   return product ? (getLocalizedProductHref(product, locale) as never) : "/shop";
 }
@@ -48,6 +117,8 @@ export default function CartPageClient() {
   const t = useTranslations("Cart");
   const locale = useLocale();
   const cart = useCart();
+  const { getAvailableQty, refreshAvailability, catalog, lastAvailabilityNotice, clearAvailabilityNotice } = cart;
+  const statusText = cartStatusCopy[(locale as keyof typeof cartStatusCopy)] ?? cartStatusCopy.it;
 
   const [payError, setPayError] = useState<string | null>(null);
   const [payLoading, setPayLoading] = useState(false);
@@ -56,8 +127,11 @@ export default function CartPageClient() {
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoApplied, setPromoApplied] = useState<PromoResult | null>(null);
+  const [cartToast, setCartToast] = useState("");
+  const [cartToastOpen, setCartToastOpen] = useState(false);
 
   const [totals, setTotals] = useState<Totals>({
+    items: [],
     subtotalCents: 0,
     discountCents: 0,
     vatCents: 0,
@@ -65,7 +139,6 @@ export default function CartPageClient() {
     totalCents: 0,
   });
 
-  const catalog = products as unknown as Product[];
   const cartLines = cart.lines;
   const lines = useMemo(() => cartLines ?? [], [cartLines]);
   const empty = lines.length === 0;
@@ -75,13 +148,17 @@ export default function CartPageClient() {
     return catalog.filter((prod) => !inCartIds.includes(prod.id)).slice(0, 3);
   }, [catalog, lines]);
 
-  const remainingForFreeShipping = Math.max(0, 6900 - totals.subtotalCents);
+  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_CENTS - totals.subtotalCents);
 
   const linesCount = lines.length;
   useEffect(() => {
     track({ type: "view_cart", data: { itemsCount: linesCount } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    void refreshAvailability();
+  }, [refreshAvailability]);
 
   const computed = useMemo(() => {
     return lines.map((line) => {
@@ -111,13 +188,41 @@ export default function CartPageClient() {
     });
   }, [catalog, lines, locale, t]);
 
+  const pricingItemsByKey = useMemo(() => {
+    return new Map(
+      totals.items.map((item) => [`${item.productId}:${item.variantId}`, item] as const)
+    );
+  }, [totals.items]);
+
+  useEffect(() => {
+    if (!lastAvailabilityNotice) return;
+    const product = catalog.find((item) => item.id === lastAvailabilityNotice.productId);
+    const variant = product?.variants.find((item) => item.id === lastAvailabilityNotice.variantId);
+    const title = [product?.title, variant?.label].filter(Boolean).join(" - ") || t("common.product_fallback");
+    const message =
+      lastAvailabilityNotice.kind === "removed"
+        ? statusText.lineRemoved(title)
+        : statusText.lineReduced(title, lastAvailabilityNotice.nextQty);
+
+    setCartToast(message);
+    setCartToastOpen(true);
+    clearAvailabilityNotice();
+  }, [catalog, clearAvailabilityNotice, lastAvailabilityNotice, statusText, t]);
+
   useEffect(() => {
     let cancelled = false;
 
     async function refreshTotals() {
       if (lines.length === 0) {
         if (!cancelled) {
-          setTotals({ subtotalCents: 0, discountCents: 0, vatCents: 0, shippingCents: 0, totalCents: 0 });
+          setTotals({
+            items: [],
+            subtotalCents: 0,
+            discountCents: 0,
+            vatCents: 0,
+            shippingCents: 0,
+            totalCents: 0,
+          });
         }
         return;
       }
@@ -140,7 +245,11 @@ export default function CartPageClient() {
 
         const data = (await response.json()) as Totals;
         if (!cancelled) {
+          if (promoApplied?.code && !data.promotionApplied) {
+            setPromoApplied(null);
+          }
           setTotals({
+            items: Array.isArray(data.items) ? data.items : [],
             subtotalCents: Number(data.subtotalCents ?? 0),
             discountCents: Number(data.discountCents ?? 0),
             vatCents: Number(data.vatCents ?? 0),
@@ -168,13 +277,18 @@ export default function CartPageClient() {
     setPromoError(null);
     setPromoApplied(null);
 
-    const subtotalCents = computed.reduce((sum, line) => sum + line.lineTotalCents, 0);
-
     try {
       const response = await fetch("/api/promotions/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, subtotalCents }),
+        body: JSON.stringify({
+          code,
+          items: lines.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId,
+            qty: item.qty,
+          })),
+        }),
       });
       const data = await response.json();
 
@@ -225,6 +339,7 @@ export default function CartPageClient() {
           variantId: item.variantId,
           qty: item.qty,
         })),
+        locale,
       };
       if (promoApplied?.code) {
         orderBody.promotionCode = promoApplied.code;
@@ -262,6 +377,7 @@ export default function CartPageClient() {
 
   return (
     <>
+      <ToggleMessage open={cartToastOpen} message={cartToast} onClose={() => setCartToastOpen(false)} />
       <section className="bg-zinc-50 min-h-[calc(100vh-80px)]" data-testid="cart-page">
         <div className="mx-auto max-w-6xl px-6 pb-24 pt-16 md:pt-20">
           <div className="flex items-end justify-between gap-4">
@@ -372,7 +488,7 @@ export default function CartPageClient() {
 
                             <button
                               type="button"
-                              onClick={() => {
+                              onClick={async () => {
                                 if (!firstVariant) return;
                                 track({
                                   type: "add_to_cart",
@@ -386,7 +502,17 @@ export default function CartPageClient() {
                                   },
                                   cartId: null,
                                 });
-                                cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                                const result = await cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                                const title = [prod.title, firstVariant.label].filter(Boolean).join(" - ");
+                                if (result.status === "rejected") {
+                                  setCartToast(statusText.addRejected(title));
+                                  setCartToastOpen(true);
+                                  return;
+                                }
+                                if (result.status === "adjusted") {
+                                  setCartToast(statusText.addAdjusted(title, result.addedQty, result.availableQty));
+                                  setCartToastOpen(true);
+                                }
                               }}
                               className="mt-3 w-full inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-[11px] font-semibold text-white hover:bg-emerald-700 transition-colors active:scale-95 cursor-pointer shadow-sm"
                             >
@@ -404,137 +530,146 @@ export default function CartPageClient() {
             <div className="mt-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_360px]">
               <div className="flex flex-col gap-5 md:gap-6">
                 {computed.map((line) => (
-                  <div
-                    key={`${line.productId}:${line.variantId}`}
-                    className="flex gap-4 rounded-[5px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_24px_rgba(24,24,27,0.06)] sm:gap-6"
-                  >
-                    <Link
-                      href={line.href}
-                      className="relative h-28 w-24 shrink-0 overflow-hidden rounded-[5px] bg-transparent sm:h-32 sm:w-28"
-                      aria-label={t("page.open_product", { title: line.title })}
-                    >
-                      {line.imageSrc ? (
-                        <Image
-                          src={line.imageSrc}
-                          alt={line.imageAlt}
-                          fill
-                          sizes="(max-width: 640px) 96px, 112px"
-                          className="object-contain p-1"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-transparent" />
-                      )}
-                    </Link>
-
-                    <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <Link href={line.href} className="truncate font-serif text-[17px] text-zinc-900 hover:underline sm:text-xl">
-                            {line.title}
-                          </Link>
-                          {line.subtitle ? (
-                            <div className="mt-1 truncate text-[11px] tracking-[0.18em] text-zinc-500 sm:text-[13px]">
-                              {line.subtitle}
-                            </div>
-                          ) : null}
-                        </div>
-
-                        <div className="text-right">
-                          <div className="text-sm font-medium tracking-[0.08em] text-zinc-900 sm:text-base">
-                            {formatEUR(line.lineTotalCents)}
-                          </div>
-                          <div className="mt-1 text-[10px] text-zinc-400 sm:text-xs sm:text-zinc-500">
-                            {t("common.per_item_with_price", { price: formatEUR(line.unitPriceCents) })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-5 flex items-center justify-between gap-3 sm:mt-6">
-                        <div className="flex h-9 items-center overflow-hidden rounded-[5px] border border-black/10 bg-white shadow-sm sm:h-10">
-                          <button
-                            type="button"
-                            className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 disabled:opacity-30 sm:h-10 sm:w-10 border-r border-black/5"
-                            onClick={() => {
-                              const nextQty = Math.max(1, line.qty - 1);
-                              const delta = nextQty - line.qty;
-
-                              track({
-                                type: "update_cart_quantity",
-                                productKey: line.productId,
-                                variantKey: line.variantId,
-                                data: {
-                                  fromQty: line.qty,
-                                  toQty: nextQty,
-                                  delta,
-                                  unitPriceCents: line.unitPriceCents,
-                                },
-                              });
-
-                              cart.setQty(line.productId, line.variantId, nextQty);
-                            }}
-                            disabled={line.qty <= 1}
-                            aria-label={t("actions.decrease_quantity")}
-                          >
-                            -
-                          </button>
-
-                          <div className="flex h-9 w-10 items-center justify-center bg-transparent text-center text-[13px] font-medium text-zinc-900 sm:h-10 sm:w-12 sm:text-sm">
-                            {line.qty}
-                          </div>
-
-                          <button
-                            type="button"
-                            className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 sm:h-10 sm:w-10 border-l border-black/5"
-                            onClick={() => {
-                              const nextQty = line.qty + 1;
-                              const delta = nextQty - line.qty;
-
-                              track({
-                                type: "update_cart_quantity",
-                                productKey: line.productId,
-                                variantKey: line.variantId,
-                                data: {
-                                  fromQty: line.qty,
-                                  toQty: nextQty,
-                                  delta,
-                                  unitPriceCents: line.unitPriceCents,
-                                },
-                              });
-
-                              cart.setQty(line.productId, line.variantId, nextQty);
-                            }}
-                            aria-label={t("actions.increase_quantity")}
-                          >
-                            +
-                          </button>
-                        </div>
-
-                        <button
-                          type="button"
-                          className="inline-flex shrink-0 items-center gap-2 rounded-[5px] bg-red-50 px-3 py-1.5 text-[10px] font-medium tracking-[0.18em] text-red-600 transition-colors hover:bg-red-100 sm:px-4 sm:py-2 sm:text-[11px]"
-                          onClick={() => {
-                            track({
-                              type: "remove_from_cart",
-                              productKey: line.productId,
-                              variantKey: line.variantId,
-                              data: {
-                                qty: line.qty,
-                                unitPriceCents: line.unitPriceCents,
-                                lineTotalCents: line.lineTotalCents,
-                              },
-                            });
-
-                            cart.remove(line.productId, line.variantId);
-                          }}
-                          aria-label={t("page.remove_from_cart_aria")}
+                  (() => {
+                    const pricingItem = pricingItemsByKey.get(`${line.productId}:${line.variantId}`);
+                    const displayUnitPriceCents = pricingItem?.unitPriceCents ?? line.unitPriceCents;
+                    const displayLineTotalCents = pricingItem?.lineSubtotalCents ?? line.lineTotalCents;
+                    const maxQty = getAvailableQty(line.productId, line.variantId) ?? 99;
+                    return (
+                      <div
+                        key={`${line.productId}:${line.variantId}`}
+                        className="flex gap-4 rounded-[5px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_24px_rgba(24,24,27,0.06)] sm:gap-6"
+                      >
+                        <Link
+                          href={line.href}
+                          className="relative h-28 w-24 shrink-0 overflow-hidden rounded-[5px] bg-transparent sm:h-32 sm:w-28"
+                          aria-label={t("page.open_product", { title: line.title })}
                         >
-                          {t("common.remove")}
-                        </button>
-                      </div>
+                          {line.imageSrc ? (
+                            <Image
+                              src={line.imageSrc}
+                              alt={line.imageAlt}
+                              fill
+                              sizes="(max-width: 640px) 96px, 112px"
+                              className="object-contain p-1"
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-transparent" />
+                          )}
+                        </Link>
 
-                      {!line.valid ? <div className="mt-3 text-xs text-red-600">{t("page.invalid_line")}</div> : null}
-                    </div>
-                  </div>
+                        <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <Link href={line.href} className="truncate font-serif text-[17px] text-zinc-900 hover:underline sm:text-xl">
+                                {line.title}
+                              </Link>
+                              {line.subtitle ? (
+                                <div className="mt-1 truncate text-[11px] tracking-[0.18em] text-zinc-500 sm:text-[13px]">
+                                  {line.subtitle}
+                                </div>
+                              ) : null}
+                            </div>
+
+                            <div className="text-right">
+                              <div className="text-sm font-medium tracking-[0.08em] text-zinc-900 sm:text-base">
+                                {formatEUR(displayLineTotalCents)}
+                              </div>
+                              <div className="mt-1 text-[10px] text-zinc-400 sm:text-xs sm:text-zinc-500">
+                                {t("common.per_item_with_price", { price: formatEUR(displayUnitPriceCents) })}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-5 flex items-center justify-between gap-3 sm:mt-6">
+                            <div className="flex h-9 items-center overflow-hidden rounded-[5px] border border-black/10 bg-white shadow-sm sm:h-10">
+                              <button
+                                type="button"
+                                className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 disabled:opacity-30 sm:h-10 sm:w-10 border-r border-black/5"
+                                onClick={() => {
+                                  const nextQty = Math.max(1, line.qty - 1);
+                                  const delta = nextQty - line.qty;
+
+                                  track({
+                                    type: "update_cart_quantity",
+                                    productKey: line.productId,
+                                    variantKey: line.variantId,
+                                    data: {
+                                      fromQty: line.qty,
+                                      toQty: nextQty,
+                                      delta,
+                                      unitPriceCents: line.unitPriceCents,
+                                    },
+                                  });
+
+                                  cart.setQty(line.productId, line.variantId, nextQty);
+                                }}
+                                disabled={line.qty <= 1}
+                                aria-label={t("actions.decrease_quantity")}
+                              >
+                                -
+                              </button>
+
+                              <div className="flex h-9 w-10 items-center justify-center bg-transparent text-center text-[13px] font-medium text-zinc-900 sm:h-10 sm:w-12 sm:text-sm">
+                                {line.qty}
+                              </div>
+
+                              <button
+                                type="button"
+                                className="h-9 w-9 text-zinc-700 transition-colors hover:bg-black/5 disabled:opacity-30 sm:h-10 sm:w-10 border-l border-black/5"
+                                onClick={() => {
+                                  const nextQty = Math.min(maxQty, line.qty + 1);
+                                  const delta = nextQty - line.qty;
+
+                                  track({
+                                    type: "update_cart_quantity",
+                                    productKey: line.productId,
+                                    variantKey: line.variantId,
+                                    data: {
+                                      fromQty: line.qty,
+                                      toQty: nextQty,
+                                      delta,
+                                      unitPriceCents: line.unitPriceCents,
+                                    },
+                                  });
+
+                                  cart.setQty(line.productId, line.variantId, nextQty);
+                                }}
+                                disabled={line.qty >= maxQty}
+                                aria-label={t("actions.increase_quantity")}
+                              >
+                                +
+                              </button>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="inline-flex shrink-0 items-center gap-2 rounded-[5px] bg-red-50 px-3 py-1.5 text-[10px] font-medium tracking-[0.18em] text-red-600 transition-colors hover:bg-red-100 sm:px-4 sm:py-2 sm:text-[11px]"
+                              onClick={() => {
+                                track({
+                                  type: "remove_from_cart",
+                                  productKey: line.productId,
+                                  variantKey: line.variantId,
+                                  data: {
+                                    qty: line.qty,
+                                    unitPriceCents: line.unitPriceCents,
+                                    lineTotalCents: line.lineTotalCents,
+                                  },
+                                });
+
+                                cart.remove(line.productId, line.variantId);
+                              }}
+                              aria-label={t("page.remove_from_cart_aria")}
+                            >
+                              {t("common.remove")}
+                            </button>
+                          </div>
+
+                          {!line.valid ? <div className="mt-3 text-xs text-red-600">{t("page.invalid_line")}</div> : null}
+                        </div>
+                      </div>
+                    );
+                  })()
                 ))}
 
                 <div className="mt-2 flex items-center justify-between gap-3 px-2 py-2">
@@ -577,7 +712,7 @@ export default function CartPageClient() {
                         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
                           <div 
                             className="h-full bg-emerald-600 transition-all duration-500 ease-out"
-                            style={{ width: `${Math.min(100, (totals.subtotalCents / 6900) * 100)}%` }}
+                            style={{ width: `${Math.min(100, (totals.subtotalCents / FREE_SHIPPING_THRESHOLD_CENTS) * 100)}%` }}
                           />
                         </div>
                       </div>
@@ -652,10 +787,6 @@ export default function CartPageClient() {
                     </div>
                   ) : null}
 
-                  <div className="flex items-center justify-between text-zinc-600">
-                    <span className="text-[13px]">{t("common.vat")}</span>
-                    <span className="text-sm text-zinc-900">{formatEUR(totals.vatCents)}</span>
-                  </div>
 
                   <div className="flex items-center justify-between text-zinc-600">
                     <span className="text-[13px]">{t("common.shipping")}</span>
@@ -731,7 +862,7 @@ export default function CartPageClient() {
                             </div>
                             <button
                               type="button"
-                              onClick={() => {
+                              onClick={async () => {
                                 if (!firstVariant) return;
                                 track({
                                   type: "add_to_cart",
@@ -744,7 +875,17 @@ export default function CartPageClient() {
                                     slug: prod.slug,
                                   },
                                 });
-                                cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                                const result = await cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                                const title = [prod.title, firstVariant.label].filter(Boolean).join(" - ");
+                                if (result.status === "rejected") {
+                                  setCartToast(statusText.addRejected(title));
+                                  setCartToastOpen(true);
+                                  return;
+                                }
+                                if (result.status === "adjusted") {
+                                  setCartToast(statusText.addAdjusted(title, result.addedQty, result.availableQty));
+                                  setCartToastOpen(true);
+                                }
                               }}
                               className="mt-3 inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-xs font-medium tracking-wide text-white transition-colors hover:bg-emerald-700 active:scale-95 cursor-pointer"
                             >

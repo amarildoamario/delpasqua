@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { locales, localizedPathnames, type Locale } from "@/i18n/pathnames";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
-import { getLocalizedBlogSlug, getLocalizedBlogCategorySlug } from "@/lib/blogSlugs";
+import { getLocalizedBlogSlug, getLocalizedBlogCategorySlug, type BlogSlugSource } from "@/lib/blogSlugs";
 import { hasBlogPostTranslation } from "@/lib/blog-data";
 
 const PRODUCTION_SITE_URL = "https://delpasqua.com";
@@ -184,10 +184,10 @@ export function getProductAlternateUrls(product: { id: string; slug?: string | n
   return urls;
 }
 
-export function getBlogAlternateUrls(post: { id: string; slug?: string | null; category?: string | null }) {
+export function getBlogAlternateUrls(post: BlogSlugSource) {
   const urls: Record<string, string> = {};
   for (const locale of locales) {
-    if (!hasBlogPostTranslation(post as any, locale)) continue;
+    if (!hasBlogPostTranslation(post, locale)) continue;
 
     const categorySlug = getLocalizedBlogCategorySlug(post, locale);
     const postSlug = getLocalizedBlogSlug(post, locale);

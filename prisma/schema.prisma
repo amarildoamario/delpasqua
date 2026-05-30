@@ -65,6 +65,7 @@ model Order {
 
   items  OrderItem[]
   events OrderEvent[] // ✅ storico azioni
+  inventoryReservations InventoryReservation[]
 
 
 
@@ -77,6 +78,9 @@ model Order {
   phone         String?
   shippingNotes String?
 
+  promotionCode String?
+
+  @@index([promotionCode, status])
 }
 
 enum OrderStatus {
@@ -323,11 +327,32 @@ model AnalyticsEvent {
 model InventoryItem {
   sku      String @id
   stock    Int
+  reserved Int    @default(0)
+
+  reservations InventoryReservation[]
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
   @@index([stock])
+  @@index([reserved])
+}
+
+model InventoryReservation {
+  id      String @id @default(cuid())
+  orderId String
+  sku     String
+  qty     Int
+
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  inventoryItem InventoryItem @relation(fields: [sku], references: [sku], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([orderId, sku])
+  @@index([orderId])
+  @@index([sku])
 }
 
 

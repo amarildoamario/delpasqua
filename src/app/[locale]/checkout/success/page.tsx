@@ -11,7 +11,7 @@ import ClearCartOnSuccess from "./ClearCartOnSuccess";
 import Footer from "@/components/Footer";
 
 // ✅ aggiunti per fallback immagini
-import products from "@/db/products.json";
+import { readCatalog } from "@/lib/server/catalog";
 import type { Product } from "@/lib/shopTypes";
 
 type OrderWithItems = Prisma.Prisma.OrderGetPayload<{ include: { items: true } }>;
@@ -163,7 +163,7 @@ export default async function CheckoutSuccessPage({
   let orderId = getOne(sp.orderId);
   const sessionId = getOne(sp.session_id);
 
-  const catalog = products as unknown as Product[];
+  const catalog = (await readCatalog()) as unknown as Product[];
 
   // 1) Stripe session (per payment_status e metodo)
   let stripeSession: Stripe.Checkout.Session | null = null;
@@ -438,13 +438,6 @@ export default async function CheckoutSuccessPage({
                         className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-neutral-900 px-4 text-sm font-medium text-white hover:opacity-90"
                       >
                         {t("common.continue_shopping")}
-                      </Link>
-
-                      <Link
-                        href="/orders"
-                        className="inline-flex h-11 w-full items-center justify-center rounded-xl border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
-                      >
-                        I miei ordini
                       </Link>
                     </div>
                   </div>

@@ -1,13 +1,12 @@
+import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
 import { prisma } from "@/lib/server/prisma";
 import { releaseReserved } from "@/lib/server/inventory";
 
 type Args = {
   limit?: number;
-  /** Override per test: se non passato usa 7 giorni */
+  /** Override per test: se non passato usa il TTL ordini condiviso */
   olderThanMinutes?: number;
 };
-
-const PENDING_TTL_MINUTES = 7 * 24 * 60; // ✅ 7 giorni fissi
 
 export async function expirePendingOrders(args: Args = {}) {
   const limit = Number.isFinite(args.limit)
@@ -17,7 +16,7 @@ export async function expirePendingOrders(args: Args = {}) {
   const ttlMinutes =
     Number.isFinite(args.olderThanMinutes) && args.olderThanMinutes! > 0
       ? args.olderThanMinutes!
-      : PENDING_TTL_MINUTES;
+      : ORDER_PENDING_TTL_MINUTES;
 
   const cutoff = new Date(Date.now() - ttlMinutes * 60_000);
 
@@ -25,6 +24,7 @@ export async function expirePendingOrders(args: Args = {}) {
     where: {
       status: "PENDING",
       paidAt: null,
+      stripeCheckoutSessionId: null,
       createdAt: { lt: cutoff },
     },
     orderBy: { createdAt: "asc" },
@@ -44,10 +44,9 @@ export async function expirePendingOrders(args: Args = {}) {
   const expired = await prisma.$transaction(async (tx) => {
     let n = 0;
 
-    for (const o of candidates) {
-      // ricontrollo dentro transazione (race-safe)
+    for (const order of candidates) {
       const fresh = await tx.order.findUnique({
-        where: { id: o.id },
+        where: { id: order.id },
         include: { items: true },
       });
 
@@ -55,25 +54,22 @@ export async function expirePendingOrders(args: Args = {}) {
       if (fresh.status !== "PENDING") continue;
       if (fresh.paidAt) continue;
 
-      // rilascia reserved stock
-      await releaseReserved(
-        tx,
-        fresh.items.map((it) => ({ sku: it.sku, qty: it.qty }))
-      );
+      await releaseReserved(tx, {
+        orderId: fresh.id,
+        lines: fresh.items.map((item) => ({ sku: item.sku, qty: item.qty })),
+      });
 
-      // expire ordine
       await tx.order.update({
         where: { id: fresh.id },
         data: { status: "EXPIRED" },
       });
 
-      // audit event
       await tx.orderEvent.create({
         data: {
           orderId: fresh.id,
           actor: "system",
           type: "ORDER_EXPIRED",
-          message: "Ordine scaduto automaticamente (pending > 7 giorni)",
+          message: `Ordine scaduto automaticamente (pending > ${ttlMinutes} minuti)`,
           fromStatus: "PENDING",
           toStatus: "EXPIRED",
           metaJson: JSON.stringify({

@@ -48,7 +48,10 @@ export async function goToCassa(
     track({ type: "begin_checkout", cartId, data: { linesCount: lines.length } });
     track({ type: "checkout_click", cartId, data: { itemsCount: lines.length } });
 
-    const body: Record<string, unknown> = { items: lines, cartId };
+    const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+    const locale = pathname.startsWith("/en/") ? "en" : "it";
+
+    const body: Record<string, unknown> = { items: lines, cartId, locale };
     if (options?.promotionCode) {
       body.promotionCode = options.promotionCode.trim().toUpperCase();
     }
@@ -67,7 +70,13 @@ export async function goToCassa(
       try {
         const j = await res.json();
         serverMsg = typeof j?.message === "string" ? j.message : "";
-      } catch { }
+      } catch {
+        try {
+          serverMsg = await res.text();
+        } catch {
+          // ignore
+        }
+      }
 
       if (res.status === 409) {
         return { ok: false, message: serverMsg || "Prodotto non disponibile.", status: 409 };
@@ -76,9 +85,9 @@ export async function goToCassa(
       const msg =
         res.status === 429
           ? "Troppe richieste. Riprova tra poco."
-          : res.status === 400
+          : serverMsg || (res.status === 400
             ? "Carrello non valido."
-            : serverMsg || "Errore durante la creazione dell'ordine.";
+            : "Errore durante la creazione dell'ordine.");
 
       return { ok: false, message: msg, status: res.status };
     }

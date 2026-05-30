@@ -31,12 +31,13 @@ export async function GET(req: Request) {
 
   const rows = await prisma.inventoryItem.findMany({
     where: { sku: { in: skus } },
-    select: { sku: true, stock: true },
+    select: { sku: true, stock: true, reserved: true },
   });
 
   for (const r of rows) {
     const stock = Number(r.stock ?? 0);
-    availability[r.sku] = Math.max(0, stock);
+    const reserved = Number(r.reserved ?? 0);
+    availability[r.sku] = Math.max(0, stock - reserved);
   }
 
   return NextResponse.json({ availability }, {

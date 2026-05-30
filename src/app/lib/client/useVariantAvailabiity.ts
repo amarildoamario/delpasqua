@@ -1,17 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
-export function makeSku(productId: string, variantId: string) {
-  return `${productId}:${variantId}`;
-}
+import { makeInventorySku } from "@/lib/inventorySku";
 
 export function useVariantAvailability(productId: string, variantIds: string[]) {
   const [availability, setAvailability] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(false);
 
   const skus = useMemo(
-    () => variantIds.map((vid) => makeSku(productId, vid)),
+    () => variantIds.map((vid) => makeInventorySku(productId, vid)),
     [productId, variantIds]
   );
 

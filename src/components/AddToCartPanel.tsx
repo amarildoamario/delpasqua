@@ -5,7 +5,7 @@ import type { Product } from "@/lib/shopTypes";
 import { useCart } from "@/context/CartContext";
 import { track } from "@/lib/analytics/track";
 import { getOrCreateCartId } from "@/lib/analytics/cartId";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 type Props = {
   product: Product;
@@ -13,6 +13,45 @@ type Props = {
   onVariantIdChange: (id: string) => void;
   available: number;
 };
+
+const addToCartStatusCopy = {
+  it: {
+    adjusted: (availableQty: number | null, addedQty: number) =>
+      availableQty != null
+        ? `Disponibili solo ${availableQty} pezzi. Aggiunti ${addedQty}.`
+        : `Aggiunti ${addedQty}. Quantita ridotta per disponibilita limitata.`,
+  },
+  en: {
+    adjusted: (availableQty: number | null, addedQty: number) =>
+      availableQty != null
+        ? `Only ${availableQty} items available. Added ${addedQty}.`
+        : `Added ${addedQty}. Quantity reduced because of limited availability.`,
+  },
+  de: {
+    adjusted: (availableQty: number | null, addedQty: number) =>
+      availableQty != null
+        ? `Nur ${availableQty} Stueck verfuegbar. ${addedQty} hinzugefuegt.`
+        : `${addedQty} hinzugefuegt. Menge wegen begrenztem Bestand reduziert.`,
+  },
+  nl: {
+    adjusted: (availableQty: number | null, addedQty: number) =>
+      availableQty != null
+        ? `Nog maar ${availableQty} beschikbaar. ${addedQty} toegevoegd.`
+        : `${addedQty} toegevoegd. Aantal verlaagd door beperkte voorraad.`,
+  },
+  da: {
+    adjusted: (availableQty: number | null, addedQty: number) =>
+      availableQty != null
+        ? `Kun ${availableQty} tilbage. ${addedQty} tilfoejet.`
+        : `${addedQty} tilfoejet. Antallet blev reduceret pga. begraenset lager.`,
+  },
+  no: {
+    adjusted: (availableQty: number | null, addedQty: number) =>
+      availableQty != null
+        ? `Bare ${availableQty} tilgjengelig. ${addedQty} lagt til.`
+        : `${addedQty} lagt til. Antallet ble redusert paa grunn av begrenset lager.`,
+  },
+} as const;
 
 function clampInt(n: number, min: number, max: number) {
   const x = Math.trunc(n);
@@ -97,8 +136,11 @@ export default function AddToCartPanel({
   onVariantIdChange,
   available,
 }: Props) {
-  const { add } = useCart();
+  const { add, getLineQty } = useCart();
   const t = useTranslations("Cart");
+  const locale = useLocale();
+  const statusText =
+    addToCartStatusCopy[(locale as keyof typeof addToCartStatusCopy)] ?? addToCartStatusCopy.it;
 
   const defaultVariantId = product.variants[0]?.id ?? "default";
   const [uncontrolledId, setUncontrolledId] = useState(defaultVariantId);
@@ -115,10 +157,11 @@ export default function AddToCartPanel({
     [product.variants, variantId]
   );
 
+  const qtyAlreadyInCart = getLineQty(product.id, variantId);
   const maxQty = useMemo(() => {
-    const n = Number.isFinite(available) ? Math.max(0, Math.trunc(available)) : 0;
+    const n = Number.isFinite(available) ? Math.max(0, Math.trunc(available - qtyAlreadyInCart)) : 0;
     return Math.min(n, 99);
-  }, [available]);
+  }, [available, qtyAlreadyInCart]);
 
   const [qty, setQty] = useState<number>(() => (maxQty > 0 ? 1 : 0));
 
@@ -144,7 +187,7 @@ export default function AddToCartPanel({
     });
   };
 
-  const onAdd = () => {
+  const onAdd = async () => {
     if (maxQty <= 0) {
       showToast(t("panel.out_of_stock_toast"));
       return;
@@ -166,10 +209,18 @@ export default function AddToCartPanel({
       },
     });
 
-    add({ productId: product.id, variantId, qty: safeQty });
+    const result = await add({ productId: product.id, variantId, qty: safeQty });
+    if (result.status === "rejected") {
+      showToast(t("panel.out_of_stock_toast"));
+      return;
+    }
 
     const title = product.title ?? product.slug ?? t("common.product_fallback");
     const vLabel = variant?.label ? ` — ${variant.label}` : "";
+    if (result.status === "adjusted") {
+      showToast(`${title}${vLabel} - ${statusText.adjusted(result.availableQty, result.addedQty)}`);
+      return;
+    }
     showToast(`${title}${vLabel} (x${safeQty})`);
   };
 

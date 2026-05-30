@@ -3,9 +3,9 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import productsRaw from "@/db/products.json";
+import productsStatic from "@/db/products.json";
 import ProductPurchaseBox from "@/app/[locale]/shop/_components/ProductPurchaseBox.client";
 import { getLocalizedProductHref } from "@/lib/productSlugs";
 
@@ -31,7 +31,7 @@ type Product = {
 };
 
 function getProductsList(): Product[] {
-  const raw = productsRaw as unknown as Product[] | { products: Product[] };
+  const raw = productsStatic as unknown as Product[] | { products: Product[] };
   if (Array.isArray(raw)) return raw;
   if (raw && "products" in raw && Array.isArray(raw.products)) return raw.products;
   return [];
@@ -63,14 +63,31 @@ export default function HeroSplitEvo() {
   const tp = useTranslations("Products");
   const locale = useLocale();
 
+  const [catalog, setCatalog] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        if (alive && Array.isArray(data)) {
+          setCatalog(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const evo = useMemo(() => {
-    const list = getProductsList();
+    const list = catalog.length ? catalog : getProductsList();
     return (
       list.find((p) => String(p.slug).toLowerCase() === "evo") ??
       list.find((p) => p.id === "evo") ??
       null
     );
-  }, []);
+  }, [catalog]);
 
   // ✅ stato variante (così anche l’immagine può reagire)
   const [variantId, setVariantId] = useState<string | undefined>(undefined);

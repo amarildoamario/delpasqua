@@ -29,7 +29,14 @@ function getPageParams(path: string) {
   if (path === "/shop") {
     return { priority: "0.9", changefreq: "weekly" };
   }
-  if (path === "/privacy" || path === "/cookie" || path === "/termini") {
+  if (
+    path === "/privacy" ||
+    path === "/cookie" ||
+    path === "/termini" ||
+    path === "/resi" ||
+    path === "/spedizioni" ||
+    path === "/parita-di-genere"
+  ) {
     return { priority: "0.5", changefreq: "monthly" };
   }
   return { priority: "0.7", changefreq: "monthly" };

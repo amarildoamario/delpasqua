@@ -357,7 +357,7 @@
         },
         "info": {
             "shipping": "Gratis verzending bij bestellingen boven €50",
-            "notes": "Prijzen zijn indicatief en exclusief BTW. Neem contact met ons op voor maatwerkbestellingen."
+            "notes": "Prijzen zijn indicatief en inclusief BTW. Neem contact met ons op voor maatwerkbestellingen."
         },
         "filters": {
             "from": "Vanaf "
@@ -1061,7 +1061,7 @@
             "close_toast_aria": "Sluiten",
             "max_qty": "MAX {max}",
             "available": "BESCHIKBAAR",
-            "plus_vat": "+ btw"
+            "plus_vat": "btw incl."
         }
     }
 }

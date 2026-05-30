@@ -4,7 +4,7 @@ import { Link } from "@/i18n/routing";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import styles from "./ShopHighlights.module.css";
-import productsData from "@/db/products.json";
+import productsStatic from "@/db/products.json";
 import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
 import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
@@ -58,8 +58,25 @@ export default function ShopHighlights() {
   const locale = useLocale();
   const copy = SHOP_HIGHLIGHTS_COPY[locale as keyof typeof SHOP_HIGHLIGHTS_COPY] ?? SHOP_HIGHLIGHTS_COPY.en;
 
+  const [catalog, setCatalog] = useState<DbProduct[]>(productsStatic as unknown as DbProduct[]);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        if (alive && Array.isArray(data)) {
+          setCatalog(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const products: HighlightProduct[] = useMemo(() => {
-    const all = (productsData as unknown as DbProduct[]) ?? [];
+    const all = catalog ?? [];
     const bySlug = new Map(all.map((p) => [p.slug, p] as const));
 
     const picked: DbProduct[] = FEATURED_SLUGS.map((s) => bySlug.get(s)).filter(
@@ -115,7 +132,7 @@ export default function ShopHighlights() {
         variantImages: variantImages.length > 1 ? variantImages : undefined,
       };
     });
-  }, [copy.from, copy.price, tp, locale]);
+  }, [copy.from, copy.price, tp, locale, catalog]);
 
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);

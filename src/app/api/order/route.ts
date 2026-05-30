@@ -9,9 +9,9 @@ import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { createOrderEvent } from "@/lib/server/orderEvents";
 import { computeOrderPricing } from "@/lib/server/pricing";
-import { getVatRate } from "@/lib/server/vat";
 import { reserveStockOrThrow } from "@/lib/server/inventory";
 import { computeRiskScore } from "@/lib/server/antiFraud";
+import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -91,12 +91,36 @@ export async function POST(req: Request) {
 
     // create order + items + reserve stock (P0.06)
     const order = await prisma.$transaction(async (tx) => {
-      await reserveStockOrThrow(
-        tx,
-        pricing.items.map((it) => ({ sku: it.sku, qty: it.qty }))
-      );
+      if (pricing.promotionApplied?.code) {
+        const promo = await tx.promotion.findUnique({
+          where: { code: pricing.promotionApplied.code },
+        });
+        if (!promo || !promo.isActive) {
+          throw Object.assign(new Error("Promotion code is no longer active"), { status: 409, code: "PROMO_LIMIT_EXCEEDED" });
+        }
 
-      return tx.order.create({
+        // Lock di riga pessimistico (FOR UPDATE) per impedire ad altre transazioni concorrenti
+        // di leggere e contare gli ordini pending prima del commit di questa transazione.
+        await tx.$executeRaw`
+          SELECT 1 FROM "Promotion"
+          WHERE "code" = ${pricing.promotionApplied.code}
+          FOR UPDATE
+        `;
+
+        const pendingCount = await tx.order.count({
+          where: {
+            promotionCode: promo.code,
+            status: "PENDING",
+          },
+        });
+        if (promo.usageLimit !== null && promo.usageLimit !== undefined) {
+          if (promo.usedCount + pendingCount >= promo.usageLimit) {
+            throw Object.assign(new Error("Promotion code usage limit reached"), { status: 409, code: "PROMO_LIMIT_EXCEEDED" });
+          }
+        }
+      }
+
+      const created = await tx.order.create({
         data: {
           idempotencyKey: idemKey,
           status: "PENDING",
@@ -162,9 +186,17 @@ export async function POST(req: Request) {
           ipAddress,
           userAgent,
           paymentProvider: "stripe",
+          promotionCode: pricing.promotionApplied?.code ?? null,
         },
         include: { items: true },
       });
+
+      await reserveStockOrThrow(tx, {
+        orderId: created.id,
+        lines: created.items.map((it) => ({ sku: it.sku, qty: it.qty })),
+      });
+
+      return created;
     });
 
     await createOrderEvent({
@@ -185,7 +217,6 @@ export async function POST(req: Request) {
 
     // Stripe checkout
     const appUrl = resolveAppUrl(req);
-    const vatRatePct = Math.round(getVatRate() * 100);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
       ...order.items.map((it) => ({
@@ -200,21 +231,7 @@ export async function POST(req: Request) {
         },
       })),
     ];
-
-    // IVA as a separate line item
-    if (order.vatCents > 0) {
-      lineItems.push({
-        quantity: 1,
-        price_data: {
-          currency: "eur",
-          unit_amount: order.vatCents,
-          product_data: {
-            name: `IVA ${vatRatePct}%`,
-            description: "Imposta sul valore aggiunto",
-          },
-        },
-      });
-    }
+    // IVA non viene aggiunta come riga separata poiché è già inclusa nei prezzi dei singoli prodotti.
 
     const traceId = randomUUID();
 
@@ -236,7 +253,7 @@ export async function POST(req: Request) {
 
     const sessionResp = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
+      expires_at: Math.floor(Date.now() / 1000) + ORDER_PENDING_TTL_MINUTES * 60,
       ...(order.email ? { customer_email: order.email } : {}),
       shipping_address_collection: { allowed_countries: ["IT"] },
       phone_number_collection: { enabled: true },
@@ -253,8 +270,8 @@ export async function POST(req: Request) {
           },
         },
       ],
-      success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/checkout/cancel?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/cancel/?session_id={CHECKOUT_SESSION_ID}`,
       client_reference_id: order.id,
       metadata: {
         orderId: order.id,

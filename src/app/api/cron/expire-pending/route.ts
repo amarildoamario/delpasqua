@@ -2,10 +2,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
 import { expirePendingOrders } from "@/lib/server/expirePending";
 import { CronExpirePendingQuerySchema } from "@/lib/server/schemas";
 
-const DEFAULT_MINUTES = 7 * 24 * 60; // 7 giorni
+const DEFAULT_MINUTES = ORDER_PENDING_TTL_MINUTES;
 
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization");

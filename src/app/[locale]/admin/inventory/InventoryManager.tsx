@@ -2,9 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { adminFetch } from "@/lib/client/adminFetch";
-
-
-
+import { makeInventorySku } from "@/lib/inventorySku";
 
 type InventoryMap = Record<
   string,
@@ -27,10 +25,6 @@ type Product = {
   category?: string;
   variants: Variant[];
 };
-
-function makeSku(productId: string, variantId: string) {
-  return `${productId}:${variantId}`;
-}
 
 function isNumberLike(s: string) {
   return /^-?\d+$/.test(s.trim());
@@ -61,7 +55,7 @@ export default function InventoryManager({
 
     for (const p of initialCatalog || []) {
       for (const v of p.variants || []) {
-        const sku = makeSku(p.id, v.id);
+        const sku = makeInventorySku(p.id, v.id);
         out.push({
           productId: p.id,
           productTitle: p.title || p.id,

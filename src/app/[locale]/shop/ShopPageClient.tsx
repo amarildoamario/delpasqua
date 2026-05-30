@@ -5,6 +5,7 @@ import ProductCard, { ProductCardProduct } from "@/components/ProductCard";
 import { track } from "@/lib/analytics/track";
 import Footer from "@/components/Footer";
 import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 type ApiProduct = {
   id: string;
@@ -14,13 +15,20 @@ type ApiProduct = {
   badge?: string | null;
   imageSrc?: string | null;
   imageAlt?: string | null;
-  variants?: { id?: string; priceCents: number; imageSrc?: string | null; imageAlt?: string | null }[] | null;
+  variants?: {
+    id?: string;
+    label?: string | null;
+    priceCents: number;
+    imageSrc?: string | null;
+    imageAlt?: string | null;
+  }[] | null;
   category?: string | null;
 };
 
 type ShopFilterId = "all" | "fruttato" | "aromatico" | "evo" | "vino" | "box";
 
 type ShopProduct = ProductCardProduct & {
+  cardKey: string;
   category?: string;
   filterTags: ShopFilterId[];
 };
@@ -138,56 +146,61 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
   const products = useMemo<ShopProduct[]>(() => {
     const data: ApiProduct[] = initialProducts.filter(isApiProduct);
 
-    return data.map((p) => {
+    return data.flatMap((p): ShopProduct[] => {
       const title = tp(`${p.id}.title`) || p.title;
       const subtitle = tp(`${p.id}.subtitle`) || p.subtitle || "";
       const badge = tp(`${p.id}.badge`) || p.badge || "";
-      const prices = (p.variants ?? [])
-        .map((variant) => variant?.priceCents)
-        .filter((price): price is number => typeof price === "number");
-      const minPriceCents = prices.length > 0 ? Math.min(...prices) : null;
-      const hasManyVariants = prices.length > 1;
+      const filterTags = inferFilterTags(p);
+      const variants = (p.variants ?? []).filter(
+        (variant): variant is NonNullable<ApiProduct["variants"]>[number] & { id: string } =>
+          typeof variant?.id === "string" && variant.id.length > 0
+      );
 
-      // Build variant images list (one per variant with a unique image)
-      const seenSrcs = new Set<string>();
-      const variantImages = (p.variants ?? [])
-        .filter((v): v is typeof v & { id: string } => typeof v.id === "string" && !!v.imageSrc)
-        .filter((v) => {
-          if (seenSrcs.has(v.imageSrc!)) return false;
-          seenSrcs.add(v.imageSrc!);
-          return true;
-        })
-        .map((v) => ({
-          variantId: v.id,
-          imageSrc: v.imageSrc!,
-          imageAlt: v.imageAlt ?? p.imageAlt ?? "",
-        }));
+      if (variants.length === 0) {
+        return [{
+          cardKey: `${p.id}::default`,
+          id: p.id,
+          slug: p.slug,
+          title,
+          subtitle,
+          badge,
+          imageSrc: p.imageSrc ?? "",
+          imageAlt: p.imageAlt ?? "",
+          priceLabel: "",
+          priceCaption: copy.price,
+          priceCents: undefined,
+          defaultVariantId: undefined,
+          variantLabel: undefined,
+          category: p.category ?? "all",
+          filterTags,
+          variantsCount: 1,
+        }];
+      }
 
-      return {
-        id: p.id,
-        slug: p.slug,
-        title,
-        subtitle,
-        badge,
-        imageSrc: p.imageSrc ?? "",
-        imageAlt: p.imageAlt ?? "",
-        priceLabel:
-          typeof minPriceCents === "number"
-            ? `${new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
-              style: "currency",
-              currency: "EUR",
-            }).format(minPriceCents / 100)}`
-            : "",
-        priceCaption: hasManyVariants
-          ? copy.from
-          : copy.price,
-        priceCents: typeof minPriceCents === "number" ? minPriceCents : undefined,
-        defaultVariantId: p.variants?.[0]?.id,
-        category: p.category ?? "all",
-        filterTags: inferFilterTags(p),
-        variantsCount: p.variants?.length ?? 1,
-        variantImages: variantImages.length > 1 ? variantImages : undefined,
-      };
+      return variants.map((variant) => {
+        const variantLabel = variant.label?.trim() || variant.id;
+        return {
+          cardKey: `${p.id}::${variant.id}`,
+          id: p.id,
+          slug: p.slug,
+          title,
+          subtitle,
+          badge,
+          imageSrc: variant.imageSrc ?? p.imageSrc ?? "",
+          imageAlt: variant.imageAlt ?? p.imageAlt ?? "",
+          priceLabel: new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
+            style: "currency",
+            currency: "EUR",
+          }).format(variant.priceCents / 100),
+          priceCaption: copy.price,
+          priceCents: variant.priceCents,
+          defaultVariantId: variant.id,
+          variantLabel,
+          category: p.category ?? "all",
+          filterTags,
+          variantsCount: 1,
+        };
+      });
     });
   }, [copy, initialProducts, locale, tp]);
 
@@ -205,7 +218,11 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
       type: "view_item_list",
       data: {
         listId: "shop",
-        itemsShown: products.map((p) => ({ productKey: p.id, slug: p.slug })),
+        itemsShown: products.map((p) => ({
+          productKey: p.id,
+          variantKey: p.defaultVariantId ?? null,
+          slug: p.slug,
+        })),
         itemsCount: products.length,
       },
     });
@@ -236,7 +253,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
     track({
       type: "product_click",
       productKey: product.id,
-      variantKey: null,
+      variantKey: product.defaultVariantId ?? null,
       data: { slug: product.slug },
     });
   }, []);
@@ -245,6 +262,13 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
     <>
       <section className="min-h-screen bg-[#fdfaf7]">
         <div className="mx-auto max-w-[1440px] px-6 py-20 lg:py-28">
+          {/* Breadcrumb sottile */}
+          <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+            <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
+            <span className="text-[#D6D3D1]">/</span>
+            <span className="text-[#57534E]">{t("header.label") || "Shop"}</span>
+          </nav>
+
           {/* Header */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -277,7 +301,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
           {/* Grid prodotti - Altezza uniforme */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
             {filteredProducts.map((product) => (
-              <div key={product.id} className="flex h-full">
+              <div key={product.cardKey} className="flex h-full">
                 <ProductCard
                   product={product}
                   onClick={() => handleProductClick(product)}

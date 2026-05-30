@@ -28,6 +28,11 @@ export const CheckoutSchema = z.object({
   promotionCode: z.string().trim().min(2).max(40).optional(),
 });
 
+export const PromotionValidateSchema = z.object({
+  code: z.string().trim().min(2).max(40),
+  items: z.array(CartLineSchema).min(1).max(50),
+});
+
 // ✅ customer non più obbligatorio (Stripe Checkout lo raccoglie)
 export const CustomerSchema = z
   .object({
@@ -64,6 +69,7 @@ export const CreateOrderSchema = z.object({
   items: z.array(CartLineSchema).min(1).max(50),
   customer: CustomerSchema, // ✅ ora opzionale
   promotionCode: z.string().trim().min(2).max(40).optional(),
+  locale: z.string().optional(),
 });
 
 /**

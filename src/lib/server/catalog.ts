@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { makeInventorySku } from "@/lib/inventorySku";
 
 // IMPORTANT:
 // Do NOT `import products from "@/db/products.json"` in runtime code.
@@ -32,6 +33,7 @@ export type CatalogProduct = {
   specs?: unknown;
 
   variants: CatalogVariant[];
+  excludeFromSeo?: boolean;
 
   // campi extra presenti nel JSON (non tipizzati)
   [k: string]: unknown;
@@ -76,5 +78,5 @@ export async function writeCatalog(nextCatalog: CatalogProduct[]) {
 
 // Internal SKU used by the inventory table
 export function makeInternalSku(productId: string, variantId: string) {
-  return `${productId}:${variantId}`;
+  return makeInventorySku(productId, variantId);
 }

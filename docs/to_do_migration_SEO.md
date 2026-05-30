@@ -3,6 +3,19 @@ DELPASQUA.COM — TO-DO LIST ROUTING PRINCIPALE WORDPRESS -> VERCEL
 Obiettivo:
 spuntare ogni voce prima di collegare definitivamente delpasqua.com al progetto Vercel.
 
+Aggiornamento Search Console del 2026-05-29:
+- Dalla lista "Ultima scansione" condivisa il 2026-05-29 risulta che Google ha ancora scansionato di recente:
+  - URL core corrette: `/`, `/il-nostro-olio/`, `/shop/`, `/contatti/`, `/produzione/`, `/storia/`, `/acquista/`
+  - URL inglesi legacy/di transizione: `/en/storia/`, `/en/il-nostro-olio/`, `/en/produzione/`, `/en/contatti/`, `/en/acquista/`, `/en/privacy-policy/`, `/en/condizioni-generali-di-vendita/`
+  - URL WordPress legacy prodotto: `/product/...`, `/en/product/...`
+  - URL WordPress legacy portfolio/tag/category: `/portfolio-item/...`, `/en/portfolio-item/...`, `/portfolio-tag/...`, `/product-category/...`, `/en/portfolio-category/...`
+  - URL parametrica legacy: `/shop/?add-to-cart=12018`
+  - Asset PDF pubblico: `/wp-content/uploads/2025/03/Politica-Parita-di-Genere-Frantoio-Del-Pasqua-gen-20251.pdf`
+- Interpretazione:
+  - le scansioni tra il 5 aprile 2026 e il 21 maggio 2026 confermano che Google sta ancora seguendo parecchi segnali legacy WordPress
+  - per molte di queste URL e` normale vedere nuove scansioni se i redirect 301 sono presenti
+  - dove la URL legacy non e` desiderata, il focus non e` bloccare la scansione ma garantire `301`, canonical coerente, assenza dalla sitemap e nessuna linkatura interna
+
 ────────────────────────────────────
 1. ROUTING ITALIANO PRINCIPALE
 ────────────────────────────────────
@@ -85,12 +98,12 @@ https://delpasqua.com/shop/
 [x] Se /acquista/ è autonoma, verificare canonical:
 https://delpasqua.com/acquista/
 
-[ ] Se /acquista/ è duplicata dello shop, impostare canonical:
+[x] Se /acquista/ è duplicata dello shop, impostare canonical: (Saltato - autonoma)
 https://delpasqua.com/shop/
 
 [x] Se /acquista/ è autonoma e utile, inserirla in sitemap.xml
 
-[ ] Se /acquista/ è duplicata, non inserirla in sitemap.xml
+[x] Se /acquista/ è duplicata, non inserirla in sitemap.xml (Saltato - autonoma)
 
 [x] Creare route Vercel per /contatti/
 
@@ -632,7 +645,7 @@ https://delpasqua.com
 
 La fase routing principale è completata quando:
 
-[ ] Tutte le vecchie URL WordPress core rispondono 200 sul nuovo Vercel
+[x] Tutte le vecchie URL WordPress core rispondono 200 sul nuovo Vercel (Verificato con successo tramite SEO Suite Report)
 
 [x] Le URL finali combaciano con quelle WordPress
     (Nota: URL core allineate a delpasqua.com; title e H1 non sono una copia letterale del WordPress attuale)

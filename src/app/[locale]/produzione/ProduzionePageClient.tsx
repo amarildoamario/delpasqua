@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useMemo, useRef } from "react";
+import { Link } from "@/i18n/routing";
 
 const FRANTOIO_IMAGES = {
   // hero
@@ -152,6 +153,13 @@ export default function ProduzionePageClient() {
               
               {/* Left Column Content */}
               <div className="order-2 lg:order-1 flex flex-col justify-center">
+                {/* Breadcrumb sottile */}
+                <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+                  <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
+                  <span className="text-[#D6D3D1]">/</span>
+                  <span className="text-[#57534E]">{t("hero.label")}</span>
+                </nav>
+
                 <div className="inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.25em] text-[#8B7355] uppercase mb-6">
                   <span className="h-px w-8 bg-[#8B7355]" />
                   {t("hero.label")}

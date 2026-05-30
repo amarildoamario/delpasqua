@@ -351,7 +351,7 @@
         },
         "info": {
             "shipping": "Spedizione gratuita per ordini superiori a €50",
-            "notes": "I prezzi sono indicativi e non includono IVA. Contattaci per ordini personalizzati."
+            "notes": "I prezzi sono indicativi e comprensivi di IVA. Contattaci per ordini personalizzati."
         },
         "filters": {
             "from": "Da "
@@ -1056,7 +1056,7 @@
             "close_toast_aria": "Chiudi",
             "max_qty": "MAX {max}",
             "available": "DISPONIBILE",
-            "plus_vat": "+ IVA"
+            "plus_vat": "IVA incl."
         }
     }
 }

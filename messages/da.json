@@ -192,7 +192,8 @@
                 "rights": "© {year} Az. Agr. Del Pasqua — Alle rettigheder forbeholdes.",
                 "back_to_top": "Tilbage til toppen",
                 "powered_by": "Powered by Modern Tech",
-                "secure_payments": "Sikker betaling"
+                "secure_payments": "Sikker betaling",
+                "legal_office": "Registreret kontor"
             }
         }
     },
@@ -356,7 +357,7 @@
         },
         "info": {
             "shipping": "Gratis fragt ved køb over 50 €",
-            "notes": "Priserne er vejledende og ekskl. moms. Kontakt os for specialønsker."
+            "notes": "Priserne er vejledende og inkl. moms. Kontakt os for specialønsker."
         },
         "filters": {
             "from": "Fra "
@@ -1061,7 +1062,7 @@
             "close_toast_aria": "Luk",
             "max_qty": "MAX {max}",
             "available": "TILGÆNGELIG",
-            "plus_vat": "+ moms"
+            "plus_vat": "moms inkl."
         }
     }
 }

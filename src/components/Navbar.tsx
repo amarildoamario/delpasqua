@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
 import "./Navbar-Styles.css";
 
 import CartButton from "@/components/CartButton";
-import productsRaw from "@/db/products.json";
+import productsStatic from "@/db/products.json";
 import {
   Sheet,
   SheetClose,
@@ -21,8 +21,6 @@ import { Link as LocaleLink, routing, usePathname } from "@/i18n/routing";
 import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
 import { mockBlogPosts } from "@/lib/blog-data";
 import { findBlogPostBySlug, getLocalizedBlogHref, findCategoryNameBySlug, normalizeBlogSlug } from "@/lib/blogSlugs";
-import { BLOG_POST_TRANSLATIONS } from "@/lib/blogTranslationsData";
-import type { Locale as BlogLocale } from "@/lib/blogTranslationsData";
 import { cn } from "@/lib/utils";
 import {
   ArrowUpRight,
@@ -127,7 +125,22 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
-  const catalog = useMemo(() => productsRaw as Array<{ id: string; slug?: string }>, []);
+  const [catalog, setCatalog] = useState<Array<{ id: string; slug?: string }>>(productsStatic);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        if (alive && Array.isArray(data)) {
+          setCatalog(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
   // All localized variants of the "category" path segment, from pathnames.ts
   // it: "categoria", en: "category", de: "kategorie", nl: "categorie", da/no: "kategori"
   const BLOG_CATEGORY_SEGMENTS = new Set(["category", "categoria", "kategorie", "categorie", "kategori"]);

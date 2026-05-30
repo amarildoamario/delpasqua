@@ -3,8 +3,7 @@ export function getVatRate() {
   return Number.isFinite(r) && r >= 0 ? r : 0.04;
 }
 
-// IVA ESCLUSA: VAT = subtotal * rate
-export function calcVatCentsFromSubtotal(subtotalCents: number) {
-  const rate = getVatRate();
-  return Math.round(subtotalCents * rate);
+// IVA INCLUSA: scorporo dell'IVA incorporata nel prezzo subtotale
+export function calcVatCentsFromSubtotal(subtotalCents: number, rate = getVatRate()) {
+  return Math.round((subtotalCents * rate) / (1 + rate));
 }

@@ -13,7 +13,8 @@ import HomeTastingsFeature from "@/components/HomeTastingsFeature";
 import HomeTrustAndReviews from "@/components/HomeTrustAndReviews";
 import HomeUniqueness from "@/components/HomeUniqueness";
 import ShopHighlights from "@/components/ShopHighlights";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, SITE_URL } from "@/lib/seo";
+import { companyInfo } from "@/lib/companyInfo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -29,7 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+
   // Read gallery images dynamically from public/home_gallery at build/request time
   let galleryImages: string[] = [];
   try {
@@ -43,8 +46,40 @@ export default function Home() {
     console.error("Error reading home_gallery directory:", error);
   }
 
+  const storeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": companyInfo.brandName,
+    "image": `${SITE_URL}/products/EVO-750-ml-gpt.png`,
+    "@id": `${SITE_URL}/${locale === "it" ? "" : locale + "/"}#store`,
+    "url": `${SITE_URL}/${locale === "it" ? "" : locale + "/"}`,
+    "telephone": companyInfo.phone,
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": companyInfo.postalAddress.streetAddress,
+      "addressLocality": companyInfo.postalAddress.addressLocality,
+      "addressRegion": companyInfo.postalAddress.addressRegion,
+      "postalCode": companyInfo.postalAddress.postalCode,
+      "addressCountry": companyInfo.postalAddress.addressCountry,
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": companyInfo.geo.latitude,
+      "longitude": companyInfo.geo.longitude,
+    },
+    "sameAs": [
+      "https://www.facebook.com/frantoiodelpasqua",
+      "https://www.instagram.com/frantoiodelpasqua"
+    ]
+  };
+
   return (
     <div className="bg-zinc-50 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
+      />
       <HeroCarousel />
       <ShopHighlights />
       <HomeAboutFamily />

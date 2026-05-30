@@ -6,7 +6,8 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { companyInfo } from "@/lib/companyInfo";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
+import { Link } from "@/i18n/routing";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -26,6 +27,35 @@ export const dynamic = "force-dynamic";
 export default async function DegustazioniPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "TastingsPage" });
+
+  const labelMap: Record<string, string> = {
+    it: "Degustazioni",
+    en: "Tastings",
+    de: "Verkostungen",
+    nl: "Proeverijen",
+    da: "Smagninger",
+    no: "Smakinger",
+  };
+  const pageLabel = labelMap[locale] ?? "Degustazioni";
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": absoluteUrl(localizedPath("/", locale))
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": pageLabel,
+        "item": absoluteUrl(localizedPath("/degustazioni", locale))
+      }
+    ]
+  };
 
   const rawTypes = getTastingTypes();
   const types = rawTypes.map((type) => ({
@@ -62,6 +92,10 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <main className="bg-[#FDFCF8] min-h-screen">
         {/* Hero Section */}
         <section className="relative overflow-hidden">
@@ -72,6 +106,13 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#B8860B]/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
 
           <div className="relative mx-auto max-w-7xl px-6 py-20 lg:py-28">
+            {/* Breadcrumb sottile */}
+            <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+              <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
+              <span className="text-[#D6D3D1]">/</span>
+              <span className="text-[#57534E]">{pageLabel}</span>
+            </nav>
+
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
                 <span className="h-px w-6 bg-[#8B7355]" />
@@ -388,30 +429,6 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
               }}
             />
 
-            {/* Breadcrumb Schema Markup per la gerarchia del sito */}
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  "@context": "https://schema.org",
-                  "@type": "BreadcrumbList",
-                  "itemListElement": [
-                    {
-                      "@type": "ListItem",
-                      "position": 1,
-                      "name": "Home",
-                      "item": "https://www.delpasqua.com/"
-                    },
-                    {
-                      "@type": "ListItem",
-                      "position": 2,
-                      "name": "Degustazioni",
-                      "item": "https://www.delpasqua.com/degustazioni"
-                    }
-                  ]
-                })
-              }}
-            />
           </div>
         </section>
       </main>

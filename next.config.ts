@@ -68,7 +68,7 @@ const nextConfig: any = {
   // toglie "X-Powered-By: Next.js"
   poweredByHeader: false,
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 
   images: {
@@ -103,22 +103,22 @@ const nextConfig: any = {
       // INTERVENTO 1: Redirect Categoria Vino (WordPress -> Vercel)
       {
         source: "/portfolio-category/wine",
-        destination: "/shop/vino/",
+        destination: "/shop/vino-vittoria/",
         permanent: true,
       },
       {
         source: "/portfolio-category/wine/",
-        destination: "/shop/vino/",
+        destination: "/shop/vino-vittoria/",
         permanent: true,
       },
       {
         source: "/en/portfolio-category/wine",
-        destination: "/en/shop/vino/",
+        destination: "/en/shop/vino-vittoria/",
         permanent: true,
       },
       {
         source: "/en/portfolio-category/wine/",
-        destination: "/en/shop/vino/",
+        destination: "/en/shop/vino-vittoria/",
         permanent: true,
       },
 
