@@ -304,14 +304,18 @@ export async function requireAdminPage(_nextPathWithSearch: string) {
 
   const rotated = await rotateSessionIfNeeded(session);
   if (rotated) {
-    c.set(ADMIN_SESSION_COOKIE, rotated.token, {
-      ...cookieOptions(),
-      maxAge: SESSION_TTL_SECONDS,
-    });
-    c.set(ADMIN_CSRF_COOKIE, rotated.csrf, {
-      ...csrfCookieOptions(),
-      maxAge: SESSION_TTL_SECONDS,
-    });
+    try {
+      c.set(ADMIN_SESSION_COOKIE, rotated.token, {
+        ...cookieOptions(),
+        maxAge: SESSION_TTL_SECONDS,
+      });
+      c.set(ADMIN_CSRF_COOKIE, rotated.csrf, {
+        ...csrfCookieOptions(),
+        maxAge: SESSION_TTL_SECONDS,
+      });
+    } catch (e) {
+      console.warn("[ADMIN AUTH] could not set rotated cookie during page render, ignoring:", e);
+    }
   }
 
   return { ok: true as const, session };

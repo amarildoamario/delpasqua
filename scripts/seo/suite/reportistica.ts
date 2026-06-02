@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: reportistica.ts (ex reporting.ts)
+ * SCOPO: Gestisce la reportistica finale della suite SEO,
+ *        identificando blocker critici e formattando il testo per il report finale.
+ * UTILIZZO: Importato ed eseguito dal runner principale `avvia-suite-seo.ts`.
+ */
+
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
@@ -7,7 +14,7 @@ import {
   ANTI_VERCEL_TOKENS,
   LEGACY_301_REDIRECTS,
   OUTCOME_DETAIL_LIMIT,
-} from "./constants";
+} from "./costanti";
 import type {
   TaskResult,
   TaskSummary,
@@ -15,14 +22,14 @@ import type {
   UrlClassification,
   MigrationOutcome,
   MigrationClassification,
-} from "./types";
+} from "./tipi";
 import {
   TaskRecorder,
   divider,
   timestamp,
   globalUrlOutcomes,
   normalizePath,
-} from "./utils";
+} from "./utilita";
 
 function resultById(results: TaskResult[], id: string) {
   return results.find((result) => result.id === id);

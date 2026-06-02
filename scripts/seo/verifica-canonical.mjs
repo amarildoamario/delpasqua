@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: verifica-canonical.mjs (ex audit-canonical.mjs)
+ * SCOPO: Analizza le pagine indicate nelle sitemap locali e valida che il tag canonical
+ *        sia unico, assoluto, coerente con la lingua della pagina e con trailing slash corretti.
+ * UTILIZZO: npm run seo:audit-canonical o node scripts/verifica-canonical.mjs
+ */
+
 import { URL } from "url";
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
@@ -22,7 +29,6 @@ async function run() {
 
   const fetchHeaders = {
     "Connection": "close",
-    "User-Agent": "Mozilla/5.0 (compatible; CanonicalAudit/1.0)",
   };
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

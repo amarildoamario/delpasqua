@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: utilita.ts (ex utils.ts)
+ * SCOPO: Fornisce funzioni di supporto riusabili e un client HTTP resiliente con retry,
+ *        usati per la scansione delle sitemap, le richieste HTTP e il tracciamento dei redirect.
+ * UTILIZZO: Importato dai vari moduli della suite SEO (verifiche.ts, costanti.ts, reportistica.ts).
+ */
+
 import fs from "node:fs/promises";
 
 import {
@@ -14,7 +21,7 @@ import {
   TECHNICAL_PATH_SEGMENTS,
   TECHNICAL_ROUTES,
   REPORT_FILE,
-} from "./constants";
+} from "./costanti";
 import type {
   TaskStatus,
   TaskResult,
@@ -24,7 +31,7 @@ import type {
   UrlOutcomeInput,
   UrlOutcome,
   Environment,
-} from "./types";
+} from "./tipi";
 
 export class TaskRecorder {
   readonly lines: string[] = [];

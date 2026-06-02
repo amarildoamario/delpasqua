@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: verifica-rotte-noindex.mjs (ex audit-technical-noindex-routes.mjs)
+ * SCOPO: Verifica che le rotte tecniche (carrello, checkout, area account) siano escluse
+ *        dalle sitemap, abbiano il tag meta `noindex` attivo e siano prive di tag canonical/hreflang/og:url.
+ * UTILIZZO: npm run seo:audit-noindex o node scripts/verifica-rotte-noindex.mjs
+ */
+
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 const TECHNICAL_ROUTES = [
@@ -23,7 +30,6 @@ const TECHNICAL_ROUTES = [
 ];
 
 const FETCH_HEADERS = {
-  "User-Agent": "Mozilla/5.0 (compatible; TechnicalNoindexAudit/1.0)",
   Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 };
 

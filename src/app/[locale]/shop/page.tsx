@@ -58,6 +58,7 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
     variants: product.variants?.map((variant) => ({
       id: variant.id,
       label: variant.label ?? null,
+      title: variant.title ?? null,
       priceCents: Number(variant.priceCents ?? 0),
       imageSrc: variant.imageSrc ?? null,
       imageAlt: variant.imageAlt ?? null,

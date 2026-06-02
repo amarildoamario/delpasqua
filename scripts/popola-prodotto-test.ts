@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: popola-prodotto-test.ts (ex seed-test-product.ts)
+ * SCOPO: Popola il database Prisma/Postgres inserendo o ripristinando a 1000 unità
+ *        lo stock del prodotto di test SKU `prodotto-test:standard` per le simulazioni di checkout.
+ * UTILIZZO: npx tsx scripts/popola-prodotto-test.ts
+ */
+
 import * as dotenv from "dotenv";
 import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";

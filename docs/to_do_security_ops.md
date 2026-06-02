@@ -108,7 +108,7 @@ Stato parziale:
 Problema:
 - `src/app/api/tasting/book/route.ts` logga email, slot e altri dettagli.
 - `src/app/api/order/route.ts:175` mette `ipAddress` e `userAgent` negli eventi ordine.
-- [RISOLTO] `src/app/api/contact/route.ts` invia IP e UA nella mail admin.
+- [✅ RISOLTO] `src/app/api/contact/route.ts` invia IP e UA nella mail admin.
 
 Impatto:
 - PII dispersa in log/eventi/email.
@@ -125,7 +125,7 @@ Stato parziale:
 - Risolto per la route contatti il 2026-05-30: Sostituiti tutti i messaggi d'errore tecnici e di configurazione inviati al client con risposte generiche, mantenendo log di errore dettagliati esclusivamente sul lato server.
 
 Problema:
-- [RISOLTO] Contact route ritorna messaggi env mancanti al browser.
+- [✅ RISOLTO] Contact route ritorna messaggi env mancanti al browser.
 - Tasting booking ritorna messaggi di errore interni in alcuni catch.
 
 Impatto:

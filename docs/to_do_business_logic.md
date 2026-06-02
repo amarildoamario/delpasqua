@@ -7,7 +7,7 @@ Legenda priorita:
 - P1 = incoerenza operativa che puo creare errori o costi manuali.
 - P2 = debito tecnico/UX che puo diventare bug.
 
-## [RISOLTO] P0 - Quantita carrello non vincolata allo stock
+## [✅ RISOLTO] P0 - Quantita carrello non vincolata allo stock
 
 Problema:
 - La PDP limitava la quantita allo stock, ma il carrello tornava a un limite generico di 99.
@@ -35,7 +35,7 @@ Fix richiesto:
 - `CartContext.add` deve clampare la quantita totale esistente + nuova alla disponibilita nota.
 - Il server resta fonte di verita: la UI non deve sostituire il controllo server.
 
-## [RISOLTO] P0 - Anti-oversell non realmente risolto
+## [✅ RISOLTO] P0 - Anti-oversell non realmente risolto
 
 Problema:
 - `reserveStockOrThrow` controllava ma non riservava davvero lo stock.
@@ -64,7 +64,7 @@ Fix richiesto:
 - In cancel/expired/failed: liberare reserved.
 - Aggiungere test di concorrenza: due ordini simultanei sull'ultima unita.
 
-## [RISOLTO] P0 - Stato PAID manuale non applica invarianti di pagamento
+## [✅ RISOLTO] P0 - Stato PAID manuale non applica invarianti di pagamento
 
 Problema:
 - `src/app/api/admin/orders/[id]/status/route.ts` permetteva il passaggio admin a `PAID`.
@@ -88,7 +88,7 @@ Fix richiesto:
 - Separare "mark paid manually" in un servizio server unico con gli stessi invarianti del webhook.
 - Oppure vietare `PENDING -> PAID` manuale e introdurre una procedura esplicita con conferma doppia.
 
-## [RISOLTO] P0 - Promozioni non atomiche rispetto a usageLimit
+## [✅ RISOLTO] P0 - Promozioni non atomiche rispetto a usageLimit
 
 Stato:
 - Risolto il 2026-05-30. Introdotta una transazione DB con lock pessimistico `FOR UPDATE` in `src/app/api/order/route.ts` per controllare e incrementare in modo atomico l'utilizzo del coupon (`usedCount`), garantendo che il limite promozionale (`usageLimit`) venga rispettato in modo rigoroso e prevenendo sottomissioni concorrenti non autorizzate.
@@ -106,7 +106,7 @@ Fix richiesto:
 - Prenotare l'uso promo a creazione ordine, con rilascio su expire/cancel.
 - Oppure incrementare atomicamente con `where usedCount < usageLimit` e collegare l'uso a ordine/idempotency.
 
-## [RISOLTO] P1 - Cache promo stale dopo modifiche admin
+## [✅ RISOLTO] P1 - Cache promo stale dopo modifiche admin
 
 Stato:
 - Risolto il 2026-05-30. Rimossa la cache promo in-memory dal pricing critico: `src/lib/server/pricing.ts` legge sempre la promo live da database, e `src/app/api/promotions/validate/route.ts` usa la stessa lettura server-side aggiornata.
@@ -123,7 +123,7 @@ Fix richiesto:
 - Rimuovere la cache per pricing critico o invalidarla dopo mutation admin.
 - Per performance, usare cache con versioning DB o breve TTL solo su letture non critiche.
 
-## [RISOLTO] P1 - IVA calcolata prima dello sconto e gestione IVA inclusa
+## [✅ RISOLTO] P1 - IVA calcolata prima dello sconto e gestione IVA inclusa
 
 Stato:
 - Risolto il 2026-05-30. L'IVA viene calcolata sul netto scontato reale proporzionalmente allocato sulle singole righe, e il sistema e stato convertito all'IVA inclusa (scorporata) al 4%, salvata a database per fini amministrativi.
@@ -140,7 +140,7 @@ Fix richiesto:
 - Se lo sconto riduce imponibile, calcolare IVA su `subtotalCents - discountCents`.
 - Aggiornare anche export fatture e snapshot pricing.
 
-## [RISOLTO] P1 - Impostazioni admin spedizione/IVA non usate dal pricing
+## [✅ RISOLTO] P1 - Impostazioni admin spedizione/IVA non usate dal pricing
 
 Stato:
 - Risolto il 2026-05-30. Creato il servizio centralizzato `src/lib/server/settings.ts` per recuperare i parametri di spedizione e aliquota IVA in tempo reale da database. Integrato in `src/lib/server/pricing.ts` e aggiornato `calcVatCentsFromSubtotal`.
@@ -157,7 +157,7 @@ Fix richiesto:
 - Usarlo in pricing, cart totals, copy UI e admin.
 - Validare e mostrare chiaramente quali impostazioni sono effettive.
 
-## [RISOLTO] P1 - Soglia spedizione gratuita incoerente
+## [✅ RISOLTO] P1 - Soglia spedizione gratuita incoerente
 
 Stato:
 - Risolto il 2026-05-30. Unificata la soglia di spedizione gratuita a 50 EUR (5000 centesimi) sia nel database come default sia come costante condivisa in `src/lib/constants.ts`. Calcoli client-side e testi coerenti.
@@ -174,7 +174,7 @@ Fix richiesto:
 - Unificare soglia in una sola fonte dati.
 - Generare i testi da settings o da una costante condivisa.
 
-## [RISOLTO] P1 - Sconti ProductMerch non applicati al checkout
+## [✅ RISOLTO] P1 - Sconti ProductMerch non applicati al checkout
 
 Stato:
 - Risolto il 2026-05-30. `ProductMerch` e stato trattato come prezzo reale: `src/lib/server/pricing.ts` applica `discountPercent` / `discountCents` attivi per prodotto, salva il dettaglio nello snapshot pricing e propaga il prezzo corretto a `/api/checkout` e alla sessione Stripe.
@@ -190,7 +190,7 @@ Fix richiesto:
 - Decidere se `ProductMerch` e solo marketing o prezzo reale.
 - Se e prezzo reale, applicarlo in `computeOrderPricing` e nello snapshot ordine.
 
-## [RISOLTO] P1 - Endpoint promo validate usa subtotal client
+## [✅ RISOLTO] P1 - Endpoint promo validate usa subtotal client
 
 Stato:
 - Risolto il 2026-05-30. `src/app/api/promotions/validate/route.ts` non accetta piu `subtotalCents` dal browser: riceve le righe carrello, ricalcola il subtotale server-side con `computeOrderPricing`, considera anche eventuali sconti `ProductMerch` attivi, e risponde in coerenza con `/api/checkout` e `/api/order`.

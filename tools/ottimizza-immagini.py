@@ -1,3 +1,8 @@
+# NOME FILE: ottimizza-immagini.py (ex optimize-images.py)
+# SCOPO: Scansiona la cartella pubblica e comprime in loco le immagini JPG/PNG,
+#        ridimensionandole se superano la larghezza di 1920px, per migliorare le performance.
+# UTILIZZO: python tools/ottimizza-immagini.py
+
 import os
 import io
 import sys

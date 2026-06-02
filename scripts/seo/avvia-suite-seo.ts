@@ -1,6 +1,13 @@
-import { TARGETS, COMPARISON_TARGETS, REPORT_FILE, WORDPRESS_SITEMAP_URLS } from "./seo-suite/constants";
-import type { TaskResult } from "./seo-suite/types";
-import { runTask, divider, timestamp } from "./seo-suite/utils";
+/**
+ * NOME FILE: avvia-suite-seo.ts (ex run-seo-suite.ts)
+ * SCOPO: Coordina ed esegue l'intera suite di audit SEO e migrazione (13 controlli in totale),
+ *        generando un report diagnostico finale per verificare canonical, hreflang, sitemap e rotte legacy.
+ * UTILIZZO: npm run seo:all o npx tsx scripts/avvia-suite-seo.ts
+ */
+
+import { TARGETS, COMPARISON_TARGETS, REPORT_FILE, WORDPRESS_SITEMAP_URLS } from "./suite/costanti";
+import type { TaskResult } from "./suite/tipi";
+import { runTask, divider, timestamp } from "./suite/utilita";
 import {
   auditLocales,
   auditSitemaps,
@@ -13,13 +20,13 @@ import {
   compareSitemaps,
   auditAllUrlOutcomes,
   migrationReadinessTask,
-} from "./seo-suite/audits";
+} from "./suite/verifiche";
 import {
   warningsExplainedTask,
   goLiveBlockersTask,
   writeReport,
   assertNoVercelArtifacts,
-} from "./seo-suite/reporting";
+} from "./suite/reportistica";
 
 async function main() {
   const suiteStartedAt = timestamp();

@@ -1,13 +1,20 @@
+/**
+ * NOME FILE: costanti.ts (ex constants.ts)
+ * SCOPO: Contiene tutte le costanti di configurazione e mappatura usate dai test SEO,
+ *        inclusi gli indirizzi locali/live, le liste di parole proibite e i redirect storici.
+ * UTILIZZO: Importato dai moduli della suite SEO (verifiche.ts, reportistica.ts, ecc.).
+ */
+
 import path from "node:path";
-import { locales } from "../../src/i18n/pathnames";
-import type { Target, ComparisonTarget } from "./types";
+import { locales } from "../../../src/i18n/pathnames";
+import type { Target, ComparisonTarget } from "./tipi";
 
 const ROOT_DIR = process.cwd();
 
 export const REPORT_FILE =
-  process.env.SEO_SUITE_REPORT_FILE || path.resolve(ROOT_DIR, "scratch", "seo-suite-report.txt");
-export const URL_OUTCOMES_JSON_FILE = path.resolve(ROOT_DIR, "scratch", "url-outcomes.json");
-export const URL_OUTCOMES_CSV_FILE = path.resolve(ROOT_DIR, "scratch", "url-outcomes.csv");
+  process.env.SEO_SUITE_REPORT_FILE || path.resolve(ROOT_DIR, "scratch", "seo-risultati", "seo-suite-report.txt");
+export const URL_OUTCOMES_JSON_FILE = path.resolve(ROOT_DIR, "scratch", "seo-risultati", "url-outcomes.json");
+export const URL_OUTCOMES_CSV_FILE = path.resolve(ROOT_DIR, "scratch", "seo-risultati", "url-outcomes.csv");
 
 export const ACTIVE_LOCALES = [...locales];
 
@@ -62,7 +69,6 @@ export const COMPARISON_TARGETS: ComparisonTarget[] = [
 
 export const TARGET_HEADERS = {
   Connection: "close",
-  "User-Agent": "Mozilla/5.0 (compatible; DelPasquaSeoSuite/2.0)",
 };
 
 export const XML_HEADERS = {

@@ -1,6 +1,14 @@
+/**
+ * NOME FILE: verifiche.ts (ex audits.ts)
+ * SCOPO: Contiene le implementazioni di tutti i controlli individuali della suite SEO
+ *        (audit lingue, sitemap, rotte legacy, noindex, hreflang, canonical, ecc.).
+ * UTILIZZO: Importato ed eseguito dal runner principale `avvia-suite-seo.ts`.
+ */
+
 import fs from "node:fs/promises";
-import { mockBlogPosts } from "../../src/lib/blog-data";
-import { readCatalog } from "../../src/lib/server/catalog";
+import path from "node:path";
+import { mockBlogPosts } from "../../../src/lib/blog-data";
+import { readCatalog } from "../../../src/lib/server/catalog";
 import {
   ACTIVE_LOCALES,
   LOCALE_ROUTE_MAPS,
@@ -16,14 +24,14 @@ import {
   URL_OUTCOMES_CSV_FILE,
   WORDPRESS_SITEMAP_URLS,
   FETCH_CONCURRENCY,
-} from "./constants";
+} from "./costanti";
 import type {
   TaskSummary,
   TaskResult,
   MigrationOutcome,
   MigrationClassification,
   UrlClassification,
-} from "./types";
+} from "./tipi";
 import {
   TaskRecorder,
   absoluteUrl,
@@ -61,7 +69,7 @@ import {
   remapUrlToBase,
   extractAlternateLinks,
   mapWithConcurrency,
-} from "./utils";
+} from "./utilita";
 
 // ----------------------------------------------------------------------------
 // 1. LOCALE AUDIT
@@ -712,6 +720,7 @@ export async function auditAllUrlOutcomes(recorder: TaskRecorder): Promise<TaskS
   printOutcomeGroups(recorder, localOutcomes);
 
   // Write outcomes to JSON/CSV files
+  await fs.mkdir(path.dirname(URL_OUTCOMES_JSON_FILE), { recursive: true });
   await fs.writeFile(URL_OUTCOMES_JSON_FILE, JSON.stringify(globalUrlOutcomes, null, 2), "utf8");
   recorder.line(`JSON outcomes written to ${URL_OUTCOMES_JSON_FILE}`);
 

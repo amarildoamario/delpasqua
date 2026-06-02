@@ -13,6 +13,7 @@ export type CatalogVariant = {
   sku?: string;
   imageSrc?: string;
   imageAlt?: string;
+  title?: string;
 
   // campi extra presenti nel JSON (non tipizzati)
   [k: string]: unknown;

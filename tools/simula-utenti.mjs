@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: simula-utenti.mjs (ex simulate-users.mjs)
+ * SCOPO: Simula l'attività e la navigazione di utenti multipli sul sito Next.js,
+ *        aggiungendo prodotti al carrello ed eseguendo checkout reali tramite Stripe.
+ * UTILIZZO: npm run sim:users o node tools/simula-utenti.mjs
+ */
+
 import { chromium } from "playwright";
 
 /**

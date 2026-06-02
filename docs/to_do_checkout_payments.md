@@ -2,7 +2,7 @@
 
 Data audit: 2026-05-29
 
-## [PARZIALE] P0 - Webhook Stripe assorbe errori con HTTP 200
+## [⚠️ PARZIALE] P0 - Webhook Stripe assorbe errori con HTTP 200
 
 Problema:
 - Il catch finale in `src/app/api/webhooks/stripe/route.ts:545` marca l'evento come `review`, ma ritorna comunque `200` a Stripe.
@@ -22,7 +22,7 @@ Fix richiesto:
 - Per errori transienti su DB/outbox/inventory, ritornare `500` a Stripe per far ritentare.
 - Mantenere idempotenza via `StripeWebhookEvent`.
 
-## [PARZIALE] P0 - Creazione ordine prima della sessione Stripe lascia ordini orfani
+## [⚠️ PARZIALE] P0 - Creazione ordine prima della sessione Stripe lascia ordini orfani
 
 Problema:
 - `src/app/api/order/route.ts` crea ordine e item prima di creare la sessione Stripe.
@@ -43,7 +43,7 @@ Fix richiesto:
 - O creare sessione prima salvando poi ordine in stato coerente, oppure marcare subito `FAILED` se Stripe fallisce.
 - Gestire idempotency anche per ordini creati senza sessione.
 
-## [RISOLTO] P0 - Metodi pagamento mostrati diversi da quelli abilitati
+## [✅ RISOLTO] P0 - Metodi pagamento mostrati diversi da quelli abilitati
 
 Stato:
 - Risolto il 2026-05-30. Abbiamo introdotto una configurazione unica in `src/lib/paymentMethods.ts` con `CHECKOUT_PAYMENT_METHOD_TYPES = ["card"]`, riutilizzata sia dal checkout ordini (`src/app/api/order/route.ts`) sia dal checkout degustazioni (`src/app/api/tasting/book/route.ts`).
@@ -62,7 +62,7 @@ Fix richiesto:
 - O abilitare realmente i metodi su Stripe e nella sessione, o mostrare solo `card`.
 - Idealmente leggere i metodi abilitati da configurazione unica.
 
-## [RISOLTO] P0 - Righe Stripe non includono sconti/IVA per riga (IVA inclusa e rimossa)
+## [✅ RISOLTO] P0 - Righe Stripe non includono sconti/IVA per riga (IVA inclusa e rimossa)
 
 Stato:
 - Risolto il 2026-05-30. I prezzi finiti inviati a Stripe includono gia l'IVA al 4% al loro interno, ed e stata rimossa la riga dell'IVA separata dal checkout Stripe per evitare doppie tassazioni. Gli sconti coupon sono allineati correttamente per riga nel pricing snapshot.
@@ -80,7 +80,7 @@ Fix richiesto:
 - Valutare se mantenere la struttura attuale o passare a prezzi netti/IVA coerenti per riga.
 - Documentare chiaramente la regola fiscale scelta.
 
-## [RISOLTO] P1 - Success page e email linkano una pagina ordini mancante
+## [✅ RISOLTO] P1 - Success page e email linkano una pagina ordini mancante
 
 Stato:
 - Risolto operativamente il 2026-05-29 rimuovendo i link rotti a `/orders` dalla success page e dai template email.
@@ -97,7 +97,7 @@ Fix richiesto:
 - Nessuna azione urgente.
 - Se in futuro si vuole mostrare il dettaglio ordine al cliente, creare una route pubblica con token sicuro.
 
-## [RISOLTO] P1 - Cancel page linka `/support` inesistente
+## [✅ RISOLTO] P1 - Cancel page linka `/support` inesistente
 
 Stato:
 - Risolto il 2026-05-29: `src/app/[locale]/checkout/cancel/page.tsx` ora linka `/contatti` tramite `Link` localizzato.
@@ -112,7 +112,7 @@ Impatto:
 Fix richiesto:
 - Nessuna azione ulteriore su questo punto, salvo futura introduzione di una vera pagina supporto.
 
-## [RISOLTO] P1 - Ordini PENDING hanno TTL di 7 giorni
+## [✅ RISOLTO] P1 - Ordini PENDING hanno TTL di 7 giorni
 
 Stato:
 - Risolto il 2026-05-30. Abbiamo centralizzato il TTL in `src/lib/constants.ts` con `ORDER_PENDING_TTL_MINUTES = 60`, riutilizzandolo dal job di expiry (`src/lib/server/expirePending.ts`) e dal cron (`src/app/api/cron/expire-pending/route.ts`).
@@ -129,7 +129,7 @@ Fix richiesto:
 - Allineare TTL a scadenza Stripe session, per esempio 30-60 minuti.
 - Distinguere ordine pending con sessione attiva da ordine operativo.
 
-## [TODO] P1 - Refund flow incompleto rispetto a Stripe
+## [⏳ TODO] P1 - Refund flow incompleto rispetto a Stripe
 
 Problema:
 - Admin puo impostare `REFUNDED` da `src/app/api/admin/orders/[id]/status/route.ts:153`.

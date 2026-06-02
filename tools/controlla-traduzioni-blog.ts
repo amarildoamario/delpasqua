@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: controlla-traduzioni-blog.ts (ex check-blog-translations.ts)
+ * SCOPO: Analizza e verifica l'integrità delle traduzioni degli articoli del blog
+ *        rispetto alla sorgente italiana, individuando campi mancanti o fallback errati.
+ * UTILIZZO: npm run check:blog-translations o npx tsx tools/controlla-traduzioni-blog.ts
+ */
+
 import fs from "node:fs";
 import path from "node:path";
 

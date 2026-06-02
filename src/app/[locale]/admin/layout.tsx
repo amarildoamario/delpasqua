@@ -15,6 +15,7 @@ import {
   Users,
   Webhook,
   CalendarDays,
+  Coins,
 } from "lucide-react";
 import { BarChart3 } from "lucide-react";
 
@@ -112,86 +113,95 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const [toShip, outboxIssues, webhookIssues, pendingTastings] = await fetchAdminDashboardData();
 
   return (
-    <div className="h-screen bg-neutral-50">
-      <div className="mx-auto flex h-full max-w-7xl gap-4 px-4 py-4">
-        <aside className="hidden w-[240px] shrink-0 lg:block">
-          <div className="h-full rounded-2xl border border-neutral-200 bg-white p-3 shadow-sm">
-            <div className="flex h-full flex-col overflow-hidden">
-              <div className="flex items-center justify-between px-2 py-2">
-                <div className="text-sm font-bold text-neutral-900">Admin</div>
-                <AdminLogoutButton />
-              </div>
+    <div className="h-screen w-full flex bg-neutral-50 overflow-hidden admin-panel">
+      {/* Attached Left Sidebar */}
+      <aside className="hidden w-[260px] shrink-0 border-r border-neutral-200 bg-white lg:block">
+        <div className="flex h-full flex-col p-4">
+          <div className="flex items-center justify-between px-2 py-3 border-b border-neutral-100 pb-3">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-neutral-900">
+              Del Pasqua Admin
+            </div>
+            <AdminLogoutButton />
+          </div>
 
-              <div className="mt-2 flex-1 space-y-1 overflow-y-auto no-scrollbar pr-1">
-                <SectionLabel>Operazioni</SectionLabel>
-                <NavItem href="/admin/ops" label="Operatività" icon={Activity} />
-                <NavItem href="/admin/dashboard" label="Dashboard" icon={LayoutDashboard} />
-                <NavItem href="/admin/orders" label="Ordini" badge={toShip} icon={ClipboardList} />
+          <div className="mt-4 flex-1 space-y-1.5 overflow-y-auto no-scrollbar pr-1">
+            <SectionLabel>Operazioni</SectionLabel>
+            <NavItem href="/admin/ops" label="Operatività" icon={Activity} />
+            <NavItem href="/admin/dashboard" label="Dashboard" icon={LayoutDashboard} />
+            <NavItem href="/admin/orders" label="Ordini" badge={toShip} icon={ClipboardList} />
 
-                <NavItem
-                  href="/admin/degustazioni"
-                  label="Degustazioni"
-                  badge={pendingTastings}
-                  icon={CalendarDays}
-                />
+            <NavItem
+              href="/admin/degustazioni"
+              label="Degustazioni"
+              badge={pendingTastings}
+              icon={CalendarDays}
+            />
 
-                <SectionLabel>Marketing</SectionLabel>
-                <NavItem href="/admin/sales" label="Merchandising" icon={BadgePercent} />
-                <NavItem href="/admin/customers" label="Clienti" icon={Users} />
-                <NavItem href="/admin/promotions" label="Promozioni" icon={Package} />
+            <SectionLabel>Marketing</SectionLabel>
+            <NavItem href="/admin/sales" label="Merchandising" icon={BadgePercent} />
+            <NavItem href="/admin/customers" label="Clienti" icon={Users} />
+            <NavItem href="/admin/promotions" label="Promozioni" icon={Package} />
 
-                <SectionLabel>Catalogo</SectionLabel>
-                <NavItem href="/admin/inventory" label="Magazzino" icon={Boxes} />
-                <NavItem href="/admin/products" label="Prodotti" icon={Package} />
+            <SectionLabel>Catalogo</SectionLabel>
+            <NavItem href="/admin/inventory" label="Magazzino" icon={Boxes} />
+            <NavItem href="/admin/products" label="Prodotti" icon={Package} />
 
-                <SectionLabel>Utility</SectionLabel>
-                <NavItem href="/admin/exports" label="Export" icon={Upload} />
-                <NavItem href="/admin/settings" label="Impostazioni" icon={SettingsIcon} />
+            <SectionLabel>Utility</SectionLabel>
+            <NavItem href="/admin/exports" label="Export" icon={Upload} />
+            <NavItem href="/admin/settings" label="Impostazioni" icon={SettingsIcon} />
 
-                <SectionLabel>Metriche</SectionLabel>
-                <NavItem href="/admin/metrics" label="Metriche" icon={BarChart3} />
+            <SectionLabel>Metriche</SectionLabel>
+            <NavItem href="/admin/metrics" label="Metriche" icon={BarChart3} />
 
-                <SectionLabel>Sistema</SectionLabel>
-                <NavItem
-                  href="/admin/system"
-                  label="Webhooks & Outbox"
-                  badge={webhookIssues + outboxIssues}
-                  icon={Webhook}
-                />
-              </div>
+            <SectionLabel>Finanza</SectionLabel>
+            <NavItem href="/admin/conti-leonardo" label="Conti Leonardo" icon={Coins} />
 
-              <div className="mt-3 border-t border-neutral-200 pt-3">
-                <Link
-                  href="/"
-                  className="block rounded-xl px-3 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-100"
-                >
-                  Vai allo shop
-                </Link>
-              </div>
+            <SectionLabel>Sistema</SectionLabel>
+            <NavItem
+              href="/admin/system"
+              label="Webhooks & Outbox"
+              badge={webhookIssues + outboxIssues}
+              icon={Webhook}
+            />
+          </div>
+
+          <div className="mt-3 border-t border-neutral-200 pt-3">
+            <Link
+              href="/"
+              className="block rounded-xl px-3 py-2 text-sm font-bold text-neutral-700 hover:bg-neutral-100 transition-colors"
+            >
+              Vai allo shop
+            </Link>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Side Column */}
+      <main className="flex-1 min-w-0 h-full flex flex-col bg-neutral-50 overflow-hidden">
+        {/* Full-width sticky header (visible only on mobile) */}
+        <header className="z-10 border-b border-neutral-200 bg-white px-6 py-4 shadow-sm shrink-0 lg:hidden">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-neutral-900">
+              Admin
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link
+                href="/admin/orders"
+                className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-bold text-neutral-900 hover:bg-neutral-50 transition-colors"
+              >
+                Ordini
+              </Link>
+              <AdminLogoutButton />
             </div>
           </div>
-        </aside>
+        </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto no-scrollbar">
-          <header className="sticky top-0 z-10 mb-4 rounded-2xl border border-neutral-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold text-neutral-900">Pannello amministrazione</div>
-
-              <div className="flex items-center gap-2 lg:hidden">
-                <Link
-                  href="/admin/orders"
-                  className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 hover:bg-neutral-50"
-                >
-                  Ordini
-                </Link>
-                <AdminLogoutButton />
-              </div>
-            </div>
-          </header>
-
-          <div className="pb-10">{children}</div>
-        </main>
-      </div>
+        {/* Scrollable inner content box */}
+        <div className="flex-1 overflow-y-auto no-scrollbar px-6 py-6 pb-16">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

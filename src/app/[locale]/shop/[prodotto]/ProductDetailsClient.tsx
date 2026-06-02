@@ -38,6 +38,7 @@ type ProductVariant = {
   imageAlt?: string;
   specs?: Specs;
   stock?: number;
+  title?: string;
 };
 
 type PurchaseInfo = {
@@ -58,6 +59,7 @@ type Product = {
   imageAlt: string;
   description: string;
   variants: ProductVariant[];
+  specsTitle?: string;
   specs?: Specs;
   purchaseInfo?: PurchaseInfo;
 };
@@ -810,7 +812,22 @@ export default function ProductDetailsClient({
 
   const descriptionParagraph = selectedVariant?.description || currentProduct.description;
 
-  const taglineText = currentProduct.id === "evo" ? "Prestazioni. Controllo. Evoluzione." : currentProduct.subtitle;
+  let taglineText = currentProduct.subtitle || "";
+  if (currentProduct.id === "evo" || currentProduct.id === "evo-latta") {
+    taglineText = "Prestazioni, controllo, evoluzione";
+  } else if (currentProduct.id === "fruttato-leggero" || currentProduct.id === "fruttato-leggero-latta") {
+    taglineText = "Delicatezza, freschezza ed eccellenza toscana";
+  } else if (currentProduct.id === "fruttato-medio" || currentProduct.id === "fruttato-medio-latta") {
+    taglineText = "Equilibrio, vivacità e profumi della nostra terra";
+  } else if (currentProduct.id === "fruttato-intenso" || currentProduct.id === "fruttato-intenso-latta") {
+    taglineText = "Carattere deciso, intensità e passione toscana";
+  } else if (currentProduct.id === "tartufo") {
+    taglineText = "Note avvolgenti e ricercatezza gourmet in cucina";
+  } else if (currentProduct.id === "peperoncino") {
+    taglineText = "Piccantezza audace e vivacità mediterranea";
+  } else if (currentProduct.id === "vino") {
+    taglineText = "Vibrazioni toscane, eleganza e convivialità nel bicchiere";
+  }
 
   // Icona personalizzata dell'Italia in SVG circolare ad alta qualità
   const ItalyIcon = (
@@ -828,6 +845,38 @@ export default function ProductDetailsClient({
   );
 
   const currentTabContent = useMemo(() => {
+    if (activeTab === "specifiche") {
+      const mergedSpecs = {
+        ...(currentProduct.specs || {}),
+        ...(selectedVariant?.specs || {}),
+      };
+      
+      const rows = Object.entries(mergedSpecs)
+        .filter(([, v]) => v != null && String(v).trim().length > 0)
+        .map(([k, v]) => ({ k, v: String(v) }));
+
+      if (rows.length === 0) {
+        return (
+          <p className="text-neutral-500 text-sm italic">
+            {locale === "it" ? "Nessuna specifica disponibile." : "No specifications available."}
+          </p>
+        );
+      }
+
+      return (
+        <div className="animate-in fade-in duration-300">
+          <div className="divide-y divide-neutral-200 rounded-xl border border-neutral-200 bg-white">
+            {rows.map((r) => (
+              <div key={r.k} className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
+                <div className="text-neutral-700 font-medium">{r.k}</div>
+                <div className="text-right text-neutral-900">{r.v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     if (hasOilInfoLayout) {
       switch (activeTab) {
         case "descrizione":
@@ -994,7 +1043,7 @@ export default function ProductDetailsClient({
         </p>
       );
     }
-  }, [activeTab, descriptionParagraph, hasOilInfoLayout, currentProduct, text]);
+  }, [activeTab, descriptionParagraph, hasOilInfoLayout, currentProduct, text, locale, selectedVariant]);
 
   const recommendations = useMemo<ProductCardProduct[]>(() => {
     if (isEvo) {
@@ -1047,8 +1096,36 @@ export default function ProductDetailsClient({
 
   const currentFaqs = text.faqs || [];
 
+  const shopLabelMap: Record<string, string> = {
+    it: "Shop",
+    en: "Shop",
+    de: "Online-Shop",
+    nl: "Winkel",
+    da: "Butik",
+    no: "Butikk",
+  };
+  const shopLabel = shopLabelMap[locale] ?? "Shop";
+  const homePath = locale === "it" ? "/" : `/${locale}`;
+  const shopPath = locale === "it" ? "/shop" : `/${locale}/shop`;
+  const breadcrumbTitle = selectedVariant?.title
+    ? selectedVariant.title
+    : (selectedVariant?.label ? `${currentProduct.title} - ${selectedVariant.label}` : currentProduct.title);
+
+  const categoryLabel = currentProduct.id === "vino"
+    ? (locale === "it" ? "VINO" : (locale === "en" ? "WINE" : (locale === "de" ? "WEIN" : (locale === "nl" ? "WIJN" : "VIN"))))
+    : (locale === "it" ? "OLIO EXTRAVERGINE DI OLIVA" : (locale === "en" ? "EXTRA VIRGIN OLIVE OIL" : (locale === "de" ? "NATIVES OLIVENOEL EXTRA" : (locale === "nl" ? "EXTRA VIERGE OLIJFOLIE" : (locale === "da" ? "EKSTRA JOMFRUOLIVENOLIE" : "EXTRA VIRGIN OLIVENOLJE")))));
+
   return (
     <>
+      {/* Breadcrumb sottile reattivo */}
+      <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+        <Link href={homePath} className="hover:text-[#3D5A3D] transition-colors">Home</Link>
+        <span className="text-[#D6D3D1]">/</span>
+        <Link href={shopPath} className="hover:text-[#3D5A3D] transition-colors">{shopLabel}</Link>
+        <span className="text-[#D6D3D1]">/</span>
+        <span className="text-[#57534E]">{breadcrumbTitle}</span>
+      </nav>
+
       {/* SEZIONE SUPERIORE: FOTO & ACQUISTO */}
       <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
         
@@ -1130,15 +1207,20 @@ export default function ProductDetailsClient({
 
         {/* COLONNA DESTRA: DETTAGLI PRODOTTO E ACQUISTO */}
         <div className="flex flex-col">
-          {/* Badge */}
-          <span className="text-[10px] font-bold tracking-[0.25em] text-[#8B7355] uppercase">
-            {currentProduct.badge || currentProduct.category}
-          </span>
+          {/* Categoria */}
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-bold tracking-[0.15em] text-[#8f6d4c] uppercase">
+              {categoryLabel}
+            </span>
+          </div>
           
-          {/* Titolo */}
-          <h1 className="mt-2 font-serif text-4xl lg:text-5xl font-light leading-none tracking-tight text-neutral-900">
-            {currentProduct.title}
-          </h1>
+          {/* Titolo Box (Spazio fissato per evitare lo shifting dei componenti sottostanti) */}
+          <div className="mt-2 h-[90px] min-h-[90px] max-h-[90px] lg:h-[110px] lg:min-h-[110px] lg:max-h-[110px] shrink-0 grow-0 flex items-start">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light leading-[1.1] tracking-tight text-neutral-900 line-clamp-2">
+              {selectedVariant?.title || currentProduct.title}
+              {selectedVariant?.label && !selectedVariant?.title ? ` - ${selectedVariant.label}` : ""}
+            </h1>
+          </div>
 
           {/* Sottotitolo / Tagline */}
           {taglineText && (
@@ -1160,10 +1242,14 @@ export default function ProductDetailsClient({
             </span>
           </div>
 
-          {/* Descrizione Breve (Bigger and darker for contrast) */}
-          <p className="mt-6 text-[15px] leading-relaxed text-[#2d2d2d] font-normal">
-            {descriptionParagraph}
-          </p>
+          {/* Descrizione Breve (Spazio fissato per evitare lo shifting dei componenti sottostanti) */}
+          <div className="relative mt-6 h-[90px] min-h-[90px] max-h-[90px] shrink-0 grow-0">
+            <div className="h-full w-full overflow-y-auto no-scrollbar text-[14.5px] leading-relaxed text-neutral-600 font-normal pb-4">
+              {descriptionParagraph}
+            </div>
+            {/* Sfumatura premium sfocata per indicare altro testo scorribile */}
+            <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-[#FDFCF8] to-transparent pointer-events-none" />
+          </div>
 
           {/* Griglia dei 4 Badges Chiave */}
           {isEvo && (
@@ -1397,29 +1483,43 @@ export default function ProductDetailsClient({
             className="flex overflow-x-auto pb-0 self-start lg:col-span-1 lg:flex-col lg:overflow-visible lg:border-b-0 lg:pb-0 lg:pr-4 space-x-[-1px] w-full border-b border-neutral-200/80 lg:border-b-0"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {[
-              { id: "descrizione", label: text.description },
-              { id: "caratteristiche", label: text.features },
-              { id: "abbinamenti", label: text.pairings },
-              { id: "ingredienti", label: text.ingredients },
-              { id: "valori nutrizionali", label: text.nutrition },
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`shrink-0 text-xs font-bold tracking-wider transition-all cursor-pointer border border-neutral-200/80 text-center lg:text-left ${
-                    isActive 
-                      ? "bg-white text-[#3D5A3D] rounded-t-[5px] border-b-transparent z-10 relative px-6 pt-3.5 pb-3.5 lg:bg-transparent lg:border-y-0 lg:border-r-0 lg:border-l-2 lg:border-[#263a2b] lg:text-[#263a2b] lg:rounded-none lg:px-0 lg:pl-4 lg:py-3 lg:z-auto" 
-                      : "bg-[#F5F5F3]/60 text-neutral-500 rounded-t-[5px] mt-[4px] px-5 pt-2.5 pb-2.5 hover:bg-neutral-100/50 lg:bg-transparent lg:border-transparent lg:text-neutral-500 lg:hover:text-[#263a2b] lg:rounded-none lg:px-0 lg:pl-4 lg:py-3 lg:mt-0"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+            {(() => {
+              const tabs = [
+                { id: "descrizione", label: text.description },
+                { id: "caratteristiche", label: text.features },
+                { id: "abbinamenti", label: text.pairings },
+                { id: "ingredienti", label: text.ingredients },
+                { id: "valori nutrizionali", label: text.nutrition },
+              ];
+
+              const hasSpecs = (currentProduct.specs && Object.keys(currentProduct.specs).length > 0) || 
+                               (selectedVariant?.specs && Object.keys(selectedVariant.specs).length > 0);
+
+              if (hasSpecs) {
+                tabs.push({ 
+                  id: "specifiche", 
+                  label: currentProduct.specsTitle || (locale === "it" ? "Specifiche" : "Specifications") 
+                });
+              }
+
+              return tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`shrink-0 text-xs font-bold tracking-wider transition-all cursor-pointer border border-neutral-200/80 text-center lg:text-left ${
+                      isActive 
+                        ? "bg-white text-[#3D5A3D] rounded-t-[5px] border-b-transparent z-10 relative px-6 pt-3.5 pb-3.5 lg:bg-transparent lg:border-y-0 lg:border-r-0 lg:border-l-2 lg:border-[#263a2b] lg:text-[#263a2b] lg:rounded-none lg:px-0 lg:pl-4 lg:py-3 lg:z-auto" 
+                        : "bg-[#F5F5F3]/60 text-neutral-500 rounded-t-[5px] mt-[4px] px-5 pt-2.5 pb-2.5 hover:bg-neutral-100/50 lg:bg-transparent lg:border-transparent lg:text-neutral-500 lg:hover:text-[#263a2b] lg:rounded-none lg:px-0 lg:pl-4 lg:py-3 lg:mt-0"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              });
+            })()}
           </div>
 
           {/* Contenuto della scheda selezionata (Col 2 e 3) */}

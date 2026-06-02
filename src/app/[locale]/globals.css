@@ -247,3 +247,9 @@ html {
     height: var(--viewport-height);
   }
 }
+
+/* ✅ FORCE BORDER RADIUS TO 5PX FOR ALL ADMIN PANEL COMPONENTS, PRESERVING CIRCULAR ELEMENTS */
+.admin-panel .rounded:not(.rounded-full),
+.admin-panel [class*="rounded-"]:not([class*="rounded-full"]) {
+  border-radius: 5px !important;
+}

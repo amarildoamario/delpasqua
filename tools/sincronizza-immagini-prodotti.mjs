@@ -1,4 +1,10 @@
-// tools/sync-product-images.mjs  (SAFE: no deletions)
+/**
+ * NOME FILE: sincronizza-immagini-prodotti.mjs (ex sync-product-images.mjs)
+ * SCOPO: Sincronizza le immagini dei prodotti e delle relative varianti nel catalogo JSON (`products.json`),
+ *        cercando corrispondenze nella cartella `/public/products` e creando backup preventivi.
+ * UTILIZZO: npm run sync:product-images o node tools/sincronizza-immagini-prodotti.mjs
+ */
+
 import fs from "node:fs";
 import path from "node:path";
 

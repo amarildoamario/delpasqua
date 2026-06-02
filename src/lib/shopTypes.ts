@@ -11,6 +11,7 @@ export type ProductVariant = {
   imageAlt?: string;
   specs?: Record<string, string>;
   stock?: number;
+  title?: string;
 };
 
 export type Product = {

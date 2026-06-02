@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: tipi.ts (ex types.ts)
+ * SCOPO: Dichiarazione dei tipi e delle interfacce TypeScript usate da tutta la suite SEO
+ *        (classificazione URL, esiti della migrazione, strutture dei task e dei blocker).
+ * UTILIZZO: Importato dai vari moduli della suite SEO.
+ */
+
 export type Environment = "local" | "live-wordpress";
 
 export type Target = {

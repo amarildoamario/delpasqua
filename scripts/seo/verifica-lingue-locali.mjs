@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: verifica-lingue-locali.mjs (ex audit-locales.mjs)
+ * SCOPO: Naviga le pagine localizzate principali e segnala la presenza di parole UI della lingua sbagliata
+ *        (ad es. controllando che testi italiani non compaiano nella versione inglese e viceversa).
+ * UTILIZZO: npm run seo:audit-locales o node scripts/verifica-lingue-locali.mjs
+ */
+
 import fetch from "node-fetch";
 
 // Default base URL to local environment

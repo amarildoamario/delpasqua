@@ -1,6 +1,13 @@
-import { mockBlogPosts } from "../src/lib/blog-data";
-import { readCatalog } from "../src/lib/server/catalog";
-import { locales } from "../src/i18n/pathnames";
+/**
+ * NOME FILE: diagnostica-conteggi-sitemap.ts (ex debug-sitemap-counts.ts)
+ * SCOPO: Esegue una diagnostica incrociata dei conteggi degli URL presenti nelle sitemap locali,
+ *        confrontandoli con il catalogo prodotti JSON ed i post del blog sorgenti.
+ * UTILIZZO: npx tsx scripts/diagnostica-conteggi-sitemap.ts
+ */
+
+import { mockBlogPosts } from "../../src/lib/blog-data";
+import { readCatalog } from "../../src/lib/server/catalog";
+import { locales } from "../../src/i18n/pathnames";
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
@@ -179,7 +186,7 @@ async function main() {
   console.log(`  - Articoli blog totali in blog-data.ts: ${totalBlogPosts}`);
 
   // Categorie Blog
-  const blogCategories = new Set(mockBlogPosts.map(p => p.category));
+  const blogCategories = new Set(mockBlogPosts.map((p: any) => p.category));
   console.log(`  - Categorie blog uniche trovate: ${blogCategories.size} (${Array.from(blogCategories).join(", ")})`);
   console.log("");
 

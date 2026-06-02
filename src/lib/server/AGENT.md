@@ -9,6 +9,7 @@
 - Mantieni questi moduli framework-light: poca dipendenza da componenti/pagine, focus su servizi e funzioni testabili.
 - Se una route handler ripete logica presente qui, sposta la regola in questa cartella invece di duplicarla.
 - Preserva confini Node/server-only.
+- Per qualsiasi implementazione o refactoring di backend, sicurezza e logica di business, fare riferimento ai file di to-do specifici (es. `to_do_security_ops.md`, `to_do_business_logic.md`) presenti all'interno della cartella [docs/](file:///c:/Users/Utente/Desktop/React/delpasqua/docs), organizzati con la convenzione grafica `[✅ RISOLTO]`, `[⚠️ PARZIALE]`, `[⏳ TODO]`.
 
 ## Security First
 - Tratta ogni input esterno come non affidabile: request body, querystring, header, cookie, webhook payload, metadata Stripe, file path e variabili ambiente.

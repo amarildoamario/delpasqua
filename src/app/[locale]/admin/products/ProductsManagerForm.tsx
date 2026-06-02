@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { adminFetch } from "@/lib/client/adminFetch";
 import DoubleConfirmDialog from "@/components/DoubleConfirmDialog";
+import {
+  ArrowUp,
+  ArrowDown,
+  Plus,
+  Trash2,
+  Image as ImageIcon,
+  ChevronDown
+} from "lucide-react";
 
 /* =========================
    TYPES
@@ -33,6 +41,7 @@ type Variant = {
   sku?: string;
   imageSrc?: string;
   imageAlt?: string;
+  title?: string;
   specs?: Record<string, string>;
   [k: string]: unknown;
 };
@@ -53,6 +62,9 @@ type Product = {
   description?: string;
   imageSrc?: string;
   imageAlt?: string;
+
+  /** Titolo personalizzato per la sezione specifiche */
+  specsTitle?: string;
 
   /** Dettagli prodotto (tabella key/value) */
   specs?: Record<string, string>;
@@ -356,11 +368,12 @@ function makeNewProductTemplate(forcedId?: string): Product {
     imageSrc: "",
     imageAlt: "",
     description: "",
+    specsTitle: "Specifiche",
     specs: {},
     _specRows: [],
     purchaseInfo: {
       caratteristiche:
-        "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità <0,3%. Estratto a freddo per preservare tutte le proprietà organolettiche.",
+        "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità <0,3%. Lavorato a freddo per preservare tutte le proprietà organolettiche.",
       imballaggio:
         "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
       spedizione:
@@ -433,6 +446,12 @@ export default function ProductsManagerForm({ initialCatalog }: { initialCatalog
   const [deleteProductStep, setDeleteProductStep] = useState<0 | 1 | 2>(0);
   const [deleteVariantStep, setDeleteVariantStep] = useState<0 | 1 | 2>(0);
   const [pendingDeleteVariantId, setPendingDeleteVariantId] = useState<string | null>(null);
+
+  // Stato per la gestione delle varianti espanse/collassate
+  const [expandedVariants, setExpandedVariants] = useState<Record<string, boolean>>({});
+  const toggleVariantExpanded = (id: string) => {
+    setExpandedVariants((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
@@ -850,142 +869,299 @@ export default function ProductsManagerForm({ initialCatalog }: { initialCatalog
               Seleziona un prodotto…
             </div>
           ) : (
-            <div className="min-w-0 space-y-3">
-              <div className="grid min-w-0 gap-3 md:grid-cols-2">
-                <TextField
-                  label="ID"
-                  value={String(draft.id || "")}
-                  onChange={(v) => patchDraft({ id: normalizeId(v), slug: draft.slug || normalizeId(v) })}
-                />
-                <TextField
-                  label="Slug"
-                  value={String(draft.slug || "")}
-                  onChange={(v) => patchDraft({ slug: normalizeId(v) })}
-                />
-                <TextField
-                  label="Titolo"
-                  value={String(draft.title || "")}
-                  onChange={(v) => patchDraft({ title: v })}
-                />
-                <TextField
-                  label="Categoria"
-                  value={String(draft.category || "")}
-                  onChange={(v) => patchDraft({ category: v })}
-                />
-                <TextField
-                  label="Sottotitolo"
-                  value={String(draft.subtitle || "")}
-                  onChange={(v) => patchDraft({ subtitle: v })}
-                />
-                <TextField
-                  label="Badge"
-                  value={String(draft.badge || "")}
-                  onChange={(v) => patchDraft({ badge: v })}
-                />
-                <TextField
-                  label="Image src"
-                  value={String(draft.imageSrc || "")}
-                  onChange={(v) => patchDraft({ imageSrc: v })}
-                />
-                <TextField
-                  label="Image alt"
-                  value={String(draft.imageAlt || "")}
-                  onChange={(v) => patchDraft({ imageAlt: v })}
+            <div className="min-w-0 space-y-5">
+              {/* Informazioni Prodotto Principali */}
+              <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4">
+                <div className="text-sm font-semibold text-neutral-900 border-b border-neutral-100 pb-2">
+                  Dati Principali Prodotto
+                </div>
+                <div className="grid min-w-0 gap-3 md:grid-cols-2">
+                  <TextField
+                    label="ID"
+                    value={String(draft.id || "")}
+                    onChange={(v) => patchDraft({ id: normalizeId(v), slug: draft.slug || normalizeId(v) })}
+                  />
+                  <TextField
+                    label="Slug"
+                    value={String(draft.slug || "")}
+                    onChange={(v) => patchDraft({ slug: normalizeId(v) })}
+                  />
+                  <TextField
+                    label="Titolo"
+                    value={String(draft.title || "")}
+                    onChange={(v) => patchDraft({ title: v })}
+                  />
+                  <TextField
+                    label="Categoria"
+                    value={String(draft.category || "")}
+                    onChange={(v) => patchDraft({ category: v })}
+                  />
+                  <TextField
+                    label="Sottotitolo"
+                    value={String(draft.subtitle || "")}
+                    onChange={(v) => patchDraft({ subtitle: v })}
+                  />
+                  <TextField
+                    label="Badge"
+                    value={String(draft.badge || "")}
+                    onChange={(v) => patchDraft({ badge: v })}
+                  />
+                  <TextField
+                    label="Image src"
+                    value={String(draft.imageSrc || "")}
+                    onChange={(v) => patchDraft({ imageSrc: v })}
+                  />
+                  <TextField
+                    label="Image alt"
+                    value={String(draft.imageAlt || "")}
+                    onChange={(v) => patchDraft({ imageAlt: v })}
+                  />
+                  <TextField
+                    label="Titolo Sezione Specifiche (su Scheda Prodotto)"
+                    value={String(draft.specsTitle || "")}
+                    placeholder="Es: Specifiche Tecniche, Dettagli, Caratteristiche"
+                    onChange={(v) => patchDraft({ specsTitle: v })}
+                  />
+                </div>
+
+                <TextArea
+                  label="Descrizione"
+                  value={String(draft.description || "")}
+                  onChange={(v) => patchDraft({ description: v })}
+                  rows={4}
                 />
               </div>
 
-              <TextArea
-                label="Descrizione"
-                value={String(draft.description || "")}
-                onChange={(v) => patchDraft({ description: v })}
-                rows={6}
-              />
+              {/* Specifiche Tecniche del Prodotto */}
+              <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4">
+                <SpecsEditor
+                  title="Dettagli Prodotto (specs)"
+                  rows={productSpecsRows}
+                  onChange={(rows) => setProductSpecsRows(rows)}
+                />
+              </div>
 
-              <SpecsEditor
-                title="Dettagli prodotto (specs)"
-                rows={productSpecsRows}
-                onChange={(rows) => setProductSpecsRows(rows)}
-              />
+              {/* Informazioni d'Acquisto (Purchase Info / Tab Box) */}
+              <div className="rounded-2xl border border-neutral-200 bg-white p-5 space-y-4">
+                <div className="text-sm font-semibold text-neutral-900 border-b border-neutral-100 pb-2">
+                  Testi Schede Box Acquisto (Purchase Info)
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <TextArea
+                    label="Caratteristiche"
+                    value={String(draft.purchaseInfo?.caratteristiche || "")}
+                    onChange={(v) => patchDraft({ purchaseInfo: { ...draft.purchaseInfo, caratteristiche: v } })}
+                    rows={3}
+                  />
+                  <TextArea
+                    label="Imballaggio"
+                    value={String(draft.purchaseInfo?.imballaggio || "")}
+                    onChange={(v) => patchDraft({ purchaseInfo: { ...draft.purchaseInfo, imballaggio: v } })}
+                    rows={3}
+                  />
+                  <TextArea
+                    label="Spedizione"
+                    value={String(draft.purchaseInfo?.spedizione || "")}
+                    onChange={(v) => patchDraft({ purchaseInfo: { ...draft.purchaseInfo, spedizione: v } })}
+                    rows={3}
+                  />
+                  <TextArea
+                    label="Resi"
+                    value={String(draft.purchaseInfo?.resi || "")}
+                    onChange={(v) => patchDraft({ purchaseInfo: { ...draft.purchaseInfo, resi: v } })}
+                    rows={3}
+                  />
+                </div>
+              </div>
 
-              {/* Variants */}
-              <div className="min-w-0 rounded-2xl border border-neutral-200 bg-white p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="text-sm font-semibold text-neutral-900">Varianti</div>
-                  <SmallBtn onClick={addVariantLocal} disabled={busy}>
-                    + Variante
+              {/* Redesigned Variants Section */}
+              <div className="min-w-0 rounded-2xl border border-neutral-200 bg-white p-5 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+                  <div>
+                    <div className="text-sm font-semibold text-neutral-900">Varianti Prodotto</div>
+                    <div className="text-xs text-neutral-500 mt-0.5">
+                      {"Visualizza, modifica o ordina le varianti. Fai click sull'intestazione per espandere/collassare."}
+                    </div>
+                  </div>
+                  <SmallBtn onClick={addVariantLocal} disabled={busy} variant="primary">
+                    <div className="flex items-center gap-1.5 font-extrabold">
+                      <Plus className="h-3.5 w-3.5" />
+                      Aggiungi Variante
+                    </div>
                   </SmallBtn>
                 </div>
 
-                <div className="mt-3 space-y-3">
-                  {(draft.variants || []).map((v, vi) => (
-                    <div key={String(v._uid || v.id)} className="rounded-2xl border border-neutral-200 p-4">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="text-sm font-bold text-neutral-900">{v.label || v.id}</div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <SmallBtn
-                            onClick={() => moveVariant(String(v.id), -1)}
-                            disabled={busy || vi === 0}
-                          >
-                            ▲
-                          </SmallBtn>
-                          <SmallBtn
-                            onClick={() => moveVariant(String(v.id), 1)}
-                            disabled={busy || vi === (draft.variants || []).length - 1}
-                          >
-                            ▼
-                          </SmallBtn>
-                          <SmallBtn variant="danger" onClick={() => askDeleteVariant(String(v.id))} disabled={busy}>
-                            Elimina variante
-                          </SmallBtn>
+                <div className="space-y-3">
+                  {(draft.variants || []).map((v, vi) => {
+                    const isOpen = expandedVariants[v.id] !== false;
+                    const priceStr = String(v._priceText ?? centsToEuroText(v.priceCents));
+
+                    return (
+                      <div
+                        key={String(v._uid || v.id)}
+                        className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50/20 transition-all duration-200 hover:shadow-md"
+                      >
+                        {/* Header card varianti */}
+                        <div
+                          onClick={() => toggleVariantExpanded(String(v.id))}
+                          className="flex cursor-pointer items-center justify-between gap-3 bg-white px-4 py-3 select-none hover:bg-neutral-50/50"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700 font-extrabold text-[11px] shrink-0">
+                              {vi + 1}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-neutral-800 truncate">
+                                  {v.label || "Nuova Variante"}
+                                </span>
+                                {v.sku && (
+                                  <span className="rounded bg-neutral-100 px-1 text-[9px] font-mono font-bold text-neutral-500 uppercase">
+                                    {v.sku}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="mt-0.5 text-[10px] text-neutral-400 font-mono">
+                                ID: {String(v.id)} • € {priceStr || "0.00"}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              onClick={() => moveVariant(String(v.id), -1)}
+                              disabled={busy || vi === 0}
+                              title="Sposta su"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 transition-all cursor-pointer"
+                            >
+                              <ArrowUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveVariant(String(v.id), 1)}
+                              disabled={busy || vi === (draft.variants || []).length - 1}
+                              title="Sposta giù"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 transition-all cursor-pointer"
+                            >
+                              <ArrowDown className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => askDeleteVariant(String(v.id))}
+                              disabled={busy}
+                              title="Elimina"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-all cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+
+                            {/* Chevron Toggle */}
+                            <div className="ml-1 flex h-7 w-7 items-center justify-center text-neutral-400">
+                              <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                            </div>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="mt-3 grid gap-3 md:grid-cols-2">
-                        <TextField
-                          label="Variant ID"
-                          value={String(v.id || "")}
-                          onChange={(val) => patchVariant(String(v.id), { id: normalizeId(val) })}
-                        />
-                        <TextField
-                          label="Label"
-                          value={String(v.label || "")}
-                          onChange={(val) => patchVariant(String(v.id), { label: val })}
-                        />
-                        <TextField
-                          label="Prezzo (EUR)"
-                          value={String(v._priceText ?? centsToEuroText(v.priceCents))}
-                          onChange={(val) => patchVariant(String(v.id), { _priceText: val })}
-                        />
-                        <TextField
-                          label="SKU"
-                          value={String(v.sku || "")}
-                          onChange={(val) => patchVariant(String(v.id), { sku: val })}
-                        />
-                        <TextField
-                          label="Image src"
-                          value={String(v.imageSrc || "")}
-                          onChange={(val) => patchVariant(String(v.id), { imageSrc: val })}
-                        />
-                        <TextField
-                          label="Image alt"
-                          value={String(v.imageAlt || "")}
-                          onChange={(val) => patchVariant(String(v.id), { imageAlt: val })}
-                        />
-                      </div>
+                        {/* Collapsible Content */}
+                        {isOpen && (
+                          <div className="p-4 space-y-4 bg-white border-t border-neutral-100 animate-in fade-in duration-200">
+                            <div className="grid gap-4 md:grid-cols-2">
+                              <div className="space-y-3">
+                                <TextField
+                                  label="ID Variante (stabile)"
+                                  value={String(v.id || "")}
+                                  onChange={(val) => patchVariant(String(v.id), { id: normalizeId(val) })}
+                                />
+                                <TextField
+                                  label="Titolo Custom Variante (opzionale)"
+                                  value={String(v.title || "")}
+                                  placeholder="Es: EVO Latta da 3 Litri"
+                                  onChange={(val) => patchVariant(String(v.id), { title: val })}
+                                />
+                                <TextField
+                                  label="Nome / Label Formato"
+                                  value={String(v.label || "")}
+                                  placeholder="Es: Bottiglia 500 ml, Latta 3 L"
+                                  onChange={(val) => patchVariant(String(v.id), { label: val })}
+                                />
+                                <TextField
+                                  label="Prezzo (€)"
+                                  value={priceStr}
+                                  placeholder="Es: 15.00"
+                                  onChange={(val) => patchVariant(String(v.id), { _priceText: val })}
+                                />
+                                <TextField
+                                  label="SKU Commerciale"
+                                  value={String(v.sku || "")}
+                                  placeholder="Es: EVO-B-500ML"
+                                  onChange={(val) => patchVariant(String(v.id), { sku: val })}
+                                />
+                              </div>
 
-                      <div className="mt-3">
-                        <SpecsEditor
-                          title="Dettagli variante (specs)"
-                          rows={Array.isArray(v._specRows) ? v._specRows : specsToRows(v.specs)}
-                          onChange={(rows) => patchVariant(String(v.id), { _specRows: rows })}
-                          addLabel="+ Riga variante"
-                        />
+                              <div className="space-y-3">
+                                <TextField
+                                  label="URL Immagine"
+                                  value={String(v.imageSrc || "")}
+                                  placeholder="Es: /products/evo-500ml.png"
+                                  onChange={(val) => patchVariant(String(v.id), { imageSrc: val })}
+                                />
+                                <TextField
+                                  label="Alt Immagine"
+                                  value={String(v.imageAlt || "")}
+                                  onChange={(val) => patchVariant(String(v.id), { imageAlt: val })}
+                                />
+
+                                {/* Preview Immagine Variant */}
+                                <div className="rounded-xl border border-neutral-200 bg-neutral-50/50 p-2.5 flex items-center gap-3">
+                                  <div className="relative h-14 w-14 overflow-hidden rounded-lg border border-neutral-200 bg-white shrink-0">
+                                    {v.imageSrc ? (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img
+                                        src={v.imageSrc}
+                                        alt={v.imageAlt || v.label}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => {
+                                          (e.target as HTMLElement).style.display = "none";
+                                        }}
+                                      />
+                                    ) : (
+                                      <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                                        <ImageIcon className="h-5 w-5" />
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <span className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wide">
+                                      Anteprima Immagine
+                                    </span>
+                                    <span className="block text-[11px] text-neutral-400 truncate mt-0.5">
+                                      {v.imageSrc || "Nessuna immagine impostata"}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Specifiche della variante */}
+                            <div className="pt-3 border-t border-neutral-100">
+                              <SpecsEditor
+                                title="Specifiche della Variante (Es: Peso, Dimensioni)"
+                                rows={Array.isArray(v._specRows) ? v._specRows : specsToRows(v.specs)}
+                                onChange={(rows) => patchVariant(String(v.id), { _specRows: rows })}
+                                addLabel="+ Riga Specifica"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {(draft.variants || []).length === 0 ? (
-                    <div className="text-sm text-neutral-500">Aggiungi almeno 1 variante.</div>
+                    <div className="text-xs text-neutral-500 p-4 border border-dashed border-neutral-200 rounded-xl text-center">
+                      Nessuna variante creata per questo prodotto. Aggiungine una per iniziare.
+                    </div>
                   ) : null}
                 </div>
               </div>

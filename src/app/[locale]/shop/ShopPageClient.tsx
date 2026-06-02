@@ -21,6 +21,7 @@ type ApiProduct = {
     priceCents: number;
     imageSrc?: string | null;
     imageAlt?: string | null;
+    title?: string | null;
   }[] | null;
   category?: string | null;
 };
@@ -146,10 +147,10 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
   const products = useMemo<ShopProduct[]>(() => {
     const data: ApiProduct[] = initialProducts.filter(isApiProduct);
 
-    return data.flatMap((p): ShopProduct[] => {
-      const title = tp(`${p.id}.title`) || p.title;
-      const subtitle = tp(`${p.id}.subtitle`) || p.subtitle || "";
-      const badge = tp(`${p.id}.badge`) || p.badge || "";
+    return data.map((p): ShopProduct => {
+      const title = locale === "it" ? p.title : (tp(`${p.id}.title`) || p.title);
+      const subtitle = locale === "it" ? (p.subtitle || "") : (tp(`${p.id}.subtitle`) || p.subtitle || "");
+      const badge = locale === "it" ? (p.badge || "") : (tp(`${p.id}.badge`) || p.badge || "");
       const filterTags = inferFilterTags(p);
       const variants = (p.variants ?? []).filter(
         (variant): variant is NonNullable<ApiProduct["variants"]>[number] & { id: string } =>
@@ -157,7 +158,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
       );
 
       if (variants.length === 0) {
-        return [{
+        return {
           cardKey: `${p.id}::default`,
           id: p.id,
           slug: p.slug,
@@ -174,33 +175,38 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
           category: p.category ?? "all",
           filterTags,
           variantsCount: 1,
-        }];
+        };
       }
 
-      return variants.map((variant) => {
-        const variantLabel = variant.label?.trim() || variant.id;
-        return {
-          cardKey: `${p.id}::${variant.id}`,
-          id: p.id,
-          slug: p.slug,
-          title,
-          subtitle,
-          badge,
-          imageSrc: variant.imageSrc ?? p.imageSrc ?? "",
-          imageAlt: variant.imageAlt ?? p.imageAlt ?? "",
-          priceLabel: new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
-            style: "currency",
-            currency: "EUR",
-          }).format(variant.priceCents / 100),
-          priceCaption: copy.price,
-          priceCents: variant.priceCents,
-          defaultVariantId: variant.id,
-          variantLabel,
-          category: p.category ?? "all",
-          filterTags,
-          variantsCount: 1,
-        };
-      });
+      const hasMultiple = variants.length > 1;
+      const sortedVariants = [...variants].sort((a, b) => a.priceCents - b.priceCents);
+      const cheapestVariant = sortedVariants[0];
+
+      const cardTitle = hasMultiple ? title : (cheapestVariant.title || title);
+
+      const priceLabel = new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
+        style: "currency",
+        currency: "EUR",
+      }).format(cheapestVariant.priceCents / 100);
+
+      return {
+        cardKey: `${p.id}::multiple`,
+        id: p.id,
+        slug: p.slug,
+        title: cardTitle,
+        subtitle,
+        badge,
+        imageSrc: cheapestVariant.imageSrc ?? p.imageSrc ?? "",
+        imageAlt: cheapestVariant.imageAlt ?? p.imageAlt ?? "",
+        priceLabel,
+        priceCaption: hasMultiple ? copy.from : copy.price,
+        priceCents: cheapestVariant.priceCents,
+        defaultVariantId: cheapestVariant.id,
+        variantLabel: hasMultiple ? undefined : (variants[0].label || undefined),
+        category: p.category ?? "all",
+        filterTags,
+        variantsCount: variants.length,
+      };
     });
   }, [copy, initialProducts, locale, tp]);
 

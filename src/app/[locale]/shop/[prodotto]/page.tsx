@@ -7,7 +7,6 @@ import { makeInventorySku } from "@/lib/inventorySku";
 import { getAvailableBySku } from "@/lib/server/inventoryRead";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
-import { Link } from "@/i18n/routing";
 import { getProductAlternateUrls, absoluteUrl, localizedPath, SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
@@ -23,6 +22,7 @@ type ProductVariant = {
   imageAlt?: string;
   specs?: Specs;
   stock?: number;
+  title?: string;
 };
 
 type Product = {
@@ -36,6 +36,7 @@ type Product = {
   imageAlt: string;
   description: string;
   variants: ProductVariant[];
+  specsTitle?: string;
   specs?: Specs;
   excludeFromSeo?: boolean;
 };
@@ -180,22 +181,17 @@ export default async function ProductPage({
   const translatedProduct: Product = {
     ...product,
     category: translateCategory(product.category, locale),
-    title: hasTranslation(tp, `${product.id}.title`) ? tp(`${product.id}.title`) : product.title,
-    subtitle: hasTranslation(tp, `${product.id}.subtitle`) ? tp(`${product.id}.subtitle`) : product.subtitle,
-    badge: hasTranslation(tp, `${product.id}.badge`) ? tp(`${product.id}.badge`) : product.badge,
-    description: hasTranslation(tp, `${product.id}.description`)
-      ? tp(`${product.id}.description`)
-      : product.description,
+    title: locale === "it" ? product.title : (hasTranslation(tp, `${product.id}.title`) ? tp(`${product.id}.title`) : product.title),
+    subtitle: locale === "it" ? product.subtitle : (hasTranslation(tp, `${product.id}.subtitle`) ? tp(`${product.id}.subtitle`) : product.subtitle),
+    badge: locale === "it" ? product.badge : (hasTranslation(tp, `${product.id}.badge`) ? tp(`${product.id}.badge`) : product.badge),
+    description: locale === "it" ? product.description : (hasTranslation(tp, `${product.id}.description`) ? tp(`${product.id}.description`) : product.description),
     variants: product.variants.map((variant) => ({
       ...variant,
-      label: hasTranslation(tp, `${product.id}.variants.${variant.id}`)
-        ? tp(`${product.id}.variants.${variant.id}`)
-        : translateVariantLabel(variant.id, variant.label, locale),
-      description: hasTranslation(tp, `${product.id}.variantDescriptions.${variant.id}`)
-        ? tp(`${product.id}.variantDescriptions.${variant.id}`)
-        : variant.description,
+      label: locale === "it" ? variant.label : (hasTranslation(tp, `${product.id}.variants.${variant.id}`) ? tp(`${product.id}.variants.${variant.id}`) : translateVariantLabel(variant.id, variant.label, locale)),
+      description: locale === "it" ? variant.description : (hasTranslation(tp, `${product.id}.variantDescriptions.${variant.id}`) ? tp(`${product.id}.variantDescriptions.${variant.id}`) : variant.description),
     })),
   };
+
 
   // Traduce tutti gli altri prodotti per passarli come raccomandati
   const relatedProducts: Product[] = list
@@ -347,15 +343,6 @@ export default async function ProductPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="mx-auto max-w-7xl px-6 py-12 lg:py-20">
-        {/* Breadcrumb sottile */}
-        <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-          <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
-          <span className="text-[#D6D3D1]">/</span>
-          <Link href="/shop" className="hover:text-[#3D5A3D] transition-colors">{shopLabel}</Link>
-          <span className="text-[#D6D3D1]">/</span>
-          <span className="text-[#57534E]">{translatedProduct.title}</span>
-        </nav>
-
         {/* Griglia client */}
         <ProductDetailsClient 
           product={translatedProduct} 

@@ -8,22 +8,20 @@
         "priceCents": 1500,
         "sku": "EVO-B-500ML",
         "imageSrc": "/products/EVO-750-ml-gpt.png",
-        "imageAlt": "EVO bottiglia 500 ml",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La bottiglia EVO da 500 ml e il formato ideale per la tavola: elegante, pratica e perfetta per chi vuole usare ogni giorno un extravergine italiano dal gusto armonico."
+        "imageAlt": "Olio EVO 500 ml",
+        "specs": {},
+        "description": "La bottiglia EVO da 500 ml è il formato ideale per la tavola: elegante, pratica e perfetta per chi vuole usare ogni giorno un extravergine italiano dal gusto armonico.",
+        "title": "Olio EVO 500 ml"
       }
     ],
     "slug": "evo",
     "category": "Olio",
-    "title": "Extravergine - EVO",
+    "title": "Olio EVO 500 ml",
     "subtitle": "Olio extravergine di oliva",
     "badge": "EVO",
     "imageSrc": "/products/EVO-750-ml-gpt.png",
-    "imageAlt": "Olio extravergine di oliva EVO",
-    "description": "EVO Del Pasqua e l'olio extravergine da tenere sempre in cucina: equilibrato, pulito e profumato, pensato per accompagnare ogni giorno piatti semplici e ricette curate.",
+    "imageAlt": "Olio EVO 500 ml",
+    "description": "EVO Del Pasqua è l'olio extravergine da tenere sempre in cucina: equilibrato, pulito e profumato, pensato per accompagnare ogni giorno piatti semplici e ricette curate.",
     "specs": {}
   },
   {
@@ -35,12 +33,10 @@
         "priceCents": 1800,
         "sku": "EVO-L-750ML",
         "imageSrc": "/products/EVO-latta-3lt.png",
-        "imageAlt": "EVO latta 750 ml",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta EVO da 750 ml e compatta e distintiva: un formato originale per chi cerca praticita, protezione e un olio extravergine italiano sempre pronto all'uso."
+        "imageAlt": "Olio EVO Latta 750 ml",
+        "specs": {},
+        "description": "La latta EVO da 750 ml è compatta e distintiva: un formato originale per chi cerca praticità, protezione e un olio extravergine italiano sempre pronto all'uso.",
+        "title": "Olio EVO Latta 750 ml"
       },
       {
         "id": "3lt",
@@ -48,12 +44,10 @@
         "priceCents": 7200,
         "sku": "EVO-L-3LT",
         "imageSrc": "/products/EVO-latta-3lt.png",
-        "imageAlt": "EVO latta 3 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta EVO da 3 L e pensata per chi usa olio ogni giorno e vuole una scorta pratica, protetta dalla luce e facile da gestire in cucina."
+        "imageAlt": "Olio EVO Latta 3 lt",
+        "specs": {},
+        "description": "La latta EVO da 3 L è pensata per chi usa olio ogni giorno e vuole una scorta pratica, protetta dalla luce e facile da gestire in cucina.",
+        "title": "Olio EVO Latta 3 lt"
       },
       {
         "id": "5lt",
@@ -61,21 +55,19 @@
         "priceCents": 12000,
         "sku": "EVO-L-5LT",
         "imageSrc": "/products/EVO-latta-5lt.png",
-        "imageAlt": "EVO latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta EVO da 5 L e il formato famiglia per avere sempre a disposizione un extravergine equilibrato, profumato e versatile, ideale per cucina e condimenti a crudo."
+        "imageAlt": "Olio EVO Latta 5 lt",
+        "specs": {},
+        "description": "La latta EVO da 5 L è il formato famiglia per avere sempre a disposizione un extravergine equilibrato, profumato e versatile, ideale per cucina e condimenti a crudo.",
+        "title": "Olio EVO Latta 5 lt"
       }
     ],
     "slug": "olio-evo-latta",
     "category": "Olio",
-    "title": "Extravergine - EVO Latta",
+    "title": "Olio EVO Latta",
     "subtitle": "Olio extravergine di oliva in latta",
     "badge": "LATTA",
     "imageSrc": "/products/EVO-latta-5lt.png",
-    "imageAlt": "Olio extravergine di oliva EVO in latta",
+    "imageAlt": "Olio EVO Latta in latta",
     "description": "EVO Del Pasqua in latta protegge al meglio l'olio dalla luce e lo rende pratico da conservare, senza rinunciare al profilo equilibrato del nostro extravergine.",
     "specs": {}
   },
@@ -84,23 +76,46 @@
     "variants": [
       {
         "id": "500ml",
-        "label": "Variante 1",
+        "label": "Bottiglia 500 ml",
         "priceCents": 1200,
         "sku": "FL-B-500ML",
-        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
-        "imageAlt": "",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-500ml.jpg",
+        "imageAlt": "Olio Fruttato Leggero 500 ml",
         "specs": {},
-        "description": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti."
+        "description": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti.",
+        "title": "Olio Fruttato Leggero 500 ml"
+      },
+      {
+        "id": "750ml",
+        "label": "Bottiglia 750 ml",
+        "priceCents": 1800,
+        "sku": "FL-B-750ML",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
+        "imageAlt": "Olio Fruttato Leggero 750 ml",
+        "specs": {},
+        "description": "La bottiglia Fruttato Leggero da 750 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti.",
+        "title": "Olio Fruttato Leggero 750 ml"
+      },
+      {
+        "id": "1lt",
+        "label": "Bottiglia 1 L",
+        "priceCents": 2200,
+        "sku": "FL-B-1LT",
+        "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
+        "imageAlt": "Olio Fruttato Leggero 1 lt",
+        "specs": {},
+        "description": "La bottiglia Fruttato Leggero da 1 L porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti.",
+        "title": "Olio Fruttato Leggero 1 lt"
       }
     ],
     "slug": "fruttato-leggero",
-    "title": "Extravergine - Fruttato Leggero",
+    "title": "Olio Fruttato Leggero",
     "category": "Olio",
     "subtitle": "Olio extravergine di oliva",
     "badge": "CLASSICO",
     "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
-    "imageAlt": "Olio extravergine - fruttato leggero",
-    "description": "Il Fruttato Leggero e delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
+    "imageAlt": "Olio Fruttato Leggero",
+    "description": "Il Fruttato Leggero è delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
     "specs": {},
     "purchaseInfo": {
       "caratteristiche": "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità <0,3%. Estratto a freddo per preservare tutte le proprietà organolettiche.",
@@ -118,12 +133,10 @@
         "priceCents": 6000,
         "sku": "FL-L-3LT",
         "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-        "imageAlt": "Fruttato leggero latta 3 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta Fruttato Leggero da 3 L e ideale per chi cerca una scorta quotidiana di olio delicato, adatto a pesce, verdure e piatti freschi."
+        "imageAlt": "Olio Fruttato Leggero 3 lt",
+        "specs": {},
+        "description": "La latta Fruttato Leggero da 3 L è ideale per chi cerca una scorta quotidiana di olio delicato, adatto a pesce, verdure e piatti freschi.",
+        "title": "Olio Fruttato Leggero 3 lt"
       },
       {
         "id": "5lt",
@@ -131,21 +144,19 @@
         "priceCents": 10000,
         "sku": "FL-L-5LT",
         "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-        "imageAlt": "Fruttato leggero latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta Fruttato Leggero da 5 L offre piu autonomia in cucina mantenendo un profilo morbido, equilibrato e facile da abbinare."
+        "imageAlt": "Olio Fruttato Leggero 5 lt",
+        "specs": {},
+        "description": "La latta Fruttato Leggero da 5 L offre più autonomia in cucina mantenendo un profilo morbido, equilibrato e facile da abbinare.",
+        "title": "Olio Fruttato Leggero 5 lt"
       }
     ],
     "slug": "olio-extra-vergine-di-oliva-fruttato-leggero-latta",
     "category": "Olio",
-    "title": "Extravergine - Fruttato Leggero Latta",
+    "title": "Olio Fruttato Leggero Latta",
     "subtitle": "Olio extravergine di oliva fruttato leggero in latta",
     "badge": "LATTA",
     "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-    "imageAlt": "Olio extravergine fruttato leggero in latta",
+    "imageAlt": "Olio Fruttato Leggero Latta",
     "description": "Il Fruttato Leggero in latta mantiene la sua delicatezza in un formato pratico, protetto e conveniente per l'uso quotidiano.",
     "specs": {}
   },
@@ -158,14 +169,10 @@
         "priceCents": 1200,
         "sku": "FM-B-500ML",
         "imageSrc": "/products/fruttato-medio-bottiglia-500ml.jpg",
-        "imageAlt": "Fruttato medio bottiglia 500 ml",
-        "specs": {
-          "Weight": "1.5 kg",
-          "Dimensions": "750 ml",
-          "Harvest": "2026",
-          "Prize": "IGP, Bio"
-        },
-        "description": "La bottiglia Fruttato Medio da 500 ml e perfetta per assaggiare o regalare un olio equilibrato, capace di valorizzare bruschette, verdure e primi piatti."
+        "imageAlt": "Olio Fruttato Medio 500 ml",
+        "specs": {},
+        "description": "La bottiglia Fruttato Medio da 500 ml è perfetta per assaggiare o regalare un olio equilibrato, capace di valorizzare bruschette, verdure e primi piatti.",
+        "title": "Olio Fruttato Medio 500 ml"
       },
       {
         "id": "750ml",
@@ -173,12 +180,10 @@
         "priceCents": 1800,
         "sku": "FM-B-750ML",
         "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
-        "imageAlt": "Fruttato medio bottiglia 750 ml",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La bottiglia Fruttato Medio da 750 ml e il formato quotidiano per chi vuole un extravergine versatile, intenso quanto basta e sempre elegante a tavola."
+        "imageAlt": "Olio Fruttato Medio 750 ml",
+        "specs": {},
+        "description": "La bottiglia Fruttato Medio da 750 ml è il formato quotidiano per chi vuole un extravergine versatile, intenso quanto basta e sempre elegante a tavola.",
+        "title": "Olio Fruttato Medio 750 ml"
       },
       {
         "id": "1lt",
@@ -186,26 +191,21 @@
         "priceCents": 2200,
         "sku": "FM-B-1LT",
         "imageSrc": "/products/fruttato-medio-bottiglia-1lt.jpg",
-        "imageAlt": "Fruttato medio bottiglia 1 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La bottiglia Fruttato Medio da 1 L offre piu continuita in cucina: un olio bilanciato, pratico e adatto a molti usi mediterranei."
+        "imageAlt": "Olio Fruttato Medio 1 lt",
+        "specs": {},
+        "description": "La bottiglia Fruttato Medio da 1 L offre più continuità in cucina: un olio bilanciato, pratico e adatto a molti usi mediterranei.",
+        "title": "Olio Fruttato Medio 1 lt"
       }
     ],
     "slug": "fruttato-medio",
     "category": "Olio",
-    "title": "Extravergine - Fruttato Medio",
+    "title": "Olio Fruttato Medio",
     "subtitle": "Olio Extravergine di oliva",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-medio-bottiglia-750ml.jpg",
-    "imageAlt": "Olio extravergine - fruttato medio",
-    "description": "Il Fruttato Medio e l'equilibrio piu versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
-    "specs": {},
-    "purchaseInfo": {
-      "caratteristiche": "questo è nuovo. inserido da admin!!!"
-    }
+    "imageSrc": "/products/fruttato-medio-bottiglia-1lt.jpg",
+    "imageAlt": "Olio Fruttato Medio",
+    "description": "Il Fruttato Medio è l'equilibrio più versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
+    "specs": {}
   },
   {
     "id": "fruttato-medio-latta",
@@ -216,12 +216,10 @@
         "priceCents": 6000,
         "sku": "FM-L-3LT",
         "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-        "imageAlt": "Fruttato medio latta 3 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta Fruttato Medio da 3 L e pensata per una cucina attiva: versatile, bilanciata e comoda per condire, cucinare e rifinire i piatti."
+        "imageAlt": "Olio Fruttato Medio 3 lt",
+        "specs": {},
+        "description": "La latta Fruttato Medio da 3 L è pensata per una cucina attiva: versatile, bilanciata e comoda per condire, cucinare e rifinire i piatti.",
+        "title": "Olio Fruttato Medio 3 lt"
       },
       {
         "id": "5lt",
@@ -229,22 +227,20 @@
         "priceCents": 10000,
         "sku": "FM-L-5LT",
         "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-        "imageAlt": "Fruttato medio latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta Fruttato Medio da 5 L e il formato scorta per chi non vuole mai restare senza un extravergine affidabile, profumato e adatto a tutto pasto."
+        "imageAlt": "Olio Fruttato Medio 5 lt",
+        "specs": {},
+        "description": "La latta Fruttato Medio da 5 L è il formato scorta per chi non vuole mai restare senza un extravergine affidabile, profumato e adatto a tutto pasto.",
+        "title": "Olio Fruttato Medio 5 lt"
       }
     ],
     "slug": "olio-extra-vergine-di-oliva-fruttato-medio-latta",
     "category": "Olio",
-    "title": "Extravergine - Fruttato Medio Latta",
+    "title": "Olio Fruttato Medio Latta",
     "subtitle": "Olio extravergine di oliva fruttato medio in latta",
     "badge": "LATTA",
     "imageSrc": "/products/fruttato-medio-latta-5lt.png",
-    "imageAlt": "Olio extravergine fruttato medio in latta",
-    "description": "Il Fruttato Medio in latta e la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
+    "imageAlt": "Olio Fruttato Medio Latta",
+    "description": "Il Fruttato Medio in latta è la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
     "specs": {}
   },
   {
@@ -256,12 +252,10 @@
         "priceCents": 1200,
         "sku": "FI-B-500ML",
         "imageSrc": "/products/fruttato-intenso-bottiglia-500ml.jpg",
-        "imageAlt": "Fruttato intenso bottiglia 500 ml",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La bottiglia Fruttato Intenso da 500 ml concentra personalita e profumo in un formato agile, perfetto su zuppe, legumi, carni e bruschette."
+        "imageAlt": "Olio Fruttato Intenso 500 ml",
+        "specs": {},
+        "description": "La bottiglia Fruttato Intenso da 500 ml concentra personalità e profumo in un formato agile, perfetto su zuppe, legumi, carni e bruschette.",
+        "title": "Olio Fruttato Intenso 500 ml"
       },
       {
         "id": "750ml",
@@ -269,12 +263,10 @@
         "priceCents": 1800,
         "sku": "FI-B-750ML",
         "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
-        "imageAlt": "Fruttato intenso bottiglia 750 ml",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La bottiglia Fruttato Intenso da 750 ml e il formato giusto per chi ama un extravergine energico, persistente e ricco di carattere."
+        "imageAlt": "Olio Fruttato Intenso 750 ml",
+        "specs": {},
+        "description": "La bottiglia Fruttato Intenso da 750 ml è il formato giusto per chi ama un extravergine energico, persistente e ricco di carattere.",
+        "title": "Olio Fruttato Intenso 750 ml"
       },
       {
         "id": "1lt",
@@ -282,26 +274,21 @@
         "priceCents": 2200,
         "sku": "FI-B-1LT",
         "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
-        "imageAlt": "Fruttato intenso bottiglia 1 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La bottiglia Fruttato Intenso da 1 L e pensata per chi usa spesso un olio deciso, ideale per ricette rustiche e piatti dal sapore importante."
+        "imageAlt": "Olio Fruttato Intenso 1 lt",
+        "specs": {},
+        "description": "La bottiglia Fruttato Intenso da 1 L è pensata per chi usa spesso un olio deciso, ideale per ricette rustiche e piatti dal sapore importante.",
+        "title": "Olio Fruttato Intenso 1 lt"
       }
     ],
     "slug": "fruttato-intenso",
     "category": "Olio",
-    "title": "Extravergine - Fruttato Intenso",
-    "subtitle": "Olio Extravergine di oliva ",
+    "title": "Olio Fruttato Intenso",
+    "subtitle": "Olio Extravergine di oliva",
     "badge": "CLASSICO",
-    "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
-    "imageAlt": "Olio extravergine - fruttato intenso",
-    "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale piu marcato: ideale per chi cerca un olio capace di farsi sentire.",
-    "specs": {
-      "Harvest": "—",
-      "Certification": "—"
-    }
+    "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
+    "imageAlt": "Olio Fruttato Intenso",
+    "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale più marcato: ideale per chi cerca un olio capace di farsi sentire.",
+    "specs": {}
   },
   {
     "id": "fruttato-intenso-latta",
@@ -312,12 +299,10 @@
         "priceCents": 6000,
         "sku": "FI-L-3LT",
         "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
-        "imageAlt": "Fruttato intenso latta 3 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta Fruttato Intenso da 3 L e una scorta intelligente per chi cerca un olio pieno, verde e persistente, perfetto su piatti strutturati."
+        "imageAlt": "Olio Fruttato Intenso 3 lt",
+        "specs": {},
+        "description": "La latta Fruttato Intenso da 3 L è una scorta intelligente per chi cerca un olio pieno, verde e persistente, perfetto su piatti strutturati.",
+        "title": "Olio Fruttato Intenso 3 lt"
       },
       {
         "id": "5lt",
@@ -325,21 +310,19 @@
         "priceCents": 10000,
         "sku": "FI-L-5LT",
         "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
-        "imageAlt": "Fruttato intenso latta 5 L",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        },
-        "description": "La latta Fruttato Intenso da 5 L e il formato piu generoso per cucine che vogliono sempre a portata di mano un extravergine potente e riconoscibile."
+        "imageAlt": "Olio Fruttato Intenso 5 lt",
+        "specs": {},
+        "description": "La latta Fruttato Intenso da 5 L è il formato più generoso per cucine che vogliono sempre a portata di mano un extravergine potente e riconoscibile.",
+        "title": "Olio Fruttato Intenso 5 lt"
       }
     ],
     "slug": "olio-extra-vergine-di-oliva-fruttato-intenso-latta",
     "category": "Olio",
-    "title": "Extravergine - Fruttato Intenso Latta",
+    "title": "Olio Fruttato Intenso Latta",
     "subtitle": "Olio extravergine di oliva fruttato intenso in latta",
     "badge": "LATTA",
     "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
-    "imageAlt": "Olio extravergine fruttato intenso in latta",
+    "imageAlt": "Olio Fruttato Intenso Latta",
     "description": "Il Fruttato Intenso in latta conserva forza e profumi in un formato pratico, ideale per chi usa con frequenza un olio dal profilo deciso.",
     "specs": {}
   },
@@ -347,101 +330,87 @@
     "id": "tartufo",
     "variants": [
       {
-        "id": "bottiglia",
-        "label": "Bottiglia",
+        "id": "500ml",
+        "label": "500 ml",
         "priceCents": 1400,
-        "sku": "TRUF-STD",
+        "sku": "TRUF-500ML",
         "imageSrc": "/products/tartufo.jpg",
-        "imageAlt": "Olio al tartufo bottiglia",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        }
+        "imageAlt": "Olio Aromatizzato al Tartufo 500 ml",
+        "specs": {},
+        "description": "Condimento a base di olio extravergine di oliva aromatizzato al tartufo. Perfetto su uova, patate, carpacci.",
+        "title": "Olio Aromatizzato al Tartufo 500 ml"
       }
     ],
     "slug": "tartufo",
     "category": "Olio",
-    "title": "Extravergine - Aromatizzato al Tartufo",
+    "title": "Olio Aromatizzato al Tartufo",
     "subtitle": "extravergine aromatizzato",
     "badge": "AROMATIZZATO",
     "imageSrc": "/products/tartufo.jpg",
-    "imageAlt": "Olio aromatico al tartufo",
+    "imageAlt": "Olio Aromatizzato al Tartufo",
     "description": "Perfetto su uova, patate, carpacci.",
-    "specs": {
-      "Harvest": "—",
-      "Certification": "—"
-    }
+    "specs": {}
   },
   {
     "id": "peperoncino",
     "variants": [
       {
-        "id": "bottiglia",
-        "label": "Bottiglia",
+        "id": "500ml",
+        "label": "500 ml",
         "priceCents": 1400,
-        "sku": "PEP-STD",
+        "sku": "PEP-500ML",
         "imageSrc": "/products/peperoncino.jpg",
-        "imageAlt": "Olio al peperoncino bottiglia",
-        "specs": {
-          "Weight": "—",
-          "Dimensions": "—"
-        }
+        "imageAlt": "Olio Aromatizzato al Peperoncino 500 ml",
+        "specs": {},
+        "description": "Condimento a base di olio extravergine di oliva aromatizzato al peperoncino calabrese. Piccantezza pulita, ottimo su pizza e primi.",
+        "title": "Olio Aromatizzato al Peperoncino 500 ml"
       }
     ],
     "slug": "peperoncino",
     "category": "Olio",
-    "title": "Extravergine - Aromatizzato al peperoncino",
+    "title": "Olio Aromatizzato al Peperoncino",
     "subtitle": "100% peperoncini calabresi",
     "badge": "AROMATIZZATO",
     "imageSrc": "/products/peperoncino.jpg",
-    "imageAlt": "Olio aromatico al peperoncino",
+    "imageAlt": "Olio Aromatizzato al Peperoncino",
     "description": "Piccantezza pulita, ottimo su pizza e primi.",
-    "specs": {
-      "Harvest": "—",
-      "Certification": "—"
-    }
+    "specs": {}
   },
   {
     "id": "vino",
     "variants": [
       {
         "id": "500ml",
-        "label": "500 ml ",
+        "label": "Bottiglia 500 ml",
         "priceCents": 1200,
-        "sku": "",
+        "sku": "WINE-500ML",
         "imageSrc": "/products/vino-vittoria.png",
-        "imageAlt": "Vino Vittoria bottiglia",
-        "specs": {
-          "nuovo": "1"
-        }
+        "imageAlt": "Vino Vittoria Sangiovese 500 ml",
+        "specs": {},
+        "description": "Vino rosso Vittoria Sangiovese in bottiglia da 500 ml.",
+        "title": "Vino Vittoria Sangiovese 500 ml"
       },
       {
         "id": "1lt",
-        "label": "1 lt",
+        "label": "Bottiglia 1 L",
         "priceCents": 2000,
-        "sku": "",
+        "sku": "WINE-1LT",
         "imageSrc": "/products/vino-vittoria.png",
-        "imageAlt": "Vino Vittoria bottiglia",
-        "specs": {}
+        "imageAlt": "Vino Vittoria Sangiovese 1 L",
+        "specs": {},
+        "description": "Vino rosso Vittoria Sangiovese in bottiglia da 1 L.",
+        "title": "Vino Vittoria Sangiovese 1 L"
       }
     ],
     "slug": "vino-vittoria",
-    "category": "vino ",
-    "title": "Vino Vittoria 100% San Giovese",
-    "subtitle": "Chianti IGP Sangiovese  ",
-    "badge": "",
+    "category": "Vino",
+    "title": "Vino Vittoria 100% Sangiovese",
+    "subtitle": "Chianti IGP Sangiovese",
+    "badge": "VINO",
     "imageSrc": "/products/vino-vittoria.png",
-    "imageAlt": "Vino Vittoria",
-    "description": "",
-    "specs": {
-      "nulla": "1231"
-    },
-    "purchaseInfo": {
-      "caratteristiche": "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidità <0,3%. Estratto a freddo per preservare tutte le proprietà organolettiche.",
-      "imballaggio": "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
-      "spedizione": "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50€.",
-      "resi": "Reso gratuito entro 14 giorni. Rimborso completo senza domande."
-    }
+    "imageAlt": "Vino Vittoria Sangiovese",
+    "description": "Rosso toscano elegante, profumato, ideale con carni rosse e formaggi.",
+    "specs": {}
   },
   {
     "id": "prodotto-test",

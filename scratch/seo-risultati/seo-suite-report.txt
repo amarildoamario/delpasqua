@@ -1,8 +1,8 @@
 ========================================================================================
 SEO Suite Report
-Generated at: 2026-05-29T15:31:00.321Z
-Started at:   2026-05-29T15:24:27.263Z
-Report file:  C:\Users\Utente\Desktop\React\delpasqua\scratch\seo-suite-report.txt
+Generated at: 2026-05-31T09:58:40.053Z
+Started at:   2026-05-31T09:51:31.927Z
+Report file:  C:\Users\Utente\Desktop\React\delpasqua\scratch\seo-risultati\seo-suite-report.txt
 ========================================================================================
 
 Summary:
@@ -18,8 +18,8 @@ Summary:
 New Local Project :: Locale audit
 Description: Controlla le pagine localizzate principali e segnala stringhe UI della lingua sbagliata.
 Status: passed
-Started at: 2026-05-29T15:24:27.266Z
-Finished at: 2026-05-29T15:24:55.416Z
+Started at: 2026-05-31T09:51:31.929Z
+Finished at: 2026-05-31T09:51:42.412Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -30,7 +30,7 @@ Output:
 New Local Project :: Locale audit
 Descrizione: Controlla le pagine localizzate principali e segnala stringhe UI della lingua sbagliata.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-29T15:24:27.266Z
+Started at: 2026-05-31T09:51:31.929Z
 ----------------------------------------------------------------------------------------
 Checking route: /
 OK   [it] / -> languageDetected=it transientRecovered=false
@@ -89,7 +89,7 @@ OK   [da] /da/kurv -> languageDetected=da transientRecovered=false
 OK   [no] /no/handlekurv -> languageDetected=no transientRecovered=false
 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:24:55.416Z
+Finished at: 2026-05-31T09:51:42.412Z
 Status: passed
 Metrics: routesChecked=42 | warnings=0
 ========================================================================================
@@ -99,8 +99,8 @@ Metrics: routesChecked=42 | warnings=0
 New Local Project :: Sitemap audit
 Description: Verifica indice sitemap, child sitemap, URL indicizzate, segmenti proibiti e homepage per locale.
 Status: passed
-Started at: 2026-05-29T15:24:55.416Z
-Finished at: 2026-05-29T15:24:55.663Z
+Started at: 2026-05-31T09:51:42.412Z
+Finished at: 2026-05-31T09:51:42.460Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -110,14 +110,14 @@ Output:
 New Local Project :: Sitemap audit
 Descrizione: Verifica indice sitemap, child sitemap, URL indicizzate, segmenti proibiti e homepage per locale.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-29T15:24:55.416Z
+Started at: 2026-05-31T09:51:42.412Z
 ----------------------------------------------------------------------------------------
 Sitemap index: found 3 child sitemaps.
 Child sitemap http://localhost:3000/sitemap-pages.xml: found 90 URLs.
 Child sitemap http://localhost:3000/sitemap-products.xml: found 66 URLs.
 Child sitemap http://localhost:3000/sitemap-blog.xml: found 301 URLs.
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:24:55.663Z
+Finished at: 2026-05-31T09:51:42.460Z
 Status: passed
 Metrics: failures=0
 ========================================================================================
@@ -127,8 +127,8 @@ Metrics: failures=0
 New Local Project :: Legacy routes audit
 Description: Controlla URL storiche, redirect 301/308 attesi e i 42 URL WordPress indicizzati su Google.
 Status: passed
-Started at: 2026-05-29T15:24:55.663Z
-Finished at: 2026-05-29T15:25:16.781Z
+Started at: 2026-05-31T09:51:42.460Z
+Finished at: 2026-05-31T09:52:12.584Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -142,7 +142,7 @@ Output:
 New Local Project :: Legacy routes audit
 Descrizione: Controlla URL storiche, redirect 301/308 attesi e i 42 URL WordPress indicizzati su Google.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-29T15:24:55.663Z
+Started at: 2026-05-31T09:51:42.460Z
 ----------------------------------------------------------------------------------------
 Checking direct URLs (9)
 OK   / status=200 location=- final=/ finalStatus=200
@@ -248,7 +248,7 @@ OK   /en/portfolio-category/wine/ status=308 location=/en/shop/vino-vittoria/ fi
 OK   /product/olio-aromatizzato-al-tartufo/ status=301 location=/shop/tartufo/ final=/shop/tartufo/ finalStatus=200 wasEnglish=false landsInEnglish=false hops=2 
 OK   /shop/?add-to-cart=12018 status=200 location=- final=/shop/ finalStatus=200 wasEnglish=false landsInEnglish=false hops=1 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:25:16.781Z
+Finished at: 2026-05-31T09:52:12.584Z
 Status: passed
 Metrics: direct200Paths=9 | legacyRedirects=43 | technicalPaths=3 | indexedUrlsChecked=41 | failures=0
 ========================================================================================
@@ -258,8 +258,8 @@ Metrics: direct200Paths=9 | legacyRedirects=43 | technicalPaths=3 | indexedUrlsC
 New Local Project :: Technical noindex audit
 Description: Verifica cart, checkout e account: noindex attivo, niente canonical/hreflang/og:url e niente sitemap.
 Status: passed
-Started at: 2026-05-29T15:25:16.782Z
-Finished at: 2026-05-29T15:25:18.628Z
+Started at: 2026-05-31T09:52:12.584Z
+Finished at: 2026-05-31T09:52:14.647Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -270,7 +270,7 @@ Output:
 New Local Project :: Technical noindex audit
 Descrizione: Verifica cart, checkout e account: noindex attivo, niente canonical/hreflang/og:url e niente sitemap.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-29T15:25:16.782Z
+Started at: 2026-05-31T09:52:12.584Z
 ----------------------------------------------------------------------------------------
 Checking technical routes (19)
 OK   /cart/ -> /carrello/ (status=200) []
@@ -293,7 +293,7 @@ OK   /nl/my-account/ -> /nl/my-account/ (status=200) []
 OK   /da/my-account/ -> /da/my-account/ (status=200) []
 OK   /no/my-account/ -> /no/my-account/ (status=200) []
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:25:18.628Z
+Finished at: 2026-05-31T09:52:14.647Z
 Status: passed
 Metrics: technicalRoutesChecked=19 | leakages=0
 ========================================================================================
@@ -303,8 +303,8 @@ Metrics: technicalRoutesChecked=19 | leakages=0
 New Local Project :: Hreflang audit
 Description: Controlla tag hreflang, x-default, self reference, URL assolute e bidirezionalita delle alternate.
 Status: passed
-Started at: 2026-05-29T15:25:18.628Z
-Finished at: 2026-05-29T15:27:05.999Z
+Started at: 2026-05-31T09:52:14.647Z
+Finished at: 2026-05-31T09:54:22.199Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -315,7 +315,7 @@ Output:
 New Local Project :: Hreflang audit
 Descrizione: Controlla tag hreflang, x-default, self reference, URL assolute e bidirezionalita delle alternate.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-29T15:25:18.628Z
+Started at: 2026-05-31T09:52:14.647Z
 ----------------------------------------------------------------------------------------
 Loaded 457 unique sitemap URLs to check for hreflang.
 Progress: fetched 50/457 URLs...
@@ -330,7 +330,7 @@ Progress: fetched 450/457 URLs...
 Progress: fetched 457/457 URLs...
 Verifying hreflang alternate maps...
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:27:05.999Z
+Finished at: 2026-05-31T09:54:22.199Z
 Status: passed
 Metrics: urlsAudited=457 | failures=0
 ========================================================================================
@@ -340,8 +340,8 @@ Metrics: urlsAudited=457 | failures=0
 New Local Project :: Canonical audit
 Description: Verifica canonical unica, assoluta, coerente con localhost, locale, trailing slash e status 200.
 Status: passed
-Started at: 2026-05-29T15:27:06.000Z
-Finished at: 2026-05-29T15:28:54.994Z
+Started at: 2026-05-31T09:54:22.199Z
+Finished at: 2026-05-31T09:56:28.575Z
 Context:
 - BASE_URL: http://localhost:3000
 - EXPECTED_SITE_URL: http://localhost:3000
@@ -354,7 +354,7 @@ New Local Project :: Canonical audit
 Descrizione: Verifica canonical unica, assoluta, coerente con localhost, locale, trailing slash e status 200.
 BASE_URL: http://localhost:3000
 EXPECTED_SITE_URL: http://localhost:3000
-Started at: 2026-05-29T15:27:06.000Z
+Started at: 2026-05-31T09:54:22.199Z
 ----------------------------------------------------------------------------------------
 Loaded 457 unique sitemap URLs to check for canonical.
 Progress: fetched 50/457 URLs...
@@ -368,7 +368,7 @@ Progress: fetched 400/457 URLs...
 Progress: fetched 450/457 URLs...
 Progress: fetched 457/457 URLs...
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:28:54.994Z
+Finished at: 2026-05-31T09:56:28.575Z
 Status: passed
 Metrics: urlsAudited=457 | failures=0
 ========================================================================================
@@ -378,8 +378,8 @@ Metrics: urlsAudited=457 | failures=0
 New Local Project :: Sitemap counts debug
 Description: Confronta i conteggi delle sitemap con catalogo locale, post blog, pattern URL e possibili anomalie.
 Status: passed
-Started at: 2026-05-29T15:28:54.994Z
-Finished at: 2026-05-29T15:28:55.025Z
+Started at: 2026-05-31T09:56:28.575Z
+Finished at: 2026-05-31T09:56:28.615Z
 Context:
 - BASE_URL: http://localhost:3000
 Metrics:
@@ -393,7 +393,7 @@ Output:
 New Local Project :: Sitemap counts debug
 Descrizione: Confronta i conteggi delle sitemap con catalogo locale, post blog, pattern URL e possibili anomalie.
 BASE_URL: http://localhost:3000
-Started at: 2026-05-29T15:28:54.994Z
+Started at: 2026-05-31T09:56:28.575Z
 ----------------------------------------------------------------------------------------
 Catalog products: 12
 Published blog posts: 51
@@ -401,7 +401,7 @@ Sitemap pages: found 90 entries.
 Sitemap products: found 66 entries.
 Sitemap blog: found 301 entries.
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:28:55.025Z
+Finished at: 2026-05-31T09:56:28.615Z
 Status: passed
 Metrics: catalogProducts=12 | blogPosts=51 | sitemapPages=90 | sitemapProducts=66 | sitemapBlog=301
 ========================================================================================
@@ -414,8 +414,8 @@ Metrics: catalogProducts=12 | blogPosts=51 | sitemapPages=90 | sitemapProducts=6
 Old Live WordPress :: Current sitemap diagnostic
 Description: Legge l'inventario URL del vecchio sito WordPress live tramite wp-sitemap.xml e child sitemap collegate.
 Status: passed
-Started at: 2026-05-29T15:28:55.026Z
-Finished at: 2026-05-29T15:28:56.871Z
+Started at: 2026-05-31T09:56:28.616Z
+Finished at: 2026-05-31T09:56:29.898Z
 Context:
 - BASE_URL: https://delpasqua.com
 - WORDPRESS_SITEMAPS: https://delpasqua.com/wp-sitemap.xml
@@ -427,7 +427,7 @@ Old Live WordPress :: Current sitemap diagnostic
 Descrizione: Legge l'inventario URL del vecchio sito WordPress live tramite wp-sitemap.xml e child sitemap collegate.
 BASE_URL: https://delpasqua.com
 WORDPRESS_SITEMAPS: https://delpasqua.com/wp-sitemap.xml
-Started at: 2026-05-29T15:28:55.026Z
+Started at: 2026-05-31T09:56:28.616Z
 ----------------------------------------------------------------------------------------
 Gathering sitemap URLs from production WordPress...
 WP_LIVE sitemap index https://delpasqua.com/wp-sitemap.xml -> 6 sitemap reference
@@ -439,7 +439,7 @@ WP_LIVE sitemap urlset https://delpasqua.com/wp-sitemap-taxonomies-portfolio-tag
 WP_LIVE sitemap urlset https://delpasqua.com/wp-sitemap-taxonomies-product_cat-1.xml -> 2 URL
 Sitemap URLs successfully loaded: 55
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:28:56.871Z
+Finished at: 2026-05-31T09:56:29.898Z
 Status: passed
 Metrics: wpSitemapUrls=55
 ========================================================================================
@@ -449,8 +449,8 @@ Metrics: wpSitemapUrls=55
 Confronto localhost -> WordPress live
 Description: Confronta la sitemap del progetto locale con l'inventario URL corrente di WordPress live.
 Status: passed
-Started at: 2026-05-29T15:28:56.873Z
-Finished at: 2026-05-29T15:28:59.021Z
+Started at: 2026-05-31T09:56:29.899Z
+Finished at: 2026-05-31T09:56:31.074Z
 Context:
 - SOURCE_BASE_URL: http://localhost:3000
 - TARGET_BASE_URL: https://delpasqua.com
@@ -467,7 +467,7 @@ Descrizione: Confronta la sitemap del progetto locale con l'inventario URL corre
 SOURCE_BASE_URL: http://localhost:3000
 TARGET_BASE_URL: https://delpasqua.com
 TARGET_SITEMAP_URLS: https://delpasqua.com/wp-sitemap.xml
-Started at: 2026-05-29T15:28:56.873Z
+Started at: 2026-05-31T09:56:29.899Z
 ----------------------------------------------------------------------------------------
 WP_LIVE sitemap index https://delpasqua.com/wp-sitemap.xml -> 6 sitemap reference
 WP_LIVE sitemap urlset https://delpasqua.com/wp-sitemap-posts-page-1.xml -> 13 URL
@@ -529,7 +529,7 @@ Only in Local Next.js (448)
 ... altri 428 path non mostrati (DIFF_LIMIT=20)
 
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:28:59.021Z
+Finished at: 2026-05-31T09:56:31.074Z
 Status: passed
 Metrics: localUrlsCount=457 | liveUrlsCount=55 | missingInLocalCount=46 | onlyInLocalCount=448
 ========================================================================================
@@ -542,8 +542,8 @@ Metrics: localUrlsCount=457 | liveUrlsCount=55 | missingInLocalCount=46 | onlyIn
 Migration Readiness
 Description: Valuta la copertura della migrazione confrontando WordPress live con il progetto locale e testando i vecchi path su localhost.
 Status: passed
-Started at: 2026-05-29T15:30:57.771Z
-Finished at: 2026-05-29T15:31:00.318Z
+Started at: 2026-05-31T09:58:38.518Z
+Finished at: 2026-05-31T09:58:40.052Z
 Context:
 - LOCAL_BASE_URL: http://localhost:3000
 - LIVE_WORDPRESS_BASE_URL: https://delpasqua.com
@@ -558,7 +558,7 @@ Migration Readiness
 Descrizione: Valuta la copertura della migrazione confrontando WordPress live con il progetto locale e testando i vecchi path su localhost.
 LOCAL_BASE_URL: http://localhost:3000
 LIVE_WORDPRESS_BASE_URL: https://delpasqua.com
-Started at: 2026-05-29T15:30:57.771Z
+Started at: 2026-05-31T09:58:38.518Z
 ----------------------------------------------------------------------------------------
 WP_LIVE sitemap index https://delpasqua.com/wp-sitemap.xml -> 6 sitemap reference
 WP_LIVE sitemap urlset https://delpasqua.com/wp-sitemap-posts-page-1.xml -> 13 URL
@@ -575,7 +575,7 @@ Migration Readiness breakdown:
 - TECHNICAL_ROUTE_IGNORE_OR_NOINDEX: 3
 - NEEDS_LOCAL_REDIRECT_OR_410: 0
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:31:00.318Z
+Finished at: 2026-05-31T09:58:40.052Z
 Status: passed
 Metrics: totalMigrationUrls=55 | samePathOk=9 | coveredByLocalRedirect=43 | needsLocalRedirectOr410=0
 ========================================================================================
@@ -588,15 +588,15 @@ Metrics: totalMigrationUrls=55 | samePathOk=9 | coveredByLocalRedirect=43 | need
 URL Outcome Classifier
 Description: Classifica solo gli ambienti local e live-wordpress usando sitemap locale, redirect legacy locali e inventario WordPress corrente.
 Status: passed
-Started at: 2026-05-29T15:28:59.021Z
-Finished at: 2026-05-29T15:30:57.771Z
+Started at: 2026-05-31T09:56:31.074Z
+Finished at: 2026-05-31T09:58:38.518Z
 Metrics:
 - localOutcomesCount: 519
 Output:
 ========================================================================================
 URL Outcome Classifier
 Descrizione: Classifica solo gli ambienti local e live-wordpress usando sitemap locale, redirect legacy locali e inventario WordPress corrente.
-Started at: 2026-05-29T15:28:59.021Z
+Started at: 2026-05-31T09:56:31.074Z
 ----------------------------------------------------------------------------------------
 Starting Local outcome fetches...
 URL Outcome Summary
@@ -727,9 +727,9 @@ LOCAL_TECHNICAL_NOINDEX_OK (19)
 [local] 200 -> 200 | /da/my-account/ -> /da/my-account/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 [local] 200 -> 200 | /no/my-account/ -> /no/my-account/ | source=local-technical-routes | redirects=0 | noindex=true | canonical=- | transientRecovered=false
 
-JSON outcomes written to C:\Users\Utente\Desktop\React\delpasqua\scratch\url-outcomes.json
+JSON outcomes written to C:\Users\Utente\Desktop\React\delpasqua\scratch\seo-risultati\url-outcomes.json
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:30:57.771Z
+Finished at: 2026-05-31T09:58:38.518Z
 Status: passed
 Metrics: localOutcomesCount=519
 ========================================================================================
@@ -742,20 +742,20 @@ Metrics: localOutcomesCount=519
 Warnings Explained
 Description: Spiega warning ed errori reali relativi a localhost, WordPress live diagnostico e readiness di migrazione.
 Status: passed
-Started at: 2026-05-29T15:31:00.318Z
-Finished at: 2026-05-29T15:31:00.319Z
+Started at: 2026-05-31T09:58:40.052Z
+Finished at: 2026-05-31T09:58:40.053Z
 Metrics:
 - explainedItems: 0
 Output:
 ========================================================================================
 Warnings Explained
 Descrizione: Spiega warning ed errori reali relativi a localhost, WordPress live diagnostico e readiness di migrazione.
-Started at: 2026-05-29T15:31:00.318Z
+Started at: 2026-05-31T09:58:40.052Z
 ----------------------------------------------------------------------------------------
 Warnings Explained
 Nessun warning/failure da spiegare.
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:31:00.319Z
+Finished at: 2026-05-31T09:58:40.053Z
 Status: passed
 Metrics: explainedItems=0
 ========================================================================================
@@ -768,8 +768,8 @@ Metrics: explainedItems=0
 Go-live blockers
 Description: Tabella finale con blocker, severity, environment, why e action basata solo su local, live-wordpress e migration.
 Status: passed
-Started at: 2026-05-29T15:31:00.320Z
-Finished at: 2026-05-29T15:31:00.320Z
+Started at: 2026-05-31T09:58:40.053Z
+Finished at: 2026-05-31T09:58:40.053Z
 Metrics:
 - totalBlockers: 0
 - critical: 0
@@ -779,13 +779,13 @@ Output:
 ========================================================================================
 Go-live blockers
 Descrizione: Tabella finale con blocker, severity, environment, why e action basata solo su local, live-wordpress e migration.
-Started at: 2026-05-29T15:31:00.320Z
+Started at: 2026-05-31T09:58:40.053Z
 ----------------------------------------------------------------------------------------
 Go-live blockers
 blocker | severity | environment | why | action
 --- | --- | --- | --- | ---
 ----------------------------------------------------------------------------------------
-Finished at: 2026-05-29T15:31:00.320Z
+Finished at: 2026-05-31T09:58:40.053Z
 Status: passed
 Metrics: totalBlockers=0 | critical=0 | warning=0 | info=0
 ========================================================================================

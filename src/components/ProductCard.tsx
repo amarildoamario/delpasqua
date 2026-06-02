@@ -343,15 +343,8 @@ function CardInner({
 
   const usesContainedImage = shouldContainProductImage(currentImage)
 
-  // Clean title: rimuovi il prefisso "Extravergine - "
-  let cleanTitle = product.title
-  if (product.id === "tartufo") {
-    cleanTitle = product.title
-  } else if (product.id === "peperoncino") {
-    cleanTitle = product.title
-  } else {
-    cleanTitle = product.title.replace(/^(Extravergine\s*-\s*|Olio\s+Extravergine\s+di\s+oliva\s+-?\s*)/i, "")
-  }
+  // Clean title: use title exactly as-is for absolute uniformity across card, breadcrumb, and h1
+  const cleanTitle = product.title
 
   // Badges mapping
   const badgesMap: Record<string, { primary: string; secondary: string }> = {

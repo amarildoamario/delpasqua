@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: verifica-migrazione.mjs (ex verify-migration.mjs)
+ * SCOPO: Esegue controlli di integrità (Sanity Checks) su Postgres, test di parità (Parity Checks)
+ *        tra il vecchio DB SQLite e Postgres locale, e smoke test applicativi sugli endpoint API.
+ * UTILIZZO: npm run verify:migration o node scripts/verifica-migrazione.mjs
+ */
+
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { PrismaClient } = require('../src/generated/prisma/index.js');

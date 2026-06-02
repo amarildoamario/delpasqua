@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: sincronizza-immagini-blog.ts (ex sync-blog-images.ts)
+ * SCOPO: Scarica in locale le immagini remote collegate ai post del blog,
+ *        salvandole nella cartella `/public/blog` e aggiornando i riferimenti nei file sorgente.
+ * UTILIZZO: npm run sync:blog-images o npx tsx tools/sincronizza-immagini-blog.ts
+ */
+
 import fs from "node:fs";
 import path from "node:path";
 import { mockBlogPosts } from "../src/lib/blog-data";

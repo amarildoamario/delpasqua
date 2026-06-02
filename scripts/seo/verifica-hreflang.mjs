@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: verifica-hreflang.mjs (ex audit-hreflang.mjs)
+ * SCOPO: Analizza le pagine indicate nelle sitemap locali e valida la presenza
+ *        e la reciprocità bidirezionale dei tag hreflang, inclusa la presenza del tag `x-default`.
+ * UTILIZZO: npm run seo:audit-hreflang o node scripts/verifica-hreflang.mjs
+ */
+
 import { URL } from "url";
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
@@ -21,7 +28,6 @@ async function run() {
 
   const fetchHeaders = {
     "Connection": "close",
-    "User-Agent": "Mozilla/5.0 (compatible; HreflangAudit/1.0)",
   };
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

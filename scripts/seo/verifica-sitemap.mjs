@@ -1,4 +1,10 @@
-// scripts/audit-sitemap.mjs
+/**
+ * NOME FILE: verifica-sitemap.mjs (ex audit-sitemap.mjs)
+ * SCOPO: Analizza la sitemap index (`sitemap.xml`) e le sitemap figlie scaricandole e verificando
+ *        che ciascun URL risponda con status 200, non contenga query params o rotte proibite, e che ci siano le homepage in tutte le lingue.
+ * UTILIZZO: npm run seo:audit-sitemap o node scripts/verifica-sitemap.mjs
+ */
+
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 const ACTIVE_LOCALES = ["it", "en", "de", "nl", "da", "no"];
 

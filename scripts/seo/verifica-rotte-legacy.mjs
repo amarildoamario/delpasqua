@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: verifica-rotte-legacy.mjs (ex audit-legacy-routes.mjs)
+ * SCOPO: Verifica che le rotte legacy (storiche) del vecchio sito WordPress redirectino
+ *        correttamente in modo permanente (301/308) verso i nuovi slug in Next.js, testando anche i 42 URL indicizzati.
+ * UTILIZZO: npm run seo:audit-legacy-routes o node scripts/verifica-rotte-legacy.mjs
+ */
+
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 const DIRECT_200_PATHS = [
@@ -16,7 +23,7 @@ const LEGACY_301_REDIRECTS = new Map([
   ["/portfolio-category/details/", "/produzione/"],
   ["/portfolio-category/nature/", "/storia/"],
   ["/portfolio-category/photogrpahy/", "/storia/"],
-  ["/portfolio-category/wine/", "/shop/vino/"],
+  ["/portfolio-category/wine/", "/shop/vino-vittoria/"],
   ["/portfolio-tag/blanc-winery/", "/produzione/"],
   ["/portfolio-tag/countryside-bay/", "/storia/"],
   ["/portfolio-tag/organic-company/", "/storia/"],
@@ -61,7 +68,6 @@ const LEGACY_301_REDIRECTS = new Map([
 const TECHNICAL_PATHS = ["/cart/", "/checkout/", "/my-account/"];
 
 const FETCH_HEADERS = {
-  "User-Agent": "Mozilla/5.0 (compatible; LegacyRoutesAudit/1.0)",
   Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 };
 

@@ -1,3 +1,10 @@
+/**
+ * NOME FILE: confronta-sitemaps.mjs (ex compare-sitemaps.mjs)
+ * SCOPO: Scarica ed analizza in parallelo le sitemap del sito live (WordPress)
+ *        e del progetto locale (Next.js) evidenziando le differenze (pagine rimosse, nuove o in comune).
+ * UTILIZZO: npm run seo:compare-sitemaps o node scripts/confronta-sitemaps.mjs
+ */
+
 import fs from "fs";
 import path from "path";
 
@@ -11,10 +18,9 @@ const SHOW_MATCHES = process.env.SHOW_MATCHES === "1";
 const SHOW_LIVE_ALL = process.env.SHOW_LIVE_ALL === "1";
 const SHOW_PROJECT_ALL = process.env.SHOW_PROJECT_ALL === "1";
 const DIFF_LIMIT = Number.parseInt(process.env.DIFF_LIMIT || "200", 10);
-const REPORT_DIR = process.env.REPORT_DIR || path.resolve(process.cwd(), "scratch", "seo-compare");
+const REPORT_DIR = process.env.REPORT_DIR || path.resolve(process.cwd(), "scratch", "seo-risultati", "seo-compare");
 
 const FETCH_HEADERS = {
-  "User-Agent": "Mozilla/5.0 (compatible; DelPasquaSitemapCompare/1.0; +https://delpasqua.com)",
   Accept: "application/xml,text/xml;q=0.9,*/*;q=0.8",
   "Accept-Language": "it-IT,it;q=0.9,en;q=0.8",
   Connection: "close",
@@ -138,16 +144,23 @@ function writePathReport(filename, paths) {
 }
 
 async function fetchXml(url) {
-  const res = await fetch(url, {
-    headers: FETCH_HEADERS,
-    redirect: "follow",
-  });
+  try {
+    const res = await fetch(url, {
+      headers: FETCH_HEADERS,
+      redirect: "follow",
+    });
 
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    return await res.text();
+  } catch (error) {
+    if (url.includes("localhost") || url.includes("127.0.0.1")) {
+      throw new Error(`fetch fallito per ${url}. Assicurati che il server di sviluppo locale sia avviato (es. con 'npm run dev'). Dettaglio: ${error.message}`);
+    }
+    throw new Error(`fetch fallito per ${url}. Verifica la connessione o l'indirizzo. Dettaglio: ${error.message}`);
   }
-
-  return await res.text();
 }
 
 async function collectSitemapPaths(entryUrl, baseUrl, seen = new Set()) {
