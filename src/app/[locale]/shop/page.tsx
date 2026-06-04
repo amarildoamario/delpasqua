@@ -3,7 +3,7 @@ import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import ShopPageClient from "./ShopPageClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const SHOP_METADATA: Record<string, { title: string; description: string }> = {
   it: {
@@ -53,7 +53,7 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
     title: product.title ?? product.id,
     subtitle: product.subtitle ?? null,
     badge: product.badge ?? null,
-    merchBadge: (product as any).merchBadge ?? null,
+    merchBadge: (product as Record<string, unknown>).merchBadge as string | null ?? null,
     imageSrc: product.imageSrc ?? null,
     imageAlt: product.imageAlt ?? product.title ?? product.id,
     variants: product.variants?.map((variant) => ({

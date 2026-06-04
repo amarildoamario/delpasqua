@@ -1,138 +1,138 @@
 ---
 id: "glos-1"
-title: "Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro"
-excerpt: "Tutti i termini dell'universo dell'olio extravergine spiegati in modo semplice. Dal fruttato al Panel Test, dalla morchia alla cultivar."
-category: "Informazioni sull'olio EVO"
+title: "EVOO Glossary: Fruity, Bitter, Pungent, Defects, Malaxation, and More"
+excerpt: "All the terms of the extra virgin olive oil world explained simply. From fruity to Panel Test, from sediment to cultivar."
+category: "Olive Oil Information"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "8 min"
 author: "Redazione Frantoio"
 imageUrl: "/blog/glossario.jpg"
 references:
-  - label: "Regolamento delegato (UE) 2022/2104 — Standard di commercializzazione dell’olio d’oliva"
+  - label: "Commission Delegated Regulation (EU) 2022/2104 — Marketing standards for olive oil"
     url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/eng"
-    note: "Definisce categorie, caratteristiche e requisiti legali (quadro UE aggiornato; abroga i vecchi riferimenti storici)."
-  - label: "Regolamento di esecuzione (UE) 2022/2105 — Controlli di conformità per gli standard dell’olio d’oliva"
+    note: "Defines categories, characteristics, and legal requirements (updated EU framework; repeals historical references)."
+  - label: "Commission Implementing Regulation (EU) 2022/2105 — Conformity checks for olive oil standards"
     url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/eng"
-    note: "Regole e procedure di controllo; rimanda ai limiti/parametri della 2022/2104."
-  - label: "COI/IOC — Standards, Methods & Guides (pagina ufficiale)"
+    note: "Check rules and procedures; refers back to the limits/parameters of 2022/2104."
+  - label: "IOC — Standards, Methods & Guides (official page)"
     url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
-    note: "Hub COI con standard di commercio, metodi analitici e documenti di analisi sensoriale."
-  - label: "COI/IOC (2024) — Metodo Panel Test (COI/T.20/Doc. n. 15/Rev. 11)"
+    note: "IOC hub with trade standards, analytical methods, and sensory analysis documents."
+  - label: "IOC (2024) — Sensory Analysis Method (COI/T.20/Doc. No 15/Rev. 11)"
     url: "https://www.internationaloliveoil.org/wp-content/uploads/2024/10/COI-T20-Doc.-15-REV-11-2024-IT.pdf"
-    note: "Riferimento per termini come fruttato/amaro/piccante, difetti e criteri statistici (mediana)."
-  - label: "EU Register — Health claim ufficiale sui polifenoli dell’olio d’oliva"
+    note: "Reference for terms like fruity/bitter/pungent, defects, and statistical criteria (median)."
+  - label: "EU Register — Official health claim on olive oil polyphenols"
     url: "https://ec.europa.eu/food/food-feed-portal/screen/health-claims/eu-register/details/POL-HC-6431"
-    note: "Condizioni d’uso del claim e definizione di idrossitirosolo + derivati."
-  - label: "Regolamento (UE) 2018/848 — Produzione biologica ed etichettatura dei prodotti biologici"
+    note: "Conditions of use of the claim and definition of hydroxytyrosol + derivatives."
+  - label: "Regulation (EU) 2018/848 — Organic production and labelling of organic products"
     url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/eng"
-    note: "Base normativa per il termine “biologico” citato nel glossario."
+    note: "Regulatory basis for the term 'organic' mentioned in the glossary."
 ---
 
 ## A
 
-**Acidità libera**: contenuto di acidi grassi liberi nell'olio, espresso in g di acido oleico per 100g. < 0.8% per l'extra vergine. *Non si percepisce al gusto.*
+**Free Acidity**: the content of free fatty acids in olive oil, expressed in grams of oleic acid per 100g. Must be < 0.8% for extra virgin olive oil. *It cannot be perceived by taste.*
 
-**Agrolimentare biologico**: sistema di produzione che esclude pesticidi di sintesi e fertilizzanti chimici, regolato dal Reg. UE 848/2018.
+**Organic Agri-food**: a production system that excludes synthetic pesticides and chemical fertilizers, regulated by Regulation (EU) 2018/848.
 
-**Aglicone**: forma idrolizzata di un glicoside (es. aglicone dell'oleuropeina). Solitamente più attivo biologicamente.
+**Aglycone**: the hydrolyzed form of a glycoside (e.g., oleuropein aglycone). Typically more biologically active.
 
 ## B
 
-**Blend**: assemblaggio di più cultivar o lotti per ottenere un profilo aromatico desiderato e costante (→ Monocultivar).
+**Blend**: the mixing of different cultivars or batches to achieve a desired and consistent flavor profile (→ Monocultivar).
 
 ## C
 
-**Campagna olearia**: periodo annuale di produzione dell'olio, tipicamente ottobre-febbraio. Coincide con l'annata di raccolta.
+**Harvest Campaign**: the annual period of olive oil production, typically from October to February. It coincides with the harvest year.
 
-**Clorofilla**: pigmento verde dell'olio. Photo-sensibilizzatrice — accelera l'ossidazione alla luce.
+**Chlorophyll**: the green pigment in olive oil. It acts as a photo-sensitizer, accelerating oxidation when exposed to light.
 
-**COI**: Consiglio Oleicolo Internazionale. Autorità internazionale che definisce i metodi di analisi e classificazione dell'olio d'oliva.
+**IOC**: International Olive Council. The international intergovernmental organization that defines the methods of analysis and standards for olive oil classification.
 
-**Cultivar**: varietà di olivo. Ogni cultivar ha caratteristiche aromatiche proprie (→ Frantoio, Moraiolo, Leccino, ecc.).
+**Cultivar**: olive variety. Each cultivar has its own unique aromatic characteristics (e.g., Frantoio, Moraiolo, Leccino, etc.).
 
 ## D
 
-**DAGs**: *Diacilgliceroli*, indicatore di freschezza/qualità. Un rapporto DAG elevato (>35%) indica un olio non adulterato e non troppo invecchiato.
+**DAGs**: *Diacylglycerols*, a marker of freshness/quality. A high ratio of DAGs (>35%) indicates a fresh, unadulterated oil that has not aged excessively.
 
-**Decanter**: centrifuga orizzontale usata nel frantoio per separare olio, acqua di vegetazione e sansa.
+**Decanter**: a horizontal centrifuge used in the olive mill to separate oil, vegetation water, and pomace.
 
-**DOP**: Denominazione di Origine Protetta. Produzione, trasformazione e confezionamento avvengono interamente nell'area geografica designata.
+**PDO**: Protected Designation of Origin. Production, processing, and preparation must all take place in the specific designated geographical area.
 
 ## E
 
-**Estrazione a freddo**: processo di estrazione dell'olio a temperatura massima di 27°C, che preserva polifenoli e aromi volatili.
+**Cold Extraction**: the process of extracting olive oil at a maximum temperature of 27°C, which preserves polyphenols and volatile aromas.
 
 ## F
 
-**Frangitura**: prima fase di lavorazione dell'oliva — frantumazione meccanica del frutto intero.
+**Crushing**: the first stage of olive processing—the mechanical grinding of the whole olive fruit.
 
-**Fruttato**: attributo positivo sensoriale. Il complesso di sensazioni olfattive che ricordano l'oliva fresca. Può essere leggero, medio o intenso.
+**Fruity**: a positive sensory attribute. The range of olfactory sensations resembling fresh olives. It can be light, medium, or robust (intense).
 
-**Frazione insaponificabile**: la parte dell'olio (1–2%) che non reagisce con le basi per formare sapone. Contiene polifenoli, tocoferoli, pigmenti, cere.
+**Unsaponifiable Fraction**: the portion of the oil (1–2%) that does not react with bases to form soap. It contains polyphenols, tocopherols, pigments, and waxes.
 
 ## G
 
-**Gramolatura**: processo di mescolamento lento della pasta di olive dopo la frangitura. Favorisce l'aggregazione delle goccioline di olio prima della centrifugazione.
+**Malaxation (Gramolatura)**: the process of slowly mixing the olive paste after crushing. It encourages oil droplets to merge before centrifugation.
 
 ## H
 
-**HPLC**: *High-Performance Liquid Chromatography*. Tecnica analitica usata per identificare e quantificare i singoli polifenoli dell'olio.
+**HPLC**: *High-Performance Liquid Chromatography*. An analytical technique used to identify and quantify individual polyphenols in olive oil.
 
-**HT**: *Idrossitirosolo*. Polifenolo con elevatissima attività antiossidante. Base della claim EFSA sui polifenoli dell'olio d'oliva.
+**HT**: *Hydroxytyrosol*. A polyphenol with extremely high antioxidant activity. The basis of the EFSA health claim on olive oil polyphenols.
 
 ## I
 
-**IGP**: Indicazione Geografica Protetta. Almeno una fase della produzione avviene nell'area geografica designata.
+**PGI**: Protected Geographical Indication. At least one of the stages of production, processing, or preparation must take place in the designated geographical area.
 
-**Indice di maturazione**: metodo di valutazione dello stadio maturativo dell'oliva (scala Jaen, 0–7). Determina il momento ottimale di raccolta.
+**Maturity Index**: a method of evaluating the ripening stage of the olives (Jaen scale, 0–7). It determines the optimal harvest time.
 
 ## K
 
-**K232 e K270**: coefficienti di estinzione UV a 232 e 270 nanometri. Misurano rispettivamente l'ossidazione primaria (idroperossidi) e secondaria (aldeidi e chetoni). Valori bassi = olio fresco e ben conservato.
+**K232 and K270**: UV extinction coefficients at 232 and 270 nanometers. They measure primary oxidation (hydroperoxides) and secondary oxidation (aldehydes and ketones) respectively. Low values = fresh and well-preserved oil.
 
 ## L
 
-**LOX pathway** (*lipossigenasi*): via metabolica responsabile della formazione degli aromi verdi dell'olio (esanale, (E)-2-esenal, ecc.). Attivata durante la molitura.
+**LOX Pathway** (*lipoxygenase*): the metabolic pathway responsible for creating the green aromas of olive oil (hexanal, (E)-2-hexenal, etc.). Activated during milling.
 
 ## M
 
-**Mediana dei difetti**: valore statistico del Panel Test che riassume l'intensità del difetto principale percepito. Deve essere 0 per un olio extra vergine.
+**Median of Defects**: a statistical value from the Panel Test summarizing the intensity of the perceived main defect. It must be 0 for an oil to be classified as extra virgin.
 
-**Morchia**: sedimento denso che si deposita sul fondo dei serbatoi. Ricco di acqua di vegetazione e residui organici — fonte di difetti se non rimosso.
+**Muddy Sediment (Morchia)**: a thick sediment that settles at the bottom of storage tanks. Rich in vegetation water and organic residues—a source of defects if not removed.
 
-**Monocultivar**: olio prodotto da un'unica varietà di olivo (→ Blend).
+**Monocultivar**: olive oil produced from a single variety of olive (→ Blend).
 
 ## O
 
-**Oleocantale**: polifenolo dialdeido responsabile del piccante in gola. Ha attività anti-infiammatoria simile all'ibuprofene.
+**Oleocanthal**: a dialdehydic polyphenol responsible for the peppery throat tickle. It exhibits anti-inflammatory activity similar to ibuprofen.
 
-**Oleuropeina**: secoiridoide glicoside principale dell'oliva verde. Responsabile del gusto amaro. Potente antiossidante.
+**Oleuropein**: the main secoiridoid glycoside in green olives. Responsible for the bitter taste. A powerful antioxidant.
 
-**ORAC**: Oxygen Radical Absorbance Capacity. Misura della capacità antiossidante di una sostanza.
+**ORAC**: Oxygen Radical Absorbance Capacity. A measure of the antioxidant capacity of a substance.
 
 ## P
 
-**Panel Test**: analisi sensoriale ufficiale dell'olio d'oliva. Gruppo di assaggiatori certificati valuta attributi positivi e difetti secondo metodo COI/UE.
+**Panel Test**: the official sensory analysis of olive oil. A group of certified tasters evaluates positive attributes and defects according to the IOC/EU method.
 
-**Perossidi**: prodotti primari dell'ossidazione. Il numero di perossidi (NP) deve essere ≤ 20 mEq O₂/kg per l'extra vergine.
+**Peroxides**: the primary products of oxidation. The peroxide value (PV) must be ≤ 20 mEq O₂/kg for extra virgin olive oil.
 
-**Polifenoli totali**: contenuto totale di composti fenolici, espresso in mg/kg. Indicatore di qualità nutraceutica.
+**Total Polyphenols**: the total content of phenolic compounds, expressed in mg/kg. An indicator of nutraceutical quality.
 
 ## S
 
-**Sansa**: residuo solido dell'estrazione (buccia, nocciolo, polpa esaurita). Può essere sottoposta a estrazione con solvente (olio di sansa) o usata come combustibile.
+**Pomace (Sansa)**: the solid residue left after extraction (skin, stone, exhausted pulp). It can be treated with solvent to extract pomace oil, or used as fuel.
 
-**Secoiridoide**: classe di composti fenolici tipici delle Oleacee. Oleuropeina e oleocantale sono secoiridoidi.
+**Secoiridoid**: a class of phenolic compounds typical of the Oleaceae family. Oleuropein and oleocanthal are secoiridoids.
 
 ## T
 
-**TMC**: Termine Minimo di Conservazione. "Preferibilmente entro il..." — non è una scadenza di sicurezza, ma di qualità.
+**Best-By Date (TMC)**: Termine Minimo di Conservazione ("Best before..."). It is not a safety expiration date, but a quality one.
 
-**Tocoferoli**: vitamina E naturale dell'olio. Antiossidante liposolubile.
+**Tocopherols**: natural Vitamin E in olive oil. A fat-soluble antioxidant.
 
 ## V
 
-**Velato**: olio non filtrato, con particelle in sospensione che danno aspetto torbido.
+**Veiled (Velato)**: unfiltered olive oil with suspended particles that give it a cloudy appearance.
 
-**Volatile**: composto chimico facilmente evaporabile. Responsabile degli aromi percepiti al naso.
+**Volatile**: a chemical compound that easily evaporates, responsible for the aromas perceived by the nose.

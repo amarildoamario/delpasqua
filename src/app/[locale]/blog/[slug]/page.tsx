@@ -12,6 +12,23 @@ import {
 } from "@/lib/blogSlugs";
 import { Metadata } from 'next';
 import { getBlogAlternateUrls, SITE_URL, absoluteUrl, localizedPath } from "@/lib/seo";
+import { locales } from "@/i18n/pathnames";
+
+export async function generateStaticParams() {
+  const params: { locale: string; slug: string }[] = [];
+
+  for (const locale of locales) {
+    const posts = await getBlogPosts(locale);
+    for (const post of posts) {
+      params.push({
+        locale,
+        slug: post.slug,
+      });
+    }
+  }
+
+  return params;
+}
 
 export async function generateMetadata(
     { params }: { params: Promise<{ slug: string, locale: string, category?: string }> }

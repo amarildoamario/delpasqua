@@ -293,7 +293,7 @@ export async function POST(req: Request) {
         type: "ORDER_CREATED",
         message: `Ordine creato (${order.orderNumber ?? order.id})`,
         toStatus: order.status,
-        meta: { ipAddress, userAgent, promotion: pricing.promotionApplied },
+        meta: { promotion: pricing.promotionApplied },
       });
 
       // P0.10 event

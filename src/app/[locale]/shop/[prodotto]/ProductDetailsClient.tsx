@@ -55,6 +55,7 @@ type Product = {
   title: string;
   subtitle?: string;
   badge?: string;
+  merchBadge?: string | null;
   imageSrc: string;
   imageAlt: string;
   description: string;
@@ -1279,45 +1280,45 @@ export default function ProductDetailsClient({
   }, [activeTab, descriptionParagraph, currentProduct, locale, selectedVariant]);
 
   const recommendations = useMemo<ProductCardProduct[]>(() => {
-    if (isEvo) {
-      // Use real related products plus EVO latta as a recommendation
-      const evoRelated = relatedProducts.slice(0, 3).map((p) => {
-        const cheapestVariant = p.variants?.reduce((min, cur) => (cur.priceCents < min.priceCents ? cur : min), p.variants[0]);
-        const priceCents = cheapestVariant ? cheapestVariant.priceCents : 1500;
-        return {
-          id: p.id,
-          slug: p.slug,
-          title: p.title,
-          subtitle: p.subtitle ?? (cheapestVariant ? formatSizeLabel(cheapestVariant) : ""),
-          badge: p.badge,
-          imageSrc: p.imageSrc,
-          imageAlt: p.imageAlt,
-          priceLabel: formatEUR(priceCents, locale),
-          priceCents,
-          defaultVariantId: cheapestVariant?.id,
-          variantsCount: p.variants?.length ?? 1,
-        };
-      });
-      return evoRelated;
-    }
-
-    return relatedProducts.slice(0, 4).map((p) => {
+    const mapProductToCard = (p: Product): ProductCardProduct => {
       const cheapestVariant = p.variants?.reduce((min, cur) => (cur.priceCents < min.priceCents ? cur : min), p.variants[0]);
       const priceCents = cheapestVariant ? cheapestVariant.priceCents : 1500;
+      const hasMultiple = (p.variants?.length ?? 0) > 1;
+
+      const priceCaptionCopy = {
+        it: { from: "A partire da", price: "Prezzo" },
+        en: { from: "From", price: "Price" },
+        de: { from: "Ab", price: "Preis" },
+        nl: { from: "Vanaf", price: "Prijs" },
+        da: { from: "Fra", price: "Pris" },
+        no: { from: "Fra", price: "Pris" },
+      };
+      const pCopy = priceCaptionCopy[locale as keyof typeof priceCaptionCopy] ?? priceCaptionCopy.it;
+
       return {
         id: p.id,
         slug: p.slug,
-        title: p.title,
+        title: hasMultiple ? p.title : (cheapestVariant?.title || p.title),
         subtitle: p.subtitle ?? (cheapestVariant ? formatSizeLabel(cheapestVariant) : ""),
         badge: p.badge,
-        imageSrc: p.imageSrc,
-        imageAlt: p.imageAlt,
+        merchBadge: p.merchBadge || null,
+        imageSrc: cheapestVariant?.imageSrc ?? p.imageSrc ?? "",
+        imageAlt: cheapestVariant?.imageAlt ?? p.imageAlt ?? "",
         priceLabel: formatEUR(priceCents, locale),
+        priceCaption: hasMultiple ? pCopy.from : pCopy.price,
         priceCents,
         defaultVariantId: cheapestVariant?.id,
         variantsCount: p.variants?.length ?? 1,
+        variantLabel: hasMultiple ? undefined : (p.variants?.[0]?.label || undefined),
       };
-    });
+    };
+
+    if (isEvo) {
+      // Use real related products plus EVO latta as a recommendation
+      return relatedProducts.slice(0, 3).map(mapProductToCard);
+    }
+
+    return relatedProducts.slice(0, 4).map(mapProductToCard);
   }, [isEvo, locale, relatedProducts]);
 
   // FAQ State
@@ -1464,7 +1465,7 @@ export default function ProductDetailsClient({
 
           {/* Prezzo e Informazioni Fiscali */}
           <div className="mt-5 flex items-baseline gap-3">
-            <span className="font-serif text-3xl text-neutral-900 font-light">
+            <span className="font-sans text-3xl font-bold text-neutral-900">
               {formatEUR(variantPriceCents, locale)}
             </span>
             <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">
@@ -1809,7 +1810,7 @@ export default function ProductDetailsClient({
           {text.relatedTitle}
         </h2>
         
-        <div className="grid auto-rows-fr grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid auto-rows-fr grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {recommendations.map((item) => (
             <div key={item.id} className="flex h-full">
               <ProductCard product={item} />

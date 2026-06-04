@@ -41,6 +41,21 @@ function isDev() {
   return process.env.NODE_ENV !== "production";
 }
 
+function maskEmail(email: string) {
+  if (!email) return "";
+  const parts = email.split("@");
+  if (parts.length !== 2) return "***";
+  const [local, domain] = parts;
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}${local.slice(1, -1).replace(/./g, "*")}${local[local.length - 1]}@${domain}`;
+}
+
+function maskName(name: string) {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  return parts.map((part) => part.length > 1 ? `${part[0]}***` : "*").join(" ");
+}
+
 function adminRecipients(): string[] {
   const raw =
     process.env.TASTINGS_ADMIN_EMAILS ||
@@ -113,7 +128,7 @@ function devExtras(args: {
 }) {
   if (!isDev()) return {};
   return {
-    to: args.to,
+    to: args.to.map(maskEmail),
     from: args.from,
     env: {
       NODE_ENV: process.env.NODE_ENV,
@@ -186,7 +201,7 @@ export async function sendTastingBookingAdminEmail(args: {
   // ✅ log SERVER sempre
   console.log("[TASTING][EMAIL][ADMIN] preflight", {
     bookingId: args.id,
-    to,
+    to: to.map(maskEmail),
     from,
     hasResendKey,
     hasFrom,
@@ -282,9 +297,9 @@ export async function sendTastingBookingAdminEmail(args: {
 
   console.log("[TASTING][EMAIL][ADMIN] sending", {
     bookingId: args.id,
-    to,
+    to: to.map(maskEmail),
     from,
-    subject,
+    subject: subject.replace(args.fullName, maskName(args.fullName)),
   });
 
   try {
@@ -344,7 +359,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
   const hasFrom = Boolean(from);
 
   console.log("[TASTING][EMAIL][CUSTOMER][CANCELED] preflight", {
-    to: args.toEmail,
+    to: maskEmail(args.toEmail),
     from,
     hasResendKey,
     hasFrom,
@@ -358,7 +373,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
       error: "Missing EMAIL_FROM",
       ...(isDev()
         ? {
-            to: [args.toEmail],
+            to: [maskEmail(args.toEmail)],
             from,
             env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom },
           }
@@ -375,7 +390,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
       error: "Missing RESEND_API_KEY",
       ...(isDev()
         ? {
-            to: [args.toEmail],
+            to: [maskEmail(args.toEmail)],
             from,
             env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom },
           }
@@ -431,7 +446,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
   </body></html>`;
 
   console.log("[TASTING][EMAIL][CUSTOMER][CANCELED] sending", {
-    to: args.toEmail,
+    to: maskEmail(args.toEmail),
     from,
     subject,
   });
@@ -452,7 +467,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
       messageId: getResendMessageId(res),
       ...(isDev()
         ? {
-            to: [args.toEmail],
+            to: [maskEmail(args.toEmail)],
             from,
             env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom },
           }
@@ -470,7 +485,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
       error: errText,
       ...(isDev()
         ? {
-            to: [args.toEmail],
+            to: [maskEmail(args.toEmail)],
             from,
             env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom },
           }
@@ -501,7 +516,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
   const hasFrom = Boolean(from);
 
   console.log("[TASTING][EMAIL][CUSTOMER] preflight", {
-    to: args.toEmail,
+    to: maskEmail(args.toEmail),
     from,
     hasResendKey,
     hasFrom,
@@ -514,7 +529,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
       status: "failed",
       error: "Missing EMAIL_FROM",
       ...(isDev()
-        ? { to: [args.toEmail], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
+        ? { to: [maskEmail(args.toEmail)], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
         : {}),
     };
     console.error("[TASTING][EMAIL][CUSTOMER] failed", out);
@@ -527,7 +542,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
       status: "failed",
       error: "Missing RESEND_API_KEY",
       ...(isDev()
-        ? { to: [args.toEmail], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
+        ? { to: [maskEmail(args.toEmail)], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
         : {}),
     };
     console.error("[TASTING][EMAIL][CUSTOMER] failed", out);
@@ -578,7 +593,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
   </body></html>`;
 
   console.log("[TASTING][EMAIL][CUSTOMER] sending", {
-    to: args.toEmail,
+    to: maskEmail(args.toEmail),
     from,
     subject,
   });
@@ -598,7 +613,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
       status: "sent",
       messageId: getResendMessageId(res),
       ...(isDev()
-        ? { to: [args.toEmail], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
+        ? { to: [maskEmail(args.toEmail)], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
         : {}),
     };
 
@@ -612,7 +627,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
       status: "failed",
       error: errText,
       ...(isDev()
-        ? { to: [args.toEmail], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
+        ? { to: [maskEmail(args.toEmail)], from, env: { NODE_ENV: process.env.NODE_ENV, hasResendKey, hasFrom } }
         : {}),
     };
 

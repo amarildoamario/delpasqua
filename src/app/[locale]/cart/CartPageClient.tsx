@@ -478,7 +478,7 @@ export default function CartPageClient() {
 
                           <div className="mt-auto pt-3">
                             <div className="flex items-baseline gap-1">
-                              <span className="font-serif text-[1.15rem] font-bold tracking-tight text-[#1f1a17]">
+                              <span className="font-sans text-[1.15rem] font-bold tracking-tight text-[#1f1a17]">
                                 {formatEUR(price)}
                               </span>
                               <span className="text-[9px] font-medium text-[#8a7c6e] lowercase">

@@ -102,9 +102,9 @@ function getFirstAvailableTime(d: Date, isMorning: boolean, durMins: number, boo
 
 export default function TastingsCalendar(props: {
   tastingTypes: TastingType[];
-  initialWeekStartIso: string;
-  initialSlots: Slot[];
-  initialBookings: Booking[];
+  initialWeekStartIso?: string;
+  initialSlots?: Slot[];
+  initialBookings?: Booking[];
 }) {
   const t = useTranslations("TastingsCalendar");
   const locale = useLocale();
@@ -122,11 +122,12 @@ export default function TastingsCalendar(props: {
     }).format(d);
   }
 
+  const [initialLoading, setInitialLoading] = useState(!props.initialSlots);
   const [weekStart, setWeekStart] = useState(() =>
-    normalizeWeekStart(new Date(props.initialWeekStartIso))
+    normalizeWeekStart(props.initialWeekStartIso ? new Date(props.initialWeekStartIso) : new Date())
   );
-  const [slots, setSlots] = useState<Slot[]>(props.initialSlots);
-  const [bookings, setBookings] = useState<Booking[]>(props.initialBookings);
+  const [slots, setSlots] = useState<Slot[]>(props.initialSlots || []);
+  const [bookings, setBookings] = useState<Booking[]>(props.initialBookings || []);
   const [loadingWeek, setLoadingWeek] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -307,6 +308,19 @@ export default function TastingsCalendar(props: {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  useEffect(() => {
+    let active = true;
+    if (initialLoading) {
+      loadWeek(weekStart).then(() => {
+        if (active) setInitialLoading(false);
+      });
+    }
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const weekLabel = useMemo(() => {
     const a = weekDays[0];
     const b = weekDays[6];
@@ -316,6 +330,56 @@ export default function TastingsCalendar(props: {
     });
     return `${fmt.format(a)} – ${fmt.format(b)}`;
   }, [weekDays, locale]);
+
+  if (initialLoading) {
+    return (
+      <div className="w-full">
+        {/* Navigation Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-[5px] bg-zinc-200 animate-pulse" />
+            <div className="w-40 h-11 rounded-[5px] bg-zinc-200/80 animate-pulse" />
+            <div className="w-12 h-12 rounded-[5px] bg-zinc-200 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Desktop Grid Skeleton */}
+        <div className="hidden lg:block">
+          <div className="grid grid-cols-7 gap-3">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="rounded-[5px] border border-[#E7E5E4] bg-white min-h-[380px] flex flex-col p-4 space-y-4">
+                <div className="h-4 w-20 bg-zinc-200 rounded animate-pulse" />
+                <div className="h-8 w-10 bg-zinc-200/80 rounded animate-pulse" />
+                <hr className="border-zinc-100" />
+                <div className="h-16 w-full bg-zinc-100 rounded-[5px] animate-pulse" />
+                <div className="h-16 w-full bg-zinc-100 rounded-[5px] animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile List Skeleton */}
+        <div className="lg:hidden space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-[5px] border border-[#E7E5E4] bg-white p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 bg-zinc-200 rounded animate-pulse" />
+                <div className="space-y-1">
+                  <div className="h-3 w-20 bg-zinc-200 rounded animate-pulse" />
+                  <div className="h-3 w-12 bg-zinc-200/80 rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="h-12 bg-zinc-100 rounded-[5px] animate-pulse" />
+                <div className="h-12 bg-zinc-100 rounded-[5px] animate-pulse" />
+                <div className="h-12 bg-zinc-100 rounded-[5px] animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

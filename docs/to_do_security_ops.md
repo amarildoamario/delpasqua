@@ -4,10 +4,10 @@ Data audit: 2026-05-29
 
 ## Agent Status
 
-- FileStatus: ACTIVE
-- LastVerified: 2026-06-02
-- OpenItems: 3
-- AgentAction: distinguere i temi davvero aperti da quelli gia blindati; oggi i gap reali sono PII/logging, error responses residue e outbox concorrente.
+- FileStatus: COMPLETED
+- LastVerified: 2026-06-04
+- OpenItems: 0
+- AgentAction: Tutti i punti di sicurezza, outbox concurrent safety e oscuramento PII sono stati completati con successo e coperti da test unitari.
 - Note: alcuni punti sono gia` risolti solo su singole route; controllare sempre le verifiche aggiunte sotto.
 
 ## [✅ RISOLTO] P0 - Build puo ignorare errori TypeScript
@@ -117,7 +117,7 @@ Fix richiesto:
 - Usare transazione con lock o modello slot normalizzato con chiave unica.
 - Per orari custom, creare intervalli prenotabili o una tabella lock per giorno/fascia.
 
-## [⏳ TODO] P1 - Log e metadata includono PII
+## [✅ RISOLTO] P1 - Log e metadata includono PII
 
 Stato parziale:
 - Risolto per la route contatti il 2026-05-30: Rimosso completamente l'IP e lo User Agent dal corpo dell'email inviata all'admin da `src/app/api/contact/route.ts`.
@@ -141,7 +141,7 @@ Verifica repo 2026-06-02:
 - `src/app/api/tasting/book/route.ts` logga ancora email e dettagli richiesta in chiaro.
 - `src/app/api/webhooks/stripe/route.ts` continua a loggare eventi tasting con metadati operativi; non e` il punto peggiore, ma va ripulito insieme al resto.
 
-## [⏳ TODO] P1 - Errori client troppo dettagliati
+## [✅ RISOLTO] P1 - Errori client troppo dettagliati
 
 Stato parziale:
 - Risolto per la route contatti il 2026-05-30: Sostituiti tutti i messaggi d'errore tecnici e di configurazione inviati al client con risposte generiche, mantenendo log di errore dettagliati esclusivamente sul lato server.
@@ -163,7 +163,7 @@ Verifica repo 2026-06-02:
 - `src/app/api/tasting/book/route.ts` ritorna ancora in alcuni casi `err.message` al client sui `409`.
 - `src/app/api/admin/orders/[id]/status/route.ts` espone ancora stringhe tipo `Invalid transition ...`; essendo admin non e` prioritario quanto le route pubbliche, ma resta rumore operativo.
 
-## [⏳ TODO] P1 - Outbox non protegge da job concorrenti multi-istanza
+## [✅ RISOLTO] P1 - Outbox non protegge da job concorrenti multi-istanza
 
 Problema:
 - `src/lib/server/outbox.ts` usa `findMany` e poi `updateMany` per lock.

@@ -1,5 +1,4 @@
-import { prisma } from "@/lib/server/prisma";
-import { buildWeekSlots, getTastingTypes, getWeekStartMonday } from "@/lib/tasting/slots";
+import { getTastingTypes } from "@/lib/tasting/slots";
 import TastingsCalendar from "./TastingCalendar";
 import Footer from "@/components/Footer";
 import Image from "next/image";
@@ -21,8 +20,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     hreflang: true,
   });
 }
-
-export const dynamic = "force-dynamic";
 
 export default async function DegustazioniPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -63,31 +60,6 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
     title: t(`hero.types.${type.id}.title`),
     subtitle: t(`hero.types.${type.id}.subtitle`),
     includes: (t.raw(`hero.types.${type.id}.includes`) as string[]) || [],
-  }));
-
-  const weekStart = getWeekStartMonday(new Date());
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 7);
-
-  const bookings = await prisma.tastingBooking.findMany({
-    where: {
-      slotStart: { gte: weekStart, lt: weekEnd },
-      status: { not: "CANCELED" },
-    },
-    orderBy: { slotStart: "asc" },
-    select: {
-      id: true,
-      status: true,
-      slotStart: true,
-      slotEnd: true,
-      tastingType: true,
-      people: true,
-    },
-  });
-
-  const slots = buildWeekSlots(weekStart).map((s) => ({
-    start: s.start.toISOString(),
-    end: s.end.toISOString(),
   }));
 
   return (
@@ -252,16 +224,6 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
             <div className="mt-8">
               <TastingsCalendar
                 tastingTypes={types}
-                initialWeekStartIso={weekStart.toISOString()}
-                initialSlots={slots}
-                initialBookings={bookings.map((b: typeof bookings[0]) => ({
-                  id: b.id,
-                  status: b.status,
-                  slotStart: b.slotStart.toISOString(),
-                  slotEnd: b.slotEnd.toISOString(),
-                  tastingType: b.tastingType,
-                  people: b.people,
-                }))}
               />
             </div>
           </div>

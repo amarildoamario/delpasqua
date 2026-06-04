@@ -1,138 +1,138 @@
 ---
 id: "glos-1"
-title: "Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro"
-excerpt: "Tutti i termini dell'universo dell'olio extravergine spiegati in modo semplice. Dal fruttato al Panel Test, dalla morchia alla cultivar."
-category: "Informazioni sull'olio EVO"
+title: "Olivenöl-Glossar: Fruchtig, bitter, scharf, Mängel, Kneten und mehr"
+excerpt: "Alle Begriffe aus der Welt des nativen Olivenöls extra einfach erklärt. Von fruchtig bis Panel-Test, von Bodensatz bis Sorte."
+category: "Olivenöl-Informationen"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "8 min"
 author: "Redazione Frantoio"
 imageUrl: "/blog/glossario.jpg"
 references:
-  - label: "Regolamento delegato (UE) 2022/2104 — Standard di commercializzazione dell’olio d’oliva"
-    url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/eng"
-    note: "Definisce categorie, caratteristiche e requisiti legali (quadro UE aggiornato; abroga i vecchi riferimenti storici)."
-  - label: "Regolamento di esecuzione (UE) 2022/2105 — Controlli di conformità per gli standard dell’olio d’oliva"
-    url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/eng"
-    note: "Regole e procedure di controllo; rimanda ai limiti/parametri della 2022/2104."
-  - label: "COI/IOC — Standards, Methods & Guides (pagina ufficiale)"
+  - label: "Delegierte Verordnung (EU) 2022/2104 der Kommission — Vermarktungsnormen für Olivenöl"
+    url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/deu"
+    note: "Definiert Kategorien, Eigenschaften und gesetzliche Anforderungen (aktualisierter EU-Rahmen; ersetzt historische Verweise)."
+  - label: "Durchführungsverordnung (EU) 2022/2105 der Kommission — Konformitätsprüfungen von Olivenölvermarktungsnormen"
+    url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/deu"
+    note: "Prüfungsregeln und -verfahren; verweist auf die Grenzwerte/Parameter von 2022/2104."
+  - label: "IOC — Standards, Methods & Guides (offizielle Seite)"
     url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
-    note: "Hub COI con standard di commercio, metodi analitici e documenti di analisi sensoriale."
-  - label: "COI/IOC (2024) — Metodo Panel Test (COI/T.20/Doc. n. 15/Rev. 11)"
+    note: "IOC-Plattform mit Handelsstandards, Analysemethoden und sensorischen Analysedokumenten."
+  - label: "IOC (2024) — Sensorische Prüfmethode (COI/T.20/Doc. No 15/Rev. 11)"
     url: "https://www.internationaloliveoil.org/wp-content/uploads/2024/10/COI-T20-Doc.-15-REV-11-2024-IT.pdf"
-    note: "Riferimento per termini come fruttato/amaro/piccante, difetti e criteri statistici (mediana)."
-  - label: "EU Register — Health claim ufficiale sui polifenoli dell’olio d’oliva"
+    note: "Referenz für Begriffe wie fruchtig/bitter/scharf, Mängel und statistische Kriterien (Median)."
+  - label: "EU-Register — Offizielle gesundheitsbezogene Angabe zu Olivenöl-Polyphenolen"
     url: "https://ec.europa.eu/food/food-feed-portal/screen/health-claims/eu-register/details/POL-HC-6431"
-    note: "Condizioni d’uso del claim e definizione di idrossitirosolo + derivati."
-  - label: "Regolamento (UE) 2018/848 — Produzione biologica ed etichettatura dei prodotti biologici"
-    url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/eng"
-    note: "Base normativa per il termine “biologico” citato nel glossario."
+    note: "Bedingungen für die Verwendung der Angabe und Definition von Hydroxytyrosol + Derivaten."
+  - label: "Verordnung (EU) 2018/848 — Ökologische/biologische Produktion und Kennzeichnung von ökologischen/biologischen Erzeugnissen"
+    url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/deu"
+    note: "Regulatorische Grundlage für den im Glossar erwähnten Begriff 'biologisch'."
 ---
 
 ## A
 
-**Acidità libera**: contenuto di acidi grassi liberi nell'olio, espresso in g di acido oleico per 100g. < 0.8% per l'extra vergine. *Non si percepisce al gusto.*
+**Freie Fettsäuren (Säuregrad)**: Gehalt an freien Fettsäuren im Olivenöl, ausgedrückt in Gramm Ölsäure pro 100g. Muss bei nativem Olivenöl extra < 0,8% sein. *Nicht geschmacklich wahrnehmbar.*
 
-**Agrolimentare biologico**: sistema di produzione che esclude pesticidi di sintesi e fertilizzanti chimici, regolato dal Reg. UE 848/2018.
+**Ökologische Landwirtschaft**: Ein Produktionssystem, das synthetische Pestizide und chemische Düngemittel ausschließt, geregelt durch die Verordnung (EU) 2018/848.
 
-**Aglicone**: forma idrolizzata di un glicoside (es. aglicone dell'oleuropeina). Solitamente più attivo biologicamente.
+**Aglykon**: Die hydrolysierte Form eines Glykosids (z. B. Oleuropein-Aglykon). In der Regel biologisch aktiver.
 
 ## B
 
-**Blend**: assemblaggio di più cultivar o lotti per ottenere un profilo aromatico desiderato e costante (→ Monocultivar).
+**Blend**: Die Mischung verschiedener Olivensorten oder Chargen, um ein gewünschtes und konstantes Geschmacksprofil zu erzielen (→ Monocultivar).
 
 ## C
 
-**Campagna olearia**: periodo annuale di produzione dell'olio, tipicamente ottobre-febbraio. Coincide con l'annata di raccolta.
+**Erntecampagne**: Der jährliche Zeitraum der Olivenölproduktion, typischerweise von Oktober bis Februar. Fällt mit dem Erntejahr zusammen.
 
-**Clorofilla**: pigmento verde dell'olio. Photo-sensibilizzatrice — accelera l'ossidazione alla luce.
+**Chlorophyll**: Das grüne Pigment im Olivenöl. Wirkt als Photosensibilisator und beschleunigt die Oxidation bei Lichteinfall.
 
-**COI**: Consiglio Oleicolo Internazionale. Autorità internazionale che definisce i metodi di analisi e classificazione dell'olio d'oliva.
+**IOC**: Internationaler Olivenrat. Die internationale zwischenstaatliche Organisation, die Analysemethoden und Standards für die Olivenölklassifizierung festlegt.
 
-**Cultivar**: varietà di olivo. Ogni cultivar ha caratteristiche aromatiche proprie (→ Frantoio, Moraiolo, Leccino, ecc.).
+**Cultivar**: Olivensorte. Jede Sorte hat ihre eigenen einzigartigen aromatischen Eigenschaften (z. B. Frantoio, Moraiolo, Leccino usw.).
 
 ## D
 
-**DAGs**: *Diacilgliceroli*, indicatore di freschezza/qualità. Un rapporto DAG elevato (>35%) indica un olio non adulterato e non troppo invecchiato.
+**DAGs**: *Diacylglycerine*, ein Indikator für Frische/Qualität. Ein hohes Verhältnis von DAGs (>35%) deutet auf ein frisches, unverfälschtes Öl hin, das nicht zu alt ist.
 
-**Decanter**: centrifuga orizzontale usata nel frantoio per separare olio, acqua di vegetazione e sansa.
+**Decanter**: Eine horizontale Zentrifuge, die in der Ölmühle verwendet wird, um Öl, Vegetationswasser und Trester zu trennen.
 
-**DOP**: Denominazione di Origine Protetta. Produzione, trasformazione e confezionamento avvengono interamente nell'area geografica designata.
+**g.U. (DOP)**: Geschützte Ursprungsbezeichnung. Erzeugung, Verarbeitung und Herstellung müssen in einem bestimmten abgegrenzten geografischen Gebiet erfolgen.
 
 ## E
 
-**Estrazione a freddo**: processo di estrazione dell'olio a temperatura massima di 27°C, che preserva polifenoli e aromi volatili.
+**Kaltextraktion**: Die Gewinnung von Olivenöl bei einer maximalen Temperatur von 27°C, wodurch Polyphenole und flüchtige Aromen erhalten bleiben.
 
 ## F
 
-**Frangitura**: prima fase di lavorazione dell'oliva — frantumazione meccanica del frutto intero.
+**Frangitura (Mahlen)**: Die erste Stufe der Olivenverarbeitung—das mechanische Zerkleinern der ganzen Olive.
 
-**Fruttato**: attributo positivo sensoriale. Il complesso di sensazioni olfattive che ricordano l'oliva fresca. Può essere leggero, medio o intenso.
+**Fruchtig**: Ein positives sensorisches Attribut. Die Vielfalt der Geruchsempfindungen, die an frische Oliven erinnern. Kann leicht, mittelfruchtig oder intensiv sein.
 
-**Frazione insaponificabile**: la parte dell'olio (1–2%) che non reagisce con le basi per formare sapone. Contiene polifenoli, tocoferoli, pigmenti, cere.
+**Unverseifbarer Anteil**: Der Anteil des Öls (1–2%), der nicht mit Basen zu Seife reagiert. Enthält Polyphenole, Tocopherole, Pigmente und Wachse.
 
 ## G
 
-**Gramolatura**: processo di mescolamento lento della pasta di olive dopo la frangitura. Favorisce l'aggregazione delle goccioline di olio prima della centrifugazione.
+**Kneten (Gramolatura)**: Das langsame Mischen der Olivenpaste nach dem Mahlen. Es fördert das Zusammenfließen der Öltröpfchen vor der Zentrifugation.
 
 ## H
 
-**HPLC**: *High-Performance Liquid Chromatography*. Tecnica analitica usata per identificare e quantificare i singoli polifenoli dell'olio.
+**HPLC**: *High-Performance Liquid Chromatography* (Hochleistungsflüssigkeitschromatographie). Eine Analysetechnik zur Identifizierung und Quantifizierung einzelner Polyphenole im Olivenöl.
 
-**HT**: *Idrossitirosolo*. Polifenolo con elevatissima attività antiossidante. Base della claim EFSA sui polifenoli dell'olio d'oliva.
+**HT**: *Hydroxytyrosol*. Ein Polyphenol mit extrem hoher antioxidativer Aktivität. Basis des EFSA-Health-Claims für Olivenöl-Polyphenole.
 
 ## I
 
-**IGP**: Indicazione Geografica Protetta. Almeno una fase della produzione avviene nell'area geografica designata.
+**g.g.A. (IGP)**: Geschützte geografische Angabe. Mindestens eine der Produktionsstufen muss in dem abgegrenzten geografischen Gebiet stattfinden.
 
-**Indice di maturazione**: metodo di valutazione dello stadio maturativo dell'oliva (scala Jaen, 0–7). Determina il momento ottimale di raccolta.
+**Reifeindex**: Eine Methode zur Bewertung des Reifegrades der Oliven (Jaen-Skala, 0–7). Bestimmt den optimalen Erntezeitpunkt.
 
 ## K
 
-**K232 e K270**: coefficienti di estinzione UV a 232 e 270 nanometri. Misurano rispettivamente l'ossidazione primaria (idroperossidi) e secondaria (aldeidi e chetoni). Valori bassi = olio fresco e ben conservato.
+**K232 und K270**: UV-Extinktionskoeffizienten bei 232 und 270 Nanometern. Sie messen die primäre Oxidation (Hydroperoxide) bzw. sekundäre Oxidation (Aldehyde und Ketone). Niedrige Werte = frisches und gut gelagertes Öl.
 
 ## L
 
-**LOX pathway** (*lipossigenasi*): via metabolica responsabile della formazione degli aromi verdi dell'olio (esanale, (E)-2-esenal, ecc.). Attivata durante la molitura.
+**LOX-Weg** (*Lipoxygenase-Weg*): Der Stoffwechselweg, der für die Entstehung der grünen Aromen des Olivenöls verantwortlich ist (Hexanal, (E)-2-Hexenal etc.). Wird während des Mahlens aktiviert.
 
 ## M
 
-**Mediana dei difetti**: valore statistico del Panel Test che riassume l'intensità del difetto principale percepito. Deve essere 0 per un olio extra vergine.
+**Median der Fehler**: Ein statistischer Wert aus dem Panel-Test, der die Intensität des wahrgenommenen Hauptfehlers zusammenfasst. Muss bei nativem Olivenöl extra 0 sein.
 
-**Morchia**: sedimento denso che si deposita sul fondo dei serbatoi. Ricco di acqua di vegetazione e residui organici — fonte di difetti se non rimosso.
+**Bodensatz (Morchia)**: Ein dicker Bodensatz, der sich am Boden von Lagertanks absetzt. Reich an Vegetationswasser und organischen Rückständen—führt zu Fehlern, wenn er nicht entfernt wird.
 
-**Monocultivar**: olio prodotto da un'unica varietà di olivo (→ Blend).
+**Monocultivar**: Olivenöl, das aus einer einzigen Olivensorte hergestellt wird (→ Blend).
 
 ## O
 
-**Oleocantale**: polifenolo dialdeido responsabile del piccante in gola. Ha attività anti-infiammatoria simile all'ibuprofene.
+**Oleocanthal**: Ein dialdehydisches Polyphenol, das für das typische Kratzen im Hals verantwortlich ist. Zeigt eine entzündungshemmende Wirkung ähnlich wie Ibuprofen.
 
-**Oleuropeina**: secoiridoide glicoside principale dell'oliva verde. Responsabile del gusto amaro. Potente antiossidante.
+**Oleuropein**: Das Haupt-Secoiridoid-Glykosid in grünen Oliven. Verantwortlich für den bitteren Geschmack. Ein starkes Antioxidans.
 
-**ORAC**: Oxygen Radical Absorbance Capacity. Misura della capacità antiossidante di una sostanza.
+**ORAC**: Oxygen Radical Absorbance Capacity. Ein Maß für die antioxidative Kapazität einer Substanz.
 
 ## P
 
-**Panel Test**: analisi sensoriale ufficiale dell'olio d'oliva. Gruppo di assaggiatori certificati valuta attributi positivi e difetti secondo metodo COI/UE.
+**Panel-Test**: Die offizielle sensorische Analyse von Olivenöl. Eine Gruppe zertifizierter Prüfer bewertet positive Attribute und Fehler nach der IOC/EU-Methode.
 
-**Perossidi**: prodotti primari dell'ossidazione. Il numero di perossidi (NP) deve essere ≤ 20 mEq O₂/kg per l'extra vergine.
+**Peroxide**: Die primären Produkte der Oxidation. Der Peroxidwert (POZ) muss bei nativem Olivenöl extra ≤ 20 mEq O₂/kg sein.
 
-**Polifenoli totali**: contenuto totale di composti fenolici, espresso in mg/kg. Indicatore di qualità nutraceutica.
+**Gesamtpolyphenole**: Der Gesamtgehalt an phenolischen Verbindungen, ausgedrückt in mg/kg. Ein Indikator für die gesundheitliche Qualität.
 
 ## S
 
-**Sansa**: residuo solido dell'estrazione (buccia, nocciolo, polpa esaurita). Può essere sottoposta a estrazione con solvente (olio di sansa) o usata come combustibile.
+**Trester (Sansa)**: Die festen Rückstände nach der Extraktion (Haut, Kern, ausgepresstes Fruchtfleisch). Kann mit Lösungsmitteln extrahiert (Tresteröl) oder als Brennstoff verwendet werden.
 
-**Secoiridoide**: classe di composti fenolici tipici delle Oleacee. Oleuropeina e oleocantale sono secoiridoidi.
+**Secoiridoid**: Eine Klasse von phenolischen Verbindungen, die typisch für die Familie der Oleaceae sind. Oleuropein und Oleocanthal sind Secoiridoide.
 
 ## T
 
-**TMC**: Termine Minimo di Conservazione. "Preferibilmente entro il..." — non è una scadenza di sicurezza, ma di qualità.
+**Mindesthaltbarkeitsdatum (TMC)**: "Mindestens haltbar bis...". Kein Verfallsdatum der Lebensmittelsicherheit, sondern ein Qualitätsmerkmal.
 
-**Tocoferoli**: vitamina E naturale dell'olio. Antiossidante liposolubile.
+**Tocopherole**: Natürliches Vitamin E im Olivenöl. Ein fettlösliches Antioxidans.
 
 ## V
 
-**Velato**: olio non filtrato, con particelle in sospensione che danno aspetto torbido.
+**Naturtrüb (Velato)**: Unfiltriertes Olivenöl mit Schwebstoffen, die ihm ein trübes Aussehen verleihen.
 
-**Volatile**: composto chimico facilmente evaporabile. Responsabile degli aromi percepiti al naso.
+**Aromastoffe (Volatile)**: Leicht verdampfbare chemische Verbindungen, die für die von der Nase wahrgenommenen Aromen verantwortlich sind.

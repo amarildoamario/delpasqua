@@ -1,138 +1,138 @@
 ---
 id: "glos-1"
-title: "Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro"
-excerpt: "Tutti i termini dell'universo dell'olio extravergine spiegati in modo semplice. Dal fruttato al Panel Test, dalla morchia alla cultivar."
-category: "Informazioni sull'olio EVO"
+title: "Extra Vierge Olijfolie Glossarium: Fruitig, bitter, pittig, defecten en meer"
+excerpt: "Alle termen uit de wereld van extra vierge olijfolie eenvoudig uitgelegd. Van fruitig tot Panel Test, van bezinksel tot cultivar."
+category: "Olijfolie-informatie"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "8 min"
 author: "Redazione Frantoio"
 imageUrl: "/blog/glossario.jpg"
 references:
-  - label: "Regolamento delegato (UE) 2022/2104 — Standard di commercializzazione dell’olio d’oliva"
-    url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/eng"
-    note: "Definisce categorie, caratteristiche e requisiti legali (quadro UE aggiornato; abroga i vecchi riferimenti storici)."
-  - label: "Regolamento di esecuzione (UE) 2022/2105 — Controlli di conformità per gli standard dell’olio d’oliva"
-    url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/eng"
-    note: "Regole e procedure di controllo; rimanda ai limiti/parametri della 2022/2104."
-  - label: "COI/IOC — Standards, Methods & Guides (pagina ufficiale)"
+  - label: "Gedelegeerde Verordening (EU) 2022/2104 van de Commissie — Handelsnormen voor olijfolie"
+    url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/nld"
+    note: "Definieert categorieën, kenmerken en wettelijke vereisten (bijgewerkt EU-kader; trekt historische verwijzingen in)."
+  - label: "Uitvoeringsverordening (EU) 2022/2105 van de Commissie — Conformiteitscontroles van de handelsnormen voor olijfolie"
+    url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/nld"
+    note: "Controleregels en -procedures; verwijst naar de limieten/parameters van 2022/2104."
+  - label: "IOC — Standards, Methods & Guides (officiële pagina)"
     url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
-    note: "Hub COI con standard di commercio, metodi analitici e documenti di analisi sensoriale."
-  - label: "COI/IOC (2024) — Metodo Panel Test (COI/T.20/Doc. n. 15/Rev. 11)"
+    note: "IOC-hub met handelsnormen, analysemethoden en documenten voor sensorische analyse."
+  - label: "IOC (2024) — Sensorische analysemethode (COI/T.20/Doc. No 15/Rev. 11)"
     url: "https://www.internationaloliveoil.org/wp-content/uploads/2024/10/COI-T20-Doc.-15-REV-11-2024-IT.pdf"
-    note: "Riferimento per termini come fruttato/amaro/piccante, difetti e criteri statistici (mediana)."
-  - label: "EU Register — Health claim ufficiale sui polifenoli dell’olio d’oliva"
+    note: "Referentie voor termen als fruitig/bitter/pittig, defecten en statistische criteria (mediaan)."
+  - label: "EU-register — Officiële gezondheidsclaim voor olijfolie-polifenolen"
     url: "https://ec.europa.eu/food/food-feed-portal/screen/health-claims/eu-register/details/POL-HC-6431"
-    note: "Condizioni d’uso del claim e definizione di idrossitirosolo + derivati."
-  - label: "Regolamento (UE) 2018/848 — Produzione biologica ed etichettatura dei prodotti biologici"
-    url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/eng"
-    note: "Base normativa per il termine “biologico” citato nel glossario."
+    note: "Voorwaarden voor het gebruik van de claim en definitie van hydroxytyrosol + derivaten."
+  - label: "Verordening (EU) 2018/848 — Biologische productie en etikettering van biologische producten"
+    url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/nld"
+    note: "Regelgevende basis voor de term 'biologisch' die in de verklarende woordenlijst wordt genoemd."
 ---
 
 ## A
 
-**Acidità libera**: contenuto di acidi grassi liberi nell'olio, espresso in g di acido oleico per 100g. < 0.8% per l'extra vergine. *Non si percepisce al gusto.*
+**Vrije zuurgraad**: het gehalte aan vrije vetzuren in de olijfolie, uitgedrukt in gram oliezuur per 100g. Moet < 0,8% zijn voor extra vierge olijfolie. *Dit kan niet via de smaak worden waargenomen.*
 
-**Agrolimentare biologico**: sistema di produzione che esclude pesticidi di sintesi e fertilizzanti chimici, regolato dal Reg. UE 848/2018.
+**Biologische landbouw**: een productiesysteem dat synthetische pesticiden en chemische meststoffen uitsluit, gereguleerd door Verordening (EU) 2018/848.
 
-**Aglicone**: forma idrolizzata di un glicoside (es. aglicone dell'oleuropeina). Solitamente più attivo biologicamente.
+**Aglycon**: de gehydrolyseerde vorm van een glycoside (bijv. oleuropeïne aglycon). Meestal biologisch actiever.
 
 ## B
 
-**Blend**: assemblaggio di più cultivar o lotti per ottenere un profilo aromatico desiderato e costante (→ Monocultivar).
+**Blend**: het mengen van verschillende cultivars of partijen om een gewenst en consistent smaakprofiel te verkrijgen (→ Monocultivar).
 
 ## C
 
-**Campagna olearia**: periodo annuale di produzione dell'olio, tipicamente ottobre-febbraio. Coincide con l'annata di raccolta.
+**Oogstcampagne**: de jaarlijkse periode van olijfolieproductie, typisch van oktober tot februari. Valt samen met het oogstjaar.
 
-**Clorofilla**: pigmento verde dell'olio. Photo-sensibilizzatrice — accelera l'ossidazione alla luce.
+**Bladgroen (Chlorofyl)**: het groene pigment in olijfolie. Werkt als een foto-sensibilisator die de oxidatie versnelt bij blootstelling aan licht.
 
-**COI**: Consiglio Oleicolo Internazionale. Autorità internazionale che definisce i metodi di analisi e classificazione dell'olio d'oliva.
+**IOC**: Internationale Olijfraad. De internationale intergouvernementele organisatie die analysemethoden en normen voor olijfolieclassificatie definieert.
 
-**Cultivar**: varietà di olivo. Ogni cultivar ha caratteristiche aromatiche proprie (→ Frantoio, Moraiolo, Leccino, ecc.).
+**Cultivar**: olijvenras. Elke cultivar heeft zijn eigen unieke aromatische kenmerken (bijv. Frantoio, Moraiolo, Leccino, enz.).
 
 ## D
 
-**DAGs**: *Diacilgliceroli*, indicatore di freschezza/qualità. Un rapporto DAG elevato (>35%) indica un olio non adulterato e non troppo invecchiato.
+**DAGs**: *Diacylglycerolen*, een indicator van versheid/kwaliteit. Een hoge verhouding DAG's (>35%) duidt op een verse, onvervalste olie die niet overmatig verouderd is.
 
-**Decanter**: centrifuga orizzontale usata nel frantoio per separare olio, acqua di vegetazione e sansa.
+**Decanter**: een horizontale centrifuge die in de olijfmolen wordt gebruikt om olie, vegetatiewater en perskoek te scheiden.
 
-**DOP**: Denominazione di Origine Protetta. Produzione, trasformazione e confezionamento avvengono interamente nell'area geografica designata.
+**BOB (DOP)**: Beschermde Oorsprongsbenaming. Productie, verwerking en bereiding moeten allemaal plaatsvinden in het specifieke aangewezen geografische gebied.
 
 ## E
 
-**Estrazione a freddo**: processo di estrazione dell'olio a temperatura massima di 27°C, che preserva polifenoli e aromi volatili.
+**Koude extractie**: het proces van het extraheren van olijfolie bij een maximale temperatuur van 27°C, waardoor polifenolen en vluchtige aroma's behouden blijven.
 
 ## F
 
-**Frangitura**: prima fase di lavorazione dell'oliva — frantumazione meccanica del frutto intero.
+**Malen (Frangitura)**: de eerste fase van olijvenverwerking—het mechanisch vermalen van de hele olijf.
 
-**Fruttato**: attributo positivo sensoriale. Il complesso di sensazioni olfattive che ricordano l'oliva fresca. Può essere leggero, medio o intenso.
+**Fruitig**: een positief sensorisch kenmerk. Het spectrum van geursensaties die doen denken aan verse olijven. Dit kan licht, medium of intens zijn.
 
-**Frazione insaponificabile**: la parte dell'olio (1–2%) che non reagisce con le basi per formare sapone. Contiene polifenoli, tocoferoli, pigmenti, cere.
+**Onverzeepbare fractie**: het deel van de olie (1–2%) dat niet reageert met basen om zeep te vormen. Bevat polifenolen, tocoferolen, pigmenten en wassen.
 
 ## G
 
-**Gramolatura**: processo di mescolamento lento della pasta di olive dopo la frangitura. Favorisce l'aggregazione delle goccioline di olio prima della centrifugazione.
+**Mengen (Gramolatura)**: het proces van het langzaam mengen van de olijvenpasta na het malen. Dit stimuleert de oliedruppeltjes om samen te vloeien vóór de centrifugatie.
 
 ## H
 
-**HPLC**: *High-Performance Liquid Chromatography*. Tecnica analitica usata per identificare e quantificare i singoli polifenoli dell'olio.
+**HPLC**: *High-Performance Liquid Chromatography* (hogedrukvloeistofchromatografie). Een analytische techniek die wordt gebruikt om individuele polifenolen in olijfolie te identificeren en te kwantificeren.
 
-**HT**: *Idrossitirosolo*. Polifenolo con elevatissima attività antiossidante. Base della claim EFSA sui polifenoli dell'olio d'oliva.
+**HT**: *Hydroxytyrosol*. Een polifenol met een extreem hoge antioxidantwerking. De basis van de EFSA-gezondheidsclaim over olijfolie-polifenolen.
 
 ## I
 
-**IGP**: Indicazione Geografica Protetta. Almeno una fase della produzione avviene nell'area geografica designata.
+**BGA (IGP)**: Beschermde Geografische Aanduiding. Ten minste een van de stadia van productie, verwerking of bereiding moet plaatsvinden in het aangewezen geografische gebied.
 
-**Indice di maturazione**: metodo di valutazione dello stadio maturativo dell'oliva (scala Jaen, 0–7). Determina il momento ottimale di raccolta.
+**Rijpingsindex**: een methode om het rijpingsstadium van de olijven te evalueren (schaal van Jaen, 0–7). Bepaalt de optimale oogsttijd.
 
 ## K
 
-**K232 e K270**: coefficienti di estinzione UV a 232 e 270 nanometri. Misurano rispettivamente l'ossidazione primaria (idroperossidi) e secondaria (aldeidi e chetoni). Valori bassi = olio fresco e ben conservato.
+**K232 en K270**: UV-extinctiecoëfficiënten bij 232 en 270 nanometer. Ze meten respectievelijk primaire oxidatie (hydroperoxiden) en secundaire oxidatie (aldehyden en ketonen). Lage waarden = verse en goed bewaarde olie.
 
 ## L
 
-**LOX pathway** (*lipossigenasi*): via metabolica responsabile della formazione degli aromi verdi dell'olio (esanale, (E)-2-esenal, ecc.). Attivata durante la molitura.
+**LOX-route** (*lipoxygenase-route*): de metabole route die verantwoordelijk is voor de vorming van de groene aroma's van olijfolie (hexanal, (E)-2-hexenal, enz.). Geactiveerd tijdens het malen.
 
 ## M
 
-**Mediana dei difetti**: valore statistico del Panel Test che riassume l'intensità del difetto principale percepito. Deve essere 0 per un olio extra vergine.
+**Mediaan van de defecten**: een statistische waarde uit de Panel Test die de intensiteit van het waargenomen hoofddefect samenvat. Moet 0 zijn voor extra vierge olijfolie.
 
-**Morchia**: sedimento denso che si deposita sul fondo dei serbatoi. Ricco di acqua di vegetazione e residui organici — fonte di difetti se non rimosso.
+**Bezinksel (Morchia)**: een dik bezinksel dat zich ophoopt op de bodem van opslagtanks. Rijk aan vegetatiewater en organische resten—een bron van defecten als het niet wordt verwijderd.
 
-**Monocultivar**: olio prodotto da un'unica varietà di olivo (→ Blend).
+**Monocultivar**: olijfolie geproduceerd uit één enkel olijvenras (→ Blend).
 
 ## O
 
-**Oleocantale**: polifenolo dialdeido responsabile del piccante in gola. Ha attività anti-infiammatoria simile all'ibuprofene.
+**Oleocanthal**: een dialdehydisch polifenol dat verantwoordelijk is voor de typische prikkeling in de keel. Heeft een ontstekingsremmende werking die vergelijkbaar is met ibuprofen.
 
-**Oleuropeina**: secoiridoide glicoside principale dell'oliva verde. Responsabile del gusto amaro. Potente antiossidante.
+**Oleuropeïne**: het belangrijkste secoiridoïde glycoside in groene olijven. Verantwoordelijk voor de bittere smaak. Een krachtige antioxidant.
 
-**ORAC**: Oxygen Radical Absorbance Capacity. Misura della capacità antiossidante di una sostanza.
+**ORAC**: Oxygen Radical Absorbance Capacity. Een maat voor de antioxidantcapaciteit van een stof.
 
 ## P
 
-**Panel Test**: analisi sensoriale ufficiale dell'olio d'oliva. Gruppo di assaggiatori certificati valuta attributi positivi e difetti secondo metodo COI/UE.
+**Panel Test**: de officiële sensorische analyse van olijfolie. Een groep gecertificeerde proevers evalueert positieve eigenschappen en defecten volgens de IOC/EU-methode.
 
-**Perossidi**: prodotti primari dell'ossidazione. Il numero di perossidi (NP) deve essere ≤ 20 mEq O₂/kg per l'extra vergine.
+**Peroxiden**: de primaire producten van oxidatie. Het peroxidegetal (NP) mag maximaal ≤ 20 mEq O₂/kg bedragen voor extra vierge olijfolie.
 
-**Polifenoli totali**: contenuto totale di composti fenolici, espresso in mg/kg. Indicatore di qualità nutraceutica.
+**Totaal polifenolen**: het totale gehalte aan fenolische verbindingen, uitgedrukt in mg/kg. Een indicator van de gezondheidswaarde.
 
 ## S
 
-**Sansa**: residuo solido dell'estrazione (buccia, nocciolo, polpa esaurita). Può essere sottoposta a estrazione con solvente (olio di sansa) o usata come combustibile.
+**Olijvenpulp (Sansa)**: het vaste residu dat overblijft na extractie (schil, pit, uitgeperst vruchtvlees). Kan met oplosmiddelen worden geëxtraheerd (olijfpulpolie) of als brandstof worden gebruikt.
 
-**Secoiridoide**: classe di composti fenolici tipici delle Oleacee. Oleuropeina e oleocantale sono secoiridoidi.
+**Secoiridoïde**: een klasse van fenolische verbindingen die typisch zijn voor de Oleaceae-familie. Oleuropeïne en oleocanthal zijn secoiridoïden.
 
 ## T
 
-**TMC**: Termine Minimo di Conservazione. "Preferibilmente entro il..." — non è una scadenza di sicurezza, ma di qualità.
+**TMC**: Termine Minimo di Conservazione ("Ten minste houdbaar tot..."). Dit is geen veiligheidsvervaldatum, maar een kwaliteitsindicatie.
 
-**Tocoferoli**: vitamina E naturale dell'olio. Antiossidante liposolubile.
+**Tocoferolen**: natuurlijke vitamine E in olijfolie. Een in vet oplosbare antioxidant.
 
 ## V
 
-**Velato**: olio non filtrato, con particelle in sospensione che danno aspetto torbido.
+**Troebel (Velato)**: ongefilterde olijfolie met zwevende deeltjes die het een troebel uiterlijk geven.
 
-**Volatile**: composto chimico facilmente evaporabile. Responsabile degli aromi percepiti al naso.
+**Vluchtig**: een chemische verbinding die gemakkelijk verdampt, verantwoordelijk voor de aroma's die door de neus worden waargenomen.

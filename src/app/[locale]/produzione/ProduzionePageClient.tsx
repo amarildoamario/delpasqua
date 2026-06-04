@@ -149,12 +149,12 @@ export default function ProduzionePageClient() {
           <div className="absolute inset-0 bg-[radial-gradient(#3D5A3D/0.02_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
           
           <div className="mx-auto max-w-7xl px-6 relative">
-            <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
               
               {/* Left Column Content */}
               <div className="order-2 lg:order-1 flex flex-col justify-center">
                 {/* Breadcrumb sottile */}
-                <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+                <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.25em] text-[#8B7355] uppercase">
                   <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
                   <span className="text-[#D6D3D1]">/</span>
                   <span className="text-[#57534E]">{t("hero.label")}</span>
@@ -198,7 +198,7 @@ export default function ProduzionePageClient() {
                   <div className="absolute -bottom-4 -right-4 h-full w-full border border-[#B8860B]/30 rounded-[5px] pointer-events-none transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-1" />
                   
                   {/* Main image container */}
-                  <div className="relative overflow-hidden border-2 border-[#E7E5E4] bg-[#F5F5F4] rounded-[5px] aspect-[4/3] sm:aspect-[16/11] w-full shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  <div className="relative overflow-hidden border-2 border-[#E7E5E4] bg-[#F5F5F4] rounded-[5px] aspect-[4/3] w-full shadow-lg group-hover:shadow-xl transition-all duration-300">
                     <Image
                       src={FRANTOIO_IMAGES.hero}
                       alt={t("hero.img_alt")}
@@ -266,18 +266,21 @@ export default function ProduzionePageClient() {
         ======================================================== */}
         <section id="capitolo-1" style={chapterScrollMarginStyle} className="py-24 bg-white border-b border-[#E7E5E4]">
           <div className="mx-auto max-w-7xl px-6">
-            <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16">
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
               
               {/* Image Column */}
               <div className="relative group w-full max-w-[540px] mx-auto lg:max-w-none">
-                <div className="absolute -bottom-4 -right-4 h-full w-full border border-[#B8860B]/20 rounded-[5px] pointer-events-none transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-                <div className="relative overflow-hidden border border-[#E7E5E4] bg-[#F5F5F4] rounded-[5px] aspect-[16/11] shadow-lg">
+                {/* Decorative luxury offset border behind the image */}
+                <div className="absolute -bottom-4 -right-4 h-full w-full border border-[#B8860B]/30 rounded-[5px] pointer-events-none transition-transform duration-300 group-hover:translate-x-1 group-hover:translate-y-1" />
+                
+                {/* Main image container */}
+                <div className="relative overflow-hidden border-2 border-[#E7E5E4] bg-[#F5F5F4] rounded-[5px] aspect-[4/3] w-full shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <Image
                     src={FRANTOIO_IMAGES.raccolta}
                     alt={t("steps.raccolta.title")}
                     fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
-                    sizes="(max-width: 1024px) 100vw, 550px"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 620px"
                   />
                 </div>
               </div>
@@ -353,51 +356,45 @@ export default function ProduzionePageClient() {
             </div>
 
             {/* Custom Machinery Grid Journey */}
-            <div className="flex flex-wrap justify-center gap-8">
-              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
-                <MachineCard
-                  title={t("machines.defogliazione.title")}
-                  desc={t("machines.defogliazione.desc")}
-                  imgSrc={FRANTOIO_IMAGES.defogliazione}
-                  color="olive"
-                  icon="defogliazione"
-                />
-              </div>
-              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
-                <MachineCard
-                  title={t("machines.frangitura.title")}
-                  desc={t("machines.frangitura.desc")}
-                  imgSrc={FRANTOIO_IMAGES.frangitura}
-                  color="gold"
-                  icon="frangitura"
-                />
-              </div>
-              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
-                <MachineCard
-                  title={t("machines.gramolazione.title")}
-                  desc={t("machines.gramolazione.desc")}
-                  imgSrc={FRANTOIO_IMAGES.gramolazione}
-                  color="olive"
-                  icon="gramolazione"
-                />
-              </div>
-              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
-                <MachineCard
-                  title={t("machines.estrazione.title")}
-                  desc={t("machines.estrazione.desc")}
-                  imgSrc={FRANTOIO_IMAGES.estrazione}
-                  color="gold"
-                  icon="estrazione"
-                />
-              </div>
-              <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] flex flex-col">
-                <MachineCard
-                  title={t("machines.filtrazione.title")}
-                  desc={t("machines.filtrazione.desc")}
-                  imgSrc={FRANTOIO_IMAGES.filtrazione}
-                  color="olive"
-                  icon="filtrazione"
-                />
+            <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:gap-x-12 lg:gap-y-16">
+              <MachineCard
+                title={t("machines.defogliazione.title")}
+                desc={t("machines.defogliazione.desc")}
+                imgSrc={FRANTOIO_IMAGES.defogliazione}
+                color="olive"
+                icon="defogliazione"
+              />
+              <MachineCard
+                title={t("machines.frangitura.title")}
+                desc={t("machines.frangitura.desc")}
+                imgSrc={FRANTOIO_IMAGES.frangitura}
+                color="gold"
+                icon="frangitura"
+              />
+              <MachineCard
+                title={t("machines.gramolazione.title")}
+                desc={t("machines.gramolazione.desc")}
+                imgSrc={FRANTOIO_IMAGES.gramolazione}
+                color="olive"
+                icon="gramolazione"
+              />
+              <MachineCard
+                title={t("machines.estrazione.title")}
+                desc={t("machines.estrazione.desc")}
+                imgSrc={FRANTOIO_IMAGES.estrazione}
+                color="gold"
+                icon="estrazione"
+              />
+              <div className="sm:col-span-2 flex justify-center">
+                <div className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(50%-1.5rem)]">
+                  <MachineCard
+                    title={t("machines.filtrazione.title")}
+                    desc={t("machines.filtrazione.desc")}
+                    imgSrc={FRANTOIO_IMAGES.filtrazione}
+                    color="olive"
+                    icon="filtrazione"
+                  />
+                </div>
               </div>
             </div>
 
@@ -815,19 +812,23 @@ function MachineCard({
 }) {
   const t_shared = useTranslations("ProduzionePage.shared");
   const accentColor = color === "olive" ? "#3D5A3D" : "#B8860B";
-  const hoverShadow = color === "olive" ? "shadow-[#3D5A3D]/5" : "shadow-[#B8860B]/5";
 
   return (
-    <div className={`group relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${hoverShadow} flex flex-col h-full`}>
-      {/* Dynamic Slide Accent Bar */}
-      <div
-        className="absolute left-0 top-0 h-1 w-0 transition-all duration-500 ease-out group-hover:w-full"
-        style={{ backgroundColor: accentColor }}
-      />
-      
-      <div className="flex-grow">
+    <div className="group relative flex flex-col h-full transition-all duration-300">
+      {/* Frame of image */}
+      <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4]/60 bg-[#F5F5F4] aspect-[3/2] w-full shadow-sm">
+        <Image
+          src={imgSrc}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-750 ease-out group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+        />
+      </div>
+
+      <div className="mt-5 flex-grow">
         {/* Top Header Card Info */}
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#E7E5E4] group-hover:border-[#3D5A3D]/10 transition-colors">
+        <div className="flex items-center justify-between pb-2 border-b border-[#E7E5E4] group-hover:border-[#3D5A3D]/25 transition-colors">
           <div className="text-[10px] font-bold tracking-[0.25em] text-[#8B7355] uppercase">
             {t_shared("machine")}
           </div>
@@ -843,22 +844,11 @@ function MachineCard({
           </div>
         </div>
 
-        <div className="font-serif text-xl font-light tracking-tight text-[#1C1917] group-hover:text-[#3D5A3D] transition-colors mt-2">
+        <h3 className="font-serif text-2xl font-light tracking-tight text-[#1C1917] group-hover:text-[#3D5A3D] transition-colors mt-3">
           {title}
-        </div>
+        </h3>
         
         <p className="mt-2 text-sm leading-relaxed text-[#57534E]">{desc}</p>
-      </div>
-
-      {/* Frame of image */}
-      <div className="mt-6 relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4] aspect-[16/10] w-full shadow-inner">
-        <Image
-          src={imgSrc}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        />
       </div>
     </div>
   );

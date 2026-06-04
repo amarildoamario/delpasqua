@@ -19,6 +19,15 @@ function getIP(req: Request) {
   return (xf?.split(",")[0] ?? "unknown").trim();
 }
 
+function maskEmail(email: string) {
+  if (!email) return "";
+  const parts = email.split("@");
+  if (parts.length !== 2) return "***";
+  const [local, domain] = parts;
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}${local.slice(1, -1).replace(/./g, "*")}${local[local.length - 1]}@${domain}`;
+}
+
 const BodySchema = z.object({
   slotStartIso: z.string().min(10),
   slotEndIso: z.string().min(10),
@@ -121,7 +130,7 @@ export async function POST(req: Request) {
       console.log("[TASTING][BOOK] request inside transaction", {
         tastingTypeId: data.tastingTypeId,
         people: data.people,
-        email: data.email,
+        email: maskEmail(data.email),
         slotStart: slotStart.toISOString(),
         slotEnd: slotEnd.toISOString(),
       });
@@ -220,7 +229,7 @@ export async function POST(req: Request) {
     status: booking.status,
     slotStart: booking.slotStart,
     slotEnd: booking.slotEnd,
-    email: booking.email,
+    email: maskEmail(booking.email),
   });
 
   const mail = await sendTastingBookingAdminEmail({
@@ -256,7 +265,9 @@ export async function POST(req: Request) {
     }
 
     if (status === 413) return new Response("Payload Too Large", { status: 413 });
-    if (status === 400) return new Response(err.message ?? "Bad Request", { status: 400 });
+    if (status === 400) {
+      return NextResponse.json({ error: "Richiesta non valida." }, { status: 400 });
+    }
 
     if (status === 409 || err.code === "SLOT_CONFLICT") {
       return NextResponse.json(

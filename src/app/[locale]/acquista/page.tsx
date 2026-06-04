@@ -6,7 +6,7 @@ import { readCatalog } from "@/lib/server/catalog";
 import { getLocalizedProductHref } from "@/lib/productSlugs";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const BUY_METADATA: Record<string, { title: string; description: string }> = {
   it: {

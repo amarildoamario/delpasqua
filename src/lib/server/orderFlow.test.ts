@@ -7,6 +7,8 @@ import {
   releaseReserved,
   reserveStockOrThrow,
 } from "./inventory";
+import { processOutboxBatch } from "./outbox";
+import type { TransactionalEmailType } from "@/generated/prisma/client";
 
 type InventoryRow = {
   sku: string;
@@ -117,15 +119,30 @@ type TestTxShape = {
     }) => Promise<OrderEventRow>;
   };
   outboxEvent: {
+    findMany: (args: unknown) => Promise<unknown[]>;
+    updateMany: (args: unknown) => Promise<{ count: number }>;
+    update: (args: unknown) => Promise<unknown>;
     create: (args: { data: { type: string; payload: Record<string, unknown> } }) => Promise<OutboxRow>;
   };
   $executeRaw: (strings: TemplateStringsArray, ...values: unknown[]) => Promise<number>;
-  $queryRaw: (strings: TemplateStringsArray, ...values: unknown[]) => Promise<Array<{ value: string }>>;
+  $queryRaw: (strings: TemplateStringsArray, ...values: unknown[]) => Promise<unknown[]>;
 };
 
 function unconfigured(): never {
   throw new Error("Unconfigured test double");
 }
+
+type FakeOutboxEvent = {
+  id: string;
+  type: string;
+  payload: Record<string, unknown>;
+  status: string;
+  attempts: number;
+  runAt: Date;
+  lastError?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 class FakeOrderTx {
   inventory = new Map<string, InventoryRow>();
@@ -135,6 +152,8 @@ class FakeOrderTx {
   outbox: OutboxRow[] = [];
   settings = new Map<string, number>();
   promotions = new Map<string, PromotionRow>();
+  outboxEvents = new Map<string, FakeOutboxEvent>();
+  failQueryRaw = false;
 
   constructor(args?: {
     inventory?: InventoryRow[];
@@ -142,6 +161,7 @@ class FakeOrderTx {
     orders?: OrderRow[];
     orderEvents?: OrderEventRow[];
     promotions?: PromotionRow[];
+    outboxEvents?: FakeOutboxEvent[];
   }) {
     for (const row of args?.inventory ?? []) {
       this.inventory.set(row.sku, { ...row });
@@ -157,6 +177,9 @@ class FakeOrderTx {
     }
     for (const row of args?.promotions ?? []) {
       this.promotions.set(row.code, { ...row });
+    }
+    for (const ev of args?.outboxEvents ?? []) {
+      this.outboxEvents.set(ev.id, { ...ev });
     }
     this.orderEvents = (args?.orderEvents ?? []).map((row) => ({ ...row }));
   }
@@ -188,6 +211,9 @@ class FakeOrderTx {
       create: async () => unconfigured(),
     },
     outboxEvent: {
+      findMany: async () => unconfigured(),
+      updateMany: async () => unconfigured(),
+      update: async () => unconfigured(),
       create: async () => unconfigured(),
     },
     $executeRaw: async () => unconfigured(),
@@ -325,14 +351,60 @@ function buildFakeTx(args?: ConstructorParameters<typeof FakeOrderTx>[0]) {
     return row;
   };
 
-  store.tx.outboxEvent.create = async ({
-    data,
-  }: {
-    data: { type: string; payload: Record<string, unknown> };
-  }) => {
-    const row = { type: data.type, payload: data.payload };
-    store.outbox.push(row);
-    return row;
+  store.tx.outboxEvent = {
+    findMany: async (args: unknown) => {
+      const { where } = args as { where: { status?: { in: string[] }; runAt?: { lte: Date } } };
+      return [...store.outboxEvents.values()].filter((ev) => {
+        if (where.status?.in) {
+          if (!where.status.in.includes(ev.status)) return false;
+        }
+        if (where.runAt?.lte) {
+          if (ev.runAt > where.runAt.lte) return false;
+        }
+        return true;
+      });
+    },
+    updateMany: async (args: unknown) => {
+      const { where, data } = args as { where: { id?: string; status?: { in: string[] } }; data: Record<string, unknown> };
+      let count = 0;
+      for (const ev of store.outboxEvents.values()) {
+        if (where.id && ev.id !== where.id) continue;
+        if (where.status?.in && !where.status.in.includes(ev.status)) continue;
+        Object.assign(ev, data);
+        count++;
+      }
+      return { count };
+    },
+    update: async (args: unknown) => {
+      const { where, data } = args as { where: { id: string }; data: Record<string, unknown> };
+      const ev = store.outboxEvents.get(where.id);
+      if (!ev) throw new Error(`Outbox event ${where.id} not found`);
+      Object.assign(ev, data);
+      return { ...ev };
+    },
+    create: async ({
+      data,
+    }: {
+      data: { type: string; payload: Record<string, unknown> };
+    }) => {
+      const row = { type: data.type, payload: data.payload };
+      store.outbox.push(row);
+
+      const fullRow = {
+        id: `outbox-${store.outboxEvents.size + 1}`,
+        type: data.type,
+        payload: data.payload,
+        status: "pending",
+        attempts: 0,
+        runAt: new Date(),
+        lastError: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      store.outboxEvents.set(fullRow.id, fullRow);
+
+      return row;
+    },
   };
 
   store.tx.$executeRaw = async (strings: TemplateStringsArray, ...values: unknown[]) => {
@@ -383,6 +455,35 @@ function buildFakeTx(args?: ConstructorParameters<typeof FakeOrderTx>[0]) {
 
   store.tx.$queryRaw = async (strings: TemplateStringsArray, ...values: unknown[]) => {
     const sql = strings.join(" ");
+
+    if (store.failQueryRaw) {
+      throw new Error("Simulated queryRaw error");
+    }
+
+    if (sql.includes('UPDATE "OutboxEvent"')) {
+      const now = values[0] as Date;
+      const limit = values[1] as number;
+      const matches = [...store.outboxEvents.values()]
+        .filter((ev) => ["pending", "failed"].includes(ev.status) && ev.runAt <= now)
+        .slice(0, limit);
+
+      for (const ev of matches) {
+        ev.status = "processing";
+        ev.updatedAt = new Date();
+      }
+      return matches.map((ev) => ({
+        id: ev.id,
+        type: ev.type,
+        payload: ev.payload,
+        status: ev.status,
+        attempts: ev.attempts,
+        runAt: ev.runAt,
+        lastError: ev.lastError,
+        createdAt: ev.createdAt,
+        updatedAt: ev.updatedAt,
+      }));
+    }
+
     if (!sql.includes('INSERT INTO "Setting"')) {
       throw new Error(`Unsupported $queryRaw in test double: ${sql}`);
     }
@@ -715,4 +816,106 @@ test("applyStripeRefundToOrderTx records a full refund and enqueues refund email
   });
 
   assert.equal(store.outbox.length, 1);
+});
+
+test("processOutboxBatch processes pending and failed outbox events using raw query lock", async () => {
+  const now = new Date();
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const outboxEvents = [
+    {
+      id: "ev-1",
+      type: "ORDER_PAID",
+      payload: { orderId: "order-1" },
+      status: "pending",
+      attempts: 0,
+      runAt: oneHourAgo,
+      createdAt: oneHourAgo,
+      updatedAt: oneHourAgo,
+    },
+    {
+      id: "ev-2",
+      type: "ORDER_SHIPPED",
+      payload: { orderId: "order-2" },
+      status: "failed",
+      attempts: 1,
+      runAt: oneHourAgo,
+      createdAt: oneHourAgo,
+      updatedAt: oneHourAgo,
+    },
+    {
+      id: "ev-3",
+      type: "ORDER_CANCELED",
+      payload: { orderId: "order-3" },
+      status: "done",
+      attempts: 0,
+      runAt: oneHourAgo,
+      createdAt: oneHourAgo,
+      updatedAt: oneHourAgo,
+    },
+  ];
+
+  const { store, tx } = buildFakeTx({ outboxEvents });
+
+  const emailed: unknown[] = [];
+  const mockSendEmail = async (args: { type: TransactionalEmailType; orderId: string }) => {
+    emailed.push(args);
+    return { ok: true };
+  };
+
+  const result = await processOutboxBatch({
+    tx,
+    sendEmailFn: mockSendEmail,
+    limit: 5,
+  });
+
+  assert.equal(result.checked, 2);
+  assert.equal(result.processed, 2);
+  assert.equal(result.failed, 0);
+
+  // Check state updates
+  assert.equal(store.outboxEvents.get("ev-1")?.status, "done");
+  assert.equal(store.outboxEvents.get("ev-2")?.status, "done");
+  assert.equal(store.outboxEvents.get("ev-3")?.status, "done"); // untouched, remained done
+
+  assert.equal(emailed.length, 2);
+  assert.deepEqual(emailed[0], { type: "ORDER_PAID", orderId: "order-1" });
+  assert.deepEqual(emailed[1], { type: "ORDER_SHIPPED", orderId: "order-2" });
+});
+
+test("processOutboxBatch falls back to soft-locking when raw query fails", async () => {
+  const now = new Date();
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const outboxEvents = [
+    {
+      id: "ev-1",
+      type: "ORDER_PAID",
+      payload: { orderId: "order-1" },
+      status: "pending",
+      attempts: 0,
+      runAt: oneHourAgo,
+      createdAt: oneHourAgo,
+      updatedAt: oneHourAgo,
+    },
+  ];
+
+  const { store, tx } = buildFakeTx({ outboxEvents });
+  store.failQueryRaw = true; // force error
+
+  const emailed: unknown[] = [];
+  const mockSendEmail = async (args: { type: TransactionalEmailType; orderId: string }) => {
+    emailed.push(args);
+    return { ok: true };
+  };
+
+  const result = await processOutboxBatch({
+    tx,
+    sendEmailFn: mockSendEmail,
+    limit: 5,
+  });
+
+  assert.equal(result.checked, 1);
+  assert.equal(result.processed, 1);
+  assert.equal(result.failed, 0);
+  assert.equal(store.outboxEvents.get("ev-1")?.status, "done");
+  assert.equal(emailed.length, 1);
 });

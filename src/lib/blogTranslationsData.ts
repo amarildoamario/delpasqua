@@ -1910,4 +1910,42 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       category: "Olivenoljekjemi",
     },
   },
+  "glos-1": {
+    "it": {
+      slug: "glossario-olio-evo",
+      title: "Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro",
+      excerpt: "Tutti i termini dell'universo dell'olio extravergine spiegati in modo semplice. Dal fruttato al Panel Test, dalla morchia alla cultivar.",
+      category: "Informazioni sull'olio EVO",
+    },
+    "en": {
+      slug: "extra-virgin-olive-oil-glossary",
+      title: "EVOO Glossary: Fruity, Bitter, Pungent, Defects, Malaxation, and More",
+      excerpt: "All the terms of the extra virgin olive oil world explained simply. From fruity to Panel Test, from sediment to cultivar.",
+      category: "Olive Oil Information",
+    },
+    "de": {
+      slug: "olivenoel-extra-vergine-glossar",
+      title: "Olivenöl-Glossar: Fruchtig, bitter, scharf, Mängel, Kneten und mehr",
+      excerpt: "Alle Begriffe aus der Welt des nativen Olivenöls extra einfach erklärt. Von fruchtig bis Panel-Test, von Bodensatz bis Sorte.",
+      category: "Olivenöl-Informationen",
+    },
+    "nl": {
+      slug: "extra-vierge-olijfolie-glossarium",
+      title: "Extra Vierge Olijfolie Glossarium: Fruitig, bitter, pittig, defecten en meer",
+      excerpt: "Alle termen uit de wereld van extra vierge olijfolie eenvoudig uitgelegd. Van fruitig tot Panel Test, van bezinksel tot cultivar.",
+      category: "Olijfolie-informatie",
+    },
+    "da": {
+      slug: "ekstra-jomfruolivenolie-ordbog",
+      title: "Ordliste for ekstra jomfruolivenolie: Frugtig, bitter, skarp, fejl og mere",
+      excerpt: "Alle begreber inden for ekstra jomfruolivenolie forklaret på en enkel måde. Fra frugtig til Panel Test, fra bundfald til cultivar.",
+      category: "Olivenolie-information",
+    },
+    "no": {
+      slug: "ekstra-jomfruolivenolje-ordbok",
+      title: "Ordliste for ekstra jomfruolivenolje: Fruktig, bitter, skarp, feil og mer",
+      excerpt: "Alle begreper innen ekstra jomfruolivenolje forklart på en omhyggelig måte. Fra fruktig til Panel Test, fra bunnfall til cultivar.",
+      category: "Olivenolje-informasjon",
+    },
+  },
 };

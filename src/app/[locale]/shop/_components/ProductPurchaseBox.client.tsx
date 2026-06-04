@@ -537,7 +537,7 @@ export default function ProductPurchaseBox({
           <div>
             <span className="text-[10px] font-medium tracking-[0.2em] text-neutral-400 uppercase">{productId}</span>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="font-serif text-3xl text-neutral-900">{formatEUR(priceCents, locale)}</span>
+              <span className="font-sans text-3xl font-bold text-neutral-900">{formatEUR(priceCents, locale)}</span>
               {variants.length > 1 && (
                 <span className="text-sm text-neutral-400 line-through">
                   {formatEUR(Math.max(...variants.map((v) => v.priceCents)), locale)}

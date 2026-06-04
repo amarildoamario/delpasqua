@@ -1,138 +1,136 @@
 ---
 id: "glos-1"
-title: "Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro"
-excerpt: "Tutti i termini dell'universo dell'olio extravergine spiegati in modo semplice. Dal fruttato al Panel Test, dalla morchia alla cultivar."
-category: "Informazioni sull'olio EVO"
+title: "Ordliste for ekstra jomfruolivenolie: Frugtig, bitter, skarp, fejl og mere"
+excerpt: "Alle begreber inden for ekstra jomfruolivenolie forklaret på en enkel måde. Fra frugtig til Panel Test, fra bundfald til cultivar."
+category: "Olivenolie-information"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "8 min"
 author: "Redazione Frantoio"
 imageUrl: "/blog/glossario.jpg"
 references:
-  - label: "Regolamento delegato (UE) 2022/2104 — Standard di commercializzazione dell’olio d’oliva"
-    url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/eng"
-    note: "Definisce categorie, caratteristiche e requisiti legali (quadro UE aggiornato; abroga i vecchi riferimenti storici)."
-  - label: "Regolamento di esecuzione (UE) 2022/2105 — Controlli di conformità per gli standard dell’olio d’oliva"
-    url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/eng"
-    note: "Regole e procedure di controllo; rimanda ai limiti/parametri della 2022/2104."
-  - label: "COI/IOC — Standards, Methods & Guides (pagina ufficiale)"
+  - label: "Kommissionens delegerede forordning (EU) 2022/2104 — Handelsnormer for olivenolie"
+    url: "https://eur-lex.europa.eu/eli/reg_del/2022/2104/oj/dan"
+    note: "Definerer kategorier, egenskaber og juridiske krav (opdateret EU-ramme; ophæver historiske henvisninger)."
+  - label: "Kommissionens gennemførelsesforordning (EU) 2022/2105 — Overensstemmelseskontrol af handelsnormer for olivenolie"
+    url: "https://eur-lex.europa.eu/eli/reg_impl/2022/2105/oj/dan"
+    note: "Regler og procedurer for kontrol; henviser til grænseværdier/parametre i 2022/2104."
+  - label: "IOC — Standards, Methods & Guides (officiel side)"
     url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
-    note: "Hub COI con standard di commercio, metodi analitici e documenti di analisi sensoriale."
-  - label: "COI/IOC (2024) — Metodo Panel Test (COI/T.20/Doc. n. 15/Rev. 11)"
+    note: "IOC-portal med handelsnormer, analysemetoder og dokumenter vedrørende organoleptisk vurdering."
+  - label: "IOC (2024) — Metode for organoleptisk vurdering (COI/T.20/Doc. No 15/Rev. 11)"
     url: "https://www.internationaloliveoil.org/wp-content/uploads/2024/10/COI-T20-Doc.-15-REV-11-2024-IT.pdf"
-    note: "Riferimento per termini come fruttato/amaro/piccante, difetti e criteri statistici (mediana)."
-  - label: "EU Register — Health claim ufficiale sui polifenoli dell’olio d’oliva"
+    note: "Reference for begreber som frugtig/bitter/skarp, fejl og statistiske kriterier (median)."
+  - label: "EU-register — Officiel sundhedsanprisning af olivenoliepolyfenoler"
     url: "https://ec.europa.eu/food/food-feed-portal/screen/health-claims/eu-register/details/POL-HC-6431"
-    note: "Condizioni d’uso del claim e definizione di idrossitirosolo + derivati."
-  - label: "Regolamento (UE) 2018/848 — Produzione biologica ed etichettatura dei prodotti biologici"
-    url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/eng"
-    note: "Base normativa per il termine “biologico” citato nel glossario."
+    note: "Betingelser for anvendelse af anprisningen samt definition af hydroxytyrosol og derivater."
+  - label: "Forordning (EU) 2018/848 — Økologisk produktion og mærkning af økologiske produkter"
+    url: "https://eur-lex.europa.eu/eli/reg/2018/848/oj/dan"
+    note: "Reguleringsgrundlag for begrebet 'økologisk', der nævnes i ordbogen."
 ---
 
 ## A
 
-**Acidità libera**: contenuto di acidi grassi liberi nell'olio, espresso in g di acido oleico per 100g. < 0.8% per l'extra vergine. *Non si percepisce al gusto.*
+**Fri syre (Syreindhold)**: indholdet af frie fedtsyrer i olien, udtrykt i gram oliesyre pr. 100g. Skal være < 0,8 % for ekstra jomfruolivenolie. *Kan ikke smages.*
 
-**Agrolimentare biologico**: sistema di produzione che esclude pesticidi di sintesi e fertilizzanti chimici, regolato dal Reg. UE 848/2018.
+**Økologisk landbrug**: et produktionssystem, der udelukker syntetiske pesticider og kunstgødning, reguleret af forordning (EU) 2018/848.
 
-**Aglicone**: forma idrolizzata di un glicoside (es. aglicone dell'oleuropeina). Solitamente più attivo biologicamente.
+**Aglykon**: den hydrolyserede form af et glycosid (f.eks. oleuropein-aglykon). Normalt mere biologisk aktiv.
 
 ## B
 
-**Blend**: assemblaggio di più cultivar o lotti per ottenere un profilo aromatico desiderato e costante (→ Monocultivar).
+**Blend**: sammenstikning af several olivensorter (cultivarer) eller partier for at opnå en ønsket og ensartet smagsprofil (→ Monocultivar).
 
 ## C
 
-**Campagna olearia**: periodo annuale di produzione dell'olio, tipicamente ottobre-febbraio. Coincide con l'annata di raccolta.
+**Høstkampagne**: den årlige periode for olivenolieproduktion, typisk fra oktober til februar. Falder sammen med høståret.
 
-**Clorofilla**: pigmento verde dell'olio. Photo-sensibilizzatrice — accelera l'ossidazione alla luce.
+**Klorofyl**: det grønne pigment in olivenolie. Fungerer som fotosensibilisator, hvilket fremskynder iltning (oxidation) i lys.
 
-**COI**: Consiglio Oleicolo Internazionale. Autorità internazionale che definisce i metodi di analisi e classificazione dell'olio d'oliva.
+**IOC**: Det Internationale Olivenråd. Det internationale organ, som definerer analysemetoder og standarder for klassificering af olivenolie.
 
-**Cultivar**: varietà di olivo. Ogni cultivar ha caratteristiche aromatiche proprie (→ Frantoio, Moraiolo, Leccino, ecc.).
+**Cultivar**: olivensort. Hver sort har sine egne unikke aromatiske egenskaber (f.eks. Frantoio, Moraiolo, Leccino osv.).
 
 ## D
 
-**DAGs**: *Diacilgliceroli*, indicatore di freschezza/qualità. Un rapporto DAG elevato (>35%) indica un olio non adulterato e non troppo invecchiato.
+**DAGs**: *Diacylglyceroler*, en indikator for friskhed/kvalitet. Et højt DAG-forhold (>35 %) indikerer en frisk, uforfalsket olie, der ikke er overdrevent forældet.
 
-**Decanter**: centrifuga orizzontale usata nel frantoio per separare olio, acqua di vegetazione e sansa.
+**Decanter**: en horisontal centrifuge, der anvendes på oliemøllen til at adskille olie, vegetationsvand og olivenpresseaffald (sansa).
 
-**DOP**: Denominazione di Origine Protetta. Produzione, trasformazione e confezionamento avvengono interamente nell'area geografica designata.
+**BOB (DOP)**: Beskyttet Oprindelsesbetegnelse. Produktion, forarbejdning og tilberedning skal finde sted i det specifikke geografiske område.
 
 ## E
 
-**Estrazione a freddo**: processo di estrazione dell'olio a temperatura massima di 27°C, che preserva polifenoli e aromi volatili.
+**Koldpresning/Koldestration**: udvinding af olivenolie ved en maksimal temperatur på 27°C, hvilket bevarer polyfenoler og flygtige aromaer.
 
 ## F
 
-**Frangitura**: prima fase di lavorazione dell'oliva — frantumazione meccanica del frutto intero.
+**Malning (Frangitura)**: det første trin i olivenforarbejdningen—mekanisk knusning af hele olivenfrugter.
 
-**Fruttato**: attributo positivo sensoriale. Il complesso di sensazioni olfattive che ricordano l'oliva fresca. Può essere leggero, medio o intenso.
+**Frugtig**: en positiv organoleptisk egenskab. Duft- og smagsindtryk, der minder om friske oliven. Kan være let, medium eller intens.
 
-**Frazione insaponificabile**: la parte dell'olio (1–2%) che non reagisce con le basi per formare sapone. Contiene polifenoli, tocoferoli, pigmenti, cere.
+**Uforsæbelig fraktion**: den del af olien (1-2 %), der ikke reagerer med baser til at danne sæbe. Indeholder polyfenoler, tocopheroler, pigmenter og voks.
 
 ## G
 
-**Gramolatura**: processo di mescolamento lento della pasta di olive dopo la frangitura. Favorisce l'aggregazione delle goccioline di olio prima della centrifugazione.
+**Æltning (Gramolatura)**: en langsom omrøring af olivenmassen efter knusning. Det hjælper oliedråberne til at samle sig inden centrifugering.
 
 ## H
 
-**HPLC**: *High-Performance Liquid Chromatography*. Tecnica analitica usata per identificare e quantificare i singoli polifenoli dell'olio.
-
-**HT**: *Idrossitirosolo*. Polifenolo con elevatissima attività antiossidante. Base della claim EFSA sui polifenoli dell'olio d'oliva.
+**HPLC**: *High-Performance Liquid Chromatography* (højtryksvæskekromatografi). En analytisk teknik, der bruges til at identificere og måle de enkelte polyfenoler i olivenolie.
 
 ## I
 
-**IGP**: Indicazione Geografica Protetta. Almeno una fase della produzione avviene nell'area geografica designata.
+**BGB (IGP)**: Beskyttet Geografisk Betegnelse. Mindst et af produktionsstadierne skal finde sted i det specifikke geografiske område.
 
-**Indice di maturazione**: metodo di valutazione dello stadio maturativo dell'oliva (scala Jaen, 0–7). Determina il momento ottimale di raccolta.
+**Modenhedsindeks**: en metode til vurdering af olivens modenhed (Jaen-skala, 0–7). Bestemmer det optimale høsttidspunkt.
 
 ## K
 
-**K232 e K270**: coefficienti di estinzione UV a 232 e 270 nanometri. Misurano rispettivamente l'ossidazione primaria (idroperossidi) e secondaria (aldeidi e chetoni). Valori bassi = olio fresco e ben conservato.
+**K232 og K270**: UV-absorptionskoefficienter ved henholdsvis 232 og 270 nanometer. De måler primær oxidation (hydroperoxider) og sekundær oxidation (aldehyder og ketoner). Lave værdier = frisk og vellagret olie.
 
 ## L
 
-**LOX pathway** (*lipossigenasi*): via metabolica responsabile della formazione degli aromi verdi dell'olio (esanale, (E)-2-esenal, ecc.). Attivata durante la molitura.
+**LOX-vejen** (*lipoxygenase-vej*): den metabolske vej, der er ansvarlig for dannelsen af grønne aromaer i olivenolien (hexanal, (E)-2-hexenal osv.). Aktiveres under knusningen.
 
 ## M
 
-**Mediana dei difetti**: valore statistico del Panel Test che riassume l'intensità del difetto principale percepito. Deve essere 0 per un olio extra vergine.
+**Median for fejl**: en statistisk værdi fra den organoleptiske vurdering (Panel Test), der opsummerer intensiteten af den mest fremtrædende fejl. Skal være 0 for ekstra jomfruolivenolie.
 
-**Morchia**: sedimento denso che si deposita sul fondo dei serbatoi. Ricco di acqua di vegetazione e residui organici — fonte di difetti se non rimosso.
+**Bundfald (Morchia)**: et tykt lag bundfald, der samler sig i bunden af lagertanke. Rigt på vegetationsvand og organiske rester—en kilde til fejl, hvis det ikke fjernes.
 
-**Monocultivar**: olio prodotto da un'unica varietà di olivo (→ Blend).
+**Monocultivar**: olivenolie fremstillet af en enkelt olivensort (→ Blend).
 
 ## O
 
-**Oleocantale**: polifenolo dialdeido responsabile del piccante in gola. Ha attività anti-infiammatoria simile all'ibuprofene.
+**Oleocanthal**: en dialdehyd-polyfenol, der er ansvarlig for det skarpe prik i halsen. Har en inflammationshæmmende virkning svarende til ibuprofen.
 
-**Oleuropeina**: secoiridoide glicoside principale dell'oliva verde. Responsabile del gusto amaro. Potente antiossidante.
+**Oleuropein**: det vigtigste secoiridoid-glycosid i grønne oliven. Giver den bitre smag. En stærk antioxidant.
 
-**ORAC**: Oxygen Radical Absorbance Capacity. Misura della capacità antiossidante di una sostanza.
+**ORAC**: Oxygen Radical Absorbance Capacity. En måling af et stofs antioxidantkapacitet.
 
 ## P
 
-**Panel Test**: analisi sensoriale ufficiale dell'olio d'oliva. Gruppo di assaggiatori certificati valuta attributi positivi e difetti secondo metodo COI/UE.
+**Panel Test**: den officielle organoleptiske vurdering af olivenolie. Et panel af uddannede smagere vurderer positive egenskaber og fejl i henhold til IOC/EU-metoden.
 
-**Perossidi**: prodotti primari dell'ossidazione. Il numero di perossidi (NP) deve essere ≤ 20 mEq O₂/kg per l'extra vergine.
+**Peroxider**: primære oxidationsprodukter. Peroxidtallet (NP) må højst være ≤ 20 mEq O₂/kg for ekstra jomfruolivenolie.
 
-**Polifenoli totali**: contenuto totale di composti fenolici, espresso in mg/kg. Indicatore di qualità nutraceutica.
+**Polyfenoler i alt**: det samlede indhold af phenoliske forbindelser, udtrykt i mg/kg. En indikator for ernæringsmæssig kvalitet.
 
 ## S
 
-**Sansa**: residuo solido dell'estrazione (buccia, nocciolo, polpa esaurita). Può essere sottoposta a estrazione con solvente (olio di sansa) o usata come combustibile.
+**Olivenpresseaffald (Sansa)**: den faste rest efter udvinding (skal, sten, presset frugtkød). Kan efterbehandles med opløsningsmiddel (sansaolie) eller bruges som brændsel.
 
-**Secoiridoide**: classe di composti fenolici tipici delle Oleacee. Oleuropeina e oleocantale sono secoiridoidi.
+**Secoiridoid**: en klasse af phenoliske forbindelser, der er typiske for olivenfamilien (Oleaceae). Oleuropein og oleocanthal er secoiridoider.
 
 ## T
 
-**TMC**: Termine Minimo di Conservazione. "Preferibilmente entro il..." — non è una scadenza di sicurezza, ma di qualità.
+**Mindste holdbarhedsdato (TMC)**: "Mindst holdbar til...". Det er ikke en sidste anvendelsesdato for fødevaresikkerhed, men en kvalitetsgaranti.
 
-**Tocoferoli**: vitamina E naturale dell'olio. Antiossidante liposolubile.
+**Tocopheroler**: naturligt E-vitamin i olivenolien. En fedtopløselig antioxidant.
 
 ## V
 
-**Velato**: olio non filtrato, con particelle in sospensione che danno aspetto torbido.
+**Ufiltreret/Uklart (Velato)**: olivenolie med små svævende partikler, som giver et uklart udseende.
 
-**Volatile**: composto chimico facilmente evaporabile. Responsabile degli aromi percepiti al naso.
+**Flygtig (Volatile)**: en kemisk forbindelse, der let fordamper, og som er ansvarlig for de aromaer, næsen registrerer.

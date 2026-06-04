@@ -1,14 +1,15 @@
 // src/app/shop/[prodotto]/page.tsx
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { readCatalogWithMerch } from "@/lib/server/catalog";
-import { findProductBySlug } from "@/lib/productSlugs";
+import { readCatalog, readCatalogWithMerch } from "@/lib/server/catalog";
+import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
 import { makeInventorySku } from "@/lib/inventorySku";
 import { getAvailableBySku } from "@/lib/server/inventoryRead";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
 import { getProductAlternateUrls, absoluteUrl, localizedPath, SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
+import { locales } from "@/i18n/pathnames";
 
 type Specs = Record<string, string>;
 
@@ -125,6 +126,22 @@ function translateCategory(value: string | undefined, locale: string) {
   return categories[normalized]?.[locale] ?? value ?? "";
 }
 
+export async function generateStaticParams() {
+  const list = await readCatalog();
+  const params: { locale: string; prodotto: string }[] = [];
+
+  for (const locale of locales) {
+    for (const product of list) {
+      params.push({
+        locale,
+        prodotto: getLocalizedProductSlug(product, locale),
+      });
+    }
+  }
+
+  return params;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -185,7 +202,7 @@ export default async function ProductPage({
     title: locale === "it" ? product.title : (hasTranslation(tp, `${product.id}.title`) ? tp(`${product.id}.title`) : product.title),
     subtitle: locale === "it" ? product.subtitle : (hasTranslation(tp, `${product.id}.subtitle`) ? tp(`${product.id}.subtitle`) : product.subtitle),
     badge: locale === "it" ? product.badge : (hasTranslation(tp, `${product.id}.badge`) ? tp(`${product.id}.badge`) : product.badge),
-    merchBadge: (product as any).merchBadge ?? null,
+    merchBadge: product.merchBadge ?? null,
     description: locale === "it" ? product.description : (hasTranslation(tp, `${product.id}.description`) ? tp(`${product.id}.description`) : product.description),
     variants: product.variants.map((variant) => ({
       ...variant,
@@ -204,7 +221,7 @@ export default async function ProductPage({
       title: hasTranslation(tp, `${p.id}.title`) ? tp(`${p.id}.title`) : p.title,
       subtitle: hasTranslation(tp, `${p.id}.subtitle`) ? tp(`${p.id}.subtitle`) : p.subtitle,
       badge: hasTranslation(tp, `${p.id}.badge`) ? tp(`${p.id}.badge`) : p.badge,
-      merchBadge: (p as any).merchBadge ?? null,
+      merchBadge: p.merchBadge ?? null,
       description: hasTranslation(tp, `${p.id}.description`)
         ? tp(`${p.id}.description`)
         : p.description ?? "",
@@ -345,7 +362,7 @@ export default async function ProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <div className="mx-auto max-w-7xl px-6 py-12 lg:py-20">
+      <div className="mx-auto max-w-[1440px] px-6 py-12 lg:py-20">
         {/* Griglia client */}
         <ProductDetailsClient 
           product={translatedProduct} 

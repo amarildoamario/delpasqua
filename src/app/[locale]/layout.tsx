@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
 };
 
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params
