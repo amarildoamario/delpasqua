@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { OrderStatus } from "@/generated/prisma/client";
 import { adminFetch } from "@/lib/client/adminFetch";
+import { Truck, RotateCcw, Loader2 } from "lucide-react";
 
 export default function ShipToggleButton({
   orderId,
@@ -17,8 +18,8 @@ export default function ShipToggleButton({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const canShip = !shipped && status === "PREPARING";
-  const canUnship = shipped && status === "SHIPPED";
+  const canShip = !shipped && status === "IN_PREPARAZIONE";
+  const canUnship = shipped && status === "SPEDITO";
   const enabled = canShip || canUnship;
 
   async function toggle() {
@@ -48,11 +49,11 @@ export default function ShipToggleButton({
       onClick={toggle}
       disabled={!enabled || loading}
       className={[
-        "rounded-xl px-3 py-2 text-xs font-semibold transition",
+        "flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition shadow-xs",
         shipped
-          ? "border border-neutral-200/70 bg-white text-neutral-900 hover:bg-neutral-50 disabled:hover:bg-white"
-          : "bg-neutral-900 text-white hover:opacity-90 disabled:hover:opacity-60",
-        !enabled || loading ? "cursor-not-allowed opacity-60" : "",
+          ? "border border-neutral-200 bg-white text-neutral-800 hover:bg-neutral-50 disabled:hover:bg-white"
+          : "bg-neutral-900 text-white hover:opacity-90 disabled:opacity-60",
+        !enabled || loading ? "cursor-not-allowed opacity-50" : "cursor-pointer",
       ].join(" ")}
       title={
         canShip
@@ -60,11 +61,23 @@ export default function ShipToggleButton({
           : canUnship
           ? "Annulla spedizione"
           : shipped
-          ? "Puoi annullare solo se lo stato è SHIPPED"
-          : "Puoi spedire solo se lo stato è PREPARING"
+          ? "Puoi annullare solo se lo stato è SPEDITO"
+          : "Puoi spedire solo se lo stato è IN_PREPARAZIONE"
       }
     >
-      {loading ? "…" : shipped ? "Annulla" : "Spedisci"}
+      {loading ? (
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+      ) : shipped ? (
+        <>
+          <RotateCcw className="h-3.5 w-3.5 text-neutral-500" />
+          Annulla Spedizione
+        </>
+      ) : (
+        <>
+          <Truck className="h-3.5 w-3.5" />
+          Spedisci
+        </>
+      )}
     </button>
   );
 }

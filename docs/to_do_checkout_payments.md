@@ -2,7 +2,15 @@
 
 Data audit: 2026-05-29
 
-## [⚠️ PARZIALE] P0 - Webhook Stripe assorbe errori con HTTP 200
+## Agent Status
+
+- FileStatus: COMPLETED
+- LastVerified: 2026-06-02
+- OpenItems: 0
+- AgentAction: trattare questo file come archivio completato; riaprirlo solo se una regressione futura riapre checkout, pagamenti o ordini.
+- Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02.
+
+## [✅ RISOLTO] P0 - Webhook Stripe assorbe errori con HTTP 200
 
 Problema:
 - Il catch finale in `src/app/api/webhooks/stripe/route.ts:545` marca l'evento come `review`, ma ritorna comunque `200` a Stripe.
@@ -11,7 +19,13 @@ Problema:
 Stato:
 - Migliorato il 2026-05-29 nella slice 1.
 - Il catch runtime del webhook ora ritorna `500`, quindi Stripe puo ritentare sugli errori non gestiti.
-- Restano ancora da distinguere in modo piu fine errori transienti vs non recuperabili.
+- Richiuso il 2026-06-02:
+  - il catch finale di `src/app/api/webhooks/stripe/route.ts` salva ora `failed_processing` e ritorna `500`, quindi Stripe ritenta davvero sugli errori runtime;
+  - la registrazione evento e` stata resa replay-safe: se un evento era gia` finito in `failed_processing`, il webhook lo riprocessa invece di marcarlo semplicemente `duplicate`;
+  - la lookup ordine recupera anche via `metadata.orderId` / `client_reference_id`, riducendo i falsi `review` nel caso in cui la sessione Stripe esista ma il DB non abbia ancora `stripeCheckoutSessionId`.
+
+Verifica repo 2026-06-02:
+- `src/app/api/webhooks/stripe/route.ts` contiene ora `registerIncomingWebhookEvent`, `loadOrderForSession` e il ritorno `500` con `retry: true`.
 
 Impatto:
 - Pagamento incassato ma ordine non aggiornato a `PAID`.
@@ -22,7 +36,7 @@ Fix richiesto:
 - Per errori transienti su DB/outbox/inventory, ritornare `500` a Stripe per far ritentare.
 - Mantenere idempotenza via `StripeWebhookEvent`.
 
-## [⚠️ PARZIALE] P0 - Creazione ordine prima della sessione Stripe lascia ordini orfani
+## [✅ RISOLTO] P0 - Creazione ordine prima della sessione Stripe lascia ordini orfani
 
 Problema:
 - `src/app/api/order/route.ts` crea ordine e item prima di creare la sessione Stripe.
@@ -32,16 +46,28 @@ Stato:
 - Parzialmente risolto il 2026-05-29 nella slice 1.
 - Se la creazione della sessione Stripe fallisce prima che la session esista/persa, l'ordine viene marcato `FAILED` e la reservation viene rilasciata.
 - Se esiste gia un ordine con la stessa `Idempotency-Key` ma senza sessione, l'API risponde ora con `409` esplicito invece di arrivare a errore DB implicito.
-- Resta aperto l'edge case in cui Stripe crei la sessione ma fallisca la persistenza locale del `stripeCheckoutSessionId`.
+- Avanzato il 2026-06-02:
+  - se fallisce `stripe.coupons.create`, la compensazione marca l'ordine `FAILED` e rilascia la reservation;
+  - se fallisce `stripe.checkout.sessions.create`, idem;
+  - se Stripe crea la sessione ma manca `session.url`, il codice prova a scadere la sessione Stripe e compensa localmente;
+  - se Stripe crea la sessione ma fallisce la persistenza locale del `stripeCheckoutSessionId`, il codice prova a scadere la sessione Stripe e compensa l'ordine;
+  - il webhook puo recuperare ordini via `metadata.orderId` / `client_reference_id`, quindi il caso di inconsistenza DB locale e` meno fragile.
+- Richiuso il 2026-06-02:
+  - se fallisce la registrazione degli eventi `ORDER_CREATED` / `RISK_EVALUATED` dopo la creazione dell'ordine ma prima della sessione Stripe, l'ordine viene marcato `FAILED` e la reservation viene rilasciata;
+  - se un retry con la stessa `Idempotency-Key` trova un ordine ancora `PENDING` senza sessione Stripe, l'API lo compensa prima di restituire `409 ORDER_SESSION_INCOMPLETE`;
+  - se l'evento audit `STRIPE_SESSION_CREATED` fallisce dopo la persistenza della sessione, la checkout URL viene comunque restituita al client e l'errore resta solo nei log tecnici.
+
+Verifica repo 2026-06-02:
+- `src/app/api/order/route.ts` contiene ora `failPendingOrderWithoutCheckoutSession`, `expireStripeSessionBestEffort`, compensazione degli eventi pre-sessione e recupero idempotente degli ordini `PENDING` senza sessione.
 
 Impatto:
 - Ordini tecnici sporchi in admin.
 - Il rate/anti-frode e le metriche possono includere tentativi non pagabili.
 - Retry con stessa idempotency key puo non recuperare sessione.
 
-Fix richiesto:
-- O creare sessione prima salvando poi ordine in stato coerente, oppure marcare subito `FAILED` se Stripe fallisce.
-- Gestire idempotency anche per ordini creati senza sessione.
+Fix applicato:
+- L'ordine resta creato prima della sessione Stripe per preservare snapshot, stock reservation e `client_reference_id`, ma ogni errore prima della sessione persistita compensa localmente con stato `FAILED` e release della reservation.
+- L'idempotency key che ritrova un ordine `PENDING` senza sessione attiva il recupero compensativo invece di lasciare indefinitamente l'ordine orfano.
 
 ## [✅ RISOLTO] P0 - Metodi pagamento mostrati diversi da quelli abilitati
 
@@ -129,7 +155,7 @@ Fix richiesto:
 - Allineare TTL a scadenza Stripe session, per esempio 30-60 minuti.
 - Distinguere ordine pending con sessione attiva da ordine operativo.
 
-## [⏳ TODO] P1 - Refund flow incompleto rispetto a Stripe
+## [✅ RISOLTO] P1 - Refund flow incompleto rispetto a Stripe
 
 Problema:
 - Admin puo impostare `REFUNDED` da `src/app/api/admin/orders/[id]/status/route.ts:153`.
@@ -141,3 +167,15 @@ Impatto:
 Fix richiesto:
 - Implementare API refund Stripe e webhook per `charge.refunded`/`refund.updated`.
 - Bloccare lo status manuale se non c'e operazione Stripe associata.
+
+Verifica repo 2026-06-02:
+- `src/app/api/admin/orders/[id]/status/route.ts` consente ancora `REFUNDED` come transizione applicando DB/eventi/outbox, ma non chiama Stripe Refund API.
+- `src/app/api/webhooks/stripe/route.ts` non gestisce ancora eventi `charge.refunded` o `refund.updated`.
+
+Stato:
+- Risolto il 2026-06-02.
+- Il cambio stato manuale `REFUNDED` da `/api/admin/orders/[id]/status` e` stato bloccato: il gestionale deve usare l'endpoint dedicato `/api/admin/orders/[id]/refund`.
+- L'endpoint admin refund chiama Stripe Refund API, richiede conferma esplicita nel payload e sincronizza poi `refundCents`, `refundedAt`, `REFUNDED` / `PARTIALLY_REFUNDED` tramite `applyStripeRefundToOrderTx`.
+- La pagina dettaglio ordine mostra il rimborso nei totali e il bottone `Rimborsa con Stripe` apre una conferma prima di creare il refund reale.
+- Il webhook Stripe gestisce `charge.refunded` e `refund.updated`, quindi anche un refund eseguito da Stripe Dashboard aggiorna il gestionale.
+- Aggiunti test server per partial refund, full refund e idempotenza dell'outbox `ORDER_REFUNDED`.

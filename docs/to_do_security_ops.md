@@ -2,6 +2,14 @@
 
 Data audit: 2026-05-29
 
+## Agent Status
+
+- FileStatus: ACTIVE
+- LastVerified: 2026-06-02
+- OpenItems: 3
+- AgentAction: distinguere i temi davvero aperti da quelli gia blindati; oggi i gap reali sono PII/logging, error responses residue e outbox concorrente.
+- Note: alcuni punti sono gia` risolti solo su singole route; controllare sempre le verifiche aggiunte sotto.
+
 ## [✅ RISOLTO] P0 - Build puo ignorare errori TypeScript
 
 Stato:
@@ -35,7 +43,7 @@ Fix richiesto:
 - O escludere `scratch`/script storici dal lint, o portarli a zero errori.
 - Poi rendere lint obbligatorio in CI.
 
-## [⏳ TODO] P0 - Rate limit in-memory non distribuito
+## [✅ RISOLTO] P0 - Rate limit in-memory non distribuito
 
 Problema:
 - `src/lib/server/rateLimit.ts` usa una `Map` in-memory.
@@ -47,6 +55,15 @@ Impatto:
 Fix richiesto:
 - Passare a Redis/Upstash o rate limit DB atomico.
 - Mantenere fallback in-memory solo in sviluppo.
+
+Verifica repo 2026-06-02:
+- `src/lib/server/rateLimit.ts` usa ora Upstash Redis quando sono configurate `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`.
+- Se Redis non e` configurato o non risponde, il rate limit passa al fallback Postgres atomico su `RateLimitCounter` con `INSERT ... ON CONFLICT ... count + 1 RETURNING count`.
+- Il fallback in-memory resta solo in sviluppo quando Redis e DB non sono disponibili; in produzione il rate limit fallisce chiuso se anche il fallback DB non risponde.
+- Il fallback DB viene pulito in modo probabilistico rimuovendo finestre piu vecchie di 24 ore.
+
+Stato:
+- Risolto il 2026-06-02.
 
 ## [✅ RISOLTO] P0 - Contact form senza rate limit e body limit
 
@@ -119,6 +136,11 @@ Fix richiesto:
 - Conservare PII solo dove serve operativamente.
 - Definire retention.
 
+Verifica repo 2026-06-02:
+- `src/app/api/order/route.ts` salva ancora `ipAddress` e `userAgent` e li inoltra anche in `createOrderEvent`.
+- `src/app/api/tasting/book/route.ts` logga ancora email e dettagli richiesta in chiaro.
+- `src/app/api/webhooks/stripe/route.ts` continua a loggare eventi tasting con metadati operativi; non e` il punto peggiore, ma va ripulito insieme al resto.
+
 ## [⏳ TODO] P1 - Errori client troppo dettagliati
 
 Stato parziale:
@@ -136,6 +158,11 @@ Fix richiesto:
 - Standardizzare error response pubbliche.
 - Log interni con trace id, risposta client generica.
 
+Verifica repo 2026-06-02:
+- `src/app/api/contact/route.ts` e` gia` allineata.
+- `src/app/api/tasting/book/route.ts` ritorna ancora in alcuni casi `err.message` al client sui `409`.
+- `src/app/api/admin/orders/[id]/status/route.ts` espone ancora stringhe tipo `Invalid transition ...`; essendo admin non e` prioritario quanto le route pubbliche, ma resta rumore operativo.
+
 ## [⏳ TODO] P1 - Outbox non protegge da job concorrenti multi-istanza
 
 Problema:
@@ -149,3 +176,6 @@ Fix richiesto:
 - Valutare query atomica/lock DB.
 - Aggiungere test con due processori concorrenti.
 
+Verifica repo 2026-06-02:
+- `src/lib/server/outbox.ts` continua a fare `findMany` + `updateMany` come lock soft, senza `FOR UPDATE SKIP LOCKED`.
+- La patch Stripe del 2026-06-02 migliora i retry webhook, ma non cambia il problema strutturale dell'outbox concorrente.

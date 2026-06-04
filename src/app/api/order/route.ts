@@ -9,7 +9,7 @@ import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { createOrderEvent } from "@/lib/server/orderEvents";
 import { computeOrderPricing } from "@/lib/server/pricing";
-import { reserveStockOrThrow } from "@/lib/server/inventory";
+import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { computeRiskScore } from "@/lib/server/antiFraud";
 import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
 
@@ -36,6 +36,58 @@ function resolveAppUrl(req: Request) {
   return (isLocalRequest ? "http://localhost:3000" : requestOrigin).replace(/\/$/, "");
 }
 
+async function failPendingOrderWithoutCheckoutSession(args: {
+  orderId: string;
+  reason: string;
+}) {
+  try {
+    await prisma.$transaction(async (tx) => {
+      const order = await tx.order.findUnique({
+        where: { id: args.orderId },
+        include: { items: true },
+      });
+
+      if (!order) return;
+      if (order.status !== "IN_ATTESA") return;
+      if (order.stripeCheckoutSessionId) return;
+
+      await releaseReserved(tx, {
+        orderId: order.id,
+        lines: order.items.map((item) => ({ sku: item.sku, qty: item.qty })),
+      });
+
+      await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: "FALLITO",
+          notes: args.reason,
+        },
+      });
+
+      await tx.orderEvent.create({
+        data: {
+          orderId: order.id,
+          type: "STRIPE_SESSION_FAILED",
+          message: args.reason,
+        },
+      });
+    });
+  } catch (cleanupError) {
+    console.error("Failed to compensate pending order without checkout session", cleanupError);
+  }
+}
+
+async function expireStripeSessionBestEffort(sessionId: string) {
+  try {
+    await stripe.checkout.sessions.expire(sessionId);
+  } catch (expireError) {
+    console.error("Failed to expire Stripe checkout session after local persistence error", {
+      sessionId,
+      expireError,
+    });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     // basic hardening
@@ -56,6 +108,22 @@ export async function POST(req: Request) {
 
       if (!session.url) return new Response("Stripe session URL missing", { status: 500 });
       return Response.json({ orderId: existing.id, checkoutUrl: session.url }, { status: 200 });
+    }
+    if (existing && !existing.stripeCheckoutSessionId) {
+      if (existing.status === "IN_ATTESA") {
+        await failPendingOrderWithoutCheckoutSession({
+          orderId: existing.id,
+          reason: "Recovered incomplete idempotent order without Stripe checkout session",
+        });
+      }
+
+      return Response.json(
+        {
+          error: "ORDER_SESSION_INCOMPLETE",
+          message: "Existing order found without a Stripe checkout session. Retry with a new Idempotency-Key.",
+        },
+        { status: 409 }
+      );
     }
 
     // parse body
@@ -90,7 +158,7 @@ export async function POST(req: Request) {
     });
 
     // create order + items + reserve stock (P0.06)
-    const order = await prisma.$transaction(async (tx) => {
+    let order = await prisma.$transaction(async (tx) => {
       if (pricing.promotionApplied?.code) {
         const promo = await tx.promotion.findUnique({
           where: { code: pricing.promotionApplied.code },
@@ -110,7 +178,7 @@ export async function POST(req: Request) {
         const pendingCount = await tx.order.count({
           where: {
             promotionCode: promo.code,
-            status: "PENDING",
+            status: "IN_ATTESA",
           },
         });
         if (promo.usageLimit !== null && promo.usageLimit !== undefined) {
@@ -123,7 +191,7 @@ export async function POST(req: Request) {
       const created = await tx.order.create({
         data: {
           idempotencyKey: idemKey,
-          status: "PENDING",
+          status: "IN_ATTESA",
           currency: "eur",
 
           subtotalCents: pricing.subtotalCents,
@@ -199,22 +267,6 @@ export async function POST(req: Request) {
       return created;
     });
 
-    await createOrderEvent({
-      orderId: order.id,
-      type: "ORDER_CREATED",
-      message: `Ordine creato (${order.orderNumber ?? order.id})`,
-      toStatus: order.status,
-      meta: { ipAddress, userAgent, promotion: pricing.promotionApplied },
-    });
-
-    // P0.10 event
-    await createOrderEvent({
-      orderId: order.id,
-      type: "RISK_EVALUATED",
-      message: risk.isFlagged ? "Ordine flaggato (anti-frode light)" : "Risk evaluated",
-      meta: { riskScore: risk.score, reasons: risk.reasons },
-    });
-
     // Stripe checkout
     const appUrl = resolveAppUrl(req);
 
@@ -235,52 +287,93 @@ export async function POST(req: Request) {
 
     const traceId = randomUUID();
 
-    // ✅ Se c'è uno sconto, crea un coupon Stripe al volo e aggiungilo alla sessione
-    let stripeCouponId: string | undefined;
-    if (pricing.discountCents > 0 && pricing.promotionApplied) {
-      const coupon = await stripe.coupons.create({
-        amount_off: pricing.discountCents,
-        currency: "eur",
-        duration: "once",
-        name: `Sconto ${pricing.promotionApplied.code}`,
-        metadata: {
-          orderId: order.id,
-          promotionCode: pricing.promotionApplied.code,
-        },
+    try {
+      await createOrderEvent({
+        orderId: order.id,
+        type: "ORDER_CREATED",
+        message: `Ordine creato (${order.orderNumber ?? order.id})`,
+        toStatus: order.status,
+        meta: { ipAddress, userAgent, promotion: pricing.promotionApplied },
       });
-      stripeCouponId = coupon.id;
+
+      // P0.10 event
+      await createOrderEvent({
+        orderId: order.id,
+        type: "RISK_EVALUATED",
+        message: risk.isFlagged ? "Ordine flaggato (anti-frode light)" : "Risk evaluated",
+        meta: { riskScore: risk.score, reasons: risk.reasons },
+      });
+    } catch (orderEventError) {
+      await failPendingOrderWithoutCheckoutSession({
+        orderId: order.id,
+        reason: "Order event recording failed before Stripe checkout session creation",
+      });
+      throw orderEventError;
     }
 
-    const sessionResp = await stripe.checkout.sessions.create({
-      mode: "payment",
-      expires_at: Math.floor(Date.now() / 1000) + ORDER_PENDING_TTL_MINUTES * 60,
-      ...(order.email ? { customer_email: order.email } : {}),
-      shipping_address_collection: { allowed_countries: ["IT"] },
-      phone_number_collection: { enabled: true },
-      line_items: lineItems,
-      ...(stripeCouponId
-        ? { discounts: [{ coupon: stripeCouponId }] }
-        : {}),
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            display_name: order.shippingCents > 0 ? "Spedizione" : "Spedizione gratuita",
-            type: "fixed_amount",
-            fixed_amount: { currency: "eur", amount: order.shippingCents },
+    // Se c'e uno sconto, crea un coupon Stripe al volo e aggiungilo alla sessione.
+    let stripeCouponId: string | undefined;
+    if (pricing.discountCents > 0 && pricing.promotionApplied) {
+      try {
+        const coupon = await stripe.coupons.create({
+          amount_off: pricing.discountCents,
+          currency: "eur",
+          duration: "once",
+          name: `Sconto ${pricing.promotionApplied.code}`,
+          metadata: {
+            orderId: order.id,
+            promotionCode: pricing.promotionApplied.code,
           },
-        },
-      ],
-      success_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/cancel/?session_id={CHECKOUT_SESSION_ID}`,
-      client_reference_id: order.id,
-      metadata: {
-        orderId: order.id,
-        traceId,
-        promotionCode: parsed.data.promotionCode?.trim().toUpperCase() ?? "",
-      },
-    });
+        });
+        stripeCouponId = coupon.id;
+      } catch (stripeCouponError) {
+        await failPendingOrderWithoutCheckoutSession({
+          orderId: order.id,
+          reason: "Stripe coupon creation failed before checkout session creation",
+        });
+        throw stripeCouponError;
+      }
+    }
 
-    const session = "data" in sessionResp ? (sessionResp as { data: Stripe.Checkout.Session }).data : sessionResp;
+    let session: Stripe.Checkout.Session;
+    try {
+      const sessionResp = await stripe.checkout.sessions.create({
+        mode: "payment",
+        expires_at: Math.floor(Date.now() / 1000) + ORDER_PENDING_TTL_MINUTES * 60,
+        ...(order.email ? { customer_email: order.email } : {}),
+        shipping_address_collection: { allowed_countries: ["IT"] },
+        phone_number_collection: { enabled: true },
+        line_items: lineItems,
+        ...(stripeCouponId
+          ? { discounts: [{ coupon: stripeCouponId }] }
+          : {}),
+        shipping_options: [
+          {
+            shipping_rate_data: {
+              display_name: order.shippingCents > 0 ? "Spedizione" : "Spedizione gratuita",
+              type: "fixed_amount",
+              fixed_amount: { currency: "eur", amount: order.shippingCents },
+            },
+          },
+        ],
+        success_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/cancel/?session_id={CHECKOUT_SESSION_ID}`,
+        client_reference_id: order.id,
+        metadata: {
+          orderId: order.id,
+          traceId,
+          promotionCode: parsed.data.promotionCode?.trim().toUpperCase() ?? "",
+        },
+      });
+
+      session = "data" in sessionResp ? (sessionResp as { data: Stripe.Checkout.Session }).data : sessionResp;
+    } catch (stripeCreateError) {
+      await failPendingOrderWithoutCheckoutSession({
+        orderId: order.id,
+        reason: "Stripe checkout session creation failed",
+      });
+      throw stripeCreateError;
+    }
 
     // log sicuro (no PII)
     console.log("✅ SESSION ID:", session.id);
@@ -288,23 +381,53 @@ export async function POST(req: Request) {
     console.log("✅ has_customer_email:", Boolean(session.customer_email));
     console.log("✅ has_shipping_details:", Boolean((session as { shipping_details?: unknown }).shipping_details));
 
-    if (!session.url) return new Response("Stripe session URL missing", { status: 500 });
+    if (!session.url) {
+      await expireStripeSessionBestEffort(session.id);
+      await failPendingOrderWithoutCheckoutSession({
+        orderId: order.id,
+        reason: "Stripe checkout session created without a checkout URL",
+      });
+      return new Response("Stripe session URL missing", { status: 500 });
+    }
 
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { stripeCheckoutSessionId: session.id },
-    });
+    try {
+      order = await prisma.order.update({
+        where: { id: order.id },
+        data: { stripeCheckoutSessionId: session.id },
+        include: { items: true },
+      });
+    } catch (persistSessionError) {
+      await expireStripeSessionBestEffort(session.id);
+      await failPendingOrderWithoutCheckoutSession({
+        orderId: order.id,
+        reason: "Stripe checkout session created but could not be persisted locally",
+      });
+      throw persistSessionError;
+    }
 
-    await createOrderEvent({
-      orderId: order.id,
-      type: "STRIPE_SESSION_CREATED",
-      message: "Stripe checkout session creata",
-      meta: { stripeCheckoutSessionId: session.id },
-    });
+    try {
+      await createOrderEvent({
+        orderId: order.id,
+        type: "STRIPE_SESSION_CREATED",
+        message: "Stripe checkout session creata",
+        meta: { stripeCheckoutSessionId: session.id },
+      });
+    } catch (eventError) {
+      console.error("Failed to record Stripe session creation event", {
+        orderId: order.id,
+        stripeCheckoutSessionId: session.id,
+        eventError,
+      });
+    }
 
     return Response.json({ orderId: order.id, checkoutUrl: session.url }, { status: 200 });
   } catch (e: unknown) {
-    const err = e as Error & { status?: number; statusCode?: number; retryAfterSec?: number };
+    const err = e as Error & {
+      status?: number;
+      statusCode?: number;
+      retryAfterSec?: number;
+      code?: string;
+    };
     const status = err?.status ?? err?.statusCode;
 
     if (status === 429) {
@@ -319,7 +442,10 @@ export async function POST(req: Request) {
 
     if (status === 409) {
       return Response.json(
-        { error: "OUT_OF_STOCK", message: err.message ?? "Out of stock" },
+        {
+          error: err.code ?? "OUT_OF_STOCK",
+          message: err.message ?? "Conflict",
+        },
         { status: 409 }
       );
     }

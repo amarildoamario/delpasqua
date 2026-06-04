@@ -65,7 +65,7 @@ function NavItem({
 // Il layout è un Server Component che viene ri-renderato ad ogni navigazione
 // nel pannello admin. Senza cache = 4 query DB per ogni click sul menu.
 // Con cache 30s: 0 query se i dati sono freschi, 4 query al massimo ogni 30s.
-const ADMIN_BADGE_TTL_MS = 30_000;
+const ADMIN_BADGE_TTL_MS = process.env.NODE_ENV === "production" ? 30_000 : 0;
 interface AdminBadgeCache {
   data: [number, number, number, number];
   cachedAt: number;
@@ -82,7 +82,7 @@ async function fetchAdminDashboardData() {
 
   const data = await Promise.all([
     prisma.order.count({
-      where: { shippedAt: null, status: { in: ["PAID", "PREPARING"] } },
+      where: { shippedAt: null, status: { in: ["PAGATO", "IN_PREPARAZIONE"] } },
     }),
     prisma.outboxEvent.count({
       where: { status: { in: ["failed", "pending", "processing"] } },

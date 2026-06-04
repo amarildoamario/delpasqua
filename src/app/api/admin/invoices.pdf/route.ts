@@ -1,6 +1,9 @@
 export const runtime = "nodejs";
 
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
+import { requireAdminApi } from "@/lib/server/adminAuth";
+
 
 
 function isISODateOnly(s: string) {
@@ -131,8 +134,12 @@ ${xrefStart}
 }
 
 export async function GET(req: Request) {
+  const guard = await requireAdminApi(req, { csrf: false });
+  if (!guard.ok) return guard.response;
+
   const url = new URL(req.url);
   const mode = url.searchParams.get("mode") ?? "range"; // "range" | "shipping"
+
 
   const startParam = url.searchParams.get("start");
   const endParam = url.searchParams.get("end");
@@ -153,11 +160,11 @@ const where: NonNullable<OrderWhereInput> = {};
 if (mode === "shipping") {
   // ✅ stesso set della pagina Spedizioni (da fare)
   where.shippedAt = null;
-  where.status = { in: ["PAID", "PREPARING"] };
+  where.status = { in: ["PAGATO", "IN_PREPARAZIONE"] };
 } else {
   // range classico
   where.createdAt = { gte: start, lt: endExclusive };
-  where.status = "PAID";
+  where.status = "PAGATO";
 }
 
   const orders = await prisma.order.findMany({
@@ -202,12 +209,13 @@ if (mode === "shipping") {
       ? `fatture_spedizioni_${new Date().toISOString().slice(0, 10)}.pdf`
       : `fatture_${startParam ?? "start"}_${endParam ?? "end"}.pdf`;
 
-  return new Response(pdf, {
+  return guard.attach(new NextResponse(pdf, {
     status: 200,
     headers: {
       "content-type": "application/pdf",
       "content-disposition": `attachment; filename="${filename}"`,
       "cache-control": "no-store",
     },
-  });
+  }));
 }
+

@@ -46,18 +46,18 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const order = await prisma.order.findUnique({ where: { id } });
   if (!order) return new Response("Not found", { status: 404 });
 
-  if (shipped && order.status !== "PREPARING") {
-    return new Response("Order must be PREPARING before shipping", { status: 400 });
+  if (shipped && order.status !== "IN_PREPARAZIONE") {
+    return new Response("Order must be IN_PREPARAZIONE before shipping", { status: 400 });
   }
-  if (!shipped && order.status !== "SHIPPED") {
-    return new Response("Order must be SHIPPED to unship", { status: 400 });
+  if (!shipped && order.status !== "SPEDITO") {
+    return new Response("Order must be SPEDITO to unship", { status: 400 });
   }
 
   const updated = await prisma.order.update({
     where: { id },
     data: {
       shippedAt: shipped ? new Date() : null,
-      status: shipped ? "SHIPPED" : "PREPARING",
+      status: shipped ? "SPEDITO" : "IN_PREPARAZIONE",
     },
   });
 
@@ -70,7 +70,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     meta: null,
   });
 
-  if (shipped && order.status !== "SHIPPED") {
+  if (shipped && order.status !== "SPEDITO") {
     await enqueueShippedEmail(id, actor);
   }
 

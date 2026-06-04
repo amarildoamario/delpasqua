@@ -327,7 +327,7 @@ export async function POST(req: NextRequest) {
             await tx.order.update({
               where: { id: order.id },
               data: {
-                status: "FAILED",
+                status: "FALLITO",
                 isFlagged: true,
                 notes: "Invalid/missing address from Stripe customer_details",
                 // opzionale: salvi comunque il metodo se vuoi diagnostica
@@ -362,7 +362,7 @@ export async function POST(req: NextRequest) {
 
         if (!isPaidCheckout) {
           await prisma.$transaction(async (tx) => {
-            if (order.status === "PENDING") {
+            if (order.status === "IN_ATTESA") {
               await tx.order.update({
                 where: { id: order.id },
                 data: {
@@ -508,7 +508,7 @@ export async function POST(req: NextRequest) {
 
         if (!name || !isValidAddress(addr)) {
           await prisma.$transaction(async (tx) => {
-            if (order.status === "PENDING") {
+            if (order.status === "IN_ATTESA") {
               await releaseReserved(
                 tx,
                 {
@@ -520,7 +520,7 @@ export async function POST(req: NextRequest) {
               await tx.order.update({
                 where: { id: order.id },
                 data: {
-                  status: "FAILED",
+                  status: "FALLITO",
                   isFlagged: true,
                   notes: "Invalid/missing address from Stripe customer_details",
                   ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
@@ -615,7 +615,7 @@ export async function POST(req: NextRequest) {
           include: { items: true },
         });
 
-        if (order && order.status === "PENDING") {
+        if (order && order.status === "IN_ATTESA") {
           await prisma.$transaction(async (tx) => {
             await releaseReserved(
               tx,
@@ -627,7 +627,7 @@ export async function POST(req: NextRequest) {
 
             await tx.order.update({
               where: { id: order.id },
-              data: { status: "FAILED" },
+              data: { status: "FALLITO" },
             });
 
             await tx.orderEvent.create({
@@ -680,7 +680,7 @@ export async function POST(req: NextRequest) {
 
             await tx.order.update({
               where: { id: order.id },
-              data: { status: "EXPIRED" },
+              data: { status: "SCADUTO" },
             });
           });
         } else {

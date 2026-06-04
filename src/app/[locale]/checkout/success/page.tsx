@@ -284,7 +284,7 @@ export default async function CheckoutSuccessPage({
     );
   }
 
-  const isPaid = order.status === "PAID";
+  const isPaid = order.status === "PAGATO";
   const shouldClearCart = isPaid || (stripePaymentStatus ?? "").toLowerCase() === "paid";
 
   // ✅ METODO:

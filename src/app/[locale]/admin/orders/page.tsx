@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { prisma } from "@/lib/server/prisma";
 import ShipToggleButton from "@/app/[locale]/admin/orders/ship/ShipToggleButton";
+import PrepareButton from "@/app/[locale]/admin/orders/ship/PrepareButton";
 import RangePicker from "@/app/[locale]/admin/dashboard/RangerPicker";
 import type * as Prisma from "@/generated/prisma/client";
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
+import { getFlagEmoji } from "@/lib/utils";
+import OrderStatusBadge from "@/app/[locale]/admin/orders/OrderStatusBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -27,15 +30,15 @@ function parseDateOnly(s?: string) {
 }
 
 const ALLOWED_STATUSES: Prisma.OrderStatus[] = [
-  "PENDING",
-  "PAID",
-  "PREPARING",
-  "SHIPPED",
-  "DELIVERED",
-  "CANCELED",
-  "REFUNDED",
-  "EXPIRED",
-  "FAILED",
+  "IN_ATTESA",
+  "PAGATO",
+  "IN_PREPARAZIONE",
+  "SPEDITO",
+  "CONSEGNATO",
+  "ANNULLATO",
+  "RIMBORSATO",
+  "SCADUTO",
+  "FALLITO",
 ];
 
 function isOrderStatus(s: string): s is Prisma.OrderStatus {
@@ -105,7 +108,20 @@ export default async function AdminOrdersPage({
     where,
     orderBy: { createdAt: "desc" },
     take: 200,
-    include: {
+    select: {
+      id: true,
+      createdAt: true,
+      orderNumber: true,
+      paidAt: true,
+      fullName: true,
+      email: true,
+      status: true,
+      isFlagged: true,
+      riskScore: true,
+      paymentMethod: true,
+      shippedAt: true,
+      totalCents: true,
+      countryCode: true,
       events: {
         where: { type: "INVOICE_EXPORTED" },
         orderBy: { createdAt: "desc" },
@@ -115,8 +131,11 @@ export default async function AdminOrdersPage({
     },
   });
 
-  const xmlHref = `/api/admin/invoices.xml?mode=range&start=${startISO}&end=${endISO}${statusParam ? `&status=${encodeURIComponent(statusParam)}` : ""
-    }${shipped ? `&shipped=${encodeURIComponent(shipped)}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`;
+  const printParams = new URLSearchParams({ start: startISO, end: endISO });
+  if (statusParam) printParams.set("status", statusParam);
+  if (shipped) printParams.set("shipped", shipped);
+  if (q) printParams.set("q", q);
+  const printHref = `/api/admin/print-todo?${printParams.toString()}`;
 
   return (
     <div className="space-y-4">
@@ -130,14 +149,15 @@ export default async function AdminOrdersPage({
         }
         actions={
           <>
-            {/* ✅ scarica JSON coerente coi filtri della pagina */}
+            {/* ✅ stampa gli ordini da fare */}
             <a
-              href={xmlHref}
+              href={printHref}
               target="_blank"
               rel="noreferrer"
+              title="Stampa gli ordini filtrati nella lista corrente"
               className="rounded-xl bg-neutral-900 px-3 py-2 text-sm font-semibold text-white hover:opacity-90"
             >
-              Scarica fatture (.XML)
+              Stampa ordini da fare
             </a>
 
             <Link
@@ -198,15 +218,14 @@ export default async function AdminOrdersPage({
               <th className="w-40 px-4 py-3">Data</th>
               <th className="w-56 px-4 py-3">Ordine</th>
               <th className="w-56 px-4 py-3">Cliente</th>
-              <th className="w-28 px-4 py-3">Stato</th>
+              <th className="w-28 px-4 py-3 text-center">Stato</th>
               <th className="w-24 px-4 py-3">Rischio</th>
               <th className="w-28 px-4 py-3">Pagamento</th>
               <th className="w-24 px-4 py-3">Spedito</th>
-              <th className="w-24 px-4 py-3 text-right">Totale</th>
-              <th className="w-28 px-4 py-3 text-right">Azioni</th>
+              <th className="w-28 px-4 py-3 text-left">Totale</th>
+              <th className="w-44 px-4 py-3 text-right">Azioni</th>
             </tr>
           </thead>
-
           <tbody className="divide-y divide-neutral-200">
             {orders.map((o: typeof orders[0]) => {
               const exp = o.events?.[0] ?? null;
@@ -218,8 +237,8 @@ export default async function AdminOrdersPage({
                   key={o.id}
                   className={[
                     "hover:bg-neutral-50",
-                    o.status === "PREPARING" ? "bg-sky-100" : "",
-                    o.status === "SHIPPED" ? "bg-emerald-100" : "",
+                    o.status === "IN_PREPARAZIONE" ? "bg-sky-100" : "",
+                    o.status === "SPEDITO" || o.status === "CONSEGNATO" ? "bg-emerald-100" : "",
                   ].join(" ")}
                 >
                   <td className="px-4 py-3 text-neutral-700">
@@ -256,23 +275,19 @@ export default async function AdminOrdersPage({
                   </td>
 
                   <td className="px-4 py-3 text-neutral-700">
-                    <div className="truncate font-medium">{o.fullName || "—"}</div>
+                    <div className="flex items-center gap-1.5 truncate font-medium">
+                      <span className="truncate">{o.fullName || "—"}</span>
+                      {o.countryCode ? (
+                        <span title={o.countryCode} className="text-base select-none shrink-0" aria-label={`Bandiera nazione: ${o.countryCode}`}>
+                          {getFlagEmoji(o.countryCode)}
+                        </span>
+                      ) : null}
+                    </div>
                     <div className="truncate text-xs text-neutral-500">{o.email || "—"}</div>
                   </td>
 
-                  <td className="px-4 py-3">
-                    <span
-                      className={[
-                        "inline-flex rounded-full px-2.5 py-1 text-xs font-semibold",
-                        o.status === "PREPARING"
-                          ? "bg-sky-200 text-sky-900"
-                          : o.status === "SHIPPED"
-                            ? "bg-emerald-200 text-emerald-900"
-                            : "bg-neutral-100 text-neutral-700",
-                      ].join(" ")}
-                    >
-                      {o.status}
-                    </span>
+                  <td className="px-4 py-3 text-center">
+                    <OrderStatusBadge status={o.status} />
                   </td>
 
                   <td className="px-4 py-3">
@@ -303,12 +318,15 @@ export default async function AdminOrdersPage({
                     )}
                   </td>
 
-                  <td className="px-4 py-3 text-right font-semibold text-neutral-900">
+                  <td className="px-4 py-3 text-left font-semibold text-neutral-900">
                     {euro(o.totalCents)}
                   </td>
 
                   <td className="px-4 py-3 text-right">
-                    <ShipToggleButton orderId={o.id} shipped={!!o.shippedAt} status={o.status} />
+                    <div className="flex justify-end gap-2">
+                      <PrepareButton orderId={o.id} status={o.status} />
+                      <ShipToggleButton orderId={o.id} shipped={!!o.shippedAt} status={o.status} />
+                    </div>
                   </td>
                 </tr>
               );

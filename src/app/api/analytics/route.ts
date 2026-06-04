@@ -69,12 +69,14 @@ function normalizeData({
   device,
   env,
   isInternal,
+  countryCode,
 }: {
   incomingData: unknown;
   ua: string;
   device: string;
   env: string;
   isInternal: boolean;
+  countryCode: string;
 }) {
   const obj = asObj(incomingData) ?? {};
   const meta = asObj(obj.meta) ?? {};
@@ -105,6 +107,7 @@ function normalizeData({
       isInternal,
       device,
       uaHint: ua ? ua.slice(0, 120) : null,
+      countryCode,
       ...meta,
     },
   };
@@ -120,6 +123,8 @@ export async function POST(req: Request) {
 
   const ua = req.headers.get("user-agent") ?? "";
   const device = deviceFromUA(ua);
+
+  const countryCode = (req.headers.get("x-vercel-ip-country") ?? req.headers.get("cf-ipcountry") ?? "IT").toUpperCase();
 
   const host = (req.headers.get("x-forwarded-host") ?? req.headers.get("host") ?? "").toLowerCase();
   const serverThinksInternal =
@@ -149,7 +154,7 @@ export async function POST(req: Request) {
         const env = (asStr(e.env) ?? (process.env.NODE_ENV === "production" ? "prod" : "dev")).slice(0, 32);
         const isInternal = Boolean(e.isInternal) || serverThinksInternal || env !== "prod";
 
-        const data = normalizeData({ incomingData: e.data, ua, device, env, isInternal });
+        const data = normalizeData({ incomingData: e.data, ua, device, env, isInternal, countryCode });
 
         return {
           type,

@@ -2,6 +2,14 @@
 
 Data audit: 2026-05-29
 
+## Agent Status
+
+- FileStatus: COMPLETED
+- LastVerified: 2026-06-02
+- OpenItems: 0
+- AgentAction: trattare questo file come archivio completato; riaprirlo solo se una regressione futura riapre uno dei punti sotto.
+- Note: nonostante il nome `to_do_*`, questo file non contiene piu task aperte.
+
 Legenda priorita:
 - P0 = rischio diretto su ordini, pagamenti, stock, dati cliente o incasso.
 - P1 = incoerenza operativa che puo creare errori o costi manuali.

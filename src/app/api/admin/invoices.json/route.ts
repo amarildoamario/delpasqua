@@ -93,8 +93,8 @@ export async function GET(req: Request) {
   const where: Record<string, unknown> = {};
 
   if (mode === "shipping") {
-    // ✅ Operatività: SOLO PAID non spediti + pagati davvero + no cancel/refund
-    where.status = "PAID";
+    // ✅ Operatività: SOLO PAGATO non spediti + pagati davvero + no cancel/refund
+    where.status = "PAGATO";
     where.shippedAt = null;
     where.paidAt = { not: null };
     where.canceledAt = null;
@@ -384,7 +384,7 @@ export async function GET(req: Request) {
       : `fatture_${sanitizeFilenamePart(toISODate(start))}__${sanitizeFilenamePart(toISODate(end))}.json`;
 
   return guard.attach(
-    new NextResponse(JSON.stringify({ ok: true, count: invoices.length, invoices }), {
+    new NextResponse(JSON.stringify({ ok: true, count: invoices.length, invoices }, null, 2), {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "content-disposition": `attachment; filename="${filename}"`,

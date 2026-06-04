@@ -63,6 +63,13 @@ export default async function AdminExportsPage({
         />
 
         <Card
+          title="Report dashboard (periodo) — JSON"
+          desc="JSON con i dati completi della dashboard (KPI, trends, prodotti) nel periodo selezionato."
+          href={`/api/admin/report/dashboard.json?start=${startISO}&end=${endISO}`}
+          cta="Scarica dashboard.json"
+        />
+
+        <Card
           title="Clienti"
           desc="Clienti derivati dagli ordini pagati: spesa, # ordini, ultimo ordine."
           href="/api/admin/customers.csv"

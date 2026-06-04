@@ -20,21 +20,21 @@ export default async function AdminOpsPage() {
 
   const [toShip, toShipOld, pendingOld] = await Promise.all([
     // backlog totale
-    prisma.order.count({ where: { status: "PAID", shippedAt: null } }),
+    prisma.order.count({ where: { status: "PAGATO", shippedAt: null } }),
 
     // backlog “vecchio”
     prisma.order.count({
       where: {
-        status: "PAID",
+        status: "PAGATO",
         shippedAt: null,
         paidAt: { not: null, lt: cutoff48h },
       },
     }),
 
-    // PENDING vecchi
+    // IN_ATTESA vecchi
     prisma.order.count({
       where: {
-        status: "PENDING",
+        status: "IN_ATTESA",
         createdAt: { lt: cutoff48h },
       },
     }),
@@ -45,16 +45,16 @@ export default async function AdminOpsPage() {
     <div className="space-y-4">
       <PageHeader
         title="Operatività"
-        subtitle="Tre numeri chiave per capire cosa fare adesso: spedire, recuperare ritardi e chiudere i PENDING vecchi."
+        subtitle="Tre numeri chiave per capire cosa fare adesso: spedire, recuperare ritardi e chiudere gli ordini IN ATTESA vecchi."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <a
-              href="/api/admin/invoices.xml?mode=shipping"
+              href="/api/admin/print-todo"
               target="_blank"
               rel="noreferrer"
               className="rounded-2xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm hover:bg-neutral-50"
             >
-              Fatture da fare (XML)
+              Stampa ordini da fare
             </a>
 
 
@@ -62,51 +62,31 @@ export default async function AdminOpsPage() {
         }
       />
 
-      {/* Hero */}
-      <div className="rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-6 shadow-sm">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-semibold text-neutral-700">
-              Aggiornato alle {hhmm(now)}
-            </div>
+      {/* KPI Cards Grid */}
+      <div className="grid gap-3 md:grid-cols-3">
+        <KpiCard
+          title="Da spedire"
+          value={String(toShip)}
+          hint="Ordini PAGATI non spediti"
+          href="/admin/orders?status=PAGATO&shipped=no"
+          cta="Apri backlog"
+        />
 
+        <KpiCard
+          title="Da spedire > 48h"
+          value={String(toShipOld)}
+          hint="Pagati da oltre 48h"
+          href="/admin/orders?status=PAGATO&shipped=no"
+          cta="Vedi ritardi"
+        />
 
-
-
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-
-
-
-          </div>
-        </div>
-
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          <KpiCard
-            title="Da spedire"
-            value={String(toShip)}
-            hint="Ordini PAID non spediti"
-            href="/admin/orders?status=PAID&shipped=no"
-            cta="Apri backlog"
-          />
-
-          <KpiCard
-            title="Da spedire > 48h"
-            value={String(toShipOld)}
-            hint="Pagati da oltre 48h"
-            href="/admin/orders?status=PAID&shipped=no"
-            cta="Vedi ritardi"
-          />
-
-          <KpiCard
-            title="PENDING > 48h"
-            value={String(pendingOld)}
-            hint="Checkout in sospeso da troppo"
-            href="/admin/orders?status=PENDING"
-            cta="Vedi PENDING"
-          />
-        </div>
+        <KpiCard
+          title="IN ATTESA > 48h"
+          value={String(pendingOld)}
+          hint="Checkout in sospeso da troppo"
+          href="/admin/orders?status=IN_ATTESA"
+          cta="Vedi IN ATTESA"
+        />
       </div>
 
       {/* Quick links (solo cose utili quotidianamente) */}

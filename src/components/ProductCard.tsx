@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react"
+import { Heart, ShoppingCart } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import { useCallback, useState } from "react"
 import { useLocale } from "next-intl"
@@ -10,7 +10,6 @@ import ToggleMessage from "@/components/ui/ToggleMessage"
 import { useCart } from "@/context/CartContext"
 import { getOrCreateCartId } from "@/lib/analytics/cartId"
 import { track } from "@/lib/analytics/track"
-import { shouldContainProductImage } from "@/lib/productImageFit"
 import { getLocalizedProductHref } from "@/lib/productSlugs"
 
 export type ProductCardVariantImage = {
@@ -26,6 +25,7 @@ export type ProductCardProduct = {
   title: string
   subtitle: string
   badge?: string
+  merchBadge?: string | null
   secondaryBadge?: string
   imageSrc: string
   imageAlt: string
@@ -176,6 +176,49 @@ const cardCopy = {
   },
 };
 
+const MERCH_BADGES: Record<string, Record<string, string>> = {
+  PIU_VENDUTO: {
+    it: "Più venduto",
+    en: "Best seller",
+    de: "Bestseller",
+    nl: "Bestseller",
+    da: "Bestseller",
+    no: "Bestseller",
+  },
+  IN_OFFERTA: {
+    it: "In offerta",
+    en: "Special offer",
+    de: "Im Angebot",
+    nl: "Aanbieding",
+    da: "Tilbud",
+    no: "Tilbud",
+  },
+  NOVITA: {
+    it: "Novità",
+    en: "New",
+    de: "Neu",
+    nl: "Nieuw",
+    da: "Nyhed",
+    no: "Nyhet",
+  },
+  HOT: {
+    it: "Hot",
+    en: "Hot",
+    de: "Hot",
+    nl: "Hot",
+    da: "Hot",
+    no: "Hot",
+  },
+  IN_HOME: {
+    it: "In home",
+    en: "Featured",
+    de: "Empfohlen",
+    nl: "Aanbevolen",
+    da: "Udvalgt",
+    no: "Utvalgt",
+  },
+};
+
 type CardLocale = keyof typeof cardCopy;
 
 export default function ProductCard({
@@ -193,11 +236,7 @@ export default function ProductCard({
   const locale = useLocale()
   const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
 
-  // Track which variant image is currently shown
-  const variantImages = product.variantImages ?? []
-  const [activeVariantIdx, setActiveVariantIdx] = useState(0)
-  const activeVariantImage = variantImages[activeVariantIdx]
-  const activeVariantId = activeVariantImage?.variantId ?? product.defaultVariantId
+  const activeVariantId = product.defaultVariantId
 
   const hrefBase = getLocalizedProductHref(product, locale)
   const href = activeVariantId
@@ -255,18 +294,6 @@ export default function ProductCard({
     [add, activeVariantId, product.id, product.priceCents, product.slug, product.title, product.variantLabel, showToast, text]
   )
 
-  const handlePrevImage = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setActiveVariantIdx((i) => (i - 1 + variantImages.length) % variantImages.length)
-  }, [variantImages.length])
-
-  const handleNextImage = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setActiveVariantIdx((i) => (i + 1) % variantImages.length)
-  }, [variantImages.length])
-
   return (
     <>
       <ToggleMessage open={toastOpen} message={toastMsg} onClose={() => setToastOpen(false)} />
@@ -295,17 +322,33 @@ export default function ProductCard({
         <div className="flex h-full w-full flex-col">
           <CardInner
             product={product}
-            activeVariantIdx={activeVariantIdx}
-            onPrev={handlePrevImage}
-            onNext={handleNextImage}
-            onDotClick={setActiveVariantIdx}
           />
-          <div className="px-3 pb-3 bg-white relative z-20">
-            {onOpen ? (
-              <CardActionsButton onOpen={handleOpen} onAdd={handleAdd} locale={locale} />
-            ) : (
-              <CardActionsLink href={href} onClick={onClick} onAdd={handleAdd} locale={locale} />
-            )}
+          <div className="px-3 pb-3 bg-white relative z-20 flex items-center justify-between border-t border-[#f0ece6] pt-3 mt-auto">
+            {/* Prezzo */}
+            <div className="flex flex-col">
+              <span className="text-[9px] font-semibold tracking-[0.1em] text-[#9c8f82] uppercase leading-none">
+                {product.priceCaption || text.from}
+              </span>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="font-serif text-[1.15rem] font-bold tracking-tight text-[#1f1a17]">
+                  {product.priceLabel || "€0,00"}
+                </span>
+                <span className="text-[9px] font-medium text-[#8a7c6e]">
+                  {text.vat}
+                </span>
+              </div>
+            </div>
+
+            {/* Aggiungi al Carrello */}
+            <button
+              type="button"
+              onClick={handleAdd}
+              className="h-8 rounded-[5px] bg-[#132c1c] hover:bg-[#1a3d27] text-white px-3.5 py-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-all active:scale-95 shadow-sm shadow-[#132c1c]/10"
+              aria-label={text.addToCart}
+            >
+              <ShoppingCart className="h-3.5 w-3.5" />
+              <span>{locale === "it" ? "Aggiungi" : "Add"}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -315,65 +358,38 @@ export default function ProductCard({
 
 function CardInner({
   product,
-  activeVariantIdx = 0,
-  onPrev,
-  onNext,
-  onDotClick,
 }: {
   product: ProductCardProduct
-  activeVariantIdx?: number
-  onPrev?: (e: React.MouseEvent) => void
-  onNext?: (e: React.MouseEvent) => void
-  onDotClick?: (idx: number) => void
 }) {
   const locale = useLocale()
   const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
   const [isFavorite, setIsFavorite] = useState(false)
 
-  const variantImages = product.variantImages ?? []
-  const hasVariantImages = variantImages.length > 1
-
   // Determine which image to show
-  const currentImage = hasVariantImages
-    ? variantImages[activeVariantIdx]?.imageSrc ?? product.imageSrc
-    : product.imageSrc
-  const currentAlt = hasVariantImages
-    ? variantImages[activeVariantIdx]?.imageAlt ?? product.imageAlt
-    : product.imageAlt
-
-  const usesContainedImage = shouldContainProductImage(currentImage)
-
+  const currentImage = product.imageSrc
+  const currentAlt = product.imageAlt
   // Clean title: use title exactly as-is for absolute uniformity across card, breadcrumb, and h1
   const cleanTitle = product.title
 
   // Badges mapping
-  const badgesMap: Record<string, { primary: string; secondary: string }> = {
-    "fruttato-medio": {
-      primary: product.badge || "",
-      secondary: text.secondaryBadge,
-    },
-    "fruttato-intenso": {
-      primary: product.badge || "",
-      secondary: text.secondaryBadge,
-    },
-    "evo": {
-      primary: product.badge || "",
-      secondary: text.secondaryBadge,
-    },
-    "tartufo": {
-      primary: product.badge || "",
-      secondary: text.secondaryBadge,
-    },
-    "peperoncino": {
-      primary: product.badge || "",
-      secondary: text.secondaryBadge,
-    },
+  const defaultBadgesMap: Record<string, string> = {
+    "fruttato-medio": product.badge || "",
+    "fruttato-intenso": product.badge || "",
+    "evo": product.badge || "",
+    "tartufo": product.badge || "",
+    "peperoncino": product.badge || "",
   }
 
-  const badgeInfo = badgesMap[product.id] || {
-    primary: product.badge || "CLASSICO",
-    secondary: product.secondaryBadge || text.secondaryBadge,
-  }
+  const rawDefaultBadge = defaultBadgesMap[product.id] !== undefined
+    ? defaultBadgesMap[product.id]
+    : (product.badge || "CLASSICO");
+
+  // Translate database custom badge if set
+  const rawMerchBadge = product.merchBadge || "";
+  const upperMerchBadge = rawMerchBadge.toUpperCase();
+  const translatedMerchBadge = MERCH_BADGES[upperMerchBadge]
+    ? (MERCH_BADGES[upperMerchBadge][locale] ?? MERCH_BADGES[upperMerchBadge].it)
+    : rawMerchBadge;
 
   // Variants count → testo formati
   const variantsCount = product.variantsCount ?? 1
@@ -388,18 +404,14 @@ function CardInner({
   return (
     <div className="flex h-full w-full flex-col">
       {/* Foto prodotto */}
-      <div className="relative aspect-[4/4.3] w-full overflow-hidden bg-white transform-gpu backface-hidden">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-white transform-gpu backface-hidden">
         {currentImage ? (
           <Image
             src={currentImage}
             alt={currentAlt || cleanTitle}
             fill
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className={
-              usesContainedImage
-                ? "object-contain p-4 transition-transform duration-500 group-hover:scale-[1.02] will-change-transform"
-                : "object-cover transition-transform duration-500 group-hover:scale-[1.04] will-change-transform"
-            }
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.04] will-change-transform"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-[#fdfaf7] text-[10px] font-semibold uppercase tracking-wider text-[#8f6d4c]/70">
@@ -409,58 +421,19 @@ function CardInner({
 
         {/* Badges: inset 10px dai bordi della card, sopra la foto */}
         <div className="absolute left-[10px] right-[10px] top-[10px] z-10 flex items-center justify-between pointer-events-none">
-          {badgeInfo.primary ? (
+          {rawDefaultBadge ? (
             <div className="rounded-[4px] bg-[#d29b46] px-2 py-[3px] text-[9px] font-bold tracking-[0.08em] text-white uppercase shadow-sm">
-              {badgeInfo.primary}
+              {rawDefaultBadge}
             </div>
           ) : (
             <div />
           )}
-          {badgeInfo.secondary ? (
+          {translatedMerchBadge ? (
             <div className="rounded-[4px] border border-[#ddd7ce] bg-white/92 px-2 py-[3px] text-[9px] font-bold tracking-[0.08em] text-[#1f1a17] uppercase shadow-sm backdrop-blur-sm">
-              {badgeInfo.secondary}
+              {translatedMerchBadge}
             </div>
           ) : null}
         </div>
-
-        {/* Variant image navigation arrows */}
-        {hasVariantImages && onPrev && onNext && (
-          <>
-            <button
-              type="button"
-              onClick={onPrev}
-              className="absolute left-1.5 top-1/2 z-20 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full bg-white/85 text-[#1f1a17] shadow-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-sm pointer-events-auto"
-              aria-label="Immagine precedente"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
-            </button>
-            <button
-              type="button"
-              onClick={onNext}
-              className="absolute right-1.5 top-1/2 z-20 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full bg-white/85 text-[#1f1a17] shadow-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-sm pointer-events-auto"
-              aria-label="Immagine successiva"
-            >
-              <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
-            </button>
-
-            {/* Dot indicators */}
-            <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 pointer-events-auto">
-              {variantImages.map((vi, idx) => (
-                <button
-                  key={vi.variantId}
-                  type="button"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDotClick?.(idx); }}
-                  className={`h-1.5 rounded-full transition-all duration-200 ${
-                    idx === activeVariantIdx
-                      ? "w-4 bg-[#1f1a17]"
-                      : "w-1.5 bg-[#1f1a17]/40 hover:bg-[#1f1a17]/70"
-                  }`}
-                  aria-label={`Variante ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
 
         {/* Favorite button */}
         <button
@@ -501,112 +474,19 @@ function CardInner({
         </h3>
 
         {/* Variante card univoca */}
-        {variantLabel && !hasVariantImages && (
+        {variantLabel && (
           <div className="mt-1 text-[9px] font-semibold tracking-[0.08em] text-[#8f6d4c] uppercase">
             {variantLabel}
           </div>
         )}
 
-        {/* Variante attiva (se ci sono variant images) */}
-        {hasVariantImages && (
-          <div className="mt-0.5 text-[9px] font-semibold tracking-[0.06em] text-[#8f6d4c] uppercase">
-            {variantImages[activeVariantIdx]?.variantId
-              ? variantImages[activeVariantIdx].variantId
-                  .replace("ml", " ml")
-                  .replace("lt", " L")
-                  .replace(/^(\d)/, (m) => m)
-              : ""}
-          </div>
-        )}
-
         {/* Formati disponibili */}
-        {!hasVariantImages && !variantLabel && (
+        {!variantLabel && (
           <div className="mt-1 text-[9px] font-medium tracking-[0.06em] text-[#a09282] uppercase">
             {formatsText}
           </div>
         )}
-
-        {/* Prezzo */}
-        <div className="mt-auto pt-1.5 pb-0.5">
-          <div className="text-[9px] font-semibold tracking-[0.1em] text-[#9c8f82] uppercase leading-none">
-            {product.priceCaption || text.from}
-          </div>
-          <div className="mt-0.5 flex items-baseline gap-1">
-            <span className="font-serif text-[1.25rem] font-bold tracking-tight text-[#1f1a17]">
-              {product.priceLabel || "€0,00"}
-            </span>
-            <span className="text-[10px] font-medium text-[#8a7c6e]">
-              {text.vat}
-            </span>
-          </div>
-        </div>
       </div>
-    </div>
-  )
-}
-
-function CardActionsLink({
-  href,
-  onClick,
-  onAdd,
-  locale,
-}: {
-  href: React.ComponentProps<typeof Link>["href"]
-  onClick?: () => void
-  onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void
-  locale: string
-}) {
-  const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
-
-  return (
-    <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-[#f0ece6]">
-      <Link
-        href={href}
-        onClick={onClick}
-        className="flex-1 rounded-[5px] border border-[#d2c9bd] bg-white px-3 py-2 text-[10px] font-bold tracking-[0.1em] text-[#1f1a17] uppercase transition-all duration-200 hover:border-[#1f1a17] hover:bg-stone-50 text-center"
-      >
-        {text.details}
-      </Link>
-      <button
-        type="button"
-        onClick={onAdd}
-        aria-label={text.addToCart}
-        className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#132c1c] text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-[#1a3d27] active:scale-95"
-      >
-        <ShoppingCart className="h-[15px] w-[15px]" strokeWidth={1.8} />
-      </button>
-    </div>
-  )
-}
-
-function CardActionsButton({
-  onOpen,
-  onAdd,
-  locale,
-}: {
-  onOpen: () => void
-  onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void
-  locale: string
-}) {
-  const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
-
-  return (
-    <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-[#f0ece6]">
-      <button
-        type="button"
-        onClick={onOpen}
-        className="flex-1 rounded-[5px] border border-[#d2c9bd] bg-white px-3 py-2 text-[10px] font-bold tracking-[0.1em] text-[#1f1a17] uppercase transition-all duration-200 hover:border-[#1f1a17] hover:bg-stone-50 text-center"
-      >
-        {text.details}
-      </button>
-      <button
-        type="button"
-        onClick={onAdd}
-        aria-label={text.addToCart}
-        className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-[#132c1c] text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-[#1a3d27] active:scale-95"
-      >
-        <ShoppingCart className="h-[15px] w-[15px]" strokeWidth={1.8} />
-      </button>
     </div>
   )
 }

@@ -15,6 +15,9 @@ import HomeUniqueness from "@/components/HomeUniqueness";
 import ShopHighlights from "@/components/ShopHighlights";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
+import { readCatalogWithMerch } from "@/lib/server/catalog";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -32,6 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const products = await readCatalogWithMerch();
 
   // Read gallery images dynamically from public/home_gallery at build/request time
   let galleryImages: string[] = [];
@@ -81,7 +85,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd) }}
       />
       <HeroCarousel />
-      <ShopHighlights />
+      <ShopHighlights initialProducts={products as any} />
       <HomeAboutFamily />
       <HomeAboutTerritory />
       <HomeUniqueness />

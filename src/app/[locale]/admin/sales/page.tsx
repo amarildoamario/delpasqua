@@ -1,18 +1,27 @@
 import { prisma } from "@/lib/server/prisma";
 import SalesTable from "./sales-table";
-import { readCatalog } from "@/lib/server/catalog";
+import { readCatalogWithMerch } from "@/lib/server/catalog";
 import PageHeader from "../_components/PageHeader";
 
 
 export const dynamic = "force-dynamic";
 
-type ProductVariant = { id: string; label: string; priceCents: number };
+type ProductVariant = {
+  id: string;
+  label: string;
+  priceCents: number;
+  imageSrc?: string;
+  imageAlt?: string;
+};
+
 type Product = {
   id: string;
   slug: string;
   title: string;
   subtitle?: string;
   badge?: string;
+  imageSrc?: string;
+  imageAlt?: string;
   variants: ProductVariant[];
 };
 
@@ -21,7 +30,7 @@ function minVariantPriceCents(p: Product) {
 }
 
 export default async function AdminSalesPage() {
-  const products = (await readCatalog()) as unknown as Product[];
+  const products = (await readCatalogWithMerch()) as unknown as Product[];
 
   const merch = await prisma.productMerch.findMany({
     orderBy: { updatedAt: "desc" },
@@ -31,10 +40,33 @@ export default async function AdminSalesPage() {
 
   const rows = products.map((p) => {
     const m = merchByKey.get(p.id) ?? null; // usiamo product.id come chiave
+
+    // Build variant images list with deduplication
+    const seenSrcs = new Set<string>();
+    const variantImages = (p.variants ?? [])
+      .filter((v) => typeof v.id === "string" && !!v.imageSrc)
+      .filter((v) => {
+        if (seenSrcs.has(v.imageSrc!)) return false;
+        seenSrcs.add(v.imageSrc!);
+        return true;
+      })
+      .map((v) => ({
+        variantId: v.id!,
+        imageSrc: v.imageSrc!,
+        imageAlt: v.imageAlt ?? p.imageAlt ?? "",
+      }));
+
     return {
       productKey: p.id,
       slug: p.slug,
       title: p.title,
+      subtitle: p.subtitle ?? "",
+      badge: p.badge ?? "",
+      imageSrc: p.imageSrc ?? "",
+      imageAlt: p.imageAlt ?? "",
+      variantsCount: p.variants?.length ?? 1,
+      defaultVariantId: p.variants?.[0]?.id ?? "",
+      variantImages: variantImages.length > 1 ? variantImages : undefined,
       basePriceCents: minVariantPriceCents(p),
       merch: m
         ? {

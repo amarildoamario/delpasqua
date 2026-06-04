@@ -5,6 +5,21 @@ Source: src/lib/blogTranslationsData.ts
 Posts: 51
 Locales: en, de, nl, da, no
 
+## Agent Status
+
+- FileStatus: ACTIVE
+- LastVerified: 2026-06-02
+- OpenItems: 42 missing `content` entries per locale selezionata
+- AgentAction: trattare questo file come backlog editoriale/localization, non come bug di routing o slug.
+- CompletionRule: il file diventa `COMPLETED` solo quando il `Global Summary` mostra `missing content 0` per tutte le lingue selezionate.
+- Note: oggi slug e category localizzate esistono quasi ovunque; il problema residuo principale e` il fallback del contenuto in italiano.
+
+## Note Operative Verificate Al 2026-06-02
+
+- `src/lib/blogTranslationsData.ts` ammette ancora `content?: string`, quindi il fallback a contenuto italiano resta possibile.
+- Le URL localizzate risultano gia` risolte senza collisioni nel report; il debito aperto e` soprattutto copy/content.
+- Prima di lavorare su singoli post, rieseguire `npm run check:blog-translations` se il dataset cambia.
+
 Legend: ✅ ready, ⚠️ fallback or missing field, ❌ translation entry missing
 
 ## Global Summary

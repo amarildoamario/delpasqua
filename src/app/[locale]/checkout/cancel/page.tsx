@@ -67,7 +67,7 @@ export default async function CancelPage({
   });
 
   // 3) se trovato e annullabile, marca CANCELED + rilascia reserved
-  if (order && order.status === "PENDING") {
+  if (order && order.status === "IN_ATTESA") {
     await prisma.$transaction(async (tx) => {
       await releaseReserved(
         tx,
@@ -80,7 +80,7 @@ export default async function CancelPage({
       await tx.order.update({
         where: { id: order.id },
         data: {
-          status: "CANCELED",
+          status: "ANNULLATO",
           canceledAt: new Date(),
         },
       });

@@ -18,6 +18,8 @@ La cartella `/scratch` funge da area temporanea per esperimenti, script usa-e-ge
 scratch/
 ├── AGENT.md                 # Questo file di documentazione
 ├── archivio/                # Archivio storico di script e migrazioni completate
+├── gestionale-risultati/    # Cartella con i log di esecuzione dei test del gestionale admin
+│   └── report.txt           # Report dettagliato dei test eseguiti
 └── seo-risultati/           # Cartella pulita con tutti i risultati attivi dei test SEO
     ├── seo-suite-report.txt # Report finale cumulativo dei 13 test SEO
     ├── url-outcomes.csv     # Tabella CSV dei redirect e delle classificazioni URL
@@ -27,7 +29,14 @@ scratch/
 
 ---
 
-## 📂 1. Cartella Risultati SEO (`/scratch/seo-risultati/`)
+## 🖥️ 1. Cartella Risultati Gestionale (`/scratch/gestionale-risultati/`)
+
+I risultati dell'esecuzione della suite di test del pannello di amministrazione (`npm run test:gestionale`) confluiscono in questa cartella:
+* **`report.txt`**: Il report dettagliato contenente i risultati per tutti i 12 test della suite (autenticazione, inventario, promozioni, ordini, ecc.).
+
+---
+
+## 📂 2. Cartella Risultati SEO (`/scratch/seo-risultati/`)
 
 Tutti i risultati generati dai comandi SEO (`npm run seo:all` e `npm run seo:compare-sitemaps`) vengono convogliati qui per non sporcare lo spazio di sviluppo:
 * **`seo-suite-report.txt`**: Il report testuale completo generato dal runner principale. Elenca i blocker per il go-live e il superamento delle 13 verifiche.
@@ -36,7 +45,7 @@ Tutti i risultati generati dai comandi SEO (`npm run seo:all` e `npm run seo:com
 
 ---
 
-## 📦 2. Indice dei File Archiviati (`/scratch/archivio/`)
+## 📦 3. Indice dei File Archiviati (`/scratch/archivio/`)
 
 Per evitare che la cartella diventi caotica ma al contempo preservare la memoria storica delle attività di migrazione, tutti i vecchi script e file diagnostici sono stati organizzati nella sotto-cartella `/scratch/archivio/` (interamente rinominata in italiano):
 

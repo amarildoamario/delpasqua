@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   if (!guard.ok) return guard.response;
 
   const rows = await prisma.order.findMany({
-    where: { status: "PAID", shippedAt: null },
+    where: { status: "PAGATO", shippedAt: null },
     orderBy: [{ paidAt: "desc" }, { createdAt: "desc" }],
     include: { items: true },
     take: 500,

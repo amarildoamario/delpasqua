@@ -22,7 +22,7 @@ export async function expirePendingOrders(args: Args = {}) {
 
   const candidates = await prisma.order.findMany({
     where: {
-      status: "PENDING",
+      status: "IN_ATTESA",
       paidAt: null,
       stripeCheckoutSessionId: null,
       createdAt: { lt: cutoff },
@@ -51,7 +51,7 @@ export async function expirePendingOrders(args: Args = {}) {
       });
 
       if (!fresh) continue;
-      if (fresh.status !== "PENDING") continue;
+      if (fresh.status !== "IN_ATTESA") continue;
       if (fresh.paidAt) continue;
 
       await releaseReserved(tx, {
@@ -61,7 +61,7 @@ export async function expirePendingOrders(args: Args = {}) {
 
       await tx.order.update({
         where: { id: fresh.id },
-        data: { status: "EXPIRED" },
+        data: { status: "SCADUTO" },
       });
 
       await tx.orderEvent.create({
@@ -70,8 +70,8 @@ export async function expirePendingOrders(args: Args = {}) {
           actor: "system",
           type: "ORDER_EXPIRED",
           message: `Ordine scaduto automaticamente (pending > ${ttlMinutes} minuti)`,
-          fromStatus: "PENDING",
-          toStatus: "EXPIRED",
+          fromStatus: "IN_ATTESA",
+          toStatus: "SCADUTO",
           metaJson: JSON.stringify({
             ttlMinutes,
             cutoff: cutoff.toISOString(),

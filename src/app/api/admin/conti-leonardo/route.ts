@@ -7,12 +7,12 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const PAID_LIKE_STATUSES = [
-  "PAID",
-  "PREPARING",
-  "SHIPPED",
-  "DELIVERED",
-  "REFUNDED",
-  "PARTIALLY_REFUNDED",
+  "PAGATO",
+  "IN_PREPARAZIONE",
+  "SPEDITO",
+  "CONSEGNATO",
+  "RIMBORSATO",
+  "PARZIALMENTE_RIMBORSATO",
 ] as const;
 
 const stripe = process.env.STRIPE_SECRET_KEY

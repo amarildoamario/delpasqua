@@ -17,6 +17,12 @@ scripts/
 ├── AGENT.md                         # Questo file di documentazione
 ├── popola-prodotto-test.ts          # Popolamento db prisma locale con prodotto test
 ├── verifica-migrazione.mjs          # Controllo generale migrazione sul campo
+├── gestionale/                      # Cartella dedicata alla Suite di Test del Gestionale Admin
+│   ├── runner.mjs                   # Orchestratore/runner dei test del gestionale (npm run test:gestionale)
+│   ├── utils.mjs                    # Utility e mock authentication per i test del gestionale
+│   ├── populate-dashboard-data.mjs  # Popolamento dati demo per grafici dashboard
+│   ├── seed.mjs                     # Inserimento prodotti reali e impostazioni base nel db locale
+│   └── test-*.mjs                   # I 12 script di test specifici (auth, catalog, orders, ecc.)
 └── seo/                             # Cartella dedicata alla Suite SEO e Migrazione
     ├── avvia-suite-seo.ts           # Coordinatore principale della suite SEO
     ├── confronta-sitemaps.mjs       # Confronto sitemap Live vs Progetto
@@ -35,6 +41,19 @@ scripts/
         ├── tipi.ts                  # Definizioni e interfacce TypeScript
         └── utilita.ts               # Client HTTP resiliente, helper e logging
 ```
+
+---
+
+## Catalogo degli Script Operativi (Gestionale Admin)
+
+Tutti questi script si trovano sotto `/scripts/gestionale/` e permettono il controllo e la simulazione del pannello amministrativo:
+
+* **`runner.mjs`** (npm run `test:gestionale`):
+  Orchestra ed esegue sequenzialmente tutti i 12 test di integrità del gestionale admin. Genera un report unificato in `/scratch/gestionale-risultati/report.txt`.
+* **`populate-dashboard-data.mjs`** (npm run `dashboard:populate-demo`):
+  Popola il database locale con ordini, clienti e analytics simulati degli ultimi 30 giorni per il corretto rendering dei grafici in dashboard. Può essere ripulito tramite `--clean` (o `npm run dashboard:clear-demo`).
+* **`seed.mjs`** (npm run `gestionale:seed`):
+  Popola il database locale con i prodotti reali presi dal file JSON e configura le impostazioni di default del negozio.
 
 ---
 

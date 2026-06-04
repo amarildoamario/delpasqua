@@ -18,9 +18,9 @@ export default function ShipWithTracking({
   const [loading, setLoading] = useState(false);
   const [tracking, setTracking] = useState("");
 
-  const canPrepare = status === "PAID";
-  const canShip = status === "PREPARING" && !shipped;
-  const canUnship = status === "SHIPPED" && shipped;
+  const canPrepare = status === "PAGATO";
+  const canShip = status === "IN_PREPARAZIONE" && !shipped;
+  const canUnship = status === "SPEDITO" && shipped;
 
   async function setPreparing() {
     if (!canPrepare || loading) return;
@@ -30,10 +30,10 @@ export default function ShipWithTracking({
       const r = await adminFetch(`/api/admin/orders/${orderId}/status`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ status: "PREPARING" }),
+        body: JSON.stringify({ status: "IN_PREPARAZIONE" }),
       });
 
-      if (!r.ok) console.error("Set PREPARING failed", r.status, await r.text().catch(() => ""));
+      if (!r.ok) console.error("Set IN_PREPARAZIONE failed", r.status, await r.text().catch(() => ""));
       router.refresh();
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ export default function ShipWithTracking({
         Operazioni
       </div>
 
-      {status === "PREPARING" ? (
+      {status === "IN_PREPARAZIONE" ? (
         <div className="mt-2">
           <label className="block text-[11px] text-neutral-500">
             Tracking (opzionale)
@@ -93,7 +93,7 @@ export default function ShipWithTracking({
             "border border-neutral-200/70 bg-white text-neutral-900 hover:bg-neutral-50",
             !canPrepare || loading ? "cursor-not-allowed opacity-60" : "",
           ].join(" ")}
-          title={canPrepare ? "Porta in PREPARING" : "Disponibile solo se lo stato è PAID"}
+          title={canPrepare ? "Porta in IN_PREPARAZIONE" : "Disponibile solo se lo stato è PAGATO"}
         >
           Prepara
         </button>
@@ -108,7 +108,7 @@ export default function ShipWithTracking({
               "bg-neutral-900 text-white hover:opacity-90",
               !canShip || loading ? "cursor-not-allowed opacity-60" : "",
             ].join(" ")}
-            title={canShip ? "Segna come spedito" : "Disponibile solo se lo stato è PREPARING"}
+            title={canShip ? "Segna come spedito" : "Disponibile solo se lo stato è IN_PREPARAZIONE"}
           >
             Spedisci
           </button>
@@ -122,7 +122,7 @@ export default function ShipWithTracking({
               "border border-neutral-200/70 bg-white text-neutral-900 hover:bg-neutral-50",
               !canUnship || loading ? "cursor-not-allowed opacity-60" : "",
             ].join(" ")}
-            title={canUnship ? "Annulla spedizione" : "Disponibile solo se lo stato è SHIPPED"}
+            title={canUnship ? "Annulla spedizione" : "Disponibile solo se lo stato è SPEDITO"}
           >
             Annulla
           </button>

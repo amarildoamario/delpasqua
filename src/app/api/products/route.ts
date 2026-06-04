@@ -1,6 +1,14 @@
-import { readCatalog } from "@/lib/server/catalog";
+import { readCatalogWithMerch } from "@/lib/server/catalog";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const products = await readCatalog();
-  return Response.json(products, { headers: { "Cache-Control": "no-store" } });
+  const products = await readCatalogWithMerch();
+  return Response.json(products, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+    },
+  });
 }

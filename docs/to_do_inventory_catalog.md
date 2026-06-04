@@ -2,6 +2,14 @@
 
 Data audit: 2026-05-29
 
+## Agent Status
+
+- FileStatus: ACTIVE
+- LastVerified: 2026-06-02
+- OpenItems: 6
+- AgentAction: non ripartire da zero; il server-side critico e` stato sistemato, ma il catalogo pubblico e client-side ha ancora nodi aperti.
+- Note: i problemi residui principali sono coerenza SKU, prodotto test pubblico e import statici JSON ancora presenti in componenti client.
+
 ## [⚠️ PARZIALE] P0 - Catalogo runtime importato come JSON statico
 
 Stato:
@@ -20,6 +28,15 @@ Fix richiesto:
 - Client: ricevere catalogo da API/no-store o da server component props.
 - Pricing deve essere la prima area da correggere.
 
+Verifica repo 2026-06-02:
+- La logica server-side critica e` gia` migrata a `readCatalog()`.
+- Restano import statici di `@/db/products.json` in:
+  - `src/context/CartContext.tsx`
+  - `src/components/Navbar.tsx`
+  - `src/components/HeroSplitEvo.tsx`
+  - `src/components/ShopHighlights.tsx`
+- Questi componenti fanno anche fetch a `/api/products`, quindi oggi il rischio e` piu` di doppia fonte dati e bootstrap stale che non di pricing rotto.
+
 ## [⏳ TODO] P0 - SKU catalogo ignorato dal pricing/inventario operativo
 
 Problema:
@@ -36,6 +53,11 @@ Fix richiesto:
 - Se serve SKU interno, esporlo chiaramente in admin e non chiamarlo come lo SKU commerciale.
 - Aggiungere mapping esplicito e controlli di consistenza.
 
+Verifica repo 2026-06-02:
+- L'inventario continua a usare la chiave interna `productId:variantId`.
+- Il catalogo continua ad avere anche `variant.sku` commerciale.
+- Questo e` il motivo per cui availability, pricing e shop possono essere coerenti tra loro ma ancora poco leggibili lato admin/fulfillment.
+
 ## [⏳ TODO] P0 - Rimozione o rinomina prodotto/variante puo rompere carrelli esistenti
 
 Problema:
@@ -50,6 +72,10 @@ Impatto:
 Fix richiesto:
 - Aggiungere una migrazione/redirect mapping per productId e variantId.
 - In cart hydration, rimuovere o correggere righe non piu valide con messaggio utente.
+
+Verifica repo 2026-06-02:
+- `CartContext` oggi normalizza e scarta righe non piu valide, quindi il carrello non resta sporco indefinitamente.
+- Manca pero` ancora un mapping esplicito per rinomina/merge varianti e un messaggio utente dedicato al caso "questo prodotto non esiste piu".
 
 ## [⚠️ PARZIALE] P1 - Availability pubblica cacheata puo mostrare stock vecchio
 
@@ -70,6 +96,10 @@ Impatto:
 Fix richiesto:
 - Tenere cache per listing ma fare refresh no-store nel carrello/pre-checkout.
 - Mostrare "disponibilita aggiornata in cassa" solo dove serve.
+
+Verifica repo 2026-06-02:
+- L'endpoint pubblico availability resta cacheato; la scelta e` probabilmente accettabile per listing SEO/shop.
+- Drawer, cart page e pre-checkout sono gia` riallineati a refresh `no-store`, quindi qui il residuo e` soprattutto UX/percezione.
 
 ## [✅ RISOLTO] P1 - Shop page perde immagini variante
 
@@ -102,6 +132,12 @@ Fix richiesto:
 - Escludere prodotti test dal catalogo pubblico con flag dedicato, non solo SEO.
 - Consentire prodotti test solo in ambiente non produzione.
 
+Verifica repo 2026-06-02:
+- `src/db/products.json` contiene ancora `prodotto-test`.
+- `/api/products` restituisce tutto il catalogo senza filtro pubblico dedicato.
+- `src/app/[locale]/shop/page.tsx` mappa ancora tutti i prodotti letti da `readCatalog()`.
+- `src/app/sitemap-products.xml/route.ts` lo esclude solo grazie a `excludeFromSeo`, non grazie a una semantica `isPublished`.
+
 ## [⏳ TODO] P2 - Duplicazione legacy `src/app/lib`
 
 Problema:
@@ -114,3 +150,7 @@ Impatto:
 Fix richiesto:
 - Audit import da `src/app/lib`.
 - Eliminare duplicati o aggiungere regole lint/path alias che impediscono nuovi import.
+
+Verifica repo 2026-06-02:
+- Gli import applicativi verso `src/app/lib` non risultano oggi diffusi, ma la subtree legacy esiste ancora.
+- Serve piu` pulizia strutturale che bugfix urgente.

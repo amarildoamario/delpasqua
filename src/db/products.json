@@ -93,7 +93,7 @@
         "imageSrc": "/products/fruttato-intenso-bottiglia-750ml.jpg",
         "imageAlt": "Olio Fruttato Leggero 750 ml",
         "specs": {},
-        "description": "La bottiglia Fruttato Leggero da 750 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti.",
+        "description": "La bottiglia Fruttato Leggero da 750 ml unisce eleganza e capienza: l'extravergine toscano ideale da servire a tavola per arricchire con estrema delicatezza piatti di pesce, verdure e ricette dal gusto fine.",
         "title": "Olio Fruttato Leggero 750 ml"
       },
       {
@@ -104,7 +104,7 @@
         "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
         "imageAlt": "Olio Fruttato Leggero 1 lt",
         "specs": {},
-        "description": "La bottiglia Fruttato Leggero da 1 L porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti.",
+        "description": "La bottiglia Fruttato Leggero da 1 litro è il formato famiglia ideale per l'uso quotidiano: un olio extravergine dal gusto morbido e gentile, perfetto per chi ama condimenti profumati, leggeri e mai coprenti.",
         "title": "Olio Fruttato Leggero 1 lt"
       }
     ],
@@ -337,7 +337,7 @@
         "imageSrc": "/products/tartufo.jpg",
         "imageAlt": "Olio Aromatizzato al Tartufo 500 ml",
         "specs": {},
-        "description": "Condimento a base di olio extravergine di oliva aromatizzato al tartufo. Perfetto su uova, patate, carpacci.",
+        "description": "La bottiglia da 500 ml di extravergine al Tartufo racchiude note intense e avvolgenti. Il condimento gourmet ideale per dare un tocco raffinato e di gran pregio a primi piatti, uova al tegamino, carpacci e vellutate.",
         "title": "Olio Aromatizzato al Tartufo 500 ml"
       }
     ],
@@ -348,7 +348,7 @@
     "badge": "AROMATIZZATO",
     "imageSrc": "/products/tartufo.jpg",
     "imageAlt": "Olio Aromatizzato al Tartufo",
-    "description": "Perfetto su uova, patate, carpacci.",
+    "description": "Condimento pregiato a base di olio extravergine di oliva aromatizzato al tartufo. Il tocco gourmet perfetto per esaltare uova, patate, carpacci e primi piatti della tradizione.",
     "specs": {}
   },
   {
@@ -362,7 +362,7 @@
         "imageSrc": "/products/peperoncino.jpg",
         "imageAlt": "Olio Aromatizzato al Peperoncino 500 ml",
         "specs": {},
-        "description": "Condimento a base di olio extravergine di oliva aromatizzato al peperoncino calabrese. Piccantezza pulita, ottimo su pizza e primi.",
+        "description": "La bottiglia da 500 ml di extravergine al Peperoncino unisce la morbidezza del nostro olio toscano alla vivace piccantezza del peperoncino calabrese selezionato, ideale per dare carattere a bruschette, pizza e sughi rustici.",
         "title": "Olio Aromatizzato al Peperoncino 500 ml"
       }
     ],
@@ -373,7 +373,7 @@
     "badge": "AROMATIZZATO",
     "imageSrc": "/products/peperoncino.jpg",
     "imageAlt": "Olio Aromatizzato al Peperoncino",
-    "description": "Piccantezza pulita, ottimo su pizza e primi.",
+    "description": "Un olio extravergine aromatizzato dal temperamento vivace e dalla piccantezza pulita, perfetto per accendere di gusto pizze, primi piatti mediterranei e grigliate sfiziose.",
     "specs": {}
   },
   {
@@ -387,7 +387,7 @@
         "imageSrc": "/products/vino-vittoria.png",
         "imageAlt": "Vino Vittoria Sangiovese 500 ml",
         "specs": {},
-        "description": "Vino rosso Vittoria Sangiovese in bottiglia da 500 ml.",
+        "description": "La bottiglia da 500 ml di Vino Vittoria Sangiovese è il formato perfetto per una cena intima. Un rosso toscano dal bouquet elegante, caratterizzato da note fruttate di ciliegia e accenni speziati di eccezionale bevibilità.",
         "title": "Vino Vittoria Sangiovese 500 ml"
       },
       {
@@ -398,7 +398,7 @@
         "imageSrc": "/products/vino-vittoria.png",
         "imageAlt": "Vino Vittoria Sangiovese 1 L",
         "specs": {},
-        "description": "Vino rosso Vittoria Sangiovese in bottiglia da 1 L.",
+        "description": "La bottiglia da 1 litro di Vino Vittoria Sangiovese è pensata per la convivialità a tavola in famiglia o con amici. Un Chianti IGP equilibrato ed elegante, eccezionale in abbinamento a carni rosse, arrosti saporiti e formaggi stagionati.",
         "title": "Vino Vittoria Sangiovese 1 L"
       }
     ],
@@ -409,7 +409,7 @@
     "badge": "VINO",
     "imageSrc": "/products/vino-vittoria.png",
     "imageAlt": "Vino Vittoria Sangiovese",
-    "description": "Rosso toscano elegante, profumato, ideale con carni rosse e formaggi.",
+    "description": "Rosso toscano di grande carattere ed eleganza, profumato e morbido al palato, ideale da servire con grigliate di carne, primi saporiti e formaggi locali.",
     "specs": {}
   },
   {

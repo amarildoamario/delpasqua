@@ -129,7 +129,7 @@ export default function Navbar() {
 
   useEffect(() => {
     let alive = true;
-    fetch("/api/products")
+    fetch(`/api/products?t=${Date.now()}`, { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         if (alive && Array.isArray(data)) {

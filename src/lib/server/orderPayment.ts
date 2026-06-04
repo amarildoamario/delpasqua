@@ -37,9 +37,9 @@ export async function applyPaidOrderInvariantsTx(
     include: { items: true },
   });
   if (!order) throw new Error(`Order ${args.orderId} not found`);
-  if (order.status === "PAID") return order;
-  if (order.status !== "PENDING") {
-    throw new Error(`Cannot mark order ${order.id} as PAID from status ${order.status}`);
+  if (order.status === "PAGATO") return order;
+  if (order.status !== "IN_ATTESA") {
+    throw new Error(`Cannot mark order ${order.id} as PAGATO from status ${order.status}`);
   }
 
   let currentOrderNumber = order.orderNumber;
@@ -56,7 +56,7 @@ export async function applyPaidOrderInvariantsTx(
   const updated = await tx.order.update({
     where: { id: order.id },
     data: {
-      status: "PAID",
+      status: "PAGATO",
       orderNumber: currentOrderNumber,
       paidAt: order.paidAt ?? new Date(),
       ...(args.paymentIntentId ? { stripePaymentIntentId: args.paymentIntentId } : {}),

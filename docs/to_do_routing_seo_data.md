@@ -2,6 +2,14 @@
 
 Data audit: 2026-05-29
 
+## Agent Status
+
+- FileStatus: ACTIVE
+- LastVerified: 2026-06-02
+- OpenItems: 2
+- AgentAction: questo file ha solo due task vivi; il resto e` gia` storico/risolto.
+- Note: gli open item qui sono piu` di modellazione dati/catalogo che di routing puro.
+
 ## [✅ RISOLTO] P1 - Search Console conferma scansione di URL legacy/di transizione
 
 Stato:
@@ -77,6 +85,12 @@ Fix richiesto:
 - Introdurre `isPublished`/`isPurchasable`/`excludeFromSeo` con semantica distinta.
 - Applicare gli stessi flag a shop, PDP, sitemap e JSON-LD.
 
+Verifica repo 2026-06-02:
+- `src/app/sitemap-products.xml/route.ts` filtra ancora solo `excludeFromSeo`.
+- `src/app/api/products/route.ts` restituisce ancora l'intero catalogo.
+- `src/app/[locale]/shop/page.tsx` legge ancora tutti i prodotti da `readCatalog()`.
+- Il punto si sovrappone volontariamente anche al file inventario/catalogo: va chiuso una volta sola, ma poi riflesso sia qui sia li.
+
 ## [✅ RISOLTO] P1 - Rotte checkout non localizzate nello Stripe redirect
 
 Stato:
@@ -104,3 +118,7 @@ Impatto:
 Fix richiesto:
 - Centralizzare regole commerciali in settings/config.
 - Derivare copy da quei valori dove possibile.
+
+Verifica repo 2026-06-02:
+- Restano duplicazioni tra componenti UI, `messages/*.json`, catalogo JSON e costanti runtime.
+- Alcuni punti sono gia` stati centralizzati (`settings.ts`, `paymentMethods.ts`), ma il copy commerciale non e` ancora completamente derivato da una sola fonte.

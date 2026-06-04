@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const pendingCount = await prisma.order.count({
       where: {
         promotionCode: code,
-        status: "PENDING",
+        status: "IN_ATTESA",
       },
     });
     if (promo.usageLimit && promo.usedCount + pendingCount >= promo.usageLimit) {

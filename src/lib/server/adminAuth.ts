@@ -12,7 +12,7 @@ interface SessionCacheEntry {
   cachedAt: number;
 }
 
-const SESSION_CACHE_TTL_MS = 30_000; // 30 secondi
+const SESSION_CACHE_TTL_MS = process.env.NODE_ENV === "production" ? 30_000 : 0;
 const sessionCache = new Map<string, SessionCacheEntry>();
 
 function sessionCacheGet(tokenHash: string): AdminSession | null {

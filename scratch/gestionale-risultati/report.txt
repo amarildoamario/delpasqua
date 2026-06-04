@@ -1,0 +1,623 @@
+==================================================
+GESTIONALE ADMIN TEST SUITE REPORT
+Run Date: 2026-06-03T23:59:33.646Z
+==================================================
+
+==================================================
+🚀 STARTING GESTIONALE ADMIN TEST SUITE
+==================================================
+Found 12 test script(s) to execute:
+  - test-01-auth.mjs
+  - test-02-inventory.mjs
+  - test-03-promotions.mjs
+  - test-04-orders.mjs
+  - test-05-settings.mjs
+  - test-06-catalog.mjs
+  - test-07-sales-merch.mjs
+  - test-08-tastings.mjs
+  - test-09-analytics.mjs
+  - test-10-stripe-webhook.mjs
+  - test-11-exports.mjs
+  - test-12-more-admin.mjs
+--------------------------------------------------
+
+▶ Running test-01-auth.mjs...
+   👉 Running Test 01: Admin Authentication and CSRF Guards
+      - Case 1: Fetching /api/admin/settings without session
+        [Request] GET /api/admin/settings (No session cookies or headers)
+        [Response] Status: 401
+        [Assert] Checking status === 401
+        ✅ Case 1 passed: Unauthenticated request blocked correctly
+      - Case 2: Attempting login with invalid credentials
+        [Request] POST http://localhost:3000/api/auth/login
+        [Body] { email: "invalid@example.com", password: "wrong-password" }
+        [Response] Status: 401
+        [Assert] Checking status === 401
+        ✅ Case 2 passed: Invalid credentials login rejected correctly
+      - Case 3: Generating test admin session in DB
+        [DB] Created AdminSession row with:
+          - Token (Raw): 4I_Xiqbos_...
+          - CSRF (Raw): yAj26Cts1D...
+          - Session ID in DB: cmpyq9rcl0000ogtml162z3l7
+        ✅ Case 3 passed: Mock admin session created in database
+      - Case 4: Fetching /api/admin/settings with session token (GET - CSRF bypassed)
+        [Request] GET /api/admin/settings
+        [Cookies] admin_session=4I_Xiqbo...
+        [Response] Status: 200
+        [Assert] Checking status === 200
+        ✅ Case 4 passed: Authenticated GET request succeeded
+      - Case 5: Fetching /api/admin/settings without CSRF headers (POST - CSRF enforced)
+        [Request] POST /api/admin/settings
+        [Cookies] admin_session=4I_Xiqbo...
+        [Cookies] admin_csrf=wrong-csrf-token
+        [Headers] x-csrf-token = wrong-csrf-token
+        [Response] Status: 403
+        [Assert] Checking status === 403
+        ✅ Case 5 passed: Request rejected with 403 due to mismatched/missing CSRF
+      - Case 6: Fetching /api/admin/settings with CSRF headers (POST)
+        [Request] POST /api/admin/settings
+        [Cookies] admin_session=4I_Xiqbo...
+        [Cookies] admin_csrf=yAj26Cts...
+        [Headers] x-csrf-token = yAj26Cts...
+        [Body] { values: {} }
+        [Response] Status: 200
+        [Assert] Checking status is 200 or 400 (auth guard passed, body validation checked)
+        ✅ Case 6 passed: Authentication and CSRF guards passed with status 200
+      - Case 7: Calling /api/auth/logout to revoke session
+        [Request] POST /api/auth/logout
+        [Response] Status: 200
+        [Assert] Checking status === 200
+        ✅ Session logout API returned success
+      - Cleanup: Deleting test session from DB
+        [DB] Deleting session with token hash corresponding to: 4I_Xiqbo...
+        ✅ Session deleted from database
+      - Case 8: Fetching /api/admin/settings using revoked token
+        [Request] GET /api/admin/settings (using the deleted token)
+        [Response] Status: 401
+        [Assert] Checking status === 401
+        ✅ Case 8 passed: Request blocked with 401 using revoked session
+   ✅ Test 01: Admin Authentication and CSRF Guards PASSED
+
+▶ Running test-02-inventory.mjs...
+   👉 Running Test 02: Admin Inventory Operations
+      - Setup: Cleaning up any pre-existing mock SKU entries (test-only-sku-1, test-only-sku-2) from DB
+        [DB] Deleted 0 existing mock inventory records
+      - Case 1: Setting stock of test-only-sku-1 to 150 units
+        [Request] POST /api/admin/inventory
+        [Body] { action: "set", sku: "test-only-sku-1", stock: 150 }
+        [Response] Status: 200
+        [Response JSON] {"ok":true,"item":{"sku":"test-only-sku-1","stock":150,"updatedAt":"2026-06-03T23:59:07.346Z"}}
+        [Assert] checking response ok === true
+        [Assert] checking response item.sku === "test-only-sku-1"
+        [Assert] checking response item.stock === 150
+        ✅ Case 1 passed: Stock set successfully
+      - Case 2: Fetching stock for SKU test-only-sku-1
+        [Request] GET /api/admin/inventory?skus=test-only-sku-1
+        [Response] Status: 200
+        [Response JSON] {"ok":true,"items":{"test-only-sku-1":{"stock":150,"updatedAt":"2026-06-03T23:59:07.346Z"}}}
+        [Assert] checking response ok === true
+        [Assert] checking key "test-only-sku-1" exists in items
+        [Assert] checking items["test-only-sku-1"].stock === 150
+        ✅ Case 2 passed: Fetched stock matches expectation
+      - Case 3: Adjusting stock of test-only-sku-1 by -40 units (delta)
+        [Request] POST /api/admin/inventory
+        [Body] { action: "adjust", sku: "test-only-sku-1", delta: -40 }
+        [Response] Status: 200
+        [Response JSON] {"ok":true,"item":{"sku":"test-only-sku-1","stock":110,"updatedAt":"2026-06-03T23:59:07.544Z"}}
+        [Assert] checking response item.stock === 110 (150 - 40)
+        ✅ Case 3 passed: Stock adjusted correctly
+      - Case 4: Bulk setting stock for test-only-sku-1 (80) and test-only-sku-2 (200)
+        [Request] POST /api/admin/inventory
+        [Body] { action: "bulkSet", items: [{ sku: "test-only-sku-1", stock: 80 }, { sku: "test-only-sku-2", stock: 200 }] }
+        [Response] Status: 200
+        [Response JSON] {"ok":true}
+        ✅ Case 4 passed: Bulk inventory set executed
+      - Case 5: Verifying bulk settings
+        [Request] GET /api/admin/inventory?skus=test-only-sku-1,test-only-sku-2
+        [Response] Status: 200
+        [Response JSON] {"ok":true,"items":{"test-only-sku-1":{"stock":80,"updatedAt":"2026-06-03T23:59:07.691Z"},"test-only-sku-2":{"stock":200,"updatedAt":"2026-06-03T23:59:07.723Z"}}}
+        [Assert] checking items["test-only-sku-1"].stock === 80
+        [Assert] checking items["test-only-sku-2"].stock === 200
+        ✅ Case 5 passed: Bulk settings verified successfully
+      - Cleanup: Removing test inventory items and test session
+        [DB] Deleting inventory item rows for: test-only-sku-1, test-only-sku-2
+        [DB] Cleaned up inventory rows count: 2
+        [Request] Revoking test session via POST /api/auth/logout
+        [DB] Deleting session record
+        ✅ Cleanup finished
+   ✅ Test 02: Admin Inventory Operations PASSED
+
+▶ Running test-03-promotions.mjs...
+   👉 Running Test 03: Admin Promotions Operations
+      - Setup: Cleaning up any pre-existing mock promotion with code PROMO_TEST_AUTO from DB
+        [DB] Deleted 0 existing mock promotions
+      - Case 1: Creating promo code PROMO_TEST_AUTO (10% off)
+        [Request] POST /api/admin/promotions
+        [Body] { code: "PROMO_TEST_AUTO", percent: 10, type: "percent", ... }
+        [Response] Status: 200
+        [Response JSON] {"ok":true,"promo":{"id":"cmpyq9usa00kv4stmuzu2m9ql","code":"PROMO_TEST_AUTO","description":"Automated test promo code","type":"percent","percent":10,"amountCents":null,"freeShipping":false,"minOrderCents":1500,"usageLimit":100,"usedCount":0,"startsAt":null,"endsAt":null,"isActive":true,"createdAt":"2026-06-03T23:59:08.314Z","updatedAt":"2026-06-03T23:59:08.314Z"}}
+        [Assert] checking response ok === true
+        [Assert] checking promo.code === "PROMO_TEST_AUTO"
+        [Assert] checking promo.percent === 10
+        [Assert] checking promo.id is generated
+        ✅ Case 1 passed: Promotion created successfully via API
+      - Case 2: Reading created promo code from DB
+        [DB Query] db.promotion.findUnique({ where: { id: "cmpyq9usa00kv4stmuzu2m9ql" } })
+        [DB Result] {"id":"cmpyq9usa00kv4stmuzu2m9ql","code":"PROMO_TEST_AUTO","description":"Automated test promo code","type":"percent","percent":10,"amountCents":null,"freeShipping":false,"minOrderCents":1500,"usageLimit":100,"usedCount":0,"startsAt":null,"endsAt":null,"isActive":true,"createdAt":"2026-06-03T23:59:08.314Z","updatedAt":"2026-06-03T23:59:08.314Z"}
+        [Assert] checking promo exists in DB
+        [Assert] checking DB code === "PROMO_TEST_AUTO"
+        [Assert] checking DB percent === 10
+        [Assert] checking DB isActive === true
+        ✅ Case 2 passed: Promotion record verified in database
+      - Case 3: Disabling promo code PROMO_TEST_AUTO and updating details
+        [Request] PUT /api/admin/promotions/cmpyq9usa00kv4stmuzu2m9ql
+        [Body] { isActive: false, description: "...", percent: 15 }
+        [Response] Status: 200
+        [Response JSON] {"id":"cmpyq9usa00kv4stmuzu2m9ql","code":"PROMO_TEST_AUTO","description":"Updated description via automated test","type":"percent","percent":15,"amountCents":null,"freeShipping":false,"minOrderCents":1500,"usageLimit":100,"usedCount":0,"startsAt":null,"endsAt":null,"isActive":false,"createdAt":"2026-06-03T23:59:08.314Z","updatedAt":"2026-06-03T23:59:08.525Z"}
+        [Assert] checking response isActive === false
+        [Assert] checking response percent === 15
+        ✅ Case 3 passed: Promotion updated successfully via API
+      - Case 4: Checking updated values in DB
+        [DB Query] db.promotion.findUnique({ where: { id: "cmpyq9usa00kv4stmuzu2m9ql" } })
+        [DB Result] {"id":"cmpyq9usa00kv4stmuzu2m9ql","code":"PROMO_TEST_AUTO","description":"Updated description via automated test","type":"percent","percent":15,"amountCents":null,"freeShipping":false,"minOrderCents":1500,"usageLimit":100,"usedCount":0,"startsAt":null,"endsAt":null,"isActive":false,"createdAt":"2026-06-03T23:59:08.314Z","updatedAt":"2026-06-03T23:59:08.525Z"}
+        [Assert] checking DB isActive === false
+        [Assert] checking DB percent === 15
+        [Assert] checking DB description matches updated description
+        ✅ Case 4 passed: Updated values verified in database
+      - Case 5: Deleting promo code PROMO_TEST_AUTO
+        [Request] DELETE /api/admin/promotions/cmpyq9usa00kv4stmuzu2m9ql
+        [Response] Status: 200
+        [Response JSON] {"ok":true}
+        [Assert] checking response ok === true
+        ✅ Case 5 passed: Promotion deleted successfully via API
+      - Case 6: Verifying promotion is gone from DB
+        [DB Query] db.promotion.findUnique({ where: { id: "cmpyq9usa00kv4stmuzu2m9ql" } })
+        [Assert] checking DB record is null
+        ✅ Case 6 passed: Promotion is confirmed deleted in database
+      - Cleanup: Ensuring promo code is deleted and test session revoked
+        [DB] Deleting promotion row with code PROMO_TEST_AUTO
+        [DB] Cleaned up promotions count: 0
+        [Request] Revoking test session via POST /api/auth/logout
+        [DB] Deleting session record
+        ✅ Cleanup finished
+   ✅ Test 03: Admin Promotions Operations PASSED
+
+▶ Running test-04-orders.mjs...
+   👉 Test 1: Fetching PATCH /api/admin/orders/[id]/status without session
+      [Request] PATCH http://localhost:3000/api/admin/orders/41d21fb2-c8c1-4b72-bafc-13d1e091eadf/status
+      [Body] { status: "PAGATO" }
+      [Response] Status: 401
+      [Assert] checking status === 401
+   ✅ Test 1 PASSED: unauthenticated request blocked (401)
+   👉 Test 2: Update metadata (notes, isFlagged, riskScore) without status change
+      [Request] PATCH /api/admin/orders/41d21fb2-c8c1-4b72-bafc-13d1e091eadf/status
+      [Body] { notes: "Ordine di test", isFlagged: true, riskScore: 42 }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"order":{"id":"41d21fb2-c8c1-4b72-bafc-13d1e091eadf","idempotencyKey":"test-order-gXGLeuV-y70ua7VaH5JCBA","status":"IN_ATTESA","orderNumber":null,"orderPublicToken":null,"currency":"EUR","subtotalCents":900,"vatCents":100,"shippingCents":0,"totalCents":1000,"discountCents":0,"taxCents":0,"stripeFeeCents":0,"refundCents":0,"paymentProvider":"stripe","stripeCustomerId":null,"fullName":"Test Orders","email":"test-orders@gestionale.local","address":"Via Test 1","city":"TestCity","zip":"00100","stripeCheckoutSessionId":null,"stripePaymentIntentId":null,"stripeChargeId":null,"stripeBalanceTxnId":null,"paymentMethod":null,"preparingAt":null,"shippedAt":null,"trackingCode":null,"deliveredAt":null,"canceledAt":null,"refundedAt":null,"createdAt":"2026-06-03T23:59:08.800Z","updatedAt":"2026-06-03T23:59:12.049Z","paidAt":null,"ipAddress":null,"userAgent":null,"riskScore":42,"isFlagged":true,"notes":"Ordine di test","addressLine1":"","addressLine2":null,"province":"","postalCode":"","countryCode":"IT","phone":null,"shippingNotes":null,"promotionCode":null}}
+      [Assert] checking response ok === true
+      [Assert] checking response order.notes === "Ordine di test"
+      [Assert] checking response order.isFlagged === true
+      [Assert] checking response order.riskScore === 42
+   ✅ Test 2 PASSED: metadata updated (notes, isFlagged, riskScore)
+   👉 Test 3: Invalid transition IN_ATTESA → CONSEGNATO (not allowed)
+      [Request] PATCH /api/admin/orders/41d21fb2-c8c1-4b72-bafc-13d1e091eadf/status
+      [Body] { status: "CONSEGNATO" }
+      [Response] Status: 400
+      [Assert] checking status === 400
+   ✅ Test 3 PASSED: invalid transition IN_ATTESA→CONSEGNATO rejected (400)
+   👉 Test 4: Valid transition IN_ATTESA → ANNULLATO
+      [Request] PATCH /api/admin/orders/41d21fb2-c8c1-4b72-bafc-13d1e091eadf/status
+      [Body] { status: "ANNULLATO", actor: "test-suite", message: "Cancellato dal test" }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"order":{"id":"41d21fb2-c8c1-4b72-bafc-13d1e091eadf","idempotencyKey":"test-order-gXGLeuV-y70ua7VaH5JCBA","status":"ANNULLATO","orderNumber":null,"orderPublicToken":null,"currency":"EUR","subtotalCents":900,"vatCents":100,"shippingCents":0,"totalCents":1000,"discountCents":0,"taxCents":0,"stripeFeeCents":0,"refundCents":0,"paymentProvider":"stripe","stripeCustomerId":null,"fullName":"Test Orders","email":"test-orders@gestionale.local","address":"Via Test 1","city":"TestCity","zip":"00100","stripeCheckoutSessionId":null,"stripePaymentIntentId":null,"stripeChargeId":null,"stripeBalanceTxnId":null,"paymentMethod":null,"preparingAt":null,"shippedAt":null,"trackingCode":null,"deliveredAt":null,"canceledAt":"2026-06-03T23:59:12.512Z","refundedAt":null,"createdAt":"2026-06-03T23:59:08.800Z","updatedAt":"2026-06-03T23:59:12.513Z","paidAt":null,"ipAddress":null,"userAgent":null,"riskScore":42,"isFlagged":true,"notes":"Ordine di test","addressLine1":"","addressLine2":null,"province":"","postalCode":"","countryCode":"IT","phone":null,"shippingNotes":null,"promotionCode":null}}
+      [Assert] checking order status in response is "ANNULLATO"
+   ✅ Test 4 PASSED: order ANNULLATO successfully
+   👉 Test 5: Restore an ANNULLATO order
+      [Request] PATCH /api/admin/orders/41d21fb2-c8c1-4b72-bafc-13d1e091eadf/status
+      [Body] { restore: true, actor: "test-suite" }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"order":{"id":"41d21fb2-c8c1-4b72-bafc-13d1e091eadf","idempotencyKey":"test-order-gXGLeuV-y70ua7VaH5JCBA","status":"IN_ATTESA","orderNumber":null,"orderPublicToken":null,"currency":"EUR","subtotalCents":900,"vatCents":100,"shippingCents":0,"totalCents":1000,"discountCents":0,"taxCents":0,"stripeFeeCents":0,"refundCents":0,"paymentProvider":"stripe","stripeCustomerId":null,"fullName":"Test Orders","email":"test-orders@gestionale.local","address":"Via Test 1","city":"TestCity","zip":"00100","stripeCheckoutSessionId":null,"stripePaymentIntentId":null,"stripeChargeId":null,"stripeBalanceTxnId":null,"paymentMethod":null,"preparingAt":null,"shippedAt":null,"trackingCode":null,"deliveredAt":null,"canceledAt":null,"refundedAt":null,"createdAt":"2026-06-03T23:59:08.800Z","updatedAt":"2026-06-03T23:59:12.888Z","paidAt":null,"ipAddress":null,"userAgent":null,"riskScore":42,"isFlagged":true,"notes":"Ordine di test","addressLine1":"","addressLine2":null,"province":"","postalCode":"","countryCode":"IT","phone":null,"shippingNotes":null,"promotionCode":null}}
+      [Assert] checking response ok === true
+      [Assert] checking response order.status !== "ANNULLATO"
+   ✅ Test 5 PASSED: order restored to status=IN_ATTESA
+   👉 Test 6: Refund endpoint returns 400 with special error code
+      [Request] PATCH /api/admin/orders/41d21fb2-c8c1-4b72-bafc-13d1e091eadf/status
+      [Body] { status: "RIMBORSATO" }
+      [Response] Status: 400
+      [Response JSON] {"error":"USE_STRIPE_REFUND_ENDPOINT"}
+      [Assert] checking response.error === "USE_STRIPE_REFUND_ENDPOINT"
+   ✅ Test 6 PASSED: RIMBORSATO status blocked, redirects to Stripe endpoint
+   👉 Test 7: Order events were created
+      [DB Query] SELECT id FROM "OrderEvent" WHERE "orderId" = "41d21fb2-c8c1-4b72-bafc-13d1e091eadf"
+      [DB Result] Found 3 order event(s)
+      [Assert] checking events.length >= 2
+   ✅ Test 7 PASSED: 3 order events logged correctly
+   👉 Test 8: Full order status progression flow (PAGATO -> IN_PREPARAZIONE -> SPEDITO -> CONSEGNATO)
+      [Request] PATCH /api/admin/orders/823f0d92-9d48-4682-9ae6-48c52058d6e1/status
+      [Body] { status: "IN_PREPARAZIONE" }
+      [Response] Status: 200
+      ✅ Order is in preparation. Timestamp: Thu Jun 04 2026 01:59:14 GMT+0200 (Ora legale dell’Europa centrale)
+      [Request] POST /api/admin/orders/823f0d92-9d48-4682-9ae6-48c52058d6e1/ship
+      [Body] { shipped: true }
+      [Response] Status: 200
+      ✅ Order shipped. Timestamp: Thu Jun 04 2026 01:59:14 GMT+0200 (Ora legale dell’Europa centrale)
+      [Request] PATCH /api/admin/orders/823f0d92-9d48-4682-9ae6-48c52058d6e1/status
+      [Body] { status: "CONSEGNATO" }
+      [Response] Status: 200
+      ✅ Order delivered. Timestamp: Thu Jun 04 2026 01:59:14 GMT+0200 (Ora legale dell’Europa centrale)
+   ✅ Test 8 PASSED: full status progression completed and verified
+   👉 Test 9: Dashboard page filtering and search
+      [Request] GET /it/admin/orders?q=DP-2026-104453
+      [Response] Status: 200
+      ✅ Search by orderNumber / customer name verified
+      [Request] GET /it/admin/orders?q=non-existent-order-number-xyz
+      ✅ Non-matching query yields empty results verified
+      [Request] GET /it/admin/orders?status=CONSEGNATO
+      [Request] GET /it/admin/orders?status=PAGATO
+      ✅ Filtering by status verified
+   ✅ Test 9 PASSED: dashboard page search and filtering verified
+   
+🎉 test-04-orders: all tests passed.
+   🧹 Cleaning up after test suite run...
+      [DB] Deleting order and dependencies for test order ID: 41d21fb2-c8c1-4b72-bafc-13d1e091eadf
+      ✅ Test order deleted
+      [DB] Deleting order and dependencies for test order ID: 823f0d92-9d48-4682-9ae6-48c52058d6e1
+      ✅ Test order deleted
+      [DB] Deleting session for token: Cz0Wzrau...
+      ✅ Session deleted
+▶ Running test-05-settings.mjs...
+   [DB] Created test admin session. Token: 18PEEcRX...
+   👉 Test 1: Fetching GET /api/admin/settings without session
+      [Request] GET http://localhost:3000/api/admin/settings
+      [Response] Status: 401
+      [Assert] Checking status === 401
+   ✅ Test 1 PASSED: unauthenticated GET blocked (401)
+   👉 Test 2: GET returns a key-value map
+      [Request] GET /api/admin/settings
+      [Response] Status: 200
+      [Response JSON] Keys found: freeShippingThresholdCents, invoiceCounter:2026, orderCounter:2026, shippingFlatCents, storeName, supportEmail, vatRatePercent
+      [Assert] checking type of body is object
+   ✅ Test 2 PASSED: GET settings returned 7 key(s)
+   👉 Test 3: POST invalid body → 400
+      [Request] POST /api/admin/settings
+      [Body] { values: "NOT_AN_OBJECT" }
+      [Response] Status: 400
+      [Assert] checking status === 400
+   ✅ Test 3 PASSED: invalid body rejected (400)
+   👉 Test 4: POST valid settings upsert
+      [Request] POST /api/admin/settings
+      [Body] { values: { "__gestionale_test_setting__": "valore-di-test" } }
+      [Response] Status: 200
+      [Response JSON] {"ok":true}
+      [Assert] checking response ok === true
+   ✅ Test 4 PASSED: setting upserted successfully
+   👉 Test 5: Verify setting was actually written to DB
+      [DB Query] db.setting.findUnique({ where: { key: "__gestionale_test_setting__" } })
+      [DB Result] {"key":"__gestionale_test_setting__","value":"valore-di-test","createdAt":"2026-06-03T23:59:17.772Z","updatedAt":"2026-06-03T23:59:17.772Z"}
+      [Assert] checking setting !== null
+      [Assert] checking dbSetting.value === "valore-di-test"
+   ✅ Test 5 PASSED: setting persisted correctly in DB
+   👉 Test 6: POST overwrite same key
+      [Request] POST /api/admin/settings
+      [Body] { values: { "__gestionale_test_setting__": "valore-aggiornato" } }
+      [Response] Status: 200
+      [DB Query] db.setting.findUnique({ where: { key: "__gestionale_test_setting__" } })
+      [DB Result] {"key":"__gestionale_test_setting__","value":"valore-aggiornato","createdAt":"2026-06-03T23:59:17.772Z","updatedAt":"2026-06-03T23:59:17.972Z"}
+      [Assert] checking dbUpdated.value === "valore-aggiornato"
+   ✅ Test 6 PASSED: setting overwritten correctly
+   
+🎉 test-05-settings: all tests passed.
+   🧹 Cleaning up settings test resources...
+      [DB] Deleting setting keys like: __gestionale_test_setting__
+      [DB] Cleaned setting count: 1
+      [DB] Deleting session for token: 18PEEcRX...
+▶ Running test-06-catalog.mjs...
+   👉 Test 1: Fetching GET /api/admin/catalog without session
+      [Request] GET http://localhost:3000/api/admin/catalog
+      [Response] Status: 401
+      [Assert] Checking status === 401
+   ✅ Test 1 PASSED: unauthenticated request blocked (401)
+   👉 Test 2: GET catalog returns array
+      [Request] GET /api/admin/catalog
+      [Response] Status: 200
+      [Response JSON] Catalog contains 12 item(s)
+      [Assert] Checking response ok === true
+      [Assert] Checking response.catalog is array
+   ✅ Test 2 PASSED: catalog GET returned 12 products
+   👉 Test 3: createProduct - success
+      [Request] POST /api/admin/catalog
+      [Body] { action: "createProduct", product: { id: "__test__gestionale-catalog-prod", ... } }
+      [Response] Status: 200
+      [Response JSON] Catalog now contains 13 item(s)
+      [Assert] Checking response ok === true
+      [Assert] Checking new product is present in catalog
+   ✅ Test 3 PASSED: product created successfully
+   👉 Test 4: createProduct - duplicate ID → 409
+      [Request] POST /api/admin/catalog
+      [Body] { action: "createProduct", product: { id: "__test__gestionale-catalog-prod", ... } }
+      [Response] Status: 409
+      [Assert] Checking status === 409
+   ✅ Test 4 PASSED: duplicate product ID rejected (409)
+   👉 Test 5: updateProduct - change name
+      [Request] POST /api/admin/catalog
+      [Body] { action: "updateProduct", productId: "__test__gestionale-catalog-prod", patch: { name: "Nome Aggiornato" } }
+      [Response] Status: 200
+      [Assert] Checking response ok === true
+      [Assert] Finding updated product in catalog
+      [Assert] Checking updated product name === "Nome Aggiornato"
+   ✅ Test 5 PASSED: product name updated successfully
+   👉 Test 6: updateProduct - product not found → 404
+      [Request] POST /api/admin/catalog
+      [Body] { action: "updateProduct", productId: "__test__non-existent-id", ... }
+      [Response] Status: 404
+      [Assert] Checking status === 404
+   ✅ Test 6 PASSED: updateProduct on non-existent ID returns 404
+   👉 Test 7: deleteProduct - success
+      [Request] POST /api/admin/catalog
+      [Body] { action: "deleteProduct", productId: "__test__gestionale-catalog-prod" }
+      [Response] Status: 200
+      [Assert] Checking response ok === true
+      [Assert] Checking product is gone from catalog
+      [Assert] Checking catalog count matches initialCount (12)
+   ✅ Test 7 PASSED: product deleted, catalog restored to original size
+   👉 Test 8: Invalid action → 400
+      [Request] POST /api/admin/catalog
+      [Body] { action: "deleteEverything" }
+      [Response] Status: 400
+      [Assert] Checking status === 400
+   ✅ Test 8 PASSED: invalid action rejected (400)
+   
+🎉 test-06-catalog: all tests passed.
+   🧹 Performing safety cleanup of test products from catalog...
+      [DB] Deleting session for token: X3XnDaY6...
+▶ Running test-07-sales-merch.mjs...
+   👉 Test 1: Fetching PATCH /api/admin/sales without session
+      [Request] PATCH http://localhost:3000/api/admin/sales
+      [Body] { productKey: "__gestionale_test_merch_product__" }
+      [Response] Status: 401
+      [Assert] Checking status === 401
+   ✅ Test 1 PASSED: unauthenticated request blocked (401)
+   👉 Test 2: Invalid body (missing productKey) → 400
+      [Request] PATCH /api/admin/sales
+      [Body] { isBestSeller: true }
+      [Response] Status: 400
+      [Assert] Checking status === 400
+   ✅ Test 2 PASSED: invalid body rejected (400)
+   👉 Test 3: Create merch record (upsert)
+      [Request] PATCH /api/admin/sales
+      [Body] { productKey: "__gestionale_test_merch_product__", showInHome: true, homeRank: 5, isBestSeller: true, badge: "NOVITÀ", discountPercent: 10 }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"merch":{"id":"cmpyqa6fd00l44stmuzvy83oo","productKey":"__gestionale_test_merch_product__","showInHome":true,"homeRank":5,"isBestSeller":true,"badge":"NOVITÀ","promoLabel":"Offerta Gestionale","discountPercent":10,"discountCents":null,"startsAt":null,"endsAt":null,"createdAt":"2026-06-03T23:59:23.401Z","updatedAt":"2026-06-03T23:59:23.401Z"}}
+      [Assert] Checking response ok === true
+      [Assert] Checking response.merch is defined
+      [Assert] Checking response.merch.productKey === "__gestionale_test_merch_product__"
+      [Assert] Checking response.merch.isBestSeller === true
+      [Assert] Checking response.merch.badge === "NOVITÀ"
+      [Assert] Checking response.merch.homeRank === 5
+   ✅ Test 3 PASSED: merch record created with all fields
+   👉 Test 4: Verify record in DB
+      [DB Query] db.productMerch.findUnique({ where: { productKey: "__gestionale_test_merch_product__" } })
+      [DB Result] {"id":"cmpyqa6fd00l44stmuzvy83oo","productKey":"__gestionale_test_merch_product__","showInHome":true,"homeRank":5,"isBestSeller":true,"badge":"NOVITÀ","promoLabel":"Offerta Gestionale","discountPercent":10,"discountCents":null,"startsAt":null,"endsAt":null,"createdAt":"2026-06-03T23:59:23.401Z","updatedAt":"2026-06-03T23:59:23.401Z"}
+      [Assert] Checking dbRecord !== null
+      [Assert] Checking dbRecord.badge === "NOVITÀ"
+      [Assert] Checking dbRecord.discountPercent === 10
+   ✅ Test 4 PASSED: merch record verified in DB
+   👉 Test 5: Update merch record (same key)
+      [Request] PATCH /api/admin/sales
+      [Body] { productKey: "__gestionale_test_merch_product__", showInHome: false, homeRank: 1, isBestSeller: false, badge: null, discountPercent: 0 }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"merch":{"id":"cmpyqa6fd00l44stmuzvy83oo","productKey":"__gestionale_test_merch_product__","showInHome":false,"homeRank":1,"isBestSeller":false,"badge":null,"promoLabel":null,"discountPercent":null,"discountCents":null,"startsAt":null,"endsAt":null,"createdAt":"2026-06-03T23:59:23.401Z","updatedAt":"2026-06-03T23:59:23.606Z"}}
+      [Assert] Checking response.merch.isBestSeller === false
+      [Assert] Checking response.merch.badge === null
+      [Assert] Checking response.merch.homeRank === 1
+   ✅ Test 5 PASSED: merch record updated correctly
+   👉 Test 6: discountPercent=0 → stored as null (per route logic)
+      [DB Query] db.productMerch.findUnique({ where: { productKey: "__gestionale_test_merch_product__" } })
+      [DB Result] {"id":"cmpyqa6fd00l44stmuzvy83oo","productKey":"__gestionale_test_merch_product__","showInHome":false,"homeRank":1,"isBestSeller":false,"badge":null,"promoLabel":null,"discountPercent":null,"discountCents":null,"startsAt":null,"endsAt":null,"createdAt":"2026-06-03T23:59:23.401Z","updatedAt":"2026-06-03T23:59:23.606Z"}
+      [Assert] Checking dbUpdated.discountPercent === null
+   ✅ Test 6 PASSED: discountPercent=0 correctly stored as null
+   
+🎉 test-07-sales-merch: all tests passed.
+   🧹 Cleaning up sales/merchandising test rows...
+      [DB] Deleting productMerch rows with productKey: __gestionale_test_merch_product__
+      [DB] Cleaned up count: 1
+      [DB] Deleting session for token: aUkHUS7E...
+▶ Running test-08-tastings.mjs...
+   👉 Test 1: Fetching POST /api/admin/tastings/status without session
+      [Request] POST http://localhost:3000/api/admin/tastings/status
+      [Body] { id: "007bf40a-8361-4768-9e0c-6293dfbdc177", status: "CONFIRMED" }
+      [Response] Status: 401
+      [Assert] Checking status === 401
+   ✅ Test 1 PASSED: unauthenticated request blocked (401)
+   👉 Test 2: Invalid body (missing id) → 400
+      [Request] POST /api/admin/tastings/status
+      [Body] { status: "CONFIRMED" }
+      [Response] Status: 400
+      [Assert] Checking status === 400
+   ✅ Test 2 PASSED: invalid body (missing id) rejected (400)
+   👉 Test 3: Non-existent booking → 404
+      [Request] POST /api/admin/tastings/status
+      [Body] { id: "non-existent-booking-id-xyz", status: "CONFIRMED" }
+      [Response] Status: 404
+      [Assert] Checking status === 404
+   ✅ Test 3 PASSED: non-existent booking returns 404
+   👉 Test 4: PENDING → CONFIRMED
+      [Request] POST /api/admin/tastings/status
+      [Body] { id: "007bf40a-8361-4768-9e0c-6293dfbdc177", status: "CONFIRMED" }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"bookingId":"007bf40a-8361-4768-9e0c-6293dfbdc177","status":"CONFIRMED","customerMail":{"ok":true,"status":"sent","messageId":null,"to":["test-tastings@gestionale.local"],"from":"Frantoio Del Pasqua <onboarding@resend.dev>","env":{"NODE_ENV":"development","hasResendKey":true,"hasFrom":true}}}
+      [Assert] Checking response ok === true
+      [Assert] Checking response.status === "CONFIRMED"
+   ✅ Test 4 PASSED: tasting PENDING → CONFIRMED
+   👉 Test 5: CONFIRMED → CANCELED
+      [Request] POST /api/admin/tastings/status
+      [Body] { id: "007bf40a-8361-4768-9e0c-6293dfbdc177", status: "CANCELED" }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"bookingId":"007bf40a-8361-4768-9e0c-6293dfbdc177","status":"CANCELED","customerMail":{"ok":true,"status":"sent","messageId":null,"to":["test-tastings@gestionale.local"],"from":"Frantoio Del Pasqua <onboarding@resend.dev>","env":{"NODE_ENV":"development","hasResendKey":true,"hasFrom":true}}}
+      [Assert] Checking response.status === "CANCELED"
+   ✅ Test 5 PASSED: tasting CONFIRMED → CANCELED
+   👉 Test 6: CANCELED → PENDING (restore, no mail expected)
+      [Request] POST /api/admin/tastings/status
+      [Body] { id: "007bf40a-8361-4768-9e0c-6293dfbdc177", status: "PENDING" }
+      [Response] Status: 200
+      [Response JSON] {"ok":true,"bookingId":"007bf40a-8361-4768-9e0c-6293dfbdc177","status":"PENDING","customerMail":null}
+      [Assert] Checking response.status === "PENDING"
+   ✅ Test 6 PASSED: tasting CANCELED → PENDING (restore, no mail)
+   👉 Test 7: Verify final DB state
+      [DB Query] SELECT status FROM "TastingBooking" WHERE id = "007bf40a-8361-4768-9e0c-6293dfbdc177" LIMIT 1
+      [DB Result] [{"status":"PENDING"}]
+      [Assert] Checking dbRows.length === 1
+      [Assert] Checking dbRows[0].status === "PENDING"
+   ✅ Test 7 PASSED: DB state verified — booking is PENDING
+   
+🎉 test-08-tastings: all tests passed.
+   🧹 Cleaning up tasting test resources...
+      [DB] Deleting TastingBooking row: 007bf40a-8361-4768-9e0c-6293dfbdc177
+      [DB] Deleting session for token: vJy6V17r...
+▶ Running test-09-analytics.mjs...
+   👉 Running Test 09: User Simulation & Analytics Metrics
+      - Setup: Cleaning up any existing test analytics events
+      - Case 1: Posting mobile user pageview from IT
+        [Request] POST /api/analytics
+        [Headers] User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1, x-vercel-ip-country: IT
+        [Body] Event: page_view, visitorId: test-vis-mob-999
+        [Response] Status: 200
+        [Response Text]: "OK"
+      - Case 2: Posting search engine bot crawl event from US
+        [Request] POST /api/analytics
+        [Headers] User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html), cf-ipcountry: US
+        [Body] Event: page_view, visitorId: test-vis-bot-999
+        [Response] Status: 200
+        [Response Text]: "OK"
+      - Case 3: Posting desktop user pageview from FR
+        [Request] POST /api/analytics
+        [Headers] User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36, x-vercel-ip-country: FR
+        [Body] Event: page_view, visitorId: test-vis-desk-999
+        [Response] Status: 200
+        [Response Text]: "OK"
+      - Case 4: Verifying analytics processing and device/country parsing in DB
+        [DB Result] Found 3 analytics rows in database
+        [Assert] Mobile visitor device parsing: expected="mobile", got="mobile"
+        [Assert] Mobile country extraction: expected="IT", got="IT"
+        ✅ Mobile analytics row parsed correctly
+        [Assert] Bot visitor device parsing: expected="bot", got="bot"
+        [Assert] Bot country extraction: expected="US", got="US"
+        ✅ Bot analytics row parsed correctly
+        [Assert] Desktop visitor device parsing: expected="desktop", got="desktop"
+        [Assert] Desktop country extraction: expected="FR", got="FR"
+        ✅ Desktop analytics row parsed correctly
+   🧹 Cleaning up analytics test events from DB...
+      [DB] Cleaned up 3 events
+   ✅ Test 09: User Simulation & Analytics Metrics PASSED
+
+▶ Running test-10-stripe-webhook.mjs...
+   👉 Running Test 10: Stripe Webhook Simulator
+      - Setup: Creating test IN_ATTESA order in DB...
+        [DB] Created Order ID: ord_test_ee6a8ecf-50ad-488c-813b-c3588847e42d with stripeCheckoutSessionId: cs_test_768df122-215d-4424-9c67-f4813c35b3fc
+      - Case 1: Constructing checkout.session.completed event
+      - Case 2: Signing Stripe payload with webhook secret
+        [Signature] x-stripe-signature: t=1780531166,v1=eb412ef48c04f2551c1f41a1...
+      - Case 3: Sending signature verified POST to /api/webhooks/stripe
+        [Response] Status: 200
+        [Response JSON] {"received":true}
+        [Assert] checking response status === 200
+        [Assert] checking response received === true
+      - Case 4: Checking order status transition in DB
+        [DB Query] SELECT status, "stripePaymentIntentId" FROM "Order" WHERE id = "ord_test_ee6a8ecf-50ad-488c-813b-c3588847e42d"
+        [DB Result] [{"status":"PAID","stripePaymentIntentId":"pi_test_82c16dfc-7691-48c4-a7cc-79615b5c85e8"}]
+        [Assert] Checking status === "PAID"
+        [Assert] Checking stripePaymentIntentId === "pi_test_82c16dfc-7691-48c4-a7cc-79615b5c85e8"
+        ✅ Order successfully transitioned to PAGATO via simulated webhook
+   🧹 Cleaning up webhook simulation database rows...
+      [DB] Deleting order and events for ID: ord_test_ee6a8ecf-50ad-488c-813b-c3588847e42d
+      [DB] Deleting StripeWebhookEvent rows for cs_test session
+      ✅ Cleanup complete
+   ✅ Test 10: Stripe Webhook Simulator PASSED
+
+▶ Running test-11-exports.mjs...
+   [DB] Created test admin session. Token: PMcPwCV-...
+   👉 Test 1: Fetching GET /api/admin/customers.csv
+      [Response] Status: 200
+      [CSV Preview] First 150 chars: email,orders,spentCents [NL] "buyer-39@delpasqua.demo","1","46000" [NL] "buyer-5@delpasqua.demo","1","5800" [NL] "buyer-12@delpasqua.demo","1","2000" [NL] "buyer-59@delpa...
+   ✅ Test 1 PASSED: customers CSV exported successfully
+   👉 Test 2: Fetching GET /api/admin/shipping.csv
+      [Response] Status: 200
+      [CSV Preview] First 150 chars: orderNumber,paidAt,fullName,email,address,city,zip,items [NL] "DEMO-2026-1052","2026-06-03T17:27:08.131Z","Demo Buyer 58","buyer-58@delpasqua.demo","Congre...
+   ✅ Test 2 PASSED: shipping CSV exported successfully
+   👉 Test 3: Fetching GET /api/admin/invoices.json?mode=shipping
+      [Response] Status: 200
+      [JSON Response] ok: true, count: 8
+      [Sample Invoice] Num: INV-2026-000001, Year: 2026, Date: 2026-05-05
+   ✅ Test 3 PASSED: invoices JSON exported successfully
+   👉 Test 4: Fetching GET /api/admin/conti-leonardo
+      [Response] Status: 200
+      [Response Keys] ok, vatRate, monthsData, overrides, hierarchy
+   ✅ Test 4 PASSED: Leonardo Conti ledger data retrieved successfully
+   👉 Test 5: Updating overrides via POST /api/admin/conti-leonardo
+      [Response] Status: 200
+      [DB Check] Verifying settings table for key 'leonardo_conti_data'
+   ✅ Test 5 PASSED: Leonardo Conti overrides updated and verified in DB
+   
+🎉 test-11-exports: all tests passed.
+   🧹 Cleaning up exports test resources...
+      [DB] Deleting session for token: PMcPwCV-...
+▶ Running test-12-more-admin.mjs...
+   [DB] Created test admin session. Token: bg6UE7F3...
+   👉 Test 1: Fetching GET /api/admin/invoices.pdf (Unauthorized)
+      [Response] Status: 401
+   👉 Test 2: Fetching GET /api/admin/invoices.pdf (Authorized)
+      [Response] Status: 200
+      [Content-Type] application/pdf
+      [PDF Size] 16177 bytes
+   ✅ Test 1 & 2 PASSED: PDF invoices security and download verified
+   👉 Test 3: Fetching GET /api/admin/print-todo (Authorized)
+      [Response] Status: 200
+      [Content-Type] text/html; charset=utf-8
+      [HTML Preview] First 100 chars: <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Stampa ordini</title>
+      <meta charset="u
+   ✅ Test 3 PASSED: print-todo HTML view verified
+   👉 Test 4: Fetching GET /api/admin/report?month=2026-05 (Authorized)
+      [Response] Status: 200
+      [Report Rows Count] 52
+   👉 Test 5: Fetching GET /api/admin/report?month=invalid-date
+      [Response] Status: 400
+   ✅ Test 4 & 5 PASSED: JSON monthly reports verified
+   👉 Test 7: Fetching GET /api/admin/report.csv?start=2026-05-01&end=2026-06-01 (Authorized)
+      [Response] Status: 200
+      [CSV Header] orderNumber,status,createdAt,paidAt,fullName,email,totalCents,itemsCount
+   ✅ Test 6 PASSED: report CSV verified
+   👉 Test 8: Fetching GET /api/admin/outbox (Authorized)
+      [Response] Status: 200
+   👉 Test 9: Posting POST /api/admin/outbox/retry with invalid outboxId
+      [Response] Status: 404
+      [DB] Creating dummy failed outbox event...
+   👉 Test 10: Posting POST /api/admin/outbox/retry with valid outboxId
+      [Response] Status: 200
+      [DB Status] status: done, lastError: null
+   ✅ Test 7 PASSED: Outbox listing and retry flow verified
+   
+🎉 test-12-more-admin: all tests passed.
+   🧹 Cleaning up more-admin test resources...
+      [DB] Deleting session for token: bg6UE7F3...
+
+==================================================
+📊 GESTIONALE ADMIN TEST SUITE SUMMARY
+==================================================
+✅ test-01-auth.mjs PASSED (3.96s)
+✅ test-02-inventory.mjs PASSED (0.91s)
+✅ test-03-promotions.mjs PASSED (0.81s)
+✅ test-04-orders.mjs PASSED (8.47s)
+✅ test-05-settings.mjs PASSED (0.76s)
+✅ test-06-catalog.mjs PASSED (5.02s)
+✅ test-07-sales-merch.mjs PASSED (0.59s)
+✅ test-08-tastings.mjs PASSED (2.07s)
+✅ test-09-analytics.mjs PASSED (0.43s)
+✅ test-10-stripe-webhook.mjs PASSED (1.27s)
+✅ test-11-exports.mjs PASSED (2.70s)
+✅ test-12-more-admin.mjs PASSED (3.42s)
+--------------------------------------------------
+Total: 12 | Passed: 12 | Failed: 0
+==================================================

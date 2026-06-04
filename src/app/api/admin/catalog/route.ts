@@ -70,12 +70,15 @@ async function ensureInventoryForCatalog(catalog: CatalogProduct[]) {
       skus.push(makeInternalSku(p.id, v.id));
     }
   }
-  if (!skus.length) return;
+  
+  // Dedup SKUs to prevent Postgres deadlock/duplicate key errors in the same transaction
+  const uniqueSkus = Array.from(new Set(skus));
+  if (!uniqueSkus.length) return;
 
   const chunkSize = 500;
-  for (let i = 0; i < skus.length; i += chunkSize) {
-    const chunk = skus.slice(i, i + chunkSize);
-    await prisma.$transaction(
+  for (let i = 0; i < uniqueSkus.length; i += chunkSize) {
+    const chunk = uniqueSkus.slice(i, i + chunkSize);
+    await Promise.all(
       chunk.map((sku) =>
         prisma.inventoryItem.upsert({
           where: { sku },

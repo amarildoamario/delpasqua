@@ -19,21 +19,21 @@ function now() {
 
 function isAllowedTransition(from: OrderStatus, to: OrderStatus) {
   const allowed: Record<OrderStatus, OrderStatus[]> = {
-    PENDING: ["PAID", "CANCELED", "EXPIRED", "FAILED"],
-    PAID: ["PREPARING", "REFUNDED", "CANCELED", "FAILED"],
-    PREPARING: ["SHIPPED", "CANCELED", "REFUNDED"],
-    SHIPPED: ["DELIVERED", "REFUNDED"],
-    DELIVERED: ["REFUNDED"],
-    CANCELED: [],
-    REFUNDED: [],
-    PARTIALLY_REFUNDED: ["REFUNDED"],
-    EXPIRED: [],
-    FAILED: [],
+    IN_ATTESA: ["PAGATO", "ANNULLATO", "SCADUTO", "FALLITO"],
+    PAGATO: ["IN_PREPARAZIONE", "ANNULLATO", "FALLITO"],
+    IN_PREPARAZIONE: ["SPEDITO", "ANNULLATO"],
+    SPEDITO: ["CONSEGNATO"],
+    CONSEGNATO: [],
+    ANNULLATO: [],
+    RIMBORSATO: [],
+    PARZIALMENTE_RIMBORSATO: [],
+    SCADUTO: [],
+    FALLITO: [],
   };
   return allowed[from]?.includes(to) ?? false;
 }
 
-// ✅ helper: enqueue + AUTO process (best-effort) — usato per REFUNDED
+// helper: enqueue + AUTO process (best-effort) — usato per RIMBORSATO (ex REFUNDED)
 async function enqueueRefundedEmailOutbox(args: { orderId: string; actor: string | null }) {
   await prisma.outboxEvent.create({
     data: {
@@ -83,19 +83,19 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     if (!order) return new Response("Not found", { status: 404 });
 
     if (restore) {
-      if (order.status !== "CANCELED") {
-        return new Response("Order is not CANCELED", { status: 400 });
+      if (order.status !== "ANNULLATO") {
+        return new Response("Order is not ANNULLATO", { status: 400 });
       }
 
       const lastCancel = await prisma.orderEvent.findFirst({
-        where: { orderId: id, toStatus: "CANCELED" },
+        where: { orderId: id, toStatus: "ANNULLATO" },
         orderBy: { createdAt: "desc" },
       });
 
-      const restoreTo: OrderStatus = (lastCancel?.fromStatus as OrderStatus | null) ?? "PENDING";
+      const restoreTo: OrderStatus = (lastCancel?.fromStatus as OrderStatus | null) ?? "IN_ATTESA";
 
       const updated = await prisma.$transaction(async (tx) => {
-        if (restoreTo === "PENDING") {
+        if (restoreTo === "IN_ATTESA") {
           await reserveStockOrThrow(tx, {
             orderId: id,
             lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
@@ -112,9 +112,9 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         orderId: id,
         actor,
         type: "ORDER_RESTORED",
-        fromStatus: "CANCELED",
+        fromStatus: "ANNULLATO",
         toStatus: restoreTo,
-        message: message ?? `Ordine ripristinato: CANCELED → ${restoreTo}`,
+        message: message ?? `Ordine ripristinato: ANNULLATO → ${restoreTo}`,
       });
 
       return guard.attach(NextResponse.json({ ok: true, order: updated }, { status: 200 }));
@@ -136,10 +136,18 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     }
 
     if (nextStatus) {
-      // CANCEL resta com’era (senza email qui se non ti serve)
-      if (nextStatus === "CANCELED") {
+      if (nextStatus === current) {
+        return guard.attach(NextResponse.json({ ok: true, order: updated, unchanged: true }, { status: 200 }));
+      }
+
+      if (nextStatus === "RIMBORSATO" || nextStatus === "PARZIALMENTE_RIMBORSATO") {
+        return NextResponse.json({ error: "USE_STRIPE_REFUND_ENDPOINT" }, { status: 400 });
+      }
+
+      // CANCEL resta com’era
+      if (nextStatus === "ANNULLATO") {
         updated = await prisma.$transaction(async (tx) => {
-          if (current === "PENDING") {
+          if (current === "IN_ATTESA") {
             await releaseReserved(tx, {
               orderId: id,
               lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
@@ -148,7 +156,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
           return tx.order.update({
             where: { id },
-            data: { status: "CANCELED", canceledAt: now() },
+            data: { status: "ANNULLATO", canceledAt: now() },
           });
         });
 
@@ -157,8 +165,8 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
           actor,
           type: "STATUS_CHANGED",
           fromStatus: current,
-          toStatus: "CANCELED",
-          message: message ?? `Stato cambiato: ${current} → CANCELED`,
+          toStatus: "ANNULLATO",
+          message: message ?? `Stato cambiato: ${current} → ANNULLATO`,
         });
 
         return guard.attach(NextResponse.json({ ok: true, order: updated }, { status: 200 }));
@@ -168,7 +176,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         return new Response(`Invalid transition ${current} -> ${nextStatus}`, { status: 400 });
       }
 
-      if (nextStatus === "PAID") {
+      if (nextStatus === "PAGATO") {
         updated = await prisma.$transaction((tx) =>
           applyPaidOrderInvariantsTx(tx, {
             orderId: id,
@@ -178,13 +186,12 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         );
       } else {
         const patch: Prisma.Prisma.OrderUpdateInput = { status: nextStatus };
-        if (nextStatus === "PREPARING") patch.preparingAt = now();
-        if (nextStatus === "SHIPPED") patch.shippedAt = now();
-        if (nextStatus === "DELIVERED") patch.deliveredAt = now();
-        if (nextStatus === "REFUNDED") patch.refundedAt = now();
+        if (nextStatus === "IN_PREPARAZIONE") patch.preparingAt = now();
+        if (nextStatus === "SPEDITO") patch.shippedAt = now();
+        if (nextStatus === "CONSEGNATO") patch.deliveredAt = now();
 
         updated = await prisma.$transaction(async (tx) => {
-          if (current === "PENDING" && (nextStatus === "EXPIRED" || nextStatus === "FAILED")) {
+          if (current === "IN_ATTESA" && (nextStatus === "SCADUTO" || nextStatus === "FALLITO")) {
             await releaseReserved(tx, {
               orderId: id,
               lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
@@ -207,13 +214,10 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         message: message ?? `Stato cambiato: ${current} → ${nextStatus}`,
       });
 
-      // ✅ SOLO REFUNDED
-      if (nextStatus === "REFUNDED") {
-        await enqueueRefundedEmailOutbox({ orderId: id, actor });
-      }
-      if (nextStatus === "PAID") {
+      // RIMBORSATO is handled exclusively via the /refund endpoint (see early-return guard above)
+      if (nextStatus === "PAGATO") {
         processOutboxBatch({ limit: 10 }).catch((e) => {
-          console.error("outbox auto-process failed (PAID manual):", e);
+          console.error("outbox auto-process failed (PAGATO manual):", e);
         });
       }
     } else {

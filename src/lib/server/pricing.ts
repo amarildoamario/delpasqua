@@ -225,7 +225,7 @@ export async function computeOrderPricing(args: {
       const pendingCount = await prisma.order.count({
         where: {
           promotionCode: code,
-          status: "PENDING",
+          status: "IN_ATTESA",
         },
       });
       const usageOk = !promo.usageLimit || promo.usedCount + pendingCount < promo.usageLimit;

@@ -53,41 +53,48 @@ const SHOP_HIGHLIGHTS_COPY = {
   },
 } as const;
 
-export default function ShopHighlights() {
+type ShopHighlightsProps = {
+  initialProducts?: DbProduct[];
+};
+
+export default function ShopHighlights({ initialProducts }: ShopHighlightsProps) {
   const tp = useTranslations("Products");
   const locale = useLocale();
   const copy = SHOP_HIGHLIGHTS_COPY[locale as keyof typeof SHOP_HIGHLIGHTS_COPY] ?? SHOP_HIGHLIGHTS_COPY.en;
 
-  const [catalog, setCatalog] = useState<DbProduct[]>(productsStatic as unknown as DbProduct[]);
-
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/products")
-      .then((r) => r.json())
-      .then((data) => {
-        if (alive && Array.isArray(data)) {
-          setCatalog(data);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const catalog = initialProducts || (productsStatic as unknown as DbProduct[]);
 
   const products: HighlightProduct[] = useMemo(() => {
     const all = catalog ?? [];
-    const bySlug = new Map(all.map((p) => [p.slug, p] as const));
 
-    const picked: DbProduct[] = FEATURED_SLUGS.map((s) => bySlug.get(s)).filter(
-      (x): x is DbProduct => Boolean(x)
-    );
+    // Filter products that are marked to show in home, and sort by homeRank ascending (lower rank = higher priority, 0 at the bottom)
+    const homeProducts = all
+      .filter((p) => (p as any).showInHome === true)
+      .sort((a, b) => {
+        const rA = (a as any).homeRank === 0 ? 99999 : ((a as any).homeRank ?? 99999);
+        const rB = (b as any).homeRank === 0 ? 99999 : ((b as any).homeRank ?? 99999);
+        return rA - rB;
+      });
 
+    const picked: DbProduct[] = [...homeProducts];
+
+    // Fallback: if we have fewer than 4 products, fill it up using the default FEATURED_SLUGS
     if (picked.length < 4) {
       const already = new Set(picked.map((p) => p.slug));
+      for (const s of FEATURED_SLUGS) {
+        if (picked.length >= 4) break;
+        const p = all.find((x) => x.slug === s);
+        if (p && !already.has(p.slug) && (p as any).showInHome !== false) {
+          picked.push(p);
+          already.add(p.slug);
+        }
+      }
+
+      // If still fewer than 4, add any other products
       for (const p of all) {
         if (picked.length >= 4) break;
         if (already.has(p.slug)) continue;
+        if ((p as any).showInHome === false) continue;
         picked.push(p);
         already.add(p.slug);
       }
@@ -126,6 +133,7 @@ export default function ShopHighlights() {
         priceCents: minPriceCents,
         defaultVariantId: p.variants?.[0]?.id,
         badge: tp(`${p.id}.badge`) || p.badge,
+        merchBadge: (p as any).merchBadge,
         imageSrc: p.imageSrc,
         imageAlt: p.imageAlt,
         variantsCount: p.variants?.length ?? 1,

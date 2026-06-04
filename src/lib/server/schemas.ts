@@ -175,16 +175,16 @@ export const AdminPromotionUpdateSchema = z
 
 // Order status patch
 export const OrderStatusSchema = z.enum([
-  "PENDING",
-  "PAID",
-  "PREPARING",
-  "SHIPPED",
-  "DELIVERED",
-  "CANCELED",
-  "REFUNDED",
-  "PARTIALLY_REFUNDED",
-  "EXPIRED",
-  "FAILED",
+  "IN_ATTESA",
+  "PAGATO",
+  "IN_PREPARAZIONE",
+  "SPEDITO",
+  "CONSEGNATO",
+  "ANNULLATO",
+  "RIMBORSATO",
+  "PARZIALMENTE_RIMBORSATO",
+  "SCADUTO",
+  "FALLITO",
 ]);
 
 export const AdminOrderStatusPatchSchema = z.object({
@@ -202,6 +202,12 @@ export const AdminOrderStatusPatchSchema = z.object({
 export const AdminOrderShipSchema = z.object({
   shipped: z.boolean(),
   actor: z.string().trim().min(1).max(120).optional().nullable(),
+});
+
+export const AdminOrderRefundSchema = z.object({
+  confirm: z.boolean().optional(),
+  reason: z.enum(["duplicate", "fraudulent", "requested_by_customer"]).default("requested_by_customer"),
+  message: z.string().trim().max(400).optional().nullable(),
 });
 
 // Outbox retry

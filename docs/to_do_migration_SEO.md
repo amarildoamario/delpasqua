@@ -3,6 +3,30 @@ DELPASQUA.COM — TO-DO LIST ROUTING PRINCIPALE WORDPRESS -> VERCEL
 Obiettivo:
 spuntare ogni voce prima di collegare definitivamente delpasqua.com al progetto Vercel.
 
+## Agent Status
+
+- FileStatus: ACTIVE
+- LastVerified: 2026-06-02
+- OpenItems: 25
+- AgentAction: non trattare questo file come backlog solo di codice; qui dentro convivono task di codice, QA manuale, contenuto editoriale e go-live produzione.
+- Note: al 2026-06-02 i gap reali ancora confermati dal repo sono soprattutto placeholder pubblici, recensioni hardcoded, verifiche manuali mobile/checkout/form contatti e task post go-live/Search Console.
+
+## Note Operative Verificate Al 2026-06-02
+
+- Preview / `.vercel.app`: il blocco SEO base esiste gia`:
+  - `src/app/robots.ts` disabilita interamente l'indicizzazione in preview / host `vercel.app`;
+  - `src/proxy.ts` aggiunge `X-Robots-Tag: noindex, nofollow` sui domini non finali in produzione.
+- Placeholder pubblici ancora presenti:
+  - `src/app/[locale]/parita-di-genere/page.tsx`
+  - `src/app/[locale]/degustazioni/page.tsx` usa ancora `placeholder-degustazione.jpg` anche nel JSON-LD
+- Recensioni non definitive ancora presenti:
+  - `src/components/HomeTrustAndReviews.tsx` e` ancora popolato con recensioni hardcoded e testo tipo "Google reviews ready to connect".
+- Task da non trattare come implementazione locale pura:
+  - collegamento dominio, HTTPS, redirect www/non-www;
+  - invio sitemap a Search Console;
+  - monitoraggio copertura/canonical/query dopo il go-live;
+  - verifica manuale checkout reale, mobile e form contatti.
+
 Aggiornamento Search Console del 2026-05-29:
 - Dalla lista "Ultima scansione" condivisa il 2026-05-29 risulta che Google ha ancora scansionato di recente:
   - URL core corrette: `/`, `/il-nostro-olio/`, `/shop/`, `/contatti/`, `/produzione/`, `/storia/`, `/acquista/`

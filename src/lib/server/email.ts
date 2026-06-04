@@ -563,7 +563,7 @@ export function buildTransactionalEmailPreview(
     id: "ord_preview_20260529",
     orderNumber: "DP-2026-0042",
     status:
-      type === "ORDER_SHIPPED" ? "SHIPPED" : type === "ORDER_REFUNDED" ? "REFUNDED" : "PAID",
+      type === "ORDER_SHIPPED" ? "SPEDITO" : type === "ORDER_REFUNDED" ? "RIMBORSATO" : "PAGATO",
     email: "cliente@example.com",
     fullName: "Mario Rossi",
     addressLine1: "Via delle Colline 15",

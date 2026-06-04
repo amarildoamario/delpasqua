@@ -12,7 +12,7 @@ model Order {
   id             String @id @default(cuid())
   idempotencyKey String @unique
 
-  status OrderStatus @default(PENDING)
+  status OrderStatus @default(IN_ATTESA)
 
   orderNumber      String? @unique
   orderPublicToken String? @unique
@@ -84,16 +84,16 @@ model Order {
 }
 
 enum OrderStatus {
-  PENDING
-  PAID
-  PREPARING
-  SHIPPED
-  DELIVERED
-  CANCELED
-  REFUNDED
-  PARTIALLY_REFUNDED
-  EXPIRED
-  FAILED
+  IN_ATTESA                @map("PENDING")
+  PAGATO                   @map("PAID")
+  IN_PREPARAZIONE          @map("PREPARING")
+  SPEDITO                  @map("SHIPPED")
+  CONSEGNATO               @map("DELIVERED")
+  ANNULLATO                @map("CANCELED")
+  RIMBORSATO               @map("REFUNDED")
+  PARZIALMENTE_RIMBORSATO  @map("PARTIALLY_REFUNDED")
+  SCADUTO                  @map("EXPIRED")
+  FALLITO                  @map("FAILED")
 }
 
 model OrderItem {

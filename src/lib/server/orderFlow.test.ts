@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { applyPaidOrderInvariantsTx } from "./orderPayment";
+import { applyStripeRefundToOrderTx } from "./orderRefund";
 import {
   OutOfStockError,
   releaseReserved,
@@ -29,6 +30,9 @@ type OrderRow = {
   status: string;
   orderNumber: string | null;
   paidAt: Date | null;
+  refundedAt: Date | null;
+  totalCents: number;
+  refundCents: number;
   email: string;
   fullName: string;
   address: string;
@@ -398,9 +402,12 @@ function buildFakeTx(args?: ConstructorParameters<typeof FakeOrderTx>[0]) {
 function baseOrder(id: string): OrderRow {
   return {
     id,
-    status: "PENDING",
+    status: "IN_ATTESA",
     orderNumber: null,
     paidAt: null,
+    refundedAt: null,
+    totalCents: 2500,
+    refundCents: 0,
     email: "",
     fullName: "",
     address: "",
@@ -530,7 +537,7 @@ test("applyPaidOrderInvariantsTx commits stock, assigns numbers, and is idempote
     },
   });
 
-  assert.equal(updated.status, "PAID");
+  assert.equal(updated.status, "PAGATO");
   assert.match(updated.orderNumber ?? "", /^DP-\d{4}-\d{6}$/);
   assert.ok(updated.paidAt instanceof Date);
   assert.equal(updated.email, "cliente@example.com");
@@ -589,22 +596,22 @@ test("applyPaidOrderInvariantsTx atomically increments promotion usedCount when 
     paymentMethod: "Visa **** 4242",
   });
 
-  assert.equal(updated.status, "PAID");
+  assert.equal(updated.status, "PAGATO");
   assert.equal(store.promotions.get("PROMO50")?.usedCount, 1);
 });
 
 test("order count logic successfully returns PENDING orders for a given coupon", async () => {
   const { store } = buildFakeTx({
     orders: [
-      { ...baseOrder("order-1"), status: "PENDING", promotionCode: "PROMO50" },
-      { ...baseOrder("order-2"), status: "PENDING", promotionCode: "PROMO50" },
-      { ...baseOrder("order-3"), status: "PAID", promotionCode: "PROMO50" },
-      { ...baseOrder("order-4"), status: "PENDING", promotionCode: "PROMO10" },
+      { ...baseOrder("order-1"), status: "IN_ATTESA", promotionCode: "PROMO50" },
+      { ...baseOrder("order-2"), status: "IN_ATTESA", promotionCode: "PROMO50" },
+      { ...baseOrder("order-3"), status: "PAGATO", promotionCode: "PROMO50" },
+      { ...baseOrder("order-4"), status: "IN_ATTESA", promotionCode: "PROMO10" },
     ],
   });
 
   const pendingPromo50Count = await store.tx.order.count({
-    where: { promotionCode: "PROMO50", status: "PENDING" },
+    where: { promotionCode: "PROMO50", status: "IN_ATTESA" },
   });
 
   assert.equal(pendingPromo50Count, 2);
@@ -616,7 +623,7 @@ test("simulated expire pending order releases reserved stock and marks status EX
     reservations: [{ orderId: "order-1", sku: "sku-1", qty: 2 }],
     orders: [{
       ...baseOrder("order-1"),
-      status: "PENDING",
+      status: "IN_ATTESA",
       promotionCode: "PROMO50",
     }],
   });
@@ -628,7 +635,7 @@ test("simulated expire pending order releases reserved stock and marks status EX
   });
 
   assert.ok(fresh);
-  assert.equal(fresh.status, "PENDING");
+  assert.equal(fresh.status, "IN_ATTESA");
 
   // Rilascia stock
   await releaseReserved(tx, {
@@ -639,10 +646,73 @@ test("simulated expire pending order releases reserved stock and marks status EX
   // Cambia stato in EXPIRED
   const updated = await store.tx.order.update({
     where: { id: fresh.id },
-    data: { status: "EXPIRED" },
+    data: { status: "SCADUTO" },
   });
 
-  assert.equal(updated.status, "EXPIRED");
+  assert.equal(updated.status, "SCADUTO");
   assert.equal(store.inventory.get("sku-1")?.reserved, 0);
   assert.equal(store.reservations.size, 0);
+});
+
+test("applyStripeRefundToOrderTx records a partial refund without sending refund email", async () => {
+  const { store, tx } = buildFakeTx({
+    orders: [{
+      ...baseOrder("order-1"),
+      status: "PAGATO",
+      totalCents: 2500,
+      refundCents: 0,
+    }],
+  });
+
+  const updated = await applyStripeRefundToOrderTx(tx, {
+    orderId: "order-1",
+    cumulativeRefundCents: 1000,
+    source: "stripe_webhook",
+    stripeRefundId: "re_123",
+    stripeChargeId: "ch_123",
+    stripePaymentIntentId: "pi_123",
+  });
+
+  assert.equal(updated.status, "PARZIALMENTE_RIMBORSATO");
+  assert.equal(updated.refundCents, 1000);
+  assert.ok(updated.refundedAt instanceof Date);
+  assert.equal(store.outbox.length, 0);
+  assert.ok(store.orderEvents.some((event) => event.type === "STRIPE_REFUND_SYNCED"));
+});
+
+test("applyStripeRefundToOrderTx records a full refund and enqueues refund email once", async () => {
+  const { store, tx } = buildFakeTx({
+    orders: [{
+      ...baseOrder("order-1"),
+      status: "PARZIALMENTE_RIMBORSATO",
+      totalCents: 2500,
+      refundCents: 1000,
+      refundedAt: new Date("2026-06-01T10:00:00.000Z"),
+    }],
+  });
+
+  const updated = await applyStripeRefundToOrderTx(tx, {
+    orderId: "order-1",
+    cumulativeRefundCents: 2500,
+    source: "stripe_webhook",
+    stripeRefundId: "re_456",
+    stripeChargeId: "ch_123",
+    stripePaymentIntentId: "pi_123",
+  });
+
+  assert.equal(updated.status, "RIMBORSATO");
+  assert.equal(updated.refundCents, 2500);
+  assert.equal(store.outbox.length, 1);
+  assert.equal(store.outbox[0]?.type, "ORDER_REFUNDED");
+
+  await applyStripeRefundToOrderTx(tx, {
+    orderId: "order-1",
+    cumulativeRefundCents: 2500,
+    source: "stripe_webhook",
+    stripeRefundId: "re_456",
+    stripeChargeId: "ch_123",
+    stripePaymentIntentId: "pi_123",
+  });
+
+  assert.equal(store.outbox.length, 1);
 });

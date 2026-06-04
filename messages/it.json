@@ -210,10 +210,14 @@
             "description": "Il Fruttato Leggero e delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
             "badge": "CLASSICO",
             "variants": {
-                "500ml": "Bottiglia 500 ml"
+                "500ml": "Bottiglia 500 ml",
+                "750ml": "Bottiglia 750 ml",
+                "1lt": "Bottiglia 1 L"
             },
             "variantDescriptions": {
-                "500ml": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti."
+                "500ml": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti.",
+                "750ml": "La bottiglia Fruttato Leggero da 750 ml unisce eleganza e capienza: l'extravergine toscano ideale da servire a tavola per arricchire con estrema delicatezza piatti di pesce, verdure e ricette dal gusto fine.",
+                "1lt": "La bottiglia Fruttato Leggero da 1 litro è il formato famiglia ideale per l'uso quotidiano: un olio extravergine dal gusto morbido e gentile, perfetto per chi ama condimenti profumati, leggeri e mai coprenti."
             }
         },
         "fruttato-medio": {
@@ -251,20 +255,40 @@
         "tartufo": {
             "title": "Extravergine - Tartufo",
             "subtitle": "Extravergine aromatizzato",
-            "description": "Perfetto su uova, patate, carpacci.",
-            "badge": "AROMATIZZATO"
+            "description": "Condimento pregiato a base di olio extravergine di oliva aromatizzato al tartufo. Il tocco gourmet perfetto per esaltare uova, patate, carpacci e primi piatti della tradizione.",
+            "badge": "AROMATIZZATO",
+            "variants": {
+                "500ml": "Bottiglia 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia da 500 ml di extravergine al Tartufo racchiude note intense e avvolgenti. Il condimento gourmet ideale per dare un tocco raffinato e di gran pregio a primi piatti, uova al tegamino, carpacci e vellutate."
+            }
         },
         "peperoncino": {
             "title": "Extravergine - Peperoncino",
             "subtitle": "Extravergine aromatizzato",
-            "description": "Piccantezza pulita, ottimo su pizza e primi.",
-            "badge": "AROMATIZZATO"
+            "description": "Un olio extravergine aromatizzato dal temperamento vivace e dalla piccantezza pulita, perfetto per accendere di gusto pizze, primi piatti mediterranei e grigliate sfiziose.",
+            "badge": "AROMATIZZATO",
+            "variants": {
+                "500ml": "Bottiglia 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia da 500 ml di extravergine al Peperoncino unisce la morbidezza del nostro olio toscano alla vivace piccantezza del peperoncino calabrese selezionato, ideale per dare carattere a bruschette, pizza e sughi rustici."
+            }
         },
         "vino": {
             "title": "Vino Vittoria",
             "subtitle": "100% Sangiovese",
-            "description": "Un rosso di carattere, espressione del nostro territorio.",
-            "badge": "NOVITÀ"
+            "description": "Rosso toscano di grande carattere ed eleganza, profumato e morbido al palato, ideale da servire con grigliate di carne, primi saporiti e formaggi locali.",
+            "badge": "NOVITÀ",
+            "variants": {
+                "500ml": "Bottiglia 500 ml",
+                "1lt": "Bottiglia 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La bottiglia da 500 ml di Vino Vittoria Sangiovese è il formato perfetto per una cena intima. Un rosso toscano dal bouquet elegante, caratterizzato da note fruttate di ciliegia e accenni speziati di eccezionale bevibilità.",
+                "1lt": "La bottiglia da 1 litro di Vino Vittoria Sangiovese è pensata per la convivialità a tavola in famiglia o con amici. Un Chianti IGP equilibrato ed elegante, eccezionale in abbinamento a carni rosse, arrosti saporiti e formaggi stagionati."
+            }
         },
         "prodotto-test": {
             "title": "Prodotto di Test",

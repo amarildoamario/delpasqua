@@ -1,7 +1,7 @@
 // src/app/shop/[prodotto]/page.tsx
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { readCatalog } from "@/lib/server/catalog";
+import { readCatalogWithMerch } from "@/lib/server/catalog";
 import { findProductBySlug } from "@/lib/productSlugs";
 import { makeInventorySku } from "@/lib/inventorySku";
 import { getAvailableBySku } from "@/lib/server/inventoryRead";
@@ -32,6 +32,7 @@ type Product = {
   title: string;
   subtitle?: string;
   badge?: string;
+  merchBadge?: string | null;
   imageSrc: string;
   imageAlt: string;
   description: string;
@@ -130,7 +131,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; prodotto: string }>;
 }): Promise<Metadata> {
   const { locale, prodotto } = await params;
-  const list = (await readCatalog()) as unknown as Product[];
+  const list = (await readCatalogWithMerch()) as unknown as Product[];
   const product = findProductBySlug(list, prodotto);
 
   if (!product) return { title: "Prodotto non trovato" };
@@ -173,7 +174,7 @@ export default async function ProductPage({
   const sp = searchParams ? await searchParams : undefined;
   const tp = await getTranslations({ locale, namespace: "Products" });
 
-  const list = (await readCatalog()) as unknown as Product[];
+  const list = (await readCatalogWithMerch()) as unknown as Product[];
   const product = findProductBySlug(list, prodotto);
 
   if (!product) notFound();
@@ -184,6 +185,7 @@ export default async function ProductPage({
     title: locale === "it" ? product.title : (hasTranslation(tp, `${product.id}.title`) ? tp(`${product.id}.title`) : product.title),
     subtitle: locale === "it" ? product.subtitle : (hasTranslation(tp, `${product.id}.subtitle`) ? tp(`${product.id}.subtitle`) : product.subtitle),
     badge: locale === "it" ? product.badge : (hasTranslation(tp, `${product.id}.badge`) ? tp(`${product.id}.badge`) : product.badge),
+    merchBadge: (product as any).merchBadge ?? null,
     description: locale === "it" ? product.description : (hasTranslation(tp, `${product.id}.description`) ? tp(`${product.id}.description`) : product.description),
     variants: product.variants.map((variant) => ({
       ...variant,
@@ -202,6 +204,7 @@ export default async function ProductPage({
       title: hasTranslation(tp, `${p.id}.title`) ? tp(`${p.id}.title`) : p.title,
       subtitle: hasTranslation(tp, `${p.id}.subtitle`) ? tp(`${p.id}.subtitle`) : p.subtitle,
       badge: hasTranslation(tp, `${p.id}.badge`) ? tp(`${p.id}.badge`) : p.badge,
+      merchBadge: (p as any).merchBadge ?? null,
       description: hasTranslation(tp, `${p.id}.description`)
         ? tp(`${p.id}.description`)
         : p.description ?? "",
