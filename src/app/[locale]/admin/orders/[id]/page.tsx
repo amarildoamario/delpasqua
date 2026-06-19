@@ -12,20 +12,14 @@ import {
   Mail,
   Phone,
   MapPin,
-  FileText,
   CreditCard,
   Calendar,
   Activity,
   Package,
-  ShieldCheck,
-  Building,
   Terminal,
-  Globe,
-  Info,
   ChevronLeft,
   DollarSign,
   Clock,
-  ExternalLink,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";

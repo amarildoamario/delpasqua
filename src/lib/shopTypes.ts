@@ -6,6 +6,7 @@ export type ProductVariant = {
   priceCents: number; // IVA ESCLUSA
 
   // ✅ aggiunti (sono presenti nel products.json)
+  cartAliases?: Array<{ productId: string; variantId: string }>;
   sku?: string;
   imageSrc?: string;
   imageAlt?: string;
@@ -25,6 +26,9 @@ export type Product = {
   description?: string;
   specs?: Record<string, string>;
   variants: ProductVariant[];
+  excludeFromSeo?: boolean;
+  isPublished?: boolean;
+  isPurchasable?: boolean;
 };
 
 export type CartLine = {

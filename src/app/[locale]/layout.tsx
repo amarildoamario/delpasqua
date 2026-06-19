@@ -11,6 +11,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { readPublicCatalog } from "@/lib/server/catalog";
 
 const uiSans = Manrope({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default async function RootLayout({
   }
 
   const messages = await getMessages();
+  const initialCatalog = await readPublicCatalog();
   return (
     <html lang={locale} className={uiSans.variable}>
       <head>
@@ -55,10 +57,10 @@ export default async function RootLayout({
 
       <body className={`${uiSans.className} bg-white text-zinc-900 antialiased font-sans`}>
         <NextIntlClientProvider messages={messages}>
-          <Providers>
+          <Providers initialCatalog={initialCatalog}>
             <GoogleAnalytics />
             <GA4RouteTracker />
-            <Navbar />
+            <Navbar initialCatalog={initialCatalog.map((product) => ({ id: product.id, slug: product.slug }))} />
 
             <main>
               {children}

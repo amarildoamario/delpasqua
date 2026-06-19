@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, Tag, ShoppingCart } from "lucide-react";
+import { CheckCircle2, Tag, ShoppingCart, MapPin, ChevronDown } from "lucide-react";
+import FlagIcon from "@/components/FlagIcon";
 
 import Footer from "@/components/Footer";
 import ToggleMessage from "@/components/ui/ToggleMessage";
@@ -13,7 +14,8 @@ import { track } from "@/lib/analytics/track";
 import { translateCartCheckoutError, translateCartPromoError } from "@/lib/cartI18n";
 import { getLocalizedProductHref } from "@/lib/productSlugs";
 import type { Product } from "@/lib/shopTypes";
-import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/constants";
+import { getShippingRule } from "@/lib/shippingConfig";
+import { cn } from "@/lib/utils";
 
 function formatEUR(cents: number) {
   const sign = cents < 0 ? "-" : "";
@@ -56,6 +58,8 @@ const cartStatusCopy = {
   it: {
     lineReduced: (title: string, qty: number) => `${title} aggiornato a ${qty} per disponibilita limitata.`,
     lineRemoved: (title: string) => `${title} rimosso dal carrello per esaurimento stock.`,
+    lineMigrated: (title: string) => `${title} aggiornato nel carrello dopo una modifica al catalogo.`,
+    invalidRemoved: "Un prodotto non piu disponibile e stato rimosso dal carrello.",
     addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
       availableQty != null
         ? `${title}: disponibili solo ${availableQty} pezzi. Aggiunti ${addedQty}.`
@@ -65,6 +69,8 @@ const cartStatusCopy = {
   en: {
     lineReduced: (title: string, qty: number) => `${title} updated to ${qty} because of limited stock.`,
     lineRemoved: (title: string) => `${title} was removed from the cart because it is sold out.`,
+    lineMigrated: (title: string) => `${title} was updated in the cart after a catalog change.`,
+    invalidRemoved: "A product that is no longer available was removed from the cart.",
     addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
       availableQty != null
         ? `${title}: only ${availableQty} available. Added ${addedQty}.`
@@ -74,6 +80,8 @@ const cartStatusCopy = {
   de: {
     lineReduced: (title: string, qty: number) => `${title} wurde wegen begrenztem Bestand auf ${qty} angepasst.`,
     lineRemoved: (title: string) => `${title} wurde aus dem Warenkorb entfernt, da es ausverkauft ist.`,
+    lineMigrated: (title: string) => `${title} wurde nach einer Katalogaenderung im Warenkorb aktualisiert.`,
+    invalidRemoved: "Ein nicht mehr verfuegbares Produkt wurde aus dem Warenkorb entfernt.",
     addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
       availableQty != null
         ? `${title}: nur ${availableQty} verfuegbar. ${addedQty} hinzugefuegt.`
@@ -83,6 +91,8 @@ const cartStatusCopy = {
   nl: {
     lineReduced: (title: string, qty: number) => `${title} aangepast naar ${qty} vanwege beperkte voorraad.`,
     lineRemoved: (title: string) => `${title} is uit de winkelwagen verwijderd omdat het is uitverkocht.`,
+    lineMigrated: (title: string) => `${title} is na een cataloguswijziging bijgewerkt in de winkelwagen.`,
+    invalidRemoved: "Een product dat niet meer beschikbaar is, is uit de winkelwagen verwijderd.",
     addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
       availableQty != null
         ? `${title}: nog maar ${availableQty} beschikbaar. ${addedQty} toegevoegd.`
@@ -92,6 +102,8 @@ const cartStatusCopy = {
   da: {
     lineReduced: (title: string, qty: number) => `${title} blev justeret til ${qty} pga. begraenset lager.`,
     lineRemoved: (title: string) => `${title} blev fjernet fra kurven, fordi varen er udsolgt.`,
+    lineMigrated: (title: string) => `${title} blev opdateret i kurven efter en katalogaendring.`,
+    invalidRemoved: "Et produkt, der ikke laengere er tilgaengeligt, blev fjernet fra kurven.",
     addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
       availableQty != null
         ? `${title}: kun ${availableQty} tilbage. ${addedQty} tilfoejet.`
@@ -101,6 +113,8 @@ const cartStatusCopy = {
   no: {
     lineReduced: (title: string, qty: number) => `${title} ble justert til ${qty} paa grunn av begrenset lager.`,
     lineRemoved: (title: string) => `${title} ble fjernet fra handlekurven fordi varen er utsolgt.`,
+    lineMigrated: (title: string) => `${title} ble oppdatert i handlekurven etter en katalogendring.`,
+    invalidRemoved: "Et produkt som ikke lenger er tilgjengelig, ble fjernet fra handlekurven.",
     addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
       availableQty != null
         ? `${title}: bare ${availableQty} tilgjengelig. ${addedQty} lagt til.`
@@ -111,6 +125,79 @@ const cartStatusCopy = {
 
 function productHref(product: Product | undefined, locale: string) {
   return product ? (getLocalizedProductHref(product, locale) as never) : "/shop";
+}
+
+const labels = {
+  it: {
+    shippingTitle: "Calcolo Spedizione Internazionale",
+    shippingDesc: "Per spedizioni al di fuori dell'Italia, seleziona il paese e inserisci il CAP per calcolare i costi e sbloccare la cassa.",
+    country: "Nazione di Destinazione",
+    zipCode: "CAP / Codice Postale",
+    zipPlaceholder: "Inserisci il CAP...",
+    blockMessage: "Inserisci nazione e CAP per calcolare la spedizione e sbloccare il checkout.",
+    zipError: "Inserisci un CAP valido.",
+  },
+  en: {
+    shippingTitle: "Calculate International Shipping",
+    shippingDesc: "For shipping outside Italy, please select your country and enter your ZIP code.",
+    country: "Destination Country",
+    zipCode: "ZIP / Postal Code",
+    zipPlaceholder: "Enter ZIP code...",
+    blockMessage: "Enter country and ZIP code to calculate shipping and unlock checkout.",
+    zipError: "Please enter a valid ZIP code.",
+  },
+  de: {
+    shippingTitle: "Internationalen Versand berechnen",
+    shippingDesc: "Für den Versand außerhalb Italiens wählen Sie bitte Ihr Land aus und geben Sie Ihre Postleitzahl ein.",
+    country: "Bestimmungsland",
+    zipCode: "PLZ / Postleitzahl",
+    zipPlaceholder: "PLZ eingeben...",
+    blockMessage: "Geben Sie Land und PLZ ein, um den Versand zu berechnen und die Kasse freizugeben.",
+    zipError: "Bitte geben Sie eine gültige PLZ ein.",
+  },
+  nl: {
+    shippingTitle: "Internationale verzending berekenen",
+    shippingDesc: "Selecteer uw land en voer uw postcode in voor verzending buiten Italië.",
+    country: "Land van bestemming",
+    zipCode: "Postcode",
+    zipPlaceholder: "Postcode invoeren...",
+    blockMessage: "Voer land en postcode in om de verzending te berekenen en het afrekenen te ontgrendelen.",
+    zipError: "Voer een geldige postcode in.",
+  },
+  da: {
+    shippingTitle: "Beregn international forsendelse",
+    shippingDesc: "For forsendelse uden for Italien skal du vælge dit land og indtaste dit postnummer.",
+    country: "Modtagerland",
+    zipCode: "Postnummer",
+    zipPlaceholder: "Indtast postnummer...",
+    blockMessage: "Indtast land og postnummer for at beregne forsendelse og låse op for kassen.",
+    zipError: "Indtast venligst et gyldigt postnummer.",
+  },
+  no: {
+    shippingTitle: "Beregn internasjonal frakt",
+    shippingDesc: "For frakt utenfor Italia, velg land og skriv inn postnummer.",
+    country: "Destinasjonsland",
+    zipCode: "Postnummer",
+    zipPlaceholder: "Skriv inn postnummer...",
+    blockMessage: "Skriv inn land og postnummer for å beregne frakt og låse opp kassen.",
+    zipError: "Vennligst skriv inn et gyldig postnummer.",
+  },
+} as const;
+
+const countries = [
+  { code: "DE", flag: "de", name: { it: "Germania", en: "Germany", de: "Deutschland", nl: "Duitsland", da: "Tyskland", no: "Tyskland" } },
+  { code: "NL", flag: "nl", name: { it: "Paesi Bassi", en: "Netherlands", de: "Niederlande", nl: "Nederland", da: "Nederlandene", no: "Nederland" } },
+  { code: "DK", flag: "da", name: { it: "Danimarca", en: "Denmark", de: "Dänemark", nl: "Denemarken", da: "Danmark", no: "Danmark" } },
+  { code: "NO", flag: "no", name: { it: "Norvegia", en: "Norway", de: "Norwegen", nl: "Noorwegen", da: "Norge", no: "Norge" } },
+  { code: "US", flag: "us", name: { it: "Stati Uniti", en: "United States", de: "Vereinigte Staaten", nl: "Verenigde Staten", da: "USA", no: "USA" } },
+  { code: "GB", flag: "en", name: { it: "Regno Unito (Inghilterra)", en: "United Kingdom", de: "Vereinigtes Königreich", nl: "Verenigd Koninkrijk", da: "Storbritannien", no: "Storbritannia" } },
+  { code: "IT", flag: "it", name: { it: "Italia", en: "Italy", de: "Italien", nl: "Italië", da: "Italien", no: "Italia" } },
+];
+
+function getFlagLocale(country: string): string {
+  const c = country.toLowerCase();
+  if (c === "dk") return "da";
+  return c;
 }
 
 export default function CartPageClient() {
@@ -129,6 +216,44 @@ export default function CartPageClient() {
   const [promoApplied, setPromoApplied] = useState<PromoResult | null>(null);
   const [cartToast, setCartToast] = useState("");
   const [cartToastOpen, setCartToastOpen] = useState(false);
+  const defaultCountry = useMemo(() => {
+    if (locale === "de") return "DE";
+    if (locale === "nl") return "NL";
+    if (locale === "da") return "DK";
+    if (locale === "no") return "NO";
+    if (locale === "it") return "IT";
+    if (locale === "en") return "GB"; // Default fallback for en
+    return "GB";
+  }, [locale]);
+
+  const [countryCode, setCountryCode] = useState(defaultCountry);
+  const [zipCode, setZipCode] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCountryCode(defaultCountry);
+  }, [defaultCountry]);
+
+  useEffect(() => {
+    setZipCode("");
+  }, [countryCode]);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClickOutside = (event: PointerEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () => document.removeEventListener("pointerdown", handleClickOutside);
+  }, [dropdownOpen]);
+
+  const isShippingRequired = locale !== "it" && countryCode !== "IT";
+  const isZipValid = !isShippingRequired || zipCode.trim().length >= 3;
+  const isCountryNotAllowed = countryCode !== "IT";
+  const isCheckoutBlocked = (isShippingRequired && !isZipValid) || isCountryNotAllowed;
 
   const [totals, setTotals] = useState<Totals>({
     items: [],
@@ -148,7 +273,8 @@ export default function CartPageClient() {
     return catalog.filter((prod) => !inCartIds.includes(prod.id)).slice(0, 3);
   }, [catalog, lines]);
 
-  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_CENTS - totals.subtotalCents);
+  const shippingRule = getShippingRule(countryCode);
+  const remainingForFreeShipping = Math.max(0, shippingRule.freeShippingThresholdCents - totals.subtotalCents);
 
   const linesCount = lines.length;
   useEffect(() => {
@@ -200,9 +326,13 @@ export default function CartPageClient() {
     const variant = product?.variants.find((item) => item.id === lastAvailabilityNotice.variantId);
     const title = [product?.title, variant?.label].filter(Boolean).join(" - ") || t("common.product_fallback");
     const message =
-      lastAvailabilityNotice.kind === "removed"
-        ? statusText.lineRemoved(title)
-        : statusText.lineReduced(title, lastAvailabilityNotice.nextQty);
+      lastAvailabilityNotice.kind === "invalid_removed"
+        ? statusText.invalidRemoved
+        : lastAvailabilityNotice.kind === "migrated"
+          ? statusText.lineMigrated(title)
+          : lastAvailabilityNotice.kind === "removed"
+            ? statusText.lineRemoved(title)
+            : statusText.lineReduced(title, lastAvailabilityNotice.nextQty);
 
     setCartToast(message);
     setCartToastOpen(true);
@@ -238,6 +368,7 @@ export default function CartPageClient() {
               qty: item.qty,
             })),
             promotionCode: promoApplied?.code,
+            countryCode,
           }),
         });
 
@@ -267,7 +398,7 @@ export default function CartPageClient() {
     return () => {
       cancelled = true;
     };
-  }, [lines, promoApplied]);
+  }, [lines, promoApplied, countryCode]);
 
   async function handleApplyPromo() {
     const code = promoInput.trim();
@@ -340,7 +471,14 @@ export default function CartPageClient() {
           qty: item.qty,
         })),
         locale,
+        countryCode,
       };
+      if (locale !== "it") {
+        orderBody.customer = {
+          countryCode,
+          postalCode: zipCode.trim(),
+        };
+      }
       if (promoApplied?.code) {
         orderBody.promotionCode = promoApplied.code;
       }
@@ -527,8 +665,124 @@ export default function CartPageClient() {
               </div>
             </div>
           ) : (
-            <div className="mt-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_360px]">
-              <div className="flex flex-col gap-5 md:gap-6">
+            <div>
+              {/* TOP PROMOTION BANNER FOR INTERNATIONAL LOCALES */}
+              {locale !== "it" && (
+                <div className="mt-8 rounded-[5px] border border-emerald-600/15 bg-emerald-50/50 p-4 text-xs font-semibold text-emerald-900 tracking-wide flex items-start gap-3 shadow-[0_4px_12px_rgba(16,185,129,0.03)]">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-serif text-[10px] select-none">
+                    %
+                  </div>
+                  <p className="leading-relaxed">
+                    {countryCode === "US" ? (
+                      locale === "de" ? "Aktion: Flatrate-Versand ab 500 € Einkaufswert: 60 € für die USA." :
+                      locale === "nl" ? "Promo: Flat-rate verzending vanaf 500 € aankoop: 60 € voor de VS." :
+                      locale === "da" ? "Kampagne: Fast fragtpris over 500 € køb: 60 € for USA." :
+                      locale === "no" ? "Kampanje: Flat-rate frakt over 500 € kjøp: 60 € for USA." :
+                      "PROMO: Flat rate shipping for orders over 500 €: 60 € for United States."
+                    ) : (
+                      locale === "de" ? "Aktion: Flatrate-Versand ab 500 € Einkaufswert: 30 € für Europa." :
+                      locale === "nl" ? "Promo: Flat-rate verzending vanaf 500 € aankoop: 30 € voor Europa." :
+                      locale === "da" ? "Kampagne: Fast fragtpris over 500 € køb: 30 € for Europa." :
+                      locale === "no" ? "Kampanje: Flat-rate frakt over 500 € kjøp: 30 € for Europa." :
+                      "PROMO: Flat rate shipping for orders over 500 €: 30 € for Europe."
+                    )}
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-8 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_360px]">
+                <div className="flex flex-col gap-5 md:gap-6">
+                  {/* SHIPPING CALCULATOR SECTION FOR INTERNATIONAL LOCALES */}
+                  {locale !== "it" && (
+                    <div className="rounded-[5px] border border-[#132c1c]/10 bg-[#132c1c]/[0.01] p-5 shadow-[0_4px_12px_rgba(19,44,28,0.02)]">
+                      <h2 className="font-serif text-base font-semibold text-zinc-900 flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-[#132c1c]" strokeWidth={1.5} />
+                        {labels[locale as keyof typeof labels]?.shippingTitle || labels.en.shippingTitle}
+                      </h2>
+                      <p className="mt-1 text-xs text-zinc-500 max-w-xl">
+                        {labels[locale as keyof typeof labels]?.shippingDesc || labels.en.shippingDesc}
+                      </p>
+                    
+                    <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end">
+                      {/* Custom Flag Dropdown */}
+                      <div className="w-full sm:w-64" ref={dropdownRef}>
+                        <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-[0.12em] mb-1.5">
+                          {labels[locale as keyof typeof labels]?.country || labels.en.country}
+                        </label>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                            className="w-full h-10 flex items-center justify-between rounded-[5px] border border-black/10 bg-white px-3 text-xs tracking-wider font-semibold text-zinc-800 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 hover:border-black/20"
+                          >
+                            <span className="flex items-center gap-2">
+                              {countryCode && (
+                                <FlagIcon 
+                                  locale={getFlagLocale(countryCode)} 
+                                  className="h-3 w-5 rounded-[1px] shadow-sm" 
+                                />
+                              )}
+                              <span>
+                                {countries.find(c => c.code === countryCode)?.name[locale as keyof typeof countries[0]["name"]] || 
+                                 countries.find(c => c.code === countryCode)?.name.en || countryCode}
+                              </span>
+                            </span>
+                            <ChevronDown className={cn("h-4 w-4 text-zinc-400 transition-transform", dropdownOpen && "rotate-180")} />
+                          </button>
+                          
+                          {dropdownOpen && (
+                            <div className="absolute left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-[5px] border border-stone-200 bg-white shadow-lg">
+                              {countries.map((c) => (
+                                <button
+                                  key={c.code}
+                                  type="button"
+                                  onClick={() => {
+                                    setCountryCode(c.code);
+                                    setDropdownOpen(false);
+                                  }}
+                                  className={cn(
+                                    "w-full h-10 flex items-center gap-2 px-3 text-left text-xs font-semibold uppercase tracking-wider transition-colors border-b border-zinc-50 last:border-0",
+                                    c.code === countryCode 
+                                      ? "bg-emerald-50 text-emerald-700" 
+                                      : "text-zinc-700 hover:bg-zinc-50"
+                                  )}
+                                >
+                                  <FlagIcon locale={c.flag} className="h-2.5 w-4 shrink-0 rounded-[1px] shadow-sm" />
+                                  <span>{c.name[locale as keyof typeof c["name"]] || c.name.en}</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* ZIP / CAP Input */}
+                      {countryCode !== "IT" && (
+                        <div className="flex-1">
+                          <label htmlFor="shipping-zip" className="block text-[10px] font-bold text-zinc-400 uppercase tracking-[0.12em] mb-1.5">
+                            {labels[locale as keyof typeof labels]?.zipCode || labels.en.zipCode}
+                          </label>
+                          <input
+                            id="shipping-zip"
+                            type="text"
+                            value={zipCode}
+                            onChange={(e) => setZipCode(e.target.value)}
+                            placeholder={labels[locale as keyof typeof labels]?.zipPlaceholder || labels.en.zipPlaceholder}
+                            className="w-full h-10 rounded-[5px] border border-black/10 bg-white px-3 text-xs font-semibold text-zinc-800 placeholder-zinc-400 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {isCheckoutBlocked && (
+                      <div className="mt-3 text-xs text-amber-700 font-semibold flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse" />
+                        {labels[locale as keyof typeof labels]?.blockMessage || labels.en.blockMessage}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {computed.map((line) => (
                   (() => {
                     const pricingItem = pricingItemsByKey.get(`${line.productId}:${line.variantId}`);
@@ -701,25 +955,66 @@ export default function CartPageClient() {
               <aside className="h-fit rounded-[5px] border border-black/[0.06] bg-white p-6 shadow-[0_8px_24px_rgba(24,24,27,0.06)] lg:sticky lg:top-28">
                 <div className="text-sm tracking-[0.12em] text-zinc-700">{t("page.summary")}</div>
 
-                {/* PROGRESS BAR FOR FREE SHIPPING */}
+
+
+                {/* PROGRESS BAR FOR FREE SHIPPING / FLAT RATE OVERRIDE */}
                 {totals.subtotalCents > 0 && (
                   <div className="mt-4 rounded-[5px] border border-zinc-100 bg-zinc-50/50 p-3.5 text-xs text-zinc-600">
-                    {remainingForFreeShipping > 0 ? (
-                      <div>
-                        <div className="flex items-center justify-between font-medium text-zinc-800">
-                          <span>{t("page.free_shipping_progress", { amount: formatEUR(remainingForFreeShipping) })}</span>
+                    {locale === "it" ? (
+                      remainingForFreeShipping > 0 ? (
+                        <div>
+                          <div className="flex items-center justify-between font-medium text-zinc-800">
+                            <span>{t("page.free_shipping_progress", { amount: formatEUR(remainingForFreeShipping) })}</span>
+                          </div>
+                          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
+                            <div 
+                              className="h-full bg-emerald-600 transition-all duration-500 ease-out"
+                              style={{ width: `${Math.min(100, (totals.subtotalCents / shippingRule.freeShippingThresholdCents) * 100)}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
-                          <div 
-                            className="h-full bg-emerald-600 transition-all duration-500 ease-out"
-                            style={{ width: `${Math.min(100, (totals.subtotalCents / FREE_SHIPPING_THRESHOLD_CENTS) * 100)}%` }}
-                          />
+                      ) : (
+                        <div className="flex items-center gap-2 font-medium text-emerald-600">
+                          <span>{t("page.free_shipping_unlocked")}</span>
                         </div>
-                      </div>
+                      )
                     ) : (
-                      <div className="flex items-center gap-2 font-medium text-emerald-600">
-                        <span>{t("page.free_shipping_unlocked")}</span>
-                      </div>
+                      (() => {
+                        const thresholdCents = 50000; // 500.00 EUR
+                        const remainingCents = Math.max(0, thresholdCents - totals.subtotalCents);
+                        const progressPct = Math.min(100, (totals.subtotalCents / thresholdCents) * 100);
+                        const flatCostEUR = countryCode === "US" ? "60 €" : "30 €";
+                        
+                        return remainingCents > 0 ? (
+                          <div>
+                            <div className="flex flex-col gap-1.5">
+                              <span className="font-semibold text-zinc-800">
+                                {locale === "de" ? `Noch ${formatEUR(remainingCents)} bis zum Flatrate-Versand (${flatCostEUR})` :
+                                 locale === "nl" ? `Nog ${formatEUR(remainingCents)} tot flat-rate verzending (${flatCostEUR})` :
+                                 locale === "da" ? `Mangler ${formatEUR(remainingCents)} for fast fragtpris (${flatCostEUR})` :
+                                 locale === "no" ? `Mangler ${formatEUR(remainingCents)} for flat-rate frakt (${flatCostEUR})` :
+                                 `Add ${formatEUR(remainingCents)} more to unlock flat rate shipping (${flatCostEUR})`}
+                              </span>
+                            </div>
+                            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
+                              <div 
+                                className="h-full bg-emerald-600 transition-all duration-500 ease-out"
+                                style={{ width: `${progressPct}%` }}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 font-semibold text-emerald-600">
+                            <span>
+                              {locale === "de" ? `Flatrate-Versand freigeschaltet! (${flatCostEUR})` :
+                               locale === "nl" ? `Flat-rate verzending ontgrendeld! (${flatCostEUR})` :
+                               locale === "da" ? `Fast fragtpris låst op! (${flatCostEUR})` :
+                               locale === "no" ? `Flat-rate frakt låst opp! (${flatCostEUR})` :
+                               `Flat rate shipping unlocked! (${flatCostEUR})`}
+                            </span>
+                          </div>
+                        );
+                      })()
                     )}
                   </div>
                 )}
@@ -809,10 +1104,25 @@ export default function CartPageClient() {
                   type="button"
                   className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-[5px] bg-emerald-600 px-4 text-sm font-medium tracking-[0.10em] text-white shadow-sm transition-all duration-200 hover:bg-emerald-700 disabled:opacity-50"
                   onClick={handleCheckout}
-                  disabled={payLoading || empty}
+                  disabled={payLoading || empty || isCheckoutBlocked}
                 >
                   {payLoading ? t("page.opening_checkout") : t("page.go_to_checkout")}
                 </button>
+
+                {isCheckoutBlocked && (
+                  <p className="mt-2 text-center text-xs text-amber-600 font-semibold">
+                    {isCountryNotAllowed ? (
+                      locale === "de" ? "Käufe in diesem Land sind vorübergehend nicht möglich." :
+                      locale === "nl" ? "Aankopen zijn tijdelijk niet beschikbaar in het geselecteerde land." :
+                      locale === "da" ? "Køb er midlertidigt utilgængelige i det valgte land." :
+                      locale === "no" ? "Kjøp er for øyeblikket ikke tilgjengelig i det valgte landet." :
+                      locale === "it" ? "Acquisti momentaneamente non disponibili nella nazione selezionata." :
+                      "Purchases temporarily unavailable in the selected country."
+                    ) : (
+                      labels[locale as keyof typeof labels]?.blockMessage || labels.en.blockMessage
+                    )}
+                  </p>
+                )}
 
                 <p className="mt-6 text-center text-[11px] text-zinc-400">
                   {t("page.secure_payment")}
@@ -898,6 +1208,7 @@ export default function CartPageClient() {
                   </div>
                 </div>
               )}
+            </div>
             </div>
           )}
         </div>

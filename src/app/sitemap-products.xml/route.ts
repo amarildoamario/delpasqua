@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readCatalog } from "@/lib/server/catalog";
+import { readCatalog, filterSeoCatalog } from "@/lib/server/catalog";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { locales, localizedPathnames } from "@/i18n/pathnames";
 import { absoluteUrl } from "@/lib/seo";
@@ -7,13 +7,10 @@ import { absoluteUrl } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const products = await readCatalog();
+  const products = filterSeoCatalog(await readCatalog());
   const urls: string[] = [];
 
   for (const product of products) {
-    if (product.excludeFromSeo === true) {
-      continue;
-    }
     for (const locale of locales) {
       const slug = getLocalizedProductSlug(product, locale);
       const template = localizedPathnames["/shop/[prodotto]"]?.[locale] || "/shop/[prodotto]";

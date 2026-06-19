@@ -2,6 +2,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { allocateInvoiceNumberTx } from "@/lib/server/invoiceNumber";
 import { commitReservedToSoldOrThrow } from "@/lib/server/inventory";
 import { allocateOrderNumberTx } from "@/lib/server/orderNumber";
+import { assertOrderInvariants } from "@/lib/server/orderStatus";
 
 type Tx = Prisma.TransactionClient;
 
@@ -137,5 +138,6 @@ export async function applyPaidOrderInvariantsTx(
     },
   });
 
+  assertOrderInvariants(updated);
   return updated;
 }

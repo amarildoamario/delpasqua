@@ -6,21 +6,27 @@ spuntare ogni voce prima di collegare definitivamente delpasqua.com al progetto 
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-02
-- OpenItems: 25
+- LastVerified: 2026-06-07
+- OpenItems: 23
 - AgentAction: non trattare questo file come backlog solo di codice; qui dentro convivono task di codice, QA manuale, contenuto editoriale e go-live produzione.
-- Note: al 2026-06-02 i gap reali ancora confermati dal repo sono soprattutto placeholder pubblici, recensioni hardcoded, verifiche manuali mobile/checkout/form contatti e task post go-live/Search Console.
+- Note: al 2026-06-07 i gap locali sui placeholder pubblici sono stati chiusi. Il box recensioni resta intenzionalmente in pagina come sezione da collegare a Google; restano inoltre verifiche manuali mobile/checkout/form contatti, dominio, Search Console e task post go-live.
 
-## Note Operative Verificate Al 2026-06-02
+## Lettura Rapida
+
+- I placeholder pubblici di contenuto sono stati rimossi; il box recensioni resta aperto come integrazione futura con Google.
+- Le verifiche manuali pre-go-live e post go-live sono duplicate intenzionalmente anche in `docs/to_check_live/README.md`, che va usato come checklist operativa.
+- Le voci Search Console, dominio, HTTPS e redirect restano qui come contesto SEO, ma non vanno lette come lavoro locale sul repo finche non esiste l'ambiente live definitivo.
+
+## Note Operative Verificate Al 2026-06-07
 
 - Preview / `.vercel.app`: il blocco SEO base esiste gia`:
   - `src/app/robots.ts` disabilita interamente l'indicizzazione in preview / host `vercel.app`;
   - `src/proxy.ts` aggiunge `X-Robots-Tag: noindex, nofollow` sui domini non finali in produzione.
-- Placeholder pubblici ancora presenti:
-  - `src/app/[locale]/parita-di-genere/page.tsx`
-  - `src/app/[locale]/degustazioni/page.tsx` usa ancora `placeholder-degustazione.jpg` anche nel JSON-LD
-- Recensioni non definitive ancora presenti:
-  - `src/components/HomeTrustAndReviews.tsx` e` ancora popolato con recensioni hardcoded e testo tipo "Google reviews ready to connect".
+- Placeholder pubblici rimossi il 2026-06-07:
+  - `src/app/[locale]/parita-di-genere/page.tsx` contiene ora testo pubblico reale di impegno aziendale;
+  - `src/app/[locale]/degustazioni/page.tsx` usa ora `/blog/degustazione-olio.avif` anche nel JSON-LD.
+- Recensioni non definitive:
+  - `src/components/HomeTrustAndReviews.tsx` mantiene il box recensioni e il layout Google-ready per scelta operativa; va collegato a recensioni Google reali prima di considerare chiusa la voce.
 - Task da non trattare come implementazione locale pura:
   - collegamento dominio, HTTPS, redirect www/non-www;
   - invio sitemap a Search Console;
@@ -519,8 +525,8 @@ https://delpasqua.com/sitemap.xml
 12. CONTENUTO E PLACEHOLDER
 ────────────────────────────────────
 
-[⏳ TODO] Rimuovere ogni testo placeholder
-    (Nota: restano placeholder pubblici in /parita-di-genere/ e nella pagina /degustazioni/)
+[✅ RISOLTO] Rimuovere ogni testo placeholder
+    (Nota 2026-06-07: sostituito il placeholder di /parita-di-genere/ con testo pubblico reale; sostituita l'immagine placeholder di /degustazioni/ e del relativo JSON-LD con /blog/degustazione-olio.avif)
 
 [✅ RISOLTO] Rimuovere “Spazio per raccontare…”
     (Nota: placeholder rimossi dalle sezioni descrittive di /produzione/)
@@ -543,8 +549,8 @@ https://delpasqua.com/sitemap.xml
 
 [⏳ TODO] Verificare che tutte le recensioni mostrate siano vere
 
-[⏳ TODO] Rimuovere recensioni finte o placeholder
-    (Nota: HomeTrustAndReviews.tsx e' ancora popolato con recensioni hardcoded non definitive; da chiudere prima del go-live)
+[⏳ TODO] Collegare il box recensioni a Google o sostituirlo con recensioni reali
+    (Nota 2026-06-07: il box HomeTrustAndReviews.tsx resta intenzionalmente in pagina; le recensioni hardcoded sono un placeholder operativo da sostituire/collegare)
 
 ────────────────────────────────────
 13. TITLE, META, H1
@@ -682,7 +688,7 @@ La fase routing principale è completata quando:
 
 [✅ RISOLTO] Le pagine inglesi sono sotto /en
 
-[⏳ TODO] Non ci sono testi placeholder
+[✅ RISOLTO] Non ci sono testi placeholder
 
 [✅ RISOLTO] Non ci sono link italiani che portano all’inglese
 

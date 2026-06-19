@@ -1,4 +1,5 @@
 import type { OrderStatus, Prisma } from "@/generated/prisma/client";
+import { assertOrderInvariants } from "@/lib/server/orderStatus";
 
 type Tx = Prisma.TransactionClient;
 
@@ -99,5 +100,6 @@ export async function applyStripeRefundToOrderTx(tx: Tx, args: ApplyStripeRefund
     });
   }
 
+  assertOrderInvariants(updated);
   return updated;
 }

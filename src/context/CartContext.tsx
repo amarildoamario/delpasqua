@@ -9,11 +9,16 @@ import React, {
   useRef,
   useState,
 } from "react";
-import productsStatic from "@/db/products.json";
-import { makeInventorySku } from "@/lib/inventorySku";
+import {
+  buildVariantLocationByKey,
+  clampCartQty,
+  getCatalogNormalizationNotice as buildCatalogNormalizationNotice,
+  getCartLineSku,
+  normalizeAvailableQty,
+  normalizeCartLines,
+} from "@/lib/cartNormalization";
+import type { AvailabilityMap, CartAvailabilityNotice } from "@/lib/cartNormalization";
 import type { CartLine, Product } from "@/lib/shopTypes";
-
-type AvailabilityMap = Record<string, number>;
 
 export type CartAddResult = {
   status: "added" | "adjusted" | "rejected";
@@ -24,16 +29,7 @@ export type CartAddResult = {
   finalQty: number;
   availableQty: number | null;
 };
-
-export type CartAvailabilityNotice = {
-  id: number;
-  kind: "reduced" | "removed";
-  productId: string;
-  variantId: string;
-  prevQty: number;
-  nextQty: number;
-  availableQty: number;
-};
+export type { CartAvailabilityNotice } from "@/lib/cartNormalization";
 
 type CartState = {
   lines: CartLine[];
@@ -53,12 +49,6 @@ type CartState = {
 const CartContext = createContext<CartState | null>(null);
 const LS_KEY = "dp_cart_v1";
 
-function clampQty(qty: number) {
-  const n = Math.trunc(qty);
-  if (!Number.isFinite(n) || n <= 0) return 0;
-  return Math.min(99, n);
-}
-
 function sameLines(a: CartLine[], b: CartLine[]) {
   if (a.length !== b.length) return false;
   return a.every((line, index) => {
@@ -71,16 +61,17 @@ function sameLines(a: CartLine[], b: CartLine[]) {
   });
 }
 
-function normalizeAvailableQty(value: number | null | undefined) {
-  if (typeof value !== "number") return null;
-  return Math.max(0, Math.min(99, Math.trunc(value)));
-}
-
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({
+  children,
+  initialCatalog,
+}: {
+  children: React.ReactNode;
+  initialCatalog: Product[] | unknown[];
+}) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [availabilityBySku, setAvailabilityBySku] = useState<AvailabilityMap>({});
-  const [catalog, setCatalog] = useState<Product[]>(productsStatic as unknown as Product[]);
+  const [catalog, setCatalog] = useState<Product[]>(initialCatalog as Product[]);
   const [lastAvailabilityNotice, setLastAvailabilityNotice] = useState<CartAvailabilityNotice | null>(null);
 
   const linesRef = useRef<CartLine[]>([]);
@@ -110,62 +101,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const variantByKey = useMemo(() => {
-    const map = new Map<string, Product["variants"][number]>();
-    for (const product of catalog) {
-      for (const variant of product.variants) {
-        map.set(`${product.id}::${variant.id}`, variant);
-      }
-    }
-    return map;
-  }, [catalog]);
+  const variantLocationByKey = useMemo(() => buildVariantLocationByKey(catalog), [catalog]);
 
   const getSku = useCallback(
     (productId: string, variantId: string) => {
-      const variant = variantByKey.get(`${productId}::${variantId}`);
-      if (!variant) return null;
-      return makeInventorySku(productId, variantId);
+      return getCartLineSku(productId, variantId, variantLocationByKey);
     },
-    [variantByKey]
+    [variantLocationByKey]
   );
 
-  const normalizeCartLines = useCallback(
-    (candidateLines: CartLine[], availability: AvailabilityMap) => {
-      const grouped = new Map<string, CartLine>();
-
-      for (const rawLine of candidateLines) {
-        const key = `${rawLine.productId}::${rawLine.variantId}`;
-        const variant = variantByKey.get(key);
-        if (!variant) continue;
-
-        const nextQty = clampQty(rawLine.qty);
-        if (nextQty <= 0) continue;
-
-        const sku = getSku(rawLine.productId, rawLine.variantId);
-        const knownAvailability =
-          sku && typeof availability[sku] === "number"
-            ? Math.max(0, Math.min(99, Math.trunc(availability[sku])))
-            : null;
-
-        if (knownAvailability === 0) continue;
-
-        const existing = grouped.get(key);
-        const mergedQty = (existing?.qty ?? 0) + nextQty;
-        const clampedQty =
-          knownAvailability === null ? Math.min(99, mergedQty) : Math.min(knownAvailability, mergedQty);
-
-        if (clampedQty <= 0) continue;
-
-        grouped.set(key, {
-          productId: rawLine.productId,
-          variantId: rawLine.variantId,
-          qty: clampedQty,
-        });
-      }
-
-      return [...grouped.values()];
+  const getCatalogNormalizationNotice = useCallback(
+    (candidateLines: CartLine[]) => {
+      return buildCatalogNormalizationNotice({
+        candidateLines,
+        variantLocationByKey,
+        nextNoticeId: () => ++noticeSeqRef.current,
+      });
     },
-    [getSku, variantByKey]
+    [variantLocationByKey]
   );
 
   const fetchAvailabilityForSkus = useCallback(async (skus: string[]) => {
@@ -199,7 +152,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       availability: AvailabilityMap;
     }): CartAddResult => {
       const { prevLines, nextLines, line, availability } = args;
-      const requestedQty = clampQty(line.qty);
+      const requestedQty = clampCartQty(line.qty);
       const prevQty =
         prevLines.find((item) => item.productId === line.productId && item.variantId === line.variantId)?.qty ?? 0;
       const finalQty =
@@ -232,15 +185,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       try {
         const raw = localStorage.getItem(LS_KEY);
         if (raw) {
-          const parsed = JSON.parse(raw) as CartLine[];
-          const next = normalizeCartLines(parsed, {});
+          const decoded: unknown = JSON.parse(raw);
+          const parsed = Array.isArray(decoded) ? (decoded as CartLine[]) : [];
+          const next = normalizeCartLines({
+            candidateLines: parsed,
+            availability: {},
+            variantLocationByKey,
+          });
+          const notice = getCatalogNormalizationNotice(parsed);
           linesRef.current = next;
           setLines(next);
+          if (notice) setLastAvailabilityNotice((current) => current ?? notice);
         }
       } catch {}
       setHydrated(true);
     });
-  }, [normalizeCartLines]);
+  }, [getCatalogNormalizationNotice, variantLocationByKey]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -283,7 +243,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!hydrated) return;
     queueMicrotask(() => {
       const prev = linesRef.current;
-      const next = normalizeCartLines(prev, availabilityBySku);
+      const next = normalizeCartLines({
+        candidateLines: prev,
+        availability: availabilityBySku,
+        variantLocationByKey,
+      });
       if (sameLines(prev, next)) return;
 
       const nextByKey = new Map(next.map((line) => [`${line.productId}::${line.variantId}`, line.qty] as const));
@@ -296,7 +260,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const nextQty = nextByKey.get(`${firstChanged.productId}::${firstChanged.variantId}`) ?? 0;
         const sku = getSku(firstChanged.productId, firstChanged.variantId);
         const availableQty = sku ? normalizeAvailableQty(availabilityBySku[sku]) ?? 0 : 0;
-        setLastAvailabilityNotice({
+        setLastAvailabilityNotice((current) => current ?? {
           id: ++noticeSeqRef.current,
           kind: nextQty > 0 ? "reduced" : "removed",
           productId: firstChanged.productId,
@@ -310,7 +274,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       linesRef.current = next;
       setLines(next);
     });
-  }, [availabilityBySku, getSku, hydrated, normalizeCartLines]);
+  }, [availabilityBySku, getSku, hydrated, variantLocationByKey]);
 
   const getAvailableQty = useCallback(
     (productId: string, variantId: string) => {
@@ -346,7 +310,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         candidate.push(line);
       }
 
-      const next = normalizeCartLines(candidate, mergedAvailability);
+      const next = normalizeCartLines({
+        candidateLines: candidate,
+        availability: mergedAvailability,
+        variantLocationByKey,
+      });
       linesRef.current = next;
       setLines(next);
 
@@ -357,7 +325,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         availability: mergedAvailability,
       });
     },
-    [buildAddResult, fetchAvailabilityForSkus, getSku, mergeAvailability, normalizeCartLines]
+    [buildAddResult, fetchAvailabilityForSkus, getSku, mergeAvailability, variantLocationByKey]
   );
 
   const remove = useCallback((productId: string, variantId: string) => {
@@ -370,16 +338,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const setQty = useCallback(
     (productId: string, variantId: string, qty: number) => {
-      const next = normalizeCartLines(
-        linesRef.current.map((line) =>
+      const next = normalizeCartLines({
+        candidateLines: linesRef.current.map((line) =>
           line.productId === productId && line.variantId === variantId ? { ...line, qty } : line
         ),
-        availabilityRef.current
-      );
+        availability: availabilityRef.current,
+        variantLocationByKey,
+      });
       linesRef.current = next;
       setLines(next);
     },
-    [normalizeCartLines]
+    [variantLocationByKey]
   );
 
   const clear = useCallback(() => {

@@ -15,7 +15,7 @@ import HomeUniqueness from "@/components/HomeUniqueness";
 import ShopHighlights from "@/components/ShopHighlights";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
-import { readCatalogWithMerch } from "@/lib/server/catalog";
+import { readPublicCatalogWithMerch } from "@/lib/server/catalog";
 
 export const revalidate = 3600;
 
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const products = await readCatalogWithMerch();
+  const products = await readPublicCatalogWithMerch();
 
   // Read gallery images dynamically from public/home_gallery at build/request time
   let galleryImages: string[] = [];

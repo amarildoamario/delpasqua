@@ -28,7 +28,8 @@ import {
   X,
 } from "lucide-react";
 
-import { FREE_SHIPPING_THRESHOLD_CENTS, SHIPPING_FLAT_CENTS as SHIPPING_CENTS } from "@/lib/constants";
+import { SHIPPING_FLAT_CENTS as SHIPPING_CENTS } from "@/lib/constants";
+import { getShippingRule } from "@/lib/shippingConfig";
 
 type PromoResult = {
   code: string;
@@ -61,27 +62,48 @@ const drawerStatusCopy = {
   it: {
     lineReduced: (title: string, qty: number) => `${title} aggiornato a ${qty} per disponibilita limitata.`,
     lineRemoved: (title: string) => `${title} rimosso dal carrello per esaurimento stock.`,
+    lineMigrated: (title: string) => `${title} aggiornato nel carrello dopo una modifica al catalogo.`,
+    invalidRemoved: "Un prodotto non piu disponibile e stato rimosso dal carrello.",
   },
   en: {
     lineReduced: (title: string, qty: number) => `${title} updated to ${qty} because of limited stock.`,
     lineRemoved: (title: string) => `${title} was removed from the cart because it is sold out.`,
+    lineMigrated: (title: string) => `${title} was updated in the cart after a catalog change.`,
+    invalidRemoved: "A product that is no longer available was removed from the cart.",
   },
   de: {
     lineReduced: (title: string, qty: number) => `${title} wurde wegen begrenztem Bestand auf ${qty} angepasst.`,
     lineRemoved: (title: string) => `${title} wurde aus dem Warenkorb entfernt, da es ausverkauft ist.`,
+    lineMigrated: (title: string) => `${title} wurde nach einer Katalogaenderung im Warenkorb aktualisiert.`,
+    invalidRemoved: "Ein nicht mehr verfuegbares Produkt wurde aus dem Warenkorb entfernt.",
   },
   nl: {
     lineReduced: (title: string, qty: number) => `${title} aangepast naar ${qty} vanwege beperkte voorraad.`,
     lineRemoved: (title: string) => `${title} is uit de winkelwagen verwijderd omdat het is uitverkocht.`,
+    lineMigrated: (title: string) => `${title} is na een cataloguswijziging bijgewerkt in de winkelwagen.`,
+    invalidRemoved: "Een product dat niet meer beschikbaar is, is uit de winkelwagen verwijderd.",
   },
   da: {
     lineReduced: (title: string, qty: number) => `${title} blev justeret til ${qty} pga. begraenset lager.`,
     lineRemoved: (title: string) => `${title} blev fjernet fra kurven, fordi varen er udsolgt.`,
+    lineMigrated: (title: string) => `${title} blev opdateret i kurven efter en katalogaendring.`,
+    invalidRemoved: "Et produkt, der ikke laengere er tilgaengeligt, blev fjernet fra kurven.",
   },
   no: {
     lineReduced: (title: string, qty: number) => `${title} ble justert til ${qty} paa grunn av begrenset lager.`,
     lineRemoved: (title: string) => `${title} ble fjernet fra handlekurven fordi varen er utsolgt.`,
+    lineMigrated: (title: string) => `${title} ble oppdatert i handlekurven etter en katalogendring.`,
+    invalidRemoved: "Et produkt som ikke lenger er tilgjengelig, ble fjernet fra handlekurven.",
   },
+} as const;
+
+const drawerLabels = {
+  it: "Calcola la spedizione nel carrello per procedere",
+  en: "Calculate shipping in the cart to proceed",
+  de: "Berechnen Sie den Versand im Warenkorb, um fortzufahren",
+  nl: "Bereken de verzendkosten in de winkelwagen om door te gaan",
+  da: "Beregn forsendelse i indkøbskurven for at fortsætte",
+  no: "Beregn frakt i handlekurven for å fortsette",
 } as const;
 
 export default function CartDrawer({
@@ -105,6 +127,19 @@ export default function CartDrawer({
     clearAvailabilityNotice,
   } = useCart();
   const statusText = drawerStatusCopy[(locale as keyof typeof drawerStatusCopy)] ?? drawerStatusCopy.it;
+
+  const countryCode = useMemo(() => {
+    if (locale === "de") return "DE";
+    if (locale === "nl") return "NL";
+    if (locale === "da") return "DK";
+    if (locale === "no") return "NO";
+    if (locale === "it") return "IT";
+    if (locale === "en") return "GB"; // Default fallback for en
+    return "GB";
+  }, [locale]);
+
+  const shippingRule = getShippingRule(countryCode);
+  const isCheckoutBlocked = locale !== "it";
 
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
@@ -169,9 +204,13 @@ export default function CartDrawer({
     const variant = product?.variants.find((item) => item.id === lastAvailabilityNotice.variantId);
     const title = [product?.title, variant?.label].filter(Boolean).join(" - ") || t("common.product_fallback");
     const message =
-      lastAvailabilityNotice.kind === "removed"
-        ? statusText.lineRemoved(title)
-        : statusText.lineReduced(title, lastAvailabilityNotice.nextQty);
+      lastAvailabilityNotice.kind === "invalid_removed"
+        ? statusText.invalidRemoved
+        : lastAvailabilityNotice.kind === "migrated"
+          ? statusText.lineMigrated(title)
+          : lastAvailabilityNotice.kind === "removed"
+            ? statusText.lineRemoved(title)
+            : statusText.lineReduced(title, lastAvailabilityNotice.nextQty);
 
     setStockToast(message);
     setStockToastOpen(true);
@@ -179,7 +218,7 @@ export default function CartDrawer({
   }, [catalog, clearAvailabilityNotice, lastAvailabilityNotice, open, statusText, t]);
 
   const subtotal = totals.subtotalCents;
-  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_CENTS - subtotal);
+  const remainingForFreeShipping = Math.max(0, shippingRule.freeShippingThresholdCents - subtotal);
   const shippingPreview = totals.shippingCents;
   const discountCents = totals.discountCents;
   const total = totals.totalCents;
@@ -213,6 +252,7 @@ export default function CartDrawer({
               qty: item.qty,
             })),
             promotionCode: promoApplied?.code,
+            countryCode,
           }),
         });
 
@@ -242,7 +282,7 @@ export default function CartDrawer({
     return () => {
       cancelled = true;
     };
-  }, [lines, promoApplied]);
+  }, [lines, promoApplied, countryCode]);
 
   async function handleApplyPromo() {
     const code = promoInput.trim();
@@ -345,7 +385,7 @@ export default function CartDrawer({
                     <span>
                       {t("drawer.free_shipping_above")}{" "}
                       <span className="font-medium text-zinc-900">
-                        {formatEUR(FREE_SHIPPING_THRESHOLD_CENTS)}
+                        {formatEUR(shippingRule.freeShippingThresholdCents)}
                       </span>
                       . {t("drawer.free_shipping_missing")}{" "}
                       <span className="font-medium text-zinc-900">
@@ -524,7 +564,7 @@ export default function CartDrawer({
 
               <button
                 type="button"
-                disabled={lines.length === 0 || payLoading}
+                disabled={lines.length === 0 || payLoading || isCheckoutBlocked}
                 onClick={async () => {
                   if (payLoading) return;
                   setPayError(null);
@@ -557,6 +597,12 @@ export default function CartDrawer({
                 )}
               </button>
             </div>
+
+            {isCheckoutBlocked && (
+              <p className="mt-2 text-center text-xs text-amber-600 font-semibold">
+                {drawerLabels[locale as keyof typeof drawerLabels] || drawerLabels.en}
+              </p>
+            )}
 
             <p className="mt-2.5 sm:mt-4 text-[10px] sm:text-xs text-zinc-500">
               {t("drawer.server_note")}

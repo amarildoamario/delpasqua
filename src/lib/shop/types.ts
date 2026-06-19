@@ -6,6 +6,7 @@ export type ProductVariant = {
   priceCents: number;
 
   // new
+  cartAliases?: Array<{ productId: string; variantId: string }>;
   sku?: string;
   imageSrc?: string;
   imageAlt?: string;

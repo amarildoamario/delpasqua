@@ -177,32 +177,37 @@ export default async function StoriaPage({ params }: { params: Promise<{ locale:
           </div>
 
           {/* Closing statement - Full width card */}
-          <div className="mt-24 rounded-[2rem] bg-[#1C1917] p-8 lg:p-12 xl:p-16">
-            <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div className="group/card relative mt-24 overflow-hidden rounded-[5px] border border-[#2E2A27] bg-gradient-to-br from-[#262220] via-[#1C1917] to-[#12100F] p-8 lg:p-12 xl:p-16 shadow-xl transition-all duration-500 hover:border-[#8B7355]/40">
+            {/* Subtle background glow */}
+            <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#8B7355]/5 blur-[120px] pointer-events-none transition-all duration-700 group-hover/card:bg-[#8B7355]/10" />
+            <div className="absolute -left-24 -bottom-24 h-96 w-96 rounded-full bg-[#3D5A3D]/5 blur-[120px] pointer-events-none transition-all duration-700 group-hover/card:bg-[#3D5A3D]/10" />
+
+            <div className="relative z-10 grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
-                <div className="text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+                <div className="inline-flex items-center gap-3 text-[10px] font-semibold tracking-[0.25em] text-[#8B7355] uppercase">
+                  <span className="h-px w-8 bg-[#8B7355]/50" />
                   {t("philosophy.subtitle")}
                 </div>
 
-                <h2 className="mt-4 font-serif text-3xl font-light leading-[1.1] tracking-tight text-[#FAFAF9] lg:text-4xl xl:text-5xl">
+                <h2 className="mt-6 font-serif text-3xl font-light leading-[1.15] tracking-tight text-[#FAFAF9] lg:text-4xl xl:text-5xl">
                   {t("philosophy.title_part1")} <br />
                   <span className="italic text-[#B8860B]">{t("philosophy.title_italic")}</span>
                 </h2>
 
-                <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#A8A29E] lg:text-base">
+                <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#D6D3D1] lg:text-base">
                   {t("philosophy.description")}
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#44403C] px-4 py-2 text-xs text-[#D6D3D1]">
+                  <span className="inline-flex items-center gap-2 rounded-[5px] border border-[#3E3A36] bg-[#292524]/40 px-3.5 py-2 text-xs font-medium text-[#D6D3D1] transition-all duration-300 hover:bg-[#3E3A36]/60 hover:text-white hover:border-[#8B7355]/40">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#3D5A3D]" />
                     {t("philosophy.tags.tradition")}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#44403C] px-4 py-2 text-xs text-[#D6D3D1]">
+                  <span className="inline-flex items-center gap-2 rounded-[5px] border border-[#3E3A36] bg-[#292524]/40 px-3.5 py-2 text-xs font-medium text-[#D6D3D1] transition-all duration-300 hover:bg-[#3E3A36]/60 hover:text-white hover:border-[#8B7355]/40">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#B8860B]" />
                     {t("philosophy.tags.innovation")}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#44403C] px-4 py-2 text-xs text-[#D6D3D1]">
+                  <span className="inline-flex items-center gap-2 rounded-[5px] border border-[#3E3A36] bg-[#292524]/40 px-3.5 py-2 text-xs font-medium text-[#D6D3D1] transition-all duration-300 hover:bg-[#3E3A36]/60 hover:text-white hover:border-[#8B7355]/40">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#8B7355]" />
                     {t("philosophy.tags.quality")}
                   </span>
@@ -210,12 +215,18 @@ export default async function StoriaPage({ params }: { params: Promise<{ locale:
               </div>
 
               <div className="lg:pl-8">
-                <ImageBox
-                  src={STORIA_IMAGES.territorio}
-                  alt="Territorio"
-                  variant="dark"
-                  aspect="landscape"
-                />
+                <div className="group/img relative overflow-hidden rounded-[5px] border border-[#44403C] bg-[#292524] shadow-lg">
+                  <div className="relative w-full aspect-[4/3]">
+                    <Image
+                      src={STORIA_IMAGES.territorio}
+                      alt="Territorio"
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent transition-opacity duration-500 group-hover/img:opacity-85" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

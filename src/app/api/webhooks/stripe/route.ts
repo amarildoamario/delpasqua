@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/server/prisma";
 import { releaseReserved } from "@/lib/server/inventory";
 import { processOutboxBatch } from "@/lib/server/outbox";
 import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
+import {
+  extractOrderIdFromCheckoutSession,
+  registerIncomingStripeWebhookEvent,
+  safeWebhookPayloadSnippet,
+} from "@/lib/server/stripeWebhook";
 import { sendTastingBookingAdminEmail, sendTastingConfirmedCustomerEmail } from "@/lib/server/tastingEmail";
 
 export const runtime = "nodejs";
@@ -14,8 +20,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
 });
 
-function safeSnippet(raw: string, maxLen = 800) {
-  return raw.length > maxLen ? raw.slice(0, maxLen) : raw;
+type Tx = Prisma.TransactionClient;
+
+function getStripeErrorMessage(err: unknown) {
+  if (err instanceof Error && err.message) return err.message;
+  if (typeof err === "string" && err.trim()) return err;
+  return "runtime error";
+}
+
+function getSessionOrderId(session: Stripe.Checkout.Session) {
+  return extractOrderIdFromCheckoutSession(session);
 }
 
 function getSessionIds(session: Stripe.Checkout.Session) {
@@ -43,6 +57,42 @@ function getCustomerFromSession(session: Stripe.Checkout.Session) {
 function isValidAddress(addr: Stripe.Address | null) {
   if (!addr) return false;
   return Boolean(addr.line1 && addr.city && addr.postal_code && addr.country);
+}
+
+function verifyShippingCountryAndZip(
+  order: { countryCode: string | null; postalCode: string | null },
+  addr: Stripe.Address | null
+): { ok: boolean; error?: string } {
+  if (!order.countryCode || order.countryCode.toUpperCase() === "IT") {
+    // Italian order or no country code saved, bypass CAP check
+    return { ok: true };
+  }
+
+  if (!addr) {
+    return { ok: false, error: "Missing address" };
+  }
+
+  const finalCountry = (addr.country ?? "").trim().toUpperCase();
+  const finalZip = (addr.postal_code ?? "").trim().replace(/\s+/g, "").toUpperCase();
+
+  const expectedCountry = (order.countryCode ?? "").trim().toUpperCase();
+  const expectedZip = (order.postalCode ?? "").trim().replace(/\s+/g, "").toUpperCase();
+
+  if (finalCountry !== expectedCountry) {
+    return {
+      ok: false,
+      error: `Country mismatch: calculated for ${expectedCountry} but checked out with ${finalCountry}`,
+    };
+  }
+
+  if (finalZip !== expectedZip) {
+    return {
+      ok: false,
+      error: `ZIP code mismatch: calculated for ${expectedZip} (${expectedCountry}) but checked out with ${finalZip} (${finalCountry})`,
+    };
+  }
+
+  return { ok: true };
 }
 
 /** -------------------- PAYMENT METHOD (REAL USED) -------------------- **/
@@ -156,6 +206,93 @@ async function getRealPaymentMethodLabelFromPaymentIntent(paymentIntentId: strin
 
 /** ------------------------------------------------------------------- **/
 
+async function loadOrderForSession(session: Stripe.Checkout.Session) {
+  const order = await prisma.order.findUnique({
+    where: { stripeCheckoutSessionId: session.id },
+    include: { items: true },
+  });
+
+  if (order) return order;
+
+  const orderId = getSessionOrderId(session);
+  if (!orderId) return null;
+
+  return prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+}
+
+type WebhookOrder = NonNullable<Awaited<ReturnType<typeof loadOrderForSession>>>;
+
+async function markPaidOrderForManualReviewTx(
+  tx: Tx,
+  args: {
+    order: WebhookOrder;
+    eventId: string;
+    sessionId: string;
+    paymentIntentId: string | null;
+    paymentMethodLabel: string | null;
+    eventType: "STRIPE_VALIDATION_REQUIRES_REVIEW" | "STRIPE_ASYNC_VALIDATION_REQUIRES_REVIEW";
+    message: string;
+    note: string;
+    customer: {
+      email: string;
+      name: string;
+      phone: string | null;
+      addr: Stripe.Address | null;
+    };
+  }
+) {
+  if (args.order.status === "IN_ATTESA") {
+    await applyPaidOrderInvariantsTx(tx, {
+      orderId: args.order.id,
+      source: "stripe_webhook",
+      paymentIntentId: args.paymentIntentId,
+      paymentMethod: args.paymentMethodLabel,
+      stripeEventId: args.eventId,
+      stripeSessionId: args.sessionId,
+      customer: {
+        email: args.customer.email,
+        fullName: args.customer.name,
+        phone: args.customer.phone,
+        addressLine1: args.customer.addr?.line1 ?? null,
+        addressLine2: args.customer.addr?.line2 ?? null,
+        city: args.customer.addr?.city ?? null,
+        province: args.customer.addr?.state ?? "",
+        postalCode: args.customer.addr?.postal_code ?? null,
+        countryCode: args.customer.addr?.country ?? null,
+      },
+    });
+  }
+
+  await tx.order.update({
+    where: { id: args.order.id },
+    data: {
+      isFlagged: true,
+      notes: args.note,
+      ...(args.paymentMethodLabel ? { paymentMethod: args.paymentMethodLabel } : {}),
+      ...(args.paymentIntentId ? { stripePaymentIntentId: args.paymentIntentId } : {}),
+    },
+  });
+
+  await tx.orderEvent.create({
+    data: {
+      orderId: args.order.id,
+      type: args.eventType,
+      message: args.message,
+      metaJson: JSON.stringify({
+        sessionId: args.sessionId,
+        paymentIntentId: args.paymentIntentId,
+        paymentMethod: args.paymentMethodLabel,
+        reason: args.note,
+        paymentCaptured: true,
+        requiresManualReview: true,
+      }),
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature");
   if (!sig) return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
@@ -178,7 +315,7 @@ export async function POST(req: NextRequest) {
           outcome: "failed_signature",
           attempts: 1,
           errorMessage: e?.message ?? "signature verification failed",
-          payloadSnippet: safeSnippet(rawBody),
+          payloadSnippet: safeWebhookPayloadSnippet(rawBody),
           processedAt: new Date(),
         },
       });
@@ -186,25 +323,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Webhook signature verification failed" }, { status: 400 });
   }
 
-  // Idempotenza evento
-  try {
-    await prisma.stripeWebhookEvent.create({
-      data: {
-        eventId: event.id,
-        type: event.type,
-        livemode: event.livemode,
-        created: event.created,
-        payloadSnippet: safeSnippet(rawBody),
-        outcome: "ignored",
-        attempts: 1,
+  const registration = await registerIncomingStripeWebhookEvent(prisma.stripeWebhookEvent, {
+    event,
+    rawBody,
+  });
+  if (!registration.shouldProcess) {
+    return NextResponse.json(
+      {
+        received: true,
+        duplicate: registration.duplicate,
+        previousOutcome: registration.previousOutcome,
       },
-    });
-  } catch {
-    await prisma.stripeWebhookEvent.updateMany({
-      where: { eventId: event.id },
-      data: { outcome: "duplicate", processedAt: new Date() },
-    });
-    return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
+      { status: 200 }
+    );
   }
 
   try {
@@ -215,10 +346,7 @@ export async function POST(req: NextRequest) {
         const { sessionId, paymentIntentId } = getSessionIds(session);
         const { email, name, phone, addr } = getCustomerFromSession(session);
 
-        const order = await prisma.order.findUnique({
-          where: { stripeCheckoutSessionId: sessionId },
-          include: { items: true },
-        });
+        const order = await loadOrderForSession(session);
 
         if (!order) {
           // Check if it matches a TastingBooking!
@@ -316,31 +444,20 @@ export async function POST(req: NextRequest) {
         // Validazione address+name
         if (!name || !isValidAddress(addr)) {
           await prisma.$transaction(async (tx) => {
-            await releaseReserved(
-              tx,
-              {
-                orderId: order.id,
-                lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
-              }
-            );
-
-            await tx.order.update({
-              where: { id: order.id },
-              data: {
-                status: "FALLITO",
-                isFlagged: true,
-                notes: "Invalid/missing address from Stripe customer_details",
-                // opzionale: salvi comunque il metodo se vuoi diagnostica
-                ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
-              },
-            });
-
-            await tx.orderEvent.create({
-              data: {
-                orderId: order.id,
-                type: "STRIPE_VALIDATION_FAILED",
-                message: "Missing required shipping fields from Stripe",
-                metaJson: JSON.stringify({ sessionId }),
+            await markPaidOrderForManualReviewTx(tx, {
+              order,
+              eventId: event.id,
+              sessionId,
+              paymentIntentId,
+              paymentMethodLabel,
+              eventType: "STRIPE_VALIDATION_REQUIRES_REVIEW",
+              message: "Pagamento ricevuto, ma i dati di spedizione richiedono revisione manuale",
+              note: "Invalid/missing address from Stripe customer_details",
+              customer: {
+                email,
+                name,
+                phone,
+                addr,
               },
             });
           });
@@ -351,13 +468,50 @@ export async function POST(req: NextRequest) {
               orderId: order.id,
               sessionId,
               paymentIntentId,
-              outcome: "failed_validation",
+              outcome: "processed",
               processedAt: new Date(),
-              errorMessage: "Invalid customer_details.address/name (inventory released)",
+              errorMessage: "Invalid customer_details.address/name (paid order flagged for manual review)",
             },
           });
 
-          return NextResponse.json({ received: true }, { status: 200 });
+          return NextResponse.json({ received: true, review: true }, { status: 200 });
+        }
+
+        // Validazione nazione/CAP per ordini internazionali
+        const verification = verifyShippingCountryAndZip(order, addr);
+        if (!verification.ok) {
+          await prisma.$transaction(async (tx) => {
+            await markPaidOrderForManualReviewTx(tx, {
+              order,
+              eventId: event.id,
+              sessionId,
+              paymentIntentId,
+              paymentMethodLabel,
+              eventType: "STRIPE_VALIDATION_REQUIRES_REVIEW",
+              message: "Pagamento ricevuto, ma paese/CAP richiedono revisione manuale",
+              note: verification.error || "CAP/Country mismatch",
+              customer: {
+                email,
+                name,
+                phone,
+                addr,
+              },
+            });
+          });
+
+          await prisma.stripeWebhookEvent.update({
+            where: { eventId: event.id },
+            data: {
+              orderId: order.id,
+              sessionId,
+              paymentIntentId,
+              outcome: "processed",
+              processedAt: new Date(),
+              errorMessage: `${verification.error || "CAP/Country mismatch"} (paid order flagged for manual review)`,
+            },
+          });
+
+          return NextResponse.json({ received: true, review: true }, { status: 200 });
         }
 
         if (!isPaidCheckout) {
@@ -480,10 +634,7 @@ export async function POST(req: NextRequest) {
         const { sessionId, paymentIntentId } = getSessionIds(session);
         const { email, name, phone, addr } = getCustomerFromSession(session);
 
-        const order = await prisma.order.findUnique({
-          where: { stripeCheckoutSessionId: sessionId },
-          include: { items: true },
-        });
+        const order = await loadOrderForSession(session);
 
         if (!order) {
           await prisma.stripeWebhookEvent.update({
@@ -508,32 +659,20 @@ export async function POST(req: NextRequest) {
 
         if (!name || !isValidAddress(addr)) {
           await prisma.$transaction(async (tx) => {
-            if (order.status === "IN_ATTESA") {
-              await releaseReserved(
-                tx,
-                {
-                  orderId: order.id,
-                  lines: order.items.map((it) => ({ sku: it.sku, qty: it.qty })),
-                }
-              );
-
-              await tx.order.update({
-                where: { id: order.id },
-                data: {
-                  status: "FALLITO",
-                  isFlagged: true,
-                  notes: "Invalid/missing address from Stripe customer_details",
-                  ...(paymentMethodLabel ? { paymentMethod: paymentMethodLabel } : {}),
-                },
-              });
-            }
-
-            await tx.orderEvent.create({
-              data: {
-                orderId: order.id,
-                type: "STRIPE_ASYNC_VALIDATION_FAILED",
-                message: "Missing required shipping fields after async payment success",
-                metaJson: JSON.stringify({ sessionId }),
+            await markPaidOrderForManualReviewTx(tx, {
+              order,
+              eventId: event.id,
+              sessionId,
+              paymentIntentId,
+              paymentMethodLabel,
+              eventType: "STRIPE_ASYNC_VALIDATION_REQUIRES_REVIEW",
+              message: "Pagamento asincrono ricevuto, ma i dati di spedizione richiedono revisione manuale",
+              note: "Invalid/missing address from Stripe customer_details",
+              customer: {
+                email,
+                name,
+                phone,
+                addr,
               },
             });
           });
@@ -544,13 +683,50 @@ export async function POST(req: NextRequest) {
               orderId: order.id,
               sessionId,
               paymentIntentId,
-              outcome: "failed_validation",
+              outcome: "processed",
               processedAt: new Date(),
-              errorMessage: "Invalid customer_details.address/name after async payment success",
+              errorMessage: "Invalid customer_details.address/name after async payment success (paid order flagged for manual review)",
             },
           });
 
-          return NextResponse.json({ received: true }, { status: 200 });
+          return NextResponse.json({ received: true, review: true }, { status: 200 });
+        }
+
+        // Validazione nazione/CAP per ordini internazionali in pagamento asincrono
+        const verification = verifyShippingCountryAndZip(order, addr);
+        if (!verification.ok) {
+          await prisma.$transaction(async (tx) => {
+            await markPaidOrderForManualReviewTx(tx, {
+              order,
+              eventId: event.id,
+              sessionId,
+              paymentIntentId,
+              paymentMethodLabel,
+              eventType: "STRIPE_ASYNC_VALIDATION_REQUIRES_REVIEW",
+              message: "Pagamento asincrono ricevuto, ma paese/CAP richiedono revisione manuale",
+              note: verification.error || "CAP/Country mismatch",
+              customer: {
+                email,
+                name,
+                phone,
+                addr,
+              },
+            });
+          });
+
+          await prisma.stripeWebhookEvent.update({
+            where: { eventId: event.id },
+            data: {
+              orderId: order.id,
+              sessionId,
+              paymentIntentId,
+              outcome: "processed",
+              processedAt: new Date(),
+              errorMessage: `${verification.error || "CAP/Country mismatch"} (paid order flagged for manual review)`,
+            },
+          });
+
+          return NextResponse.json({ received: true, review: true }, { status: 200 });
         }
 
         await prisma.$transaction(async (tx) => {
@@ -725,16 +901,15 @@ export async function POST(req: NextRequest) {
       }
     }
   } catch (err: unknown) {
-    const e = err as { message?: string };
     // ✅ usa un outcome valido del tuo enum
     await prisma.stripeWebhookEvent.update({
       where: { eventId: event.id },
       data: {
-        outcome: "review",
+        outcome: "failed_processing",
         processedAt: new Date(),
-        errorMessage: e?.message ?? "runtime error",
+        errorMessage: getStripeErrorMessage(err),
       },
     });
-    return NextResponse.json({ received: true }, { status: 200 });
+    return NextResponse.json({ received: false, retry: true }, { status: 500 });
   }
 }

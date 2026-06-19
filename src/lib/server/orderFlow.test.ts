@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { computeAvailableInventory, validateCartQuantityForSku } from "./cartValidation";
+import { canTransitionOrderStatus, getOrderInvariantViolations } from "./orderStatus";
 import { applyPaidOrderInvariantsTx } from "./orderPayment";
 import { applyStripeRefundToOrderTx } from "./orderRefund";
+import { evaluatePromotionEligibility } from "./promotionUsage";
 import {
   OutOfStockError,
   releaseReserved,
@@ -31,6 +34,7 @@ type OrderRow = {
   id: string;
   status: string;
   orderNumber: string | null;
+  orderPublicToken: string | null;
   paidAt: Date | null;
   refundedAt: Date | null;
   totalCents: number;
@@ -46,10 +50,13 @@ type OrderRow = {
   zip: string;
   countryCode: string;
   phone: string | null;
+  paymentProvider: string | null;
+  stripeCheckoutSessionId: string | null;
   stripePaymentIntentId: string | null;
   paymentMethod: string | null;
   items: OrderItemRow[];
   promotionCode: string | null;
+  notes: string | null;
 };
 
 type PromotionRow = {
@@ -505,6 +512,7 @@ function baseOrder(id: string): OrderRow {
     id,
     status: "IN_ATTESA",
     orderNumber: null,
+    orderPublicToken: `public-${id}`,
     paidAt: null,
     refundedAt: null,
     totalCents: 2500,
@@ -520,10 +528,13 @@ function baseOrder(id: string): OrderRow {
     zip: "",
     countryCode: "IT",
     phone: null,
+    paymentProvider: "stripe",
+    stripeCheckoutSessionId: `cs_${id}`,
     stripePaymentIntentId: null,
     paymentMethod: null,
     items: [{ sku: "sku-1", qty: 2 }],
     promotionCode: null,
+    notes: null,
   };
 }
 
@@ -574,6 +585,61 @@ test("reserveStockOrThrow allows only one concurrent reservation on the last ava
   assert.equal(rejected.length, 1);
   assert.equal(store.inventory.get("sku-1")?.reserved, 1);
   assert.equal(store.reservations.size, 1);
+});
+
+test("two concurrent checkout flows on the last unit leave one order payable and the other untouched", async () => {
+  const { store, tx } = buildFakeTx({
+    inventory: [{ sku: "sku-1", stock: 1, reserved: 0 }],
+    orders: [
+      { ...baseOrder("order-1"), items: [{ sku: "sku-1", qty: 1 }] },
+      { ...baseOrder("order-2"), items: [{ sku: "sku-1", qty: 1 }] },
+    ],
+  });
+
+  const attempts = await Promise.allSettled([
+    reserveStockOrThrow(tx, {
+      orderId: "order-1",
+      lines: [{ sku: "sku-1", qty: 1 }],
+    }).then(async () => {
+      await applyPaidOrderInvariantsTx(tx, {
+        orderId: "order-1",
+        actor: "stripe",
+        source: "stripe_webhook",
+        paymentIntentId: "pi_order_1",
+      });
+      return "order-1";
+    }),
+    reserveStockOrThrow(tx, {
+      orderId: "order-2",
+      lines: [{ sku: "sku-1", qty: 1 }],
+    }).then(async () => {
+      await applyPaidOrderInvariantsTx(tx, {
+        orderId: "order-2",
+        actor: "stripe",
+        source: "stripe_webhook",
+        paymentIntentId: "pi_order_2",
+      });
+      return "order-2";
+    }),
+  ]);
+
+  const fulfilled = attempts.filter(
+    (result): result is PromiseFulfilledResult<string> => result.status === "fulfilled"
+  );
+  const rejected = attempts.filter((result) => result.status === "rejected");
+
+  assert.equal(fulfilled.length, 1);
+  assert.equal(rejected.length, 1);
+  assert.equal(store.inventory.get("sku-1")?.stock, 0);
+  assert.equal(store.inventory.get("sku-1")?.reserved, 0);
+  assert.equal(store.reservations.size, 0);
+
+  const winnerId = fulfilled[0].value;
+  const loserId = winnerId === "order-1" ? "order-2" : "order-1";
+
+  assert.equal(store.orders.get(winnerId)?.status, "PAGATO");
+  assert.equal(store.orders.get(loserId)?.status, "IN_ATTESA");
+  assert.equal(store.outbox.filter((event) => event.type === "ORDER_PAID").length, 1);
 });
 
 test("reserveStockOrThrow rejects a second order when the last unit is already reserved", async () => {
@@ -918,4 +984,139 @@ test("processOutboxBatch falls back to soft-locking when raw query fails", async
   assert.equal(result.failed, 0);
   assert.equal(store.outboxEvents.get("ev-1")?.status, "done");
   assert.equal(emailed.length, 1);
+});
+
+test("validateCartQuantityForSku uses available stock minus reserved stock", async () => {
+  const db = {
+    inventoryItem: {
+      findUnique: async () => ({ stock: 5, reserved: 4 }),
+    },
+  };
+
+  const result = await validateCartQuantityForSku(db, {
+    sku: "sku-1",
+    qty: 2,
+  });
+
+  assert.deepEqual(result, {
+    ok: false,
+    error: "QTY_TOO_HIGH",
+    available: 1,
+    requested: 2,
+  });
+});
+
+test("computeAvailableInventory never returns negative values", () => {
+  assert.equal(computeAvailableInventory({ stock: 1, reserved: 4 }), 0);
+  assert.equal(computeAvailableInventory({ stock: 5, reserved: 2 }), 3);
+});
+
+test("evaluatePromotionEligibility rejects a promo when usageLimit is saturated by pending orders", async () => {
+  const now = new Date("2026-06-07T10:00:00.000Z");
+  const result = await evaluatePromotionEligibility(
+    {
+      promotion: {
+        findUnique: async () => ({
+          id: "promo-1",
+          code: "PROMO50",
+          description: "Test promo",
+          type: "percent",
+          percent: 50,
+          amountCents: null,
+          freeShipping: false,
+          minOrderCents: null,
+          usageLimit: 1,
+          usedCount: 0,
+          startsAt: null,
+          endsAt: null,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now,
+        }),
+      },
+      order: {
+        count: async () => 1,
+      },
+    },
+    {
+      code: "promo50",
+      subtotalCents: 5000,
+      now,
+    }
+  );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "PROMO50");
+  if (result.ok) {
+    throw new Error("Expected saturated promotion to be rejected");
+  }
+  assert.equal(result.reason, "USAGE_LIMIT_REACHED");
+  assert.equal(result.pendingCount, 1);
+});
+
+test("order invariant helpers define allowed transitions and flag inconsistent Stripe orders", () => {
+  assert.equal(canTransitionOrderStatus("IN_PREPARAZIONE", "SPEDITO"), true);
+  assert.equal(canTransitionOrderStatus("PAGATO", "SPEDITO"), false);
+
+  const paidViolations = getOrderInvariantViolations({
+    status: "PAGATO",
+    orderNumber: null,
+    orderPublicToken: null,
+    paidAt: null,
+    preparingAt: null,
+    shippedAt: null,
+    deliveredAt: null,
+    refundedAt: null,
+    refundCents: 0,
+    paymentProvider: "stripe",
+    stripeCheckoutSessionId: null,
+    stripePaymentIntentId: null,
+    notes: null,
+  });
+
+  assert.deepEqual(paidViolations, [
+    "PAID_MISSING_PAID_AT",
+    "PAID_MISSING_ORDER_NUMBER",
+    "STRIPE_ORDER_MISSING_CHECKOUT_SESSION",
+    "CUSTOMER_ORDER_MISSING_PUBLIC_TOKEN",
+  ]);
+
+  const shippedViolations = getOrderInvariantViolations({
+    status: "SPEDITO",
+    orderNumber: "2026-001",
+    orderPublicToken: "public-token",
+    paidAt: new Date("2026-06-08T10:00:00.000Z"),
+    preparingAt: null,
+    shippedAt: null,
+    deliveredAt: null,
+    refundedAt: null,
+    refundCents: 0,
+    paymentProvider: "stripe",
+    stripeCheckoutSessionId: "cs_test_123",
+    stripePaymentIntentId: "pi_test_123",
+    notes: null,
+  });
+
+  assert.deepEqual(shippedViolations, [
+    "SHIPPED_MISSING_PREPARING_AT",
+    "SHIPPED_MISSING_SHIPPED_AT",
+  ]);
+
+  const failedViolations = getOrderInvariantViolations({
+    status: "FALLITO",
+    orderNumber: null,
+    orderPublicToken: null,
+    paidAt: null,
+    preparingAt: null,
+    shippedAt: null,
+    deliveredAt: null,
+    refundedAt: null,
+    refundCents: 0,
+    paymentProvider: "stripe",
+    stripeCheckoutSessionId: null,
+    stripePaymentIntentId: null,
+    notes: null,
+  });
+
+  assert.deepEqual(failedViolations, ["FAILED_STRIPE_ORDER_MISSING_FAILURE_REASON"]);
 });

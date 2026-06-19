@@ -31,6 +31,16 @@ function deriveVatCents(order: { vatCents: number; subtotalCents: number }, vatR
   return Math.round((order.subtotalCents * vatRateDec) / (1 + vatRateDec));
 }
 
+function getAnalyticsCountryCode(data: unknown) {
+  if (!data || typeof data !== "object") return "IT";
+  const meta = (data as { meta?: unknown }).meta;
+  if (!meta || typeof meta !== "object") return "IT";
+  const countryCode = (meta as { countryCode?: unknown }).countryCode;
+  return typeof countryCode === "string" && countryCode.trim()
+    ? countryCode.trim().toUpperCase()
+    : "IT";
+}
+
 export async function GET(req: Request) {
   // ✅ Admin-only
   const guard = await requireAdminApi(req, { csrf: false });
@@ -189,6 +199,10 @@ export async function GET(req: Request) {
     }),
   ]);
 
+  void pendingOrdersByCountry;
+  void canceledOrdersByCountry;
+  void checkoutCanceledByCountry;
+
   // Calcolo visite uniche, sessioni e geografia reali in-memoria
   const sessionsSet = new Set<string>();
   const visitorsSet = new Set<string>();
@@ -198,8 +212,7 @@ export async function GET(req: Request) {
   const productViewCountryMap = new Map<string, Map<string, number>>();
 
   for (const ev of analyticsEvents) {
-    const dataObj = ev.data as any;
-    const country = (dataObj?.meta?.countryCode || "IT").toUpperCase();
+    const country = getAnalyticsCountryCode(ev.data);
 
     if (ev.type === "page_view") {
       if (ev.visitorId) visitorsSet.add(ev.visitorId);
@@ -236,14 +249,13 @@ export async function GET(req: Request) {
   const sortedProductViews = Array.from(productViewCounts.entries()).sort((a, b) => b[1] - a[1]);
   const mostViewedKey = sortedProductViews[0]?.[0] ?? null;
   const mostViewedCount = sortedProductViews[0]?.[1] ?? 0;
-  const mostViewedProductTitle = catalog.find((p: any) => p.id === mostViewedKey || p.slug === mostViewedKey)?.title || mostViewedKey || "—";
+  const mostViewedProductTitle = catalog.find((p) => p.id === mostViewedKey || p.slug === mostViewedKey)?.title || mostViewedKey || "—";
 
   // Aggregazione viste per nazione
   const countryProductViews = new Map<string, Map<string, number>>();
   for (const ev of analyticsEvents) {
     if (ev.type === "product_view" && ev.productKey) {
-      const dataObj = ev.data as any;
-      const country = (dataObj?.meta?.countryCode || "IT").toUpperCase();
+      const country = getAnalyticsCountryCode(ev.data);
 
       if (ALLOWED_COUNTRIES.includes(country)) {
         if (!countryProductViews.has(country)) {
@@ -262,7 +274,7 @@ export async function GET(req: Request) {
     }
     const sorted = Array.from(prodMap.entries()).sort((a, b) => b[1] - a[1]);
     const [topKey, count] = sorted[0];
-    const prod = catalog.find((p: any) => p.id === topKey || p.slug === topKey);
+    const prod = catalog.find((p) => p.id === topKey || p.slug === topKey);
     const sku = prod?.variants?.[0]?.sku || prod?.id || topKey;
     return { country, productSku: sku, count };
   }).filter((item) => item.count > 0);
@@ -327,6 +339,8 @@ export async function GET(req: Request) {
       _sum: { totalCents: true, stripeFeeCents: true, refundCents: true },
     }),
   ]);
+
+  void revenueAgg;
   const vatRatePercent = storeSettings.vatRatePercent;
   const overrides = overridesRow ? JSON.parse(overridesRow.value) : {};
 

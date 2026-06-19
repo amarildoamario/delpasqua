@@ -68,7 +68,7 @@ export default function HomeGallery({ images }: HomeGalleryProps) {
   const imagesList = images && images.length > 0 ? images : HOME_GALLERY_IMAGES;
 
   return (
-    <section className="bg-[#f3f1eb] py-8 sm:py-16 text-[#1f1a17] lg:py-20">
+    <section className="bg-[#f3f1eb] py-6 sm:py-10 text-[#1f1a17] lg:py-12">
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="mb-5 md:mb-9 flex flex-col gap-4 md:flex-row md:items-center">
           <h2 className="font-serif text-3xl font-light tracking-tight text-[#1f1a17] md:text-4xl">
@@ -86,14 +86,14 @@ export default function HomeGallery({ images }: HomeGalleryProps) {
             {imagesList.map((imageName, index) => (
               <CarouselItem
                 key={imageName}
-                className="basis-[85%] pl-4 sm:basis-1/2 lg:basis-1/4"
+                className="basis-[85%] pl-4 sm:basis-1/2 lg:basis-1/3"
               >
                 <div className="relative aspect-[1.08/1] overflow-hidden rounded-[5px] bg-[#E4DED3]">
                   <Image
                     src={getGalleryImageSrc(imageName)}
                     alt={t("imageAlt", { index: index + 1 })}
                     fill
-                    sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 22vw"
+                    sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 30vw"
                     className="rounded-[5px] object-cover"
                   />
                 </div>

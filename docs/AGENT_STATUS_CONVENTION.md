@@ -14,10 +14,12 @@ Ogni file operativo dovrebbe avere in alto una sezione con queste chiavi:
 ## Regole di lettura
 
 - Se `FileStatus: COMPLETED`, il file va trattato come archivio anche se il nome inizia con `to_do_`.
+- Un file `COMPLETED` puo restare in `docs` finche non esiste una decisione esplicita di spostarlo altrove.
 - Se `FileStatus: ACTIVE`, il file va trattato come backlog vivo.
 - Nei titoli task, la parte autorevole e` la keyword ASCII `TODO`, `PARZIALE` o `RISOLTO`; l'emoji iniziale e` solo decorativa.
 - Le sole voci da implementare sono quelle che contengono `TODO` o `PARZIALE` nel titolo task.
 - Le voci che contengono `RISOLTO` sono storiche e servono come contesto, regressioni note e riferimenti ai file toccati.
+- Se un file `COMPLETED` contiene stringhe `TODO` dentro report generati, indici o note descrittive, quelle stringhe non riaprono il file: fa fede `Agent Status`.
 
 ## Regole di aggiornamento
 

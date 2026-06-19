@@ -4,11 +4,11 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import FlagIcon from "@/components/FlagIcon";
 
 import "./Navbar-Styles.css";
 
 import CartButton from "@/components/CartButton";
-import productsStatic from "@/db/products.json";
 import {
   Sheet,
   SheetClose,
@@ -56,61 +56,13 @@ const LOCALE_NAMES: Record<string, string> = {
   no: "Norsk",
 };
 
-const FlagIcon = ({ locale, className }: { locale: string; className?: string }) => {
-  const flags: Record<string, React.ReactNode> = {
-    it: (
-      <svg viewBox="0 0 3 2" className={className}>
-        <rect width="1" height="2" fill="#009246" />
-        <rect width="1" height="2" x="1" fill="#fff" />
-        <rect width="1" height="2" x="2" fill="#ce2b37" />
-      </svg>
-    ),
-    en: (
-      <svg viewBox="0 0 60 30" className={className}>
-        <clipPath id="nav-flag-en">
-          <path d="M0,0 v30 h60 v-30 z" />
-        </clipPath>
-        <path d="M0,0 v30 h60 v-30 z" fill="#012169" />
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6" />
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="4" />
-        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10" />
-        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6" />
-      </svg>
-    ),
-    de: (
-      <svg viewBox="0 0 5 3" className={className}>
-        <rect width="5" height="3" y="0" fill="#000" />
-        <rect width="5" height="2" y="1" fill="#d00" />
-        <rect width="5" height="1" y="2" fill="#ffce00" />
-      </svg>
-    ),
-    nl: (
-      <svg viewBox="0 0 3 2" className={className}>
-        <rect width="3" height="2" fill="#ae1c28" />
-        <rect width="3" height="1.33" y="0.66" fill="#fff" />
-        <rect width="3" height="0.66" y="1.33" fill="#21468b" />
-      </svg>
-    ),
-    da: (
-      <svg viewBox="0 0 37 28" className={className}>
-        <rect width="37" height="28" fill="#c8102e" />
-        <rect x="12" width="4" height="28" fill="#fff" />
-        <rect y="12" width="37" height="4" fill="#fff" />
-      </svg>
-    ),
-    no: (
-      <svg viewBox="0 0 22 16" className={className}>
-        <rect width="22" height="16" fill="#ba0c2f" />
-        <path d="M0,8h22M8,0v16" stroke="#fff" strokeWidth="4" />
-        <path d="M0,8h22M8,0v16" stroke="#00205b" strokeWidth="2" />
-      </svg>
-    ),
-  };
 
-  return flags[locale] || null;
+type NavbarCatalogProduct = {
+  id: string;
+  slug?: string;
 };
 
-export default function Navbar() {
+export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatalogProduct[] }) {
   const t = useTranslations("Common");
   const locale = useLocale();
   const pathname = usePathname();
@@ -125,7 +77,7 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
-  const [catalog, setCatalog] = useState<Array<{ id: string; slug?: string }>>(productsStatic);
+  const [catalog, setCatalog] = useState<NavbarCatalogProduct[]>(initialCatalog);
 
   useEffect(() => {
     let alive = true;

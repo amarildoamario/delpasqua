@@ -24,7 +24,7 @@ export default async function AdminInventoryPage() {
   for (const p of catalog) {
     for (const v of p.variants || []) {
       if (!p?.id || !v?.id) continue;
-      skus.push(makeInventorySku(p.id, v.id));
+      skus.push(makeInventorySku(p.id, v.id, v.sku));
     }
   }
 
@@ -47,7 +47,7 @@ export default async function AdminInventoryPage() {
         title="Magazzino"
         subtitle={
           <>
-            Gestisci le scorte per ogni variante (SKU interno: <code>productId:variantId</code>). <br />
+            Gestisci le scorte per ogni variante usando lo SKU canonico del catalogo. <br />
             Bottoni rapidi: <b>Rimuovi scorte</b> (−1) e <b>Setta disponibili a 50</b>.
           </>
         }

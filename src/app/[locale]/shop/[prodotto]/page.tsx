@@ -1,10 +1,9 @@
 // src/app/shop/[prodotto]/page.tsx
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { readCatalog, readCatalogWithMerch } from "@/lib/server/catalog";
+import { readPublicCatalog, readPublicCatalogWithMerch } from "@/lib/server/catalog";
 import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
 import { makeInventorySku } from "@/lib/inventorySku";
-import { getAvailableBySku } from "@/lib/server/inventoryRead";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
 import { getProductAlternateUrls, absoluteUrl, localizedPath, SITE_URL } from "@/lib/seo";
@@ -127,7 +126,7 @@ function translateCategory(value: string | undefined, locale: string) {
 }
 
 export async function generateStaticParams() {
-  const list = await readCatalog();
+  const list = await readPublicCatalog();
   const params: { locale: string; prodotto: string }[] = [];
 
   for (const locale of locales) {
@@ -148,7 +147,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; prodotto: string }>;
 }): Promise<Metadata> {
   const { locale, prodotto } = await params;
-  const list = (await readCatalogWithMerch()) as unknown as Product[];
+  const list = (await readPublicCatalogWithMerch()) as unknown as Product[];
   const product = findProductBySlug(list, prodotto);
 
   if (!product) return { title: "Prodotto non trovato" };
@@ -191,7 +190,7 @@ export default async function ProductPage({
   const sp = searchParams ? await searchParams : undefined;
   const tp = await getTranslations({ locale, namespace: "Products" });
 
-  const list = (await readCatalogWithMerch()) as unknown as Product[];
+  const list = (await readPublicCatalogWithMerch()) as unknown as Product[];
   const product = findProductBySlug(list, prodotto);
 
   if (!product) notFound();
@@ -214,7 +213,7 @@ export default async function ProductPage({
 
   // Traduce tutti gli altri prodotti per passarli come raccomandati
   const relatedProducts: Product[] = list
-    .filter((p) => p.id !== product.id && p.excludeFromSeo !== true)
+    .filter((p) => p.id !== product.id)
     .map((p) => ({
       ...p,
       category: translateCategory(p.category, locale),
@@ -267,25 +266,15 @@ export default async function ProductPage({
     return vSrc.startsWith("http") ? vSrc : `${SITE_URL}${vSrc}`;
   };
 
-  const availabilityPromises = variants.map(async (variant) => {
-    const sku = makeInventorySku(product.id, variant.id);
-    const avail = await getAvailableBySku(sku);
-    return { variantId: variant.id, available: avail > 0 };
-  });
-  const availabilityList = await Promise.all(availabilityPromises);
-  const availabilityMap = new Map(availabilityList.map(x => [x.variantId, x.available]));
-
   const offersList = variants.map((variant) => {
     const variantUrl = `${canonical}?v=${variant.id}`;
-    const variantSku = variant.sku || `${product.id}-${variant.id}`;
+    const variantSku = makeInventorySku(product.id, variant.id, variant.sku);
     const variantImage = variantImageAbsolute(variant.imageSrc);
-    const isAvailable = availabilityMap.get(variant.id) ?? true;
     return {
       "@type": "Offer",
       "sku": variantSku,
       "price": (variant.priceCents / 100).toFixed(2),
       "priceCurrency": "EUR",
-      "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "url": variantUrl,
       "image": variantImage,
       "itemCondition": "https://schema.org/NewCondition",
@@ -298,7 +287,6 @@ export default async function ProductPage({
     "sku": offersList[0].sku,
     "price": offersList[0].price,
     "priceCurrency": "EUR",
-    "availability": offersList[0].availability,
     "url": offersList[0].url,
     "image": offersList[0].image,
     "itemCondition": "https://schema.org/NewCondition",
@@ -353,7 +341,7 @@ export default async function ProductPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8]">
+    <div className="min-h-screen bg-[#FAF7F2]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}

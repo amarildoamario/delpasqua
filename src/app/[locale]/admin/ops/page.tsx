@@ -5,12 +5,6 @@ import PageHeader from "../_components/PageHeader";
 
 export const dynamic = "force-dynamic";
 
-function hhmm(d: Date) {
-  const h = String(d.getHours()).padStart(2, "0");
-  const m = String(d.getMinutes()).padStart(2, "0");
-  return `${h}:${m}`;
-}
-
 export default async function AdminOpsPage() {
   const now = new Date();
 

@@ -310,10 +310,12 @@ export default function ProductPurchaseBox({
       return;
     }
 
-    const skus = variants.map((v) => makeInventorySku(productId, v.id));
+    const skus = variants.map((v) => makeInventorySku(productId, v.id, v.sku));
     queueMicrotask(() => setLoadingAvail(true));
 
-    fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`)
+    fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`, {
+      cache: "no-store",
+    })
       .then(async (r) => {
         const j = await r.json().catch(() => ({}));
         return j?.availability ?? {};
@@ -336,7 +338,7 @@ export default function ProductPurchaseBox({
     };
   }, [productId, variants]);
 
-  const selectedSku = selected ? makeInventorySku(productId, selected.id) : "";
+  const selectedSku = selected ? makeInventorySku(productId, selected.id, selected.sku) : "";
   const selectedAvailable = availMap ? (availMap[selectedSku] ?? 0) : null;
   const qtyAlreadyInCart = selected ? getLineQty(productId, selected.id) : 0;
   const maxQty =
@@ -587,7 +589,7 @@ export default function ProductPurchaseBox({
             {showVariantDropdown && (
               <div style={{ borderRadius: '5px' }} className="absolute z-20 mt-1 w-full border border-neutral-200 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
                 {variants.map((variant) => {
-                  const sku = makeInventorySku(productId, variant.id);
+                  const sku = makeInventorySku(productId, variant.id, variant.sku);
                   const avail = availMap ? (availMap[sku] ?? 0) : null;
                   const out = avail != null && avail <= 0;
                   const isSelected = String(variant.id) === String(selected?.id);

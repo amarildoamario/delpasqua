@@ -53,6 +53,14 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     da: "/ligestilling",
     no: "/likestilling",
   },
+  "/smaltimenti": {
+    it: "/smaltimenti",
+    en: "/waste-disposal",
+    de: "/entsorgung",
+    nl: "/afvalverwerking",
+    da: "/affaldssortering",
+    no: "/avfallshandtering",
+  },
   "/cart": {
     it: "/carrello",
     en: "/cart",

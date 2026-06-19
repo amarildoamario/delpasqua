@@ -1,4 +1,4 @@
-import { readCatalogWithMerch } from "@/lib/server/catalog";
+import { readPublicCatalogWithMerch } from "@/lib/server/catalog";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import ShopPageClient from "./ShopPageClient";
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function ShopPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const products = await readCatalogWithMerch();
+  const products = await readPublicCatalogWithMerch();
   const initialProducts = products.map((product) => ({
     id: product.id,
     slug: getLocalizedProductSlug(product, locale),

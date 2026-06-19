@@ -1,4 +1,6 @@
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
@@ -42,9 +44,9 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ availability }, {
     headers: {
-      // CDN (Vercel Edge) cache per 30s, poi serve stale mentre rigenera (60s).
-      // Lo stock cambia raramente: evita una query DB per ogni visita al negozio.
-      "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
     },
   });
 }

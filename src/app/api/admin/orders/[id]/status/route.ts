@@ -11,6 +11,11 @@ import { processOutboxBatch } from "@/lib/server/outbox";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
+import {
+  assertOrderInvariants,
+  canTransitionOrderStatus,
+  OrderInvariantError,
+} from "@/lib/server/orderStatus";
 import { AdminOrderStatusPatchSchema } from "@/lib/server/schemas";
 
 function now() {
@@ -18,19 +23,7 @@ function now() {
 }
 
 function isAllowedTransition(from: OrderStatus, to: OrderStatus) {
-  const allowed: Record<OrderStatus, OrderStatus[]> = {
-    IN_ATTESA: ["PAGATO", "ANNULLATO", "SCADUTO", "FALLITO"],
-    PAGATO: ["IN_PREPARAZIONE", "ANNULLATO", "FALLITO"],
-    IN_PREPARAZIONE: ["SPEDITO", "ANNULLATO"],
-    SPEDITO: ["CONSEGNATO"],
-    CONSEGNATO: [],
-    ANNULLATO: [],
-    RIMBORSATO: [],
-    PARZIALMENTE_RIMBORSATO: [],
-    SCADUTO: [],
-    FALLITO: [],
-  };
-  return allowed[from]?.includes(to) ?? false;
+  return canTransitionOrderStatus(from, to);
 }
 
 // helper: enqueue + AUTO process (best-effort) — usato per RIMBORSATO (ex REFUNDED)
@@ -48,6 +41,8 @@ async function enqueueRefundedEmailOutbox(args: { orderId: string; actor: string
     console.error("❌ outbox auto-process failed (REFUNDED):", e);
   });
 }
+
+void enqueueRefundedEmailOutbox;
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const guard = await requireAdminApi(req, { csrf: true });
@@ -198,7 +193,9 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
             });
           }
 
-          return tx.order.update({ where: { id }, data: patch });
+          const candidate = await tx.order.update({ where: { id }, data: patch });
+          assertOrderInvariants(candidate);
+          return candidate;
         });
       }
     }
@@ -236,6 +233,12 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   } catch (e: unknown) {
     const err = e as Error & { status?: number };
     if (err.status === 413) return new Response("Payload Too Large", { status: 413 });
+    if (err instanceof OrderInvariantError) {
+      return NextResponse.json(
+        { error: err.code, violations: err.violations },
+        { status: 409 }
+      );
+    }
     return new Response("Server Error", { status: 500 });
   }
 }

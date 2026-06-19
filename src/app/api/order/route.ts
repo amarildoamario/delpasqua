@@ -9,11 +9,24 @@ import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { createOrderEvent } from "@/lib/server/orderEvents";
 import { computeOrderPricing } from "@/lib/server/pricing";
+import { evaluatePromotionEligibility, lockPromotionRow } from "@/lib/server/promotionUsage";
 import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { computeRiskScore } from "@/lib/server/antiFraud";
 import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+type StripeAllowedCountry = NonNullable<
+  Stripe.Checkout.SessionCreateParams.ShippingAddressCollection["allowed_countries"]
+>[number];
+
+const SUPPORTED_STRIPE_COUNTRIES = ["IT", "DE", "NL", "DK", "NO", "US", "GB"] as const satisfies readonly StripeAllowedCountry[];
+
+function toStripeAllowedCountry(countryCode: string): StripeAllowedCountry {
+  const normalized = countryCode.trim().toUpperCase();
+  return (SUPPORTED_STRIPE_COUNTRIES as readonly string[]).includes(normalized)
+    ? (normalized as StripeAllowedCountry)
+    : "IT";
+}
 
 function getIP(req: Request) {
   const xf = req.headers.get("x-forwarded-for");
@@ -132,11 +145,13 @@ export async function POST(req: Request) {
     if (!parsed.success) return new Response("Bad Request", { status: 400 });
 
     const customer = parsed.data.customer; // may be undefined in Stripe-first flow
+    const selectedCountry = (parsed.data.countryCode || customer?.countryCode || "IT").toUpperCase();
 
     // compute pricing + snapshots (single source of truth)
     const pricing = await computeOrderPricing({
       lines: parsed.data.items,
       promotionCode: parsed.data.promotionCode,
+      countryCode: selectedCountry,
     });
 
     // meta
@@ -160,31 +175,22 @@ export async function POST(req: Request) {
     // create order + items + reserve stock (P0.06)
     let order = await prisma.$transaction(async (tx) => {
       if (pricing.promotionApplied?.code) {
-        const promo = await tx.promotion.findUnique({
-          where: { code: pricing.promotionApplied.code },
+        await lockPromotionRow(tx, pricing.promotionApplied.code);
+        const eligibility = await evaluatePromotionEligibility(tx, {
+          code: pricing.promotionApplied.code,
+          subtotalCents: pricing.subtotalCents,
         });
-        if (!promo || !promo.isActive) {
-          throw Object.assign(new Error("Promotion code is no longer active"), { status: 409, code: "PROMO_LIMIT_EXCEEDED" });
-        }
 
-        // Lock di riga pessimistico (FOR UPDATE) per impedire ad altre transazioni concorrenti
-        // di leggere e contare gli ordini pending prima del commit di questa transazione.
-        await tx.$executeRaw`
-          SELECT 1 FROM "Promotion"
-          WHERE "code" = ${pricing.promotionApplied.code}
-          FOR UPDATE
-        `;
-
-        const pendingCount = await tx.order.count({
-          where: {
-            promotionCode: promo.code,
-            status: "IN_ATTESA",
-          },
-        });
-        if (promo.usageLimit !== null && promo.usageLimit !== undefined) {
-          if (promo.usedCount + pendingCount >= promo.usageLimit) {
-            throw Object.assign(new Error("Promotion code usage limit reached"), { status: 409, code: "PROMO_LIMIT_EXCEEDED" });
-          }
+        if (!eligibility.ok) {
+          const code =
+            eligibility.reason === "USAGE_LIMIT_REACHED"
+              ? "PROMO_LIMIT_EXCEEDED"
+              : "PROMO_NO_LONGER_VALID";
+          const message =
+            eligibility.reason === "USAGE_LIMIT_REACHED"
+              ? "Promotion code usage limit reached"
+              : "Promotion code is no longer valid";
+          throw Object.assign(new Error(message), { status: 409, code });
         }
       }
 
@@ -221,7 +227,7 @@ export async function POST(req: Request) {
           addressLine2: customer?.addressLine2 ?? null,
           province: customer?.province ?? "",
           postalCode: customer?.postalCode ?? "",
-          countryCode: (customer?.countryCode ?? "IT").toUpperCase(),
+          countryCode: selectedCountry,
           phone: customer?.phone ?? null,
           shippingNotes: customer?.notes ?? null,
 
@@ -335,13 +341,39 @@ export async function POST(req: Request) {
       }
     }
 
+    let stripeCustomerId: string | undefined;
+    if (selectedCountry !== "IT" && customer?.postalCode) {
+      try {
+        const stripeCust = await stripe.customers.create({
+          email: customer.email || undefined,
+          name: customer.fullName || "Cliente Internazionale",
+          shipping: {
+            name: customer.fullName || "Cliente Internazionale",
+            address: {
+              country: selectedCountry,
+              postal_code: customer.postalCode,
+              line1: customer.addressLine1 || "Indirizzo da definire",
+              city: customer.city || "Citta da definire",
+            },
+          },
+        });
+        stripeCustomerId = stripeCust.id;
+      } catch (stripeCustErr) {
+        console.error("Failed to create Stripe customer on the fly:", stripeCustErr);
+      }
+    }
+
     let session: Stripe.Checkout.Session;
     try {
       const sessionResp = await stripe.checkout.sessions.create({
         mode: "payment",
         expires_at: Math.floor(Date.now() / 1000) + ORDER_PENDING_TTL_MINUTES * 60,
-        ...(order.email ? { customer_email: order.email } : {}),
-        shipping_address_collection: { allowed_countries: ["IT"] },
+        ...(stripeCustomerId
+          ? { customer: stripeCustomerId }
+          : order.email
+          ? { customer_email: order.email }
+          : {}),
+        shipping_address_collection: { allowed_countries: [toStripeAllowedCountry(selectedCountry)] },
         phone_number_collection: { enabled: true },
         line_items: lineItems,
         ...(stripeCouponId

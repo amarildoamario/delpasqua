@@ -37,7 +37,7 @@ function safeUuid(): string {
 
 export async function goToCassa(
   lines: CartLine[],
-  options?: { promotionCode?: string }
+  options?: { promotionCode?: string; countryCode?: string }
 ): Promise<GoToCassaResult> {
   if (!lines?.length) return { ok: false, message: "Il carrello è vuoto." };
 
@@ -54,6 +54,9 @@ export async function goToCassa(
     const body: Record<string, unknown> = { items: lines, cartId, locale };
     if (options?.promotionCode) {
       body.promotionCode = options.promotionCode.trim().toUpperCase();
+    }
+    if (options?.countryCode) {
+      body.countryCode = options.countryCode.trim().toUpperCase();
     }
 
     const res = await fetch("/api/order", {
@@ -100,6 +103,4 @@ export async function goToCassa(
   } catch {
     return { ok: false, message: "Errore di rete." };
   }
-
 }
-

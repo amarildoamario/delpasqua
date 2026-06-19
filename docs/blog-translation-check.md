@@ -26,57 +26,57 @@ Legend: ✅ ready, ⚠️ fallback or missing field, ❌ translation entry missi
 
 Includes all selected posts.
 
-- chim-1 | Composizione chimica dell'olio EVO: trigliceridi, acidi grassi e frazione insaponificabile | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/composizione-chimica-olio-evo | TODO: all selected locales ready
-- chim-2 | Polifenoli nell'olio EVO: oleocantale, oleuropeina e idrossitirosolo spiegati | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/polifenoli-oleocantale-oleuropeina | TODO: all selected locales ready
-- chim-3 | Profilo degli acidi grassi: oleico, linoleico, palmitico — stabilità e gusto | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/profilo-acidi-grassi-olio | TODO: all selected locales ready
-- chim-4 | Numero di perossidi: cos'è e cosa indica davvero nella qualità dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/numero-perossidi-che-misura | TODO: all selected locales ready
-- chim-5 | K232 e K270: cosa misurano e perché indicano la qualità dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/k232-k270-cosa-misurano | TODO: all selected locales ready
-- chim-6 | Gramolazione: cosa succede chimicamente e come influenza l'aroma dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/gramolazione-chimica-aroma | TODO: all selected locales ready
-- chim-7 | Filtrazione dell'olio EVO: effetti su acqua, enzimi, fermentazioni e stabilità | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/filtrazione-olio-effetti-stabilita | TODO: all selected locales ready
-- com-2 | Abbinamenti con EVO fruttato leggero | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/fruttato-leggero-abbinamenti | TODO: all selected locales ready
-- com-4 | Come e quando usare l'Olio EVO Fruttato Intenso | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/fruttato-intenso-quando-usarlo | TODO: all selected locales ready
-- com-6 | Cos'è l'Olio Nuovo e perché conviene acquistarlo? | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/olio-nuovo-cose-e-quanto-dura | TODO: all selected locales ready
-- com-8 | DOP, IGP o 100% Italiano: Cosa significano le sigle dell'Olio? | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/dop-igp-100-italiano-differenze | TODO: all selected locales ready
-- dif-1 | Difetti dell'olio EVO: guida completa ai principali vizi sensoriali | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/difetti-olio-evo-guida-completa | TODO: all selected locales ready
-- dif-2 | Rancido: cos'è, perché succede e come evitarlo | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/rancido-cause-prevenzione | TODO: all selected locales ready
-- dif-3 | Difetto avvinato-inacetito nell'olio EVO: cause, riconoscimento e prevenzione | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/difetto-avvinato-inacetito-olio | TODO: all selected locales ready
-- dif-4 | Muffa e morchia nell'olio EVO: cause, riconoscimento e prevenzione | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/difetto-muffa-morchia-olio | TODO: all selected locales ready
-- faq-1 | FAQ sull'olio EVO: perché pizzica, perché è torbido, quanto dura, perché costa | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/faq-olio-evo | TODO: all selected locales ready
-- fid-1 | Come nasce il nostro olio: raccolta → frantoio → stoccaggio | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/come-nasce-nostro-olio | TODO: all selected locales ready
-- fid-2 | Come degustare l'olio EVO in 5 minuti: guida pratica per tutti | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/come-degustare-olio-5-minuti | TODO: all selected locales ready
-- fid-3 | Tracciabilità: lotto, analisi, provenienza — come garantiamo la qualità | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/tracciabilita-lotto-analisi-qualita | TODO: all selected locales ready
-- fid-4 | Perché l'olio cambia ogni anno: clima, resa, maturazione | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/perche-olio-cambia-ogni-anno | TODO: all selected locales ready
-- fid-5 | Oleoturismo e visite al frantoio: cos'è, cosa si fa e perché vale la pena | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/oleoturismo-degustazioni-frantoio | TODO: all selected locales ready
-- glos-1 | Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/glossario-olio-evo | TODO: all selected locales ready
-- info-1 | A cosa serve l'amaro e il piccante nell'olio EVO (non è un difetto) | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/amaro-piccante-olio-non-e-difetto | TODO: all selected locales ready
-- info-10 | Crudo o in cottura: quando usare l'EVO fa davvero la differenza | 🇮🇹 IT /blog/categoria/consumo-corretto/crudo-vs-cottura-quando-usare-evo | TODO: all selected locales ready
-- info-2 | Come conservare l'olio EVO a casa: luce, ossigeno, temperatura | 🇮🇹 IT /blog/categoria/conservazione/conservare-olio-casa | TODO: all selected locales ready
-- info-4 | Come capire se un olio EVO è rancido: segnali e cosa fare | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/come-capire-olio-rancido | TODO: all selected locales ready
-- info-5 | Colore dell'olio: il verde è sinonimo di migliore? (No) | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/colore-olio-verde-migliore | TODO: all selected locales ready
-- info-6 | Punto di fumo dell'olio EVO: si può friggere con l'extravergine? | 🇮🇹 IT /blog/categoria/consumo-corretto/punto-di-fumo-friggere-evo | TODO: all selected locales ready
-- info-7 | Quante calorie ha l'olio EVO e quali sono le porzioni consigliate | 🇮🇹 IT /blog/categoria/salute-benessere/calorie-olio-evo-porzioni | TODO: all selected locales ready
-- info-8 | Olio EVO e salute: cosa dice davvero la scienza (polifenoli e non solo) | 🇮🇹 IT /blog/categoria/salute-benessere/olio-evo-salute-scienza-polifenoli | TODO: all selected locales ready
-- info-9 | I 7 errori più comuni nella conservazione dell'olio EVO in cucina | 🇮🇹 IT /blog/categoria/conservazione/errori-conservazione-olio-cucina | TODO: all selected locales ready
-- post-1 | I benefici dell'Olio Extra Vergine di Oliva per la salute quotidiana | 🇮🇹 IT /blog/categoria/salute-benessere/benefici-olio-evo-salute | TODO: all selected locales ready
-- post-buy-2 | Supermercato o filiera corta? La verità sul prezzo dell'Olio Artigianale | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/supermercato-vs-frantoio | TODO: all selected locales ready
-- post-chem-1 | L'acidità dell'Olio EVO: sfatiamo i miti comuni | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/acidita-olio-evo | TODO: all selected locales ready
-- post-chem-2 | Polifenoli e Perossidi: come decifrare le analisi dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/polifenoli-e-perossidi | TODO: all selected locales ready
-- post-store-1 | Quanto dura un Olio EVO e come conservarlo al meglio | 🇮🇹 IT /blog/categoria/conservazione/quanto-dura-olio-evo | TODO: all selected locales ready
-- post-store-2 | Lattina o bottiglia scura? Quale conserva meglio l'olio EVO | 🇮🇹 IT /blog/categoria/conservazione/bottiglia-scura-o-latta | TODO: all selected locales ready
-- post-use-1 | Friggere con l'olio extravergine: falso mito o realtà culinaria? | 🇮🇹 IT /blog/categoria/consumo-corretto/friggere-con-olio-evo | TODO: all selected locales ready
-- post-use-2 | Olio nuovo d'annata: come esaltarlo nei piatti a crudo | 🇮🇹 IT /blog/categoria/consumo-corretto/esaltare-olio-nuovo-crudo | TODO: all selected locales ready
-- ric-1 | Miglior olio per la bruschetta: 3 profili e come scegliere | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/miglior-olio-bruschetta | TODO: all selected locales ready
-- ric-2 | Miglior olio per l'insalata: emulsione, sale e il giusto profilo | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-insalata | TODO: all selected locales ready
-- ric-3 | Olio per la pasta aglio e olio: quale profilo aromatico scegliere | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-pasta-aglio-olio | TODO: all selected locales ready
-- ric-4 | Olio per legumi e zuppe: quale funziona meglio e come usarlo | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-legumi-zuppe | TODO: all selected locales ready
-- ric-5 | Pane e olio: mini guida degustazione per ospiti (e box assaggio) | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/pane-e-olio-degustazione | TODO: all selected locales ready
-- ric-6 | Olio EVO nei dolci: sì, si fa — con limone, cioccolato e aromi | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-nei-dolci | TODO: all selected locales ready
-- ric-7 | Olio su pesce crudo e carpaccio: quale scegliere e perché | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-pesce-crudo-carpaccio | TODO: all selected locales ready
-- ric-8 | Olio per carne alla griglia: fruttato intenso e il perché del contrasto | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-carne-grigliat | TODO: all selected locales ready
-- ric-9 | Olio per pizza: a crudo o in uscita? Quale profilo e quando aggiungerlo | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-pizza | TODO: all selected locales ready
-- tec-1 | NMR dell'olio di oliva: ¹H e ¹³C spettroscopia per autenticazione e adulterazione | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/nmr-olio-oliva-analisi | TODO: all selected locales ready
-- tec-2 | Spettrometria di massa dell'olio di oliva: GC-MS per volatili, LC-MS per polifenoli | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/spettrometria-massa-olio-oliva-gcms-lcms | TODO: all selected locales ready
-- tec-3 | Metodi ISO per l'analisi dell'olio di oliva: da ISO 660 a ISO 27107 — guida completa | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/metodi-iso-analisi-olio-oliva | TODO: all selected locales ready
+- chim-1 | Composizione chimica dell'olio EVO: trigliceridi, acidi grassi e frazione insaponificabile | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/composizione-chimica-olio-evo | READY: all selected locales ready
+- chim-2 | Polifenoli nell'olio EVO: oleocantale, oleuropeina e idrossitirosolo spiegati | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/polifenoli-oleocantale-oleuropeina | READY: all selected locales ready
+- chim-3 | Profilo degli acidi grassi: oleico, linoleico, palmitico — stabilità e gusto | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/profilo-acidi-grassi-olio | READY: all selected locales ready
+- chim-4 | Numero di perossidi: cos'è e cosa indica davvero nella qualità dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/numero-perossidi-che-misura | READY: all selected locales ready
+- chim-5 | K232 e K270: cosa misurano e perché indicano la qualità dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/k232-k270-cosa-misurano | READY: all selected locales ready
+- chim-6 | Gramolazione: cosa succede chimicamente e come influenza l'aroma dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/gramolazione-chimica-aroma | READY: all selected locales ready
+- chim-7 | Filtrazione dell'olio EVO: effetti su acqua, enzimi, fermentazioni e stabilità | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/filtrazione-olio-effetti-stabilita | READY: all selected locales ready
+- com-2 | Abbinamenti con EVO fruttato leggero | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/fruttato-leggero-abbinamenti | READY: all selected locales ready
+- com-4 | Come e quando usare l'Olio EVO Fruttato Intenso | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/fruttato-intenso-quando-usarlo | READY: all selected locales ready
+- com-6 | Cos'è l'Olio Nuovo e perché conviene acquistarlo? | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/olio-nuovo-cose-e-quanto-dura | READY: all selected locales ready
+- com-8 | DOP, IGP o 100% Italiano: Cosa significano le sigle dell'Olio? | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/dop-igp-100-italiano-differenze | READY: all selected locales ready
+- dif-1 | Difetti dell'olio EVO: guida completa ai principali vizi sensoriali | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/difetti-olio-evo-guida-completa | READY: all selected locales ready
+- dif-2 | Rancido: cos'è, perché succede e come evitarlo | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/rancido-cause-prevenzione | READY: all selected locales ready
+- dif-3 | Difetto avvinato-inacetito nell'olio EVO: cause, riconoscimento e prevenzione | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/difetto-avvinato-inacetito-olio | READY: all selected locales ready
+- dif-4 | Muffa e morchia nell'olio EVO: cause, riconoscimento e prevenzione | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/difetto-muffa-morchia-olio | READY: all selected locales ready
+- faq-1 | FAQ sull'olio EVO: perché pizzica, perché è torbido, quanto dura, perché costa | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/faq-olio-evo | READY: all selected locales ready
+- fid-1 | Come nasce il nostro olio: raccolta → frantoio → stoccaggio | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/come-nasce-nostro-olio | READY: all selected locales ready
+- fid-2 | Come degustare l'olio EVO in 5 minuti: guida pratica per tutti | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/come-degustare-olio-5-minuti | READY: all selected locales ready
+- fid-3 | Tracciabilità: lotto, analisi, provenienza — come garantiamo la qualità | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/tracciabilita-lotto-analisi-qualita | READY: all selected locales ready
+- fid-4 | Perché l'olio cambia ogni anno: clima, resa, maturazione | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/perche-olio-cambia-ogni-anno | READY: all selected locales ready
+- fid-5 | Oleoturismo e visite al frantoio: cos'è, cosa si fa e perché vale la pena | 🇮🇹 IT /blog/categoria/il-nostro-frantoio/oleoturismo-degustazioni-frantoio | READY: all selected locales ready
+- glos-1 | Glossario dell'olio EVO: fruttato, amaro, piccante, difetti, gramolazione e altro | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/glossario-olio-evo | READY: all selected locales ready
+- info-1 | A cosa serve l'amaro e il piccante nell'olio EVO (non è un difetto) | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/amaro-piccante-olio-non-e-difetto | READY: all selected locales ready
+- info-10 | Crudo o in cottura: quando usare l'EVO fa davvero la differenza | 🇮🇹 IT /blog/categoria/consumo-corretto/crudo-vs-cottura-quando-usare-evo | READY: all selected locales ready
+- info-2 | Come conservare l'olio EVO a casa: luce, ossigeno, temperatura | 🇮🇹 IT /blog/categoria/conservazione/conservare-olio-casa | READY: all selected locales ready
+- info-4 | Come capire se un olio EVO è rancido: segnali e cosa fare | 🇮🇹 IT /blog/categoria/difetti-dell-olio-evo/come-capire-olio-rancido | READY: all selected locales ready
+- info-5 | Colore dell'olio: il verde è sinonimo di migliore? (No) | 🇮🇹 IT /blog/categoria/informazioni-sull-olio-evo/colore-olio-verde-migliore | READY: all selected locales ready
+- info-6 | Punto di fumo dell'olio EVO: si può friggere con l'extravergine? | 🇮🇹 IT /blog/categoria/consumo-corretto/punto-di-fumo-friggere-evo | READY: all selected locales ready
+- info-7 | Quante calorie ha l'olio EVO e quali sono le porzioni consigliate | 🇮🇹 IT /blog/categoria/salute-benessere/calorie-olio-evo-porzioni | READY: all selected locales ready
+- info-8 | Olio EVO e salute: cosa dice davvero la scienza (polifenoli e non solo) | 🇮🇹 IT /blog/categoria/salute-benessere/olio-evo-salute-scienza-polifenoli | READY: all selected locales ready
+- info-9 | I 7 errori più comuni nella conservazione dell'olio EVO in cucina | 🇮🇹 IT /blog/categoria/conservazione/errori-conservazione-olio-cucina | READY: all selected locales ready
+- post-1 | I benefici dell'Olio Extra Vergine di Oliva per la salute quotidiana | 🇮🇹 IT /blog/categoria/salute-benessere/benefici-olio-evo-salute | READY: all selected locales ready
+- post-buy-2 | Supermercato o filiera corta? La verità sul prezzo dell'Olio Artigianale | 🇮🇹 IT /blog/categoria/consigli-di-acquisto/supermercato-vs-frantoio | READY: all selected locales ready
+- post-chem-1 | L'acidità dell'Olio EVO: sfatiamo i miti comuni | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/acidita-olio-evo | READY: all selected locales ready
+- post-chem-2 | Polifenoli e Perossidi: come decifrare le analisi dell'olio | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/polifenoli-e-perossidi | READY: all selected locales ready
+- post-store-1 | Quanto dura un Olio EVO e come conservarlo al meglio | 🇮🇹 IT /blog/categoria/conservazione/quanto-dura-olio-evo | READY: all selected locales ready
+- post-store-2 | Lattina o bottiglia scura? Quale conserva meglio l'olio EVO | 🇮🇹 IT /blog/categoria/conservazione/bottiglia-scura-o-latta | READY: all selected locales ready
+- post-use-1 | Friggere con l'olio extravergine: falso mito o realtà culinaria? | 🇮🇹 IT /blog/categoria/consumo-corretto/friggere-con-olio-evo | READY: all selected locales ready
+- post-use-2 | Olio nuovo d'annata: come esaltarlo nei piatti a crudo | 🇮🇹 IT /blog/categoria/consumo-corretto/esaltare-olio-nuovo-crudo | READY: all selected locales ready
+- ric-1 | Miglior olio per la bruschetta: 3 profili e come scegliere | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/miglior-olio-bruschetta | READY: all selected locales ready
+- ric-2 | Miglior olio per l'insalata: emulsione, sale e il giusto profilo | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-insalata | READY: all selected locales ready
+- ric-3 | Olio per la pasta aglio e olio: quale profilo aromatico scegliere | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-pasta-aglio-olio | READY: all selected locales ready
+- ric-4 | Olio per legumi e zuppe: quale funziona meglio e come usarlo | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-legumi-zuppe | READY: all selected locales ready
+- ric-5 | Pane e olio: mini guida degustazione per ospiti (e box assaggio) | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/pane-e-olio-degustazione | READY: all selected locales ready
+- ric-6 | Olio EVO nei dolci: sì, si fa — con limone, cioccolato e aromi | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-nei-dolci | READY: all selected locales ready
+- ric-7 | Olio su pesce crudo e carpaccio: quale scegliere e perché | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-pesce-crudo-carpaccio | READY: all selected locales ready
+- ric-8 | Olio per carne alla griglia: fruttato intenso e il perché del contrasto | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-carne-grigliat | READY: all selected locales ready
+- ric-9 | Olio per pizza: a crudo o in uscita? Quale profilo e quando aggiungerlo | 🇮🇹 IT /blog/categoria/ricette-e-abbinamenti/olio-per-pizza | READY: all selected locales ready
+- tec-1 | NMR dell'olio di oliva: ¹H e ¹³C spettroscopia per autenticazione e adulterazione | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/nmr-olio-oliva-analisi | READY: all selected locales ready
+- tec-2 | Spettrometria di massa dell'olio di oliva: GC-MS per volatili, LC-MS per polifenoli | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/spettrometria-massa-olio-oliva-gcms-lcms | READY: all selected locales ready
+- tec-3 | Metodi ISO per l'analisi dell'olio di oliva: da ISO 660 a ISO 27107 — guida completa | 🇮🇹 IT /blog/categoria/chimica-dell-olio-di-oliva/metodi-iso-analisi-olio-oliva | READY: all selected locales ready
 
 ## Worklist By Post
 
@@ -2408,3 +2408,4 @@ Full checklist:
 - [x] tec-1 | IT: /blog/categoria/chimica-dell-olio-di-oliva/nmr-olio-oliva-analisi | TARGET: /no/blog/kategori/olivenoljekjemi/nmr-spektroskopi-olivenolje-autentisering | RESOLVED_NOW: /no/blog/kategori/olivenoljekjemi/nmr-spektroskopi-olivenolje-autentisering | MISSING: none | ISSUES: ok | TITLE_IT: NMR dell'olio di oliva: ¹H e ¹³C spettroscopia per autenticazione e adulterazione
 - [x] tec-2 | IT: /blog/categoria/chimica-dell-olio-di-oliva/spettrometria-massa-olio-oliva-gcms-lcms | TARGET: /no/blog/kategori/olivenoljekjemi/massespektrometri-olivenolje-gc-ms-lc-ms | RESOLVED_NOW: /no/blog/kategori/olivenoljekjemi/massespektrometri-olivenolje-gc-ms-lc-ms | MISSING: none | ISSUES: ok | TITLE_IT: Spettrometria di massa dell'olio di oliva: GC-MS per volatili, LC-MS per polifenoli
 - [x] tec-3 | IT: /blog/categoria/chimica-dell-olio-di-oliva/metodi-iso-analisi-olio-oliva | TARGET: /no/blog/kategori/olivenoljekjemi/iso-metoder-for-olivenoljeanalyse-guide | RESOLVED_NOW: /no/blog/kategori/olivenoljekjemi/iso-metoder-for-olivenoljeanalyse-guide | MISSING: none | ISSUES: ok | TITLE_IT: Metodi ISO per l'analisi dell'olio di oliva: da ISO 660 a ISO 27107 — guida completa
+

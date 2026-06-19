@@ -2,9 +2,11 @@ import type { ProductMerch } from "@/generated/prisma";
 import { makeInventorySku } from "@/lib/inventorySku";
 import { readCatalog } from "@/lib/server/catalog";
 import { prisma } from "@/lib/server/prisma";
+import { evaluatePromotionEligibility } from "@/lib/server/promotionUsage";
 import { getStoreSettings } from "@/lib/server/settings";
 import { calcVatCentsFromSubtotal } from "@/lib/server/vat";
 import type { Product } from "@/lib/shopTypes";
+import { getShippingRule } from "@/lib/shippingConfig";
 
 export type PricingInputLine = {
   productId: string;
@@ -126,7 +128,9 @@ function applyProductMerchDiscount(unitPriceCents: number, merch: ProductMerch |
 export async function computeOrderPricing(args: {
   lines: PricingInputLine[];
   promotionCode?: string;
+  countryCode?: string;
 }): Promise<PricingResult> {
+  const countryCode = args.countryCode || "IT";
   const catalog = (await readCatalog()) as unknown as Product[];
   const now = new Date();
   const productKeys = [...new Set(args.lines.map((line) => line.productId))];
@@ -158,7 +162,7 @@ export async function computeOrderPricing(args: {
     const unitPriceCents = applyProductMerchDiscount(baseUnitPriceCents, merch);
     const lineSubtotalCents = unitPriceCents * qty;
 
-    const sku = makeInventorySku(p.id, v.id);
+    const sku = makeInventorySku(p.id, v.id, v.sku);
     const variantImageSrc = getOptionalString(v as unknown, "imageSrc");
     const productImageSrc = getOptionalString(p as unknown, "imageSrc");
 
@@ -214,56 +218,88 @@ export async function computeOrderPricing(args: {
   let freeShipping = false;
 
   if (args.promotionCode) {
-    const code = args.promotionCode.trim().toUpperCase();
-    const promo = await prisma.promotion.findUnique({ where: { code } });
+    const eligibility = await evaluatePromotionEligibility(prisma, {
+      code: args.promotionCode,
+      subtotalCents,
+      now,
+    });
 
-    if (promo && promo.isActive) {
-      const startsOk = !promo.startsAt || promo.startsAt <= now;
-      const endsOk = !promo.endsAt || promo.endsAt >= now;
-      const minOk = !promo.minOrderCents || subtotalCents >= promo.minOrderCents;
+    if (eligibility.ok) {
+      const promo = eligibility.promo;
+      if (promo.freeShipping || promo.type === "free_shipping") freeShipping = true;
 
-      const pendingCount = await prisma.order.count({
-        where: {
-          promotionCode: code,
-          status: "IN_ATTESA",
-        },
-      });
-      const usageOk = !promo.usageLimit || promo.usedCount + pendingCount < promo.usageLimit;
-
-      if (startsOk && endsOk && minOk && usageOk) {
-        if (promo.freeShipping || promo.type === "free_shipping") freeShipping = true;
-
-        if (promo.type === "percent" && promo.percent) {
-          discountCents = Math.round((subtotalCents * promo.percent) / 100);
-        } else if (promo.type === "fixed" && promo.amountCents) {
-          discountCents = promo.amountCents;
-        }
-
-        discountCents = clampInt(discountCents, 0, subtotalCents);
-
-        promotionApplied = {
-          code: promo.code,
-          type: promo.type,
-          percent: promo.percent,
-          amountCents: promo.amountCents,
-          freeShipping: promo.freeShipping || promo.type === "free_shipping",
-        };
+      if (promo.type === "percent" && promo.percent) {
+        discountCents = Math.round((subtotalCents * promo.percent) / 100);
+      } else if (promo.type === "fixed" && promo.amountCents) {
+        discountCents = promo.amountCents;
       }
+
+      discountCents = clampInt(discountCents, 0, subtotalCents);
+
+      promotionApplied = {
+        code: promo.code,
+        type: promo.type,
+        percent: promo.percent,
+        amountCents: promo.amountCents,
+        freeShipping: promo.freeShipping || promo.type === "free_shipping",
+      };
     }
   }
 
   const settings = await getStoreSettings();
+  const shippingRule = getShippingRule(countryCode);
 
   const hasProductWithFreeShipping = baseItems.some((item) => {
     const prod = catalog.find((x) => x.id === item.productId);
     return getOptionalBoolean(prod, "freeShipping") === true;
   });
   const orderFreeShipping = freeShipping || hasProductWithFreeShipping;
-  const shippingCents = orderFreeShipping
-    ? 0
-    : subtotalCents >= settings.freeShippingThresholdCents
-      ? 0
-      : settings.shippingFlatCents;
+
+  let shippingCents = 0;
+  if (!orderFreeShipping) {
+    const isItaly = countryCode.toUpperCase() === "IT";
+    if (isItaly) {
+      shippingCents = subtotalCents >= shippingRule.freeShippingThresholdCents
+        ? 0
+        : shippingRule.shippingFlatCents;
+    } else {
+      // International order
+      if (subtotalCents > 50000) {
+        // High value order (>500.00 EUR) overrides
+        if (countryCode.toUpperCase() === "US") {
+          shippingCents = 6000; // Flat 60 EUR
+        } else {
+          shippingCents = 3000; // Flat 30 EUR for Europe
+        }
+      } else {
+        // Under 500.00 EUR: dynamic weight calculation
+        if (subtotalCents >= shippingRule.freeShippingThresholdCents) {
+          shippingCents = 0;
+        } else {
+          // Compute mock package weight
+          let totalWeightKg = 0;
+          for (const item of baseItems) {
+            const vId = item.variantId.toLowerCase();
+            const label = item.variantLabel.toLowerCase();
+            let itemWeight = 1.0; // default 1 kg per item
+            
+            if (vId.includes("250") || label.includes("250")) itemWeight = 0.25;
+            else if (vId.includes("500") || label.includes("500")) itemWeight = 0.5;
+            else if (vId.includes("750") || label.includes("750")) itemWeight = 0.75;
+            else if (vId.includes("1lt") || vId.includes("1l") || label.includes("1l") || label.includes("1 l")) itemWeight = 1.0;
+            else if (vId.includes("3lt") || vId.includes("3l") || label.includes("3l") || label.includes("3 l")) itemWeight = 3.0;
+            else if (vId.includes("5lt") || vId.includes("5l") || label.includes("5l") || label.includes("5 l")) itemWeight = 5.0;
+            
+            totalWeightKg += itemWeight * item.qty;
+          }
+
+          const isUS = countryCode.toUpperCase() === "US";
+          const extraCentsPerKg = isUS ? 300 : 150; // 3 EUR/kg for US, 1.50 EUR/kg for Europe
+          shippingCents = shippingRule.shippingFlatCents + Math.round(extraCentsPerKg * totalWeightKg);
+        }
+      }
+    }
+  }
 
   const weights = baseItems.map((x) => x.lineSubtotalCents);
   const discountAlloc = allocateProportionally(discountCents, weights);

@@ -9,6 +9,7 @@ import { rateLimit } from "@/lib/server/rateLimit";
 import { AdminOrderRefundSchema } from "@/lib/server/schemas";
 import { applyStripeRefundToOrderTx, isRefundableOrderStatus } from "@/lib/server/orderRefund";
 import { processOutboxBatch } from "@/lib/server/outbox";
+import { OrderInvariantError } from "@/lib/server/orderStatus";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -129,6 +130,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   } catch (error: unknown) {
     const err = error as Error & { status?: number; statusCode?: number };
     if (err.status === 413) return NextResponse.json({ error: "Payload Too Large" }, { status: 413 });
+    if (err instanceof OrderInvariantError) {
+      return NextResponse.json(
+        { error: err.code, violations: err.violations },
+        { status: 409 }
+      );
+    }
     console.error("Admin Stripe refund failed", err);
     return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }

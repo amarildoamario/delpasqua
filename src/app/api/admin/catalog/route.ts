@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { normalizeSku } from "@/lib/inventorySku";
 import { requireAdminApi } from "@/lib/server/adminAuth";
-import { prisma } from "@/lib/server/prisma";
 import {
   readCatalog,
+  preserveCartAliases,
+  syncInventoryForCatalog,
   writeCatalog,
-  makeInternalSku,
   type CatalogProduct,
 } from "@/lib/server/catalog";
 
@@ -27,6 +28,7 @@ function sanitizeCatalog(catalog: CatalogProduct[]): CatalogProduct[] {
       ? ((p as { variants?: unknown[] }).variants || []).map((v) => ({
         ...(v as Record<string, unknown>),
         id: String((v as Record<string, unknown>)?.id || "").trim(),
+        sku: normalizeSku((v as Record<string, unknown>)?.sku) ?? undefined,
       }))
       : [],
   })) as CatalogProduct[];
@@ -61,33 +63,29 @@ function assertUniqueProductIds(catalog: CatalogProduct[]) {
   return { ok: true as const };
 }
 
-async function ensureInventoryForCatalog(catalog: CatalogProduct[]) {
-  const skus: string[] = [];
-  for (const p of catalog) {
-    if (!p?.id) continue;
-    for (const v of p.variants || []) {
-      if (!v?.id) continue;
-      skus.push(makeInternalSku(p.id, v.id));
+function assertUniqueVariantSkus(catalog: CatalogProduct[]) {
+  const skuSet = new Set<string>();
+
+  for (const product of catalog) {
+    const productId = String(product?.id || "").trim();
+    const variantIdSet = new Set<string>();
+
+    for (const variant of product.variants || []) {
+      const variantId = String(variant?.id || "").trim();
+      if (!variantId) return { ok: false as const, error: `Missing variant id in product ${productId}` };
+      if (variantIdSet.has(variantId)) {
+        return { ok: false as const, error: `Duplicate variant id in ${productId}: ${variantId}` };
+      }
+      variantIdSet.add(variantId);
+
+      const sku = normalizeSku(variant?.sku);
+      if (!sku) return { ok: false as const, error: `Missing SKU for ${productId}:${variantId}` };
+      if (skuSet.has(sku)) return { ok: false as const, error: `Duplicate SKU: ${sku}` };
+      skuSet.add(sku);
     }
   }
-  
-  // Dedup SKUs to prevent Postgres deadlock/duplicate key errors in the same transaction
-  const uniqueSkus = Array.from(new Set(skus));
-  if (!uniqueSkus.length) return;
 
-  const chunkSize = 500;
-  for (let i = 0; i < uniqueSkus.length; i += chunkSize) {
-    const chunk = uniqueSkus.slice(i, i + chunkSize);
-    await Promise.all(
-      chunk.map((sku) =>
-        prisma.inventoryItem.upsert({
-          where: { sku },
-          create: { sku, stock: 0 },
-          update: {},
-        })
-      )
-    );
-  }
+  return { ok: true as const };
 }
 
 export async function GET(req: Request) {
@@ -166,6 +164,11 @@ export async function POST(req: Request) {
     const uniq = assertUniqueProductIds(next);
     if (!uniq.ok) {
       return guard.attach(NextResponse.json({ ok: false, error: uniq.error }, { status: 400 }));
+    }
+
+    const skuCheck = assertUniqueVariantSkus(next);
+    if (!skuCheck.ok) {
+      return guard.attach(NextResponse.json({ ok: false, error: skuCheck.error }, { status: 400 }));
     }
   }
 
@@ -300,8 +303,14 @@ export async function POST(req: Request) {
     return guard.attach(NextResponse.json({ ok: false, error: uniq.error }, { status: 400 }));
   }
 
+  const skuCheck = assertUniqueVariantSkus(next);
+  if (!skuCheck.ok) {
+    return guard.attach(NextResponse.json({ ok: false, error: skuCheck.error }, { status: 400 }));
+  }
+
+  next = preserveCartAliases(current, next);
   const { backupName } = await writeCatalog(next);
-  await ensureInventoryForCatalog(next);
+  await syncInventoryForCatalog(next);
 
   return guard.attach(
     NextResponse.json(

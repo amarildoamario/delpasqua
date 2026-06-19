@@ -5,39 +5,45 @@ Data audit: 2026-05-29
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-02
-- OpenItems: 6
-- AgentAction: non ripartire da zero; il server-side critico e` stato sistemato, ma il catalogo pubblico e client-side ha ancora nodi aperti.
-- Note: i problemi residui principali sono coerenza SKU, prodotto test pubblico e import statici JSON ancora presenti in componenti client.
+- LastVerified: 2026-06-05
+- OpenItems: 1
+- AgentAction: non ripartire da zero; resta aperta solo la decisione operativa sul prodotto test, mantenuto intenzionalmente per test futuri.
+- Note: Rimosso `src/app/lib` (duplicazione legacy). Chiusi bootstrap client, SKU operativo unico, availability real-time no-store e mapping automatico dei carrelli storici sulle rinomine catalogo. Le verifiche finali di esclusione pubblica del `prodotto-test` vivono anche in `docs/to_check_live/README.md`.
 
-## [⚠️ PARZIALE] P0 - Catalogo runtime importato come JSON statico
+## [RISOLTO] P0 - Catalogo runtime importato come JSON statico
 
 Stato:
-- Risolto per la logica server-side il 2026-05-30: Sostituito l'import statico di `products.json` in `src/lib/server/pricing.ts` con la chiamata a `readCatalog()`, garantendo coerenza di prezzo e di magazzino in fase di pricing ed eliminando il rischio di cache obsoleta.
+- Risolto per la logica server-side il 2026-05-30: sostituito l'import statico di `products.json` in `src/lib/server/pricing.ts` con la chiamata a `readCatalog()`, garantendo coerenza di prezzo e di magazzino in fase di pricing ed eliminando il rischio di cache obsoleta.
 
 Problema:
 - `src/lib/server/catalog.ts:5` avvisa di non importare `products.json` in runtime perche Next puo bundle-izzarlo e renderlo stale.
-- Ma `src/components/CartDrawer.tsx:9`, `src/app/[locale]/cart/CartPageClient.tsx:11`, `src/app/[locale]/checkout/success/page.tsx:14` importano direttamente `@/db/products.json`.
+- Ma `src/components/CartDrawer.tsx:9`, `src/app/[locale]/cart/CartPageClient.tsx:11`, `src/app/[locale]/checkout/success/page.tsx:14` importavano direttamente `@/db/products.json`.
 
 Impatto:
-- Dopo modifiche admin al catalogo, pricing/carrello/success page possono usare dati vecchi finche non si redeploya o invalida bundle.
+- Dopo modifiche admin al catalogo, pricing/carrello/success page potevano usare dati vecchi finche non si redeployava o si invalidava il bundle.
 - Rischio prezzo/variante immagine non coerenti.
 
 Fix richiesto:
 - Server: usare sempre `readCatalog()` o un servizio catalogo cache-safe.
 - Client: ricevere catalogo da API/no-store o da server component props.
-- Pricing deve essere la prima area da correggere.
+- Pricing doveva essere la prima area da correggere.
 
 Verifica repo 2026-06-02:
-- La logica server-side critica e` gia` migrata a `readCatalog()`.
-- Restano import statici di `@/db/products.json` in:
+- La logica server-side critica era gia` migrata a `readCatalog()`.
+- Restavano import statici di `@/db/products.json` in:
   - `src/context/CartContext.tsx`
   - `src/components/Navbar.tsx`
   - `src/components/HeroSplitEvo.tsx`
   - `src/components/ShopHighlights.tsx`
-- Questi componenti fanno anche fetch a `/api/products`, quindi oggi il rischio e` piu` di doppia fonte dati e bootstrap stale che non di pricing rotto.
+- Questi componenti facevano anche fetch a `/api/products`, quindi il rischio era piu` di doppia fonte dati e bootstrap stale che non di pricing rotto.
 
-## [⏳ TODO] P0 - SKU catalogo ignorato dal pricing/inventario operativo
+Richiuso il 2026-06-05:
+- Rimossi i fallback runtime a `@/db/products.json` da `CartContext`, `Navbar`, `HeroSplitEvo` e `ShopHighlights`.
+- `src/app/[locale]/layout.tsx` passa ora un catalogo iniziale server-side a `Providers` e `Navbar`, eliminando il bootstrap stale dal bundle client.
+- `src/app/api/products/route.ts` espone ora il catalogo pubblico filtrato via helper server-side, invece di lasciare il client con una doppia fonte dati.
+- Il catalogo pubblico non dipende piu` da un JSON bundle-izzato nei principali consumatori client-side.
+
+## [RISOLTO] P0 - SKU catalogo ignorato dal pricing/inventario operativo
 
 Problema:
 - Varianti in `src/db/products.json` hanno campo `sku`.
@@ -58,7 +64,13 @@ Verifica repo 2026-06-02:
 - Il catalogo continua ad avere anche `variant.sku` commerciale.
 - Questo e` il motivo per cui availability, pricing e shop possono essere coerenti tra loro ma ancora poco leggibili lato admin/fulfillment.
 
-## [⏳ TODO] P0 - Rimozione o rinomina prodotto/variante puo rompere carrelli esistenti
+Richiuso il 2026-06-05:
+- `variant.sku` e` ora la chiave operativa canonica per pricing, availability, PDP, carrello e gestionale magazzino.
+- Il fallback `productId:variantId` resta solo come compatibilita` legacy, non come seconda chiave concorrente.
+- Il salvataggio catalogo migra automaticamente stock e reservation esistenti dal vecchio SKU interno al nuovo SKU canonico, evitando di perdere giacenze gia` presenti nel DB.
+- L'admin catalog valida ora SKU mancanti o duplicati, impedendo di reintrodurre ambiguita` operative.
+
+## [RISOLTO] P0 - Rimozione o rinomina prodotto/variante puo rompere carrelli esistenti
 
 Problema:
 - Il carrello salva `productId` e `variantId` in localStorage.
@@ -77,7 +89,13 @@ Verifica repo 2026-06-02:
 - `CartContext` oggi normalizza e scarta righe non piu valide, quindi il carrello non resta sporco indefinitamente.
 - Manca pero` ancora un mapping esplicito per rinomina/merge varianti e un messaggio utente dedicato al caso "questo prodotto non esiste piu".
 
-## [⚠️ PARZIALE] P1 - Availability pubblica cacheata puo mostrare stock vecchio
+Richiuso il 2026-06-05:
+- Il salvataggio admin confronta le varianti tramite lo SKU canonico stabile e conserva automaticamente gli ID precedenti in `variant.cartAliases`.
+- Durante l'hydration, `CartContext` rimappa `productId` / `variantId` storici agli ID correnti prima della validazione.
+- Gli alias vengono conservati anche dopo rinomine successive e possono rappresentare mapping espliciti per merge controllati.
+- Se non esiste alcun mapping valido, la riga viene rimossa e il cliente riceve un messaggio dedicato; le righe migrate ricevono un messaggio di aggiornamento catalogo.
+
+## [RISOLTO] P1 - Availability pubblica cacheata puo mostrare stock vecchio
 
 Problema:
 - `src/app/api/inventory/availability/route.ts` usa `Cache-Control: public, s-maxage=30, stale-while-revalidate=60`.
@@ -101,7 +119,13 @@ Verifica repo 2026-06-02:
 - L'endpoint pubblico availability resta cacheato; la scelta e` probabilmente accettabile per listing SEO/shop.
 - Drawer, cart page e pre-checkout sono gia` riallineati a refresh `no-store`, quindi qui il residuo e` soprattutto UX/percezione.
 
-## [✅ RISOLTO] P1 - Shop page perde immagini variante
+Richiuso il 2026-06-05:
+- `src/app/api/inventory/availability/route.ts` usa ora `no-store` e forza risposta dinamica senza cache CDN/browser.
+- Tutti i fetch availability client principali richiedono esplicitamente `cache: "no-store"`.
+- La PDP non aspetta piu` una query inventario server-side per costruire il primo HTML: pagina e catalogo vengono renderizzati subito, poi la disponibilita` viene caricata dal client.
+- Checkout e riserve inventario continuano comunque a validare lo stock lato server.
+
+## [RISOLTO] P1 - Shop page perde immagini variante
 
 Problema:
 - `src/app/[locale]/shop/page.tsx` passa al client solo `id` e `priceCents` delle varianti.
@@ -119,7 +143,7 @@ Impatto:
 Fix richiesto:
 - Valutare se mantenere anche un layout aggregato in contesti diversi dalla shop page.
 
-## [⏳ TODO] P1 - Prodotto test presente nel catalogo
+## [TODO] P1 - Prodotto test presente nel catalogo
 
 Problema:
 - `src/db/products.json` contiene `prodotto-test` con prezzo EUR 0,50, `freeShipping: true`, `excludeFromSeo: true`.
@@ -132,13 +156,15 @@ Fix richiesto:
 - Escludere prodotti test dal catalogo pubblico con flag dedicato, non solo SEO.
 - Consentire prodotti test solo in ambiente non produzione.
 
-Verifica repo 2026-06-02:
-- `src/db/products.json` contiene ancora `prodotto-test`.
-- `/api/products` restituisce tutto il catalogo senza filtro pubblico dedicato.
-- `src/app/[locale]/shop/page.tsx` mappa ancora tutti i prodotti letti da `readCatalog()`.
-- `src/app/sitemap-products.xml/route.ts` lo esclude solo grazie a `excludeFromSeo`, non grazie a una semantica `isPublished`.
+Verifica repo 2026-06-04:
+- Il `prodotto-test` e` mantenuto intenzionalmente nel catalogo in questa fase per consentire i test finali di pagamento e spedizione in ambiente reale. Verra` escluso o rimosso solo al completamento dei test post go-live.
 
-## [⏳ TODO] P2 - Duplicazione legacy `src/app/lib`
+Aggiornamento repo 2026-06-05:
+- Sono stati introdotti i flag pubblici `isPublished` / `isPurchasable` nel catalogo e nel gestionale prodotti.
+- Questo permette ora di escludere il prodotto test da shop, API pubbliche, PDP e sitemap senza affidarsi solo a `excludeFromSeo`.
+- Il prodotto test resta intenzionalmente attivo per test futuri; il task rimane aperto solo come promemoria operativo per disattivarlo o rimuoverlo quando non servira` piu.
+
+## [RISOLTO] P2 - Duplicazione legacy `src/app/lib`
 
 Problema:
 - `AGENT.md` segnala `src/app/lib` come legacy.
@@ -151,6 +177,8 @@ Fix richiesto:
 - Audit import da `src/app/lib`.
 - Eliminare duplicati o aggiungere regole lint/path alias che impediscono nuovi import.
 
-Verifica repo 2026-06-02:
-- Gli import applicativi verso `src/app/lib` non risultano oggi diffusi, ma la subtree legacy esiste ancora.
-- Serve piu` pulizia strutturale che bugfix urgente.
+Stato:
+- Risolto il 2026-06-04. Eseguito audit approfondito delle referenze a `src/app/lib` e rimosso completamente la subtree legacy inutilizzata dal repository.
+
+Verifica repo 2026-06-04:
+- La cartella `src/app/lib` e` stata eliminata. Nessun modulo del progetto fa piu` riferimento a questa directory.

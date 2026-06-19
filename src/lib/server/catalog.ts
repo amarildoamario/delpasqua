@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { makeInventorySku } from "@/lib/inventorySku";
+import { makeInventorySku, makeLegacyInventorySku, normalizeSku } from "@/lib/inventorySku";
 import { prisma } from "@/lib/server/prisma";
 
 // IMPORTANT:
@@ -12,12 +12,18 @@ export type CatalogVariant = {
   label?: string;
   priceCents?: number;
   sku?: string;
+  cartAliases?: CatalogCartAlias[];
   imageSrc?: string;
   imageAlt?: string;
   title?: string;
 
   // campi extra presenti nel JSON (non tipizzati)
   [k: string]: unknown;
+};
+
+export type CatalogCartAlias = {
+  productId: string;
+  variantId: string;
 };
 
 export type CatalogProduct = {
@@ -36,6 +42,8 @@ export type CatalogProduct = {
 
   variants: CatalogVariant[];
   excludeFromSeo?: boolean;
+  isPublished?: boolean;
+  isPurchasable?: boolean;
 
   // campi extra presenti nel JSON (non tipizzati)
   [k: string]: unknown;
@@ -51,6 +59,100 @@ export async function readCatalog(): Promise<CatalogProduct[]> {
   const json: unknown = JSON.parse(raw);
 
   return Array.isArray(json) ? (json as CatalogProduct[]) : [];
+}
+
+export function isPublishedCatalogProduct(product: CatalogProduct | null | undefined) {
+  if (!product) return false;
+  return product.isPublished !== false;
+}
+
+export function isPurchasableCatalogProduct(product: CatalogProduct | null | undefined) {
+  if (!product) return false;
+  return isPublishedCatalogProduct(product) && product.isPurchasable !== false;
+}
+
+export function isSeoVisibleCatalogProduct(product: CatalogProduct | null | undefined) {
+  if (!product) return false;
+  return isPurchasableCatalogProduct(product) && product.excludeFromSeo !== true;
+}
+
+export function filterPublicCatalog(products: CatalogProduct[]) {
+  return products.filter(isPurchasableCatalogProduct);
+}
+
+export function filterSeoCatalog(products: CatalogProduct[]) {
+  return products.filter(isSeoVisibleCatalogProduct);
+}
+
+export async function readPublicCatalog(): Promise<CatalogProduct[]> {
+  return filterPublicCatalog(await readCatalog());
+}
+
+function normalizeCartAlias(value: unknown): CatalogCartAlias | null {
+  if (!value || typeof value !== "object") return null;
+  const alias = value as { productId?: unknown; variantId?: unknown };
+  const productId = typeof alias.productId === "string" ? alias.productId.trim() : "";
+  const variantId = typeof alias.variantId === "string" ? alias.variantId.trim() : "";
+  return productId && variantId ? { productId, variantId } : null;
+}
+
+function cartAliasKey(alias: CatalogCartAlias) {
+  return `${alias.productId}::${alias.variantId}`;
+}
+
+export function preserveCartAliases(
+  currentCatalog: CatalogProduct[],
+  nextCatalog: CatalogProduct[]
+): CatalogProduct[] {
+  const previousBySku = new Map<
+    string,
+    { productId: string; variantId: string; aliases: CatalogCartAlias[] }
+  >();
+
+  for (const product of currentCatalog || []) {
+    for (const variant of product.variants || []) {
+      const sku = normalizeSku(variant.sku);
+      if (!sku) continue;
+      const aliases = (variant.cartAliases || [])
+        .map(normalizeCartAlias)
+        .filter((alias): alias is CatalogCartAlias => Boolean(alias));
+      previousBySku.set(sku, {
+        productId: product.id,
+        variantId: variant.id,
+        aliases,
+      });
+    }
+  }
+
+  return nextCatalog.map((product) => ({
+    ...product,
+    variants: (product.variants || []).map((variant) => {
+      const canonicalKey = cartAliasKey({ productId: product.id, variantId: variant.id });
+      const aliasMap = new Map<string, CatalogCartAlias>();
+      const addAlias = (value: unknown) => {
+        const alias = normalizeCartAlias(value);
+        if (!alias) return;
+        const key = cartAliasKey(alias);
+        if (key !== canonicalKey) aliasMap.set(key, alias);
+      };
+
+      for (const alias of variant.cartAliases || []) addAlias(alias);
+
+      const previous = normalizeSku(variant.sku)
+        ? previousBySku.get(normalizeSku(variant.sku) as string)
+        : null;
+      if (previous) {
+        addAlias({ productId: previous.productId, variantId: previous.variantId });
+        for (const alias of previous.aliases) addAlias(alias);
+      }
+
+      const cartAliases = [...aliasMap.values()];
+      return {
+        ...variant,
+        cartAliases: cartAliases.length > 0 ? cartAliases : undefined,
+      };
+    }),
+  }));
 }
 
 export async function writeCatalog(nextCatalog: CatalogProduct[]) {
@@ -80,7 +182,143 @@ export async function writeCatalog(nextCatalog: CatalogProduct[]) {
 
 // Internal SKU used by the inventory table
 export function makeInternalSku(productId: string, variantId: string) {
-  return makeInventorySku(productId, variantId);
+  return makeLegacyInventorySku(productId, variantId);
+}
+
+type CatalogInventoryVariantLike = {
+  id?: string | null;
+  sku?: string | null;
+};
+
+type CatalogInventoryProductLike = {
+  id?: string | null;
+  variants?: CatalogInventoryVariantLike[] | null;
+};
+
+type InventoryTx = Pick<typeof prisma, "inventoryItem" | "inventoryReservation">;
+
+async function migrateLegacyInventorySku(
+  tx: InventoryTx,
+  canonicalSku: string,
+  legacySku: string | null
+) {
+  if (!legacySku || legacySku === canonicalSku) {
+    await tx.inventoryItem.upsert({
+      where: { sku: canonicalSku },
+      create: { sku: canonicalSku, stock: 0 },
+      update: {},
+    });
+    return;
+  }
+
+  const [canonicalItem, legacyItem, legacyReservations] = await Promise.all([
+    tx.inventoryItem.findUnique({
+      where: { sku: canonicalSku },
+      select: { sku: true, stock: true, reserved: true },
+    }),
+    tx.inventoryItem.findUnique({
+      where: { sku: legacySku },
+      select: { sku: true, stock: true, reserved: true },
+    }),
+    tx.inventoryReservation.findMany({
+      where: { sku: legacySku },
+      select: { orderId: true, sku: true, qty: true },
+    }),
+  ]);
+
+  if (!legacyItem) {
+    if (!canonicalItem) {
+      await tx.inventoryItem.create({
+        data: { sku: canonicalSku, stock: 0 },
+      });
+    }
+    return;
+  }
+
+  if (!canonicalItem) {
+    await tx.inventoryItem.create({
+      data: {
+        sku: canonicalSku,
+        stock: legacyItem.stock,
+        reserved: legacyItem.reserved,
+      },
+    });
+  } else {
+    await tx.inventoryItem.update({
+      where: { sku: canonicalSku },
+      data: {
+        stock: canonicalItem.stock + legacyItem.stock,
+        reserved: canonicalItem.reserved + legacyItem.reserved,
+      },
+    });
+  }
+
+  for (const reservation of legacyReservations) {
+    await tx.inventoryReservation.upsert({
+      where: {
+        orderId_sku: {
+          orderId: reservation.orderId,
+          sku: canonicalSku,
+        },
+      },
+      create: {
+        orderId: reservation.orderId,
+        sku: canonicalSku,
+        qty: reservation.qty,
+      },
+      update: {
+        qty: {
+          increment: reservation.qty,
+        },
+      },
+    });
+  }
+
+  if (legacyReservations.length > 0) {
+    await tx.inventoryReservation.deleteMany({
+      where: { sku: legacySku },
+    });
+  }
+
+  await tx.inventoryItem.delete({
+    where: { sku: legacySku },
+  });
+}
+
+export async function syncInventoryForCatalog(catalog: CatalogInventoryProductLike[]) {
+  const entries = new Map<string, { canonicalSku: string; legacySku: string | null }>();
+
+  for (const product of catalog || []) {
+    const productId = String(product?.id || "").trim();
+    if (!productId) continue;
+
+    for (const variant of product?.variants || []) {
+      const variantId = String(variant?.id || "").trim();
+      if (!variantId) continue;
+
+      const canonicalSku = makeInventorySku(productId, variantId, variant?.sku);
+      const legacySku = makeLegacyInventorySku(productId, variantId);
+
+      entries.set(canonicalSku, {
+        canonicalSku,
+        legacySku: legacySku === canonicalSku ? null : legacySku,
+      });
+    }
+  }
+
+  if (entries.size === 0) return;
+
+  await prisma.$transaction(
+    async (tx) => {
+      for (const entry of entries.values()) {
+        await migrateLegacyInventorySku(tx, entry.canonicalSku, entry.legacySku);
+      }
+    },
+    {
+      maxWait: 10_000,
+      timeout: 30_000,
+    }
+  );
 }
 
 export async function readCatalogWithMerch(): Promise<CatalogProduct[]> {
@@ -127,4 +365,8 @@ export async function readCatalogWithMerch(): Promise<CatalogProduct[]> {
       variants,
     };
   });
+}
+
+export async function readPublicCatalogWithMerch(): Promise<CatalogProduct[]> {
+  return filterPublicCatalog(await readCatalogWithMerch());
 }

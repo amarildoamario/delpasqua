@@ -50,12 +50,11 @@ export default function InventoryManager({
       variantId: string;
       variantLabel: string;
       sku: string;
-      vendorSku?: string;
     }> = [];
 
     for (const p of initialCatalog || []) {
       for (const v of p.variants || []) {
-        const sku = makeInventorySku(p.id, v.id);
+        const sku = makeInventorySku(p.id, v.id, v.sku);
         out.push({
           productId: p.id,
           productTitle: p.title || p.id,
@@ -63,7 +62,6 @@ export default function InventoryManager({
           variantId: v.id,
           variantLabel: v.label || v.id,
           sku,
-          vendorSku: v.sku,
         });
       }
     }
@@ -77,8 +75,7 @@ export default function InventoryManager({
         r.productId.toLowerCase().includes(needle) ||
         r.variantLabel.toLowerCase().includes(needle) ||
         r.variantId.toLowerCase().includes(needle) ||
-        r.sku.toLowerCase().includes(needle) ||
-        (r.vendorSku || "").toLowerCase().includes(needle)
+        r.sku.toLowerCase().includes(needle)
       );
     });
   }, [initialCatalog, q]);
@@ -155,7 +152,7 @@ export default function InventoryManager({
         <div className="min-w-0">
           <div className="text-sm font-semibold text-neutral-900">Gestione scorte</div>
           <div className="mt-1 text-xs text-neutral-500">
-            Cerca per nome prodotto/variante, SKU interno (<code>product:variant</code>) o SKU commerciale.
+            Cerca per nome prodotto, variante o SKU canonico.
           </div>
         </div>
 
@@ -223,7 +220,6 @@ function Row({
     variantId: string;
     variantLabel: string;
     sku: string;
-    vendorSku?: string;
   };
   stock: number;
   busy: boolean;
@@ -252,7 +248,6 @@ function Row({
 
       <td className="border-b border-neutral-100 px-3 py-3">
         <div className="font-mono text-xs text-neutral-800">{r.sku}</div>
-        {r.vendorSku ? <div className="mt-1 text-xs text-neutral-500">SKU: {r.vendorSku}</div> : null}
       </td>
 
       <td className="border-b border-neutral-100 px-3 py-4 text-center">

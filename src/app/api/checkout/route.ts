@@ -22,6 +22,7 @@ export async function POST(req: Request) {
     const pricing = await computeOrderPricing({
       lines: parsed.data.items,
       promotionCode: parsed.data.promotionCode,
+      countryCode: parsed.data.countryCode,
     });
 
     return Response.json(

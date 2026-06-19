@@ -4,13 +4,17 @@ import { Link } from "@/i18n/routing";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import styles from "./ShopHighlights.module.css";
-import productsStatic from "@/db/products.json";
 import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
 import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 
 type HighlightProduct = ProductCardProduct;
+type MerchAwareProduct = DbProduct & {
+  showInHome?: boolean;
+  homeRank?: number;
+  merchBadge?: string | null;
+};
 
 const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
 
@@ -62,21 +66,21 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
   const locale = useLocale();
   const copy = SHOP_HIGHLIGHTS_COPY[locale as keyof typeof SHOP_HIGHLIGHTS_COPY] ?? SHOP_HIGHLIGHTS_COPY.en;
 
-  const catalog = initialProducts || (productsStatic as unknown as DbProduct[]);
+  const catalog = useMemo<MerchAwareProduct[]>(() => (initialProducts ?? []) as MerchAwareProduct[], [initialProducts]);
 
   const products: HighlightProduct[] = useMemo(() => {
     const all = catalog ?? [];
 
     // Filter products that are marked to show in home, and sort by homeRank ascending (lower rank = higher priority, 0 at the bottom)
     const homeProducts = all
-      .filter((p) => (p as any).showInHome === true)
+      .filter((p) => p.showInHome === true)
       .sort((a, b) => {
-        const rA = (a as any).homeRank === 0 ? 99999 : ((a as any).homeRank ?? 99999);
-        const rB = (b as any).homeRank === 0 ? 99999 : ((b as any).homeRank ?? 99999);
+        const rA = a.homeRank === 0 ? 99999 : (a.homeRank ?? 99999);
+        const rB = b.homeRank === 0 ? 99999 : (b.homeRank ?? 99999);
         return rA - rB;
       });
 
-    const picked: DbProduct[] = [...homeProducts];
+    const picked: MerchAwareProduct[] = [...homeProducts];
 
     // Fallback: if we have fewer than 4 products, fill it up using the default FEATURED_SLUGS
     if (picked.length < 4) {
@@ -84,7 +88,7 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
       for (const s of FEATURED_SLUGS) {
         if (picked.length >= 4) break;
         const p = all.find((x) => x.slug === s);
-        if (p && !already.has(p.slug) && (p as any).showInHome !== false) {
+        if (p && !already.has(p.slug) && p.showInHome !== false) {
           picked.push(p);
           already.add(p.slug);
         }
@@ -94,7 +98,7 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
       for (const p of all) {
         if (picked.length >= 4) break;
         if (already.has(p.slug)) continue;
-        if ((p as any).showInHome === false) continue;
+        if (p.showInHome === false) continue;
         picked.push(p);
         already.add(p.slug);
       }
@@ -133,7 +137,7 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
         priceCents: minPriceCents,
         defaultVariantId: p.variants?.[0]?.id,
         badge: tp(`${p.id}.badge`) || p.badge,
-        merchBadge: (p as any).merchBadge,
+        merchBadge: p.merchBadge,
         imageSrc: p.imageSrc,
         imageAlt: p.imageAlt,
         variantsCount: p.variants?.length ?? 1,

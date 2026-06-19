@@ -26,6 +26,7 @@ export const CartLineSchema = z.object({
 export const CheckoutSchema = z.object({
   items: z.array(CartLineSchema).min(1).max(50),
   promotionCode: z.string().trim().min(2).max(40).optional(),
+  countryCode: z.string().trim().toUpperCase().optional(),
 });
 
 export const PromotionValidateSchema = z.object({
@@ -50,7 +51,7 @@ export const CustomerSchema = z
       .string()
       .trim()
       .toUpperCase()
-      .refine((v) => ["IT"].includes(v), "Unsupported country")
+      .refine((v) => ["IT", "DE", "NL", "DK", "NO", "US", "GB"].includes(v), "Unsupported country")
       .optional(),
 
     phone: z
@@ -70,6 +71,7 @@ export const CreateOrderSchema = z.object({
   customer: CustomerSchema, // ✅ ora opzionale
   promotionCode: z.string().trim().min(2).max(40).optional(),
   locale: z.string().optional(),
+  countryCode: z.string().trim().toUpperCase().optional(),
 });
 
 /**

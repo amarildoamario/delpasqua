@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/client/adminFetch";
-import ProductCard from "@/components/ProductCard";
+import ProductCard, { type ProductCardVariantImage } from "@/components/ProductCard";
 
 type MerchState = {
   showInHome: boolean;
@@ -27,7 +27,7 @@ type Row = {
   imageAlt: string;
   variantsCount: number;
   defaultVariantId: string;
-  variantImages: any[] | undefined;
+  variantImages: ProductCardVariantImage[] | undefined;
   basePriceCents: number;
   merch: MerchState | null;
 };
@@ -210,15 +210,7 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [savedKey, setSavedKey] = useState<string | null>(null);
 
-  useEffect(() => {
-    const dirtyKeys = Object.keys(state).filter(isDirty);
-    if (dirtyKeys.length === 0) {
-      setState(initial);
-      setDbState(initial);
-    }
-  }, [initial]);
-
-  const isDirty = (key: string) => {
+  const isDirty = useCallback((key: string) => {
     const s = state[key];
     const db = dbState[key];
     if (!s || !db) return false;
@@ -233,7 +225,15 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
       s.startsAt !== db.startsAt ||
       s.endsAt !== db.endsAt
     );
-  };
+  }, [dbState, state]);
+
+  useEffect(() => {
+    const dirtyKeys = Object.keys(state).filter(isDirty);
+    if (dirtyKeys.length === 0) {
+      setState(initial);
+      setDbState(initial);
+    }
+  }, [initial, isDirty, state]);
 
   const previewProducts = useMemo(() => {
     const isExplicitlyDisabled = (key: string) => {
@@ -315,7 +315,7 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
     }
 
     return picked.slice(0, 4);
-  }, [rows, state]);
+  }, [isDirty, rows, state]);
 
   function setField<K extends keyof MerchState>(key: string, field: K, value: MerchState[K]) {
     setState((s) => ({ ...s, [key]: { ...s[key], [field]: value } }));
@@ -531,7 +531,9 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
             </span>
           </h2>
           <p className="mt-1 text-xs text-neutral-500">
-            Queste schede mostrano in tempo reale come appariranno i prodotti nella sezione "I più acquistati" della Homepage. Vengono ordinate per priorità (1° Posizione, 2° Posizione, ecc.) tra quelle con "Mostra in home" attivo. Cambiando i campi qui sotto (mostra in home, priorità, sconti, badge), l'anteprima si aggiorna all'istante.
+            {
+              "Queste schede mostrano in tempo reale come appariranno i prodotti nella sezione \"I piu acquistati\" della Homepage. Vengono ordinate per priorita tra quelle con \"Mostra in home\" attivo. Cambiando i campi qui sotto, l'anteprima si aggiorna all'istante."
+            }
           </p>
         </div>
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/routing";
-import { readCatalog } from "@/lib/server/catalog";
+import { readPublicCatalog } from "@/lib/server/catalog";
 import { getLocalizedProductHref } from "@/lib/productSlugs";
 import { pageMetadata } from "@/lib/seo";
 
@@ -59,7 +59,7 @@ export default async function AcquistaPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   const isEn = locale === "en";
   const tp = await getTranslations({ locale, namespace: "Products" });
-  const products = (await readCatalog()).slice(0, 4);
+  const products = (await readPublicCatalog()).slice(0, 4);
 
   return (
     <main className="min-h-screen bg-[#fdfaf7]">

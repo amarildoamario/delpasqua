@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdminApi } from "@/lib/server/adminAuth";
-import { prisma } from "@/lib/server/prisma";
 import {
   readCatalog,
+  readPublicCatalog,
+  preserveCartAliases,
+  syncInventoryForCatalog,
   writeCatalog,
-  makeInternalSku,
 } from "@/lib/server/catalog";
 
 export const dynamic = "force-dynamic";
 
 /*
   Questo endpoint:
-  - GET pubblico: ritorna catalogo
+  - GET pubblico: ritorna solo il catalogo pubblicabile/acquistabile
   - POST admin: modifica catalogo
   - Crea automaticamente le SKU in InventoryItem
 */
@@ -83,28 +84,10 @@ function getErrText(e: unknown, fallback = "Error"): string {
   return fallback;
 }
 
-async function ensureInventoryForCatalog(catalog: Catalog) {
-  const skus: string[] = [];
-
-  for (const p of catalog) {
-    for (const v of (p.variants || []) as Variant[]) {
-      skus.push(makeInternalSku(p.id, v.id));
-    }
-  }
-
-  for (const sku of skus) {
-    await prisma.inventoryItem.upsert({
-      where: { sku },
-      create: { sku, stock: 0 },
-      update: {},
-    });
-  }
-}
-
 // ---------------- GET (pubblico) ----------------
 
 export async function GET() {
-  const catalog = await readCatalog();
+  const catalog = await readPublicCatalog();
   return NextResponse.json(catalog, {
     headers: { "Cache-Control": "no-store" },
   });
@@ -142,10 +125,11 @@ export async function POST(req: Request) {
 
     // ---------- SAVE WHOLE ----------
     if (data.action === "saveCatalog") {
-      const { backupName } = await writeCatalog(data.catalog);
-      await ensureInventoryForCatalog(data.catalog);
+      const nextCatalog = preserveCartAliases(products, data.catalog);
+      const { backupName } = await writeCatalog(nextCatalog);
+      await syncInventoryForCatalog(nextCatalog);
       return guard.attach(
-        NextResponse.json({ ok: true, backupName, catalog: data.catalog })
+        NextResponse.json({ ok: true, backupName, catalog: nextCatalog })
       );
     }
 
@@ -247,11 +231,12 @@ export async function POST(req: Request) {
     }
 
     // ---------- WRITE ----------
-    const { backupName } = await writeCatalog(catalog);
-    await ensureInventoryForCatalog(catalog);
+    const nextCatalog = preserveCartAliases(products, catalog);
+    const { backupName } = await writeCatalog(nextCatalog);
+    await syncInventoryForCatalog(nextCatalog);
 
     return guard.attach(
-      NextResponse.json({ ok: true, backupName, catalog })
+      NextResponse.json({ ok: true, backupName, catalog: nextCatalog })
     );
   } catch (e: unknown) {
     return guard.attach(

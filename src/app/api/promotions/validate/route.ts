@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 
 import { computeOrderPricing } from "@/lib/server/pricing";
 import { prisma } from "@/lib/server/prisma";
+import { evaluatePromotionEligibility } from "@/lib/server/promotionUsage";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { PromotionValidateSchema } from "@/lib/server/schemas";
 
@@ -24,34 +25,32 @@ export async function POST(req: Request) {
     const basePricing = await computeOrderPricing({ lines: parsed.data.items });
     const subtotalCents = basePricing.subtotalCents;
 
-    const promo = await prisma.promotion.findUnique({ where: { code } });
-    if (!promo || !promo.isActive) {
-      return Response.json({ valid: false, reason: "Codice sconto non trovato o non attivo." });
-    }
-
-    const now = new Date();
-    if (promo.startsAt && promo.startsAt > now) {
-      return Response.json({ valid: false, reason: "Il codice non è ancora attivo." });
-    }
-    if (promo.endsAt && promo.endsAt < now) {
-      return Response.json({ valid: false, reason: "Il codice sconto è scaduto." });
-    }
-
-    const pendingCount = await prisma.order.count({
-      where: {
-        promotionCode: code,
-        status: "IN_ATTESA",
-      },
+    const eligibility = await evaluatePromotionEligibility(prisma, {
+      code,
+      subtotalCents,
     });
-    if (promo.usageLimit && promo.usedCount + pendingCount >= promo.usageLimit) {
-      return Response.json({ valid: false, reason: "Codice sconto non valido." });
-    }
 
-    if (promo.minOrderCents && subtotalCents < promo.minOrderCents) {
-      const minEur = (promo.minOrderCents / 100).toFixed(2).replace(".", ",");
+    if (!eligibility.ok) {
+      if (eligibility.reason === "MIN_ORDER_NOT_MET" && eligibility.promo?.minOrderCents) {
+        const minEur = (eligibility.promo.minOrderCents / 100).toFixed(2).replace(".", ",");
+        return Response.json({
+          valid: false,
+          reason: `Ordine minimo di ${minEur} EUR richiesto per questo codice.`,
+        });
+      }
+
+      const reasonByFailure: Partial<Record<typeof eligibility.reason, string>> = {
+        NOT_FOUND: "Codice sconto non trovato o non attivo.",
+        NOT_ACTIVE: "Codice sconto non trovato o non attivo.",
+        NOT_STARTED: "Il codice non e ancora attivo.",
+        EXPIRED: "Il codice sconto e scaduto.",
+        USAGE_LIMIT_REACHED: "Codice sconto non valido.",
+        MISSING_CODE: "Codice sconto non valido.",
+      };
+
       return Response.json({
         valid: false,
-        reason: `Ordine minimo di ${minEur} € richiesto per questo codice.`,
+        reason: reasonByFailure[eligibility.reason] ?? "Codice sconto non valido.",
       });
     }
 

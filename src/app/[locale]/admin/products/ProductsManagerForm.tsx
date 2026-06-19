@@ -62,6 +62,9 @@ type Product = {
   description?: string;
   imageSrc?: string;
   imageAlt?: string;
+  isPublished?: boolean;
+  isPurchasable?: boolean;
+  excludeFromSeo?: boolean;
 
   /** Titolo personalizzato per la sezione specifiche */
   specsTitle?: string;
@@ -225,6 +228,33 @@ function TextArea({
   );
 }
 
+function CheckboxField({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <label className="flex min-w-0 items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50/60 px-3 py-3">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 h-4 w-4 rounded border-neutral-300"
+      />
+      <div className="min-w-0">
+        <div className="text-xs font-bold uppercase tracking-wide text-neutral-700">{label}</div>
+        <div className="mt-1 text-xs leading-relaxed text-neutral-500">{description}</div>
+      </div>
+    </label>
+  );
+}
+
 function SmallBtn({
   children,
   onClick,
@@ -356,6 +386,7 @@ function stripUis(p: Product): Product {
 
 function makeNewProductTemplate(forcedId?: string): Product {
   const id = forcedId ? normalizeId(forcedId) : `nuovo-prodotto-${Date.now()}`;
+  const firstVariantId = "var-1";
 
   const prod: Product = {
     _uid: uid(),
@@ -367,6 +398,9 @@ function makeNewProductTemplate(forcedId?: string): Product {
     badge: "",
     imageSrc: "",
     imageAlt: "",
+    isPublished: true,
+    isPurchasable: true,
+    excludeFromSeo: false,
     description: "",
     specsTitle: "Specifiche",
     specs: {},
@@ -383,11 +417,11 @@ function makeNewProductTemplate(forcedId?: string): Product {
     variants: [
       {
         _uid: uid(),
-        id: "var-1",
+        id: firstVariantId,
         label: "Variante 1",
         priceCents: 0,
         _priceText: "0.00",
-        sku: "",
+        sku: makeSuggestedSku(id, firstVariantId),
         imageSrc: "",
         imageAlt: "",
         specs: {},
@@ -406,7 +440,20 @@ function makeNewProductTemplate(forcedId?: string): Product {
   return prod;
 }
 
-function makeNewVariantTemplate(existingIds: Set<string>): Variant {
+function makeSuggestedSku(productId: string, variantId: string) {
+  const cleanPart = (value: string) =>
+    value
+      .trim()
+      .replace(/[^A-Za-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toUpperCase();
+
+  const productPart = cleanPart(productId) || "PRODUCT";
+  const variantPart = cleanPart(variantId) || "VARIANT";
+  return `${productPart}-${variantPart}`;
+}
+
+function makeNewVariantTemplate(productId: string, existingIds: Set<string>): Variant {
   let id = `var-${Date.now()}`;
   let i = 1;
   while (existingIds.has(id)) id = `var-${Date.now()}-${i++}`;
@@ -417,7 +464,7 @@ function makeNewVariantTemplate(existingIds: Set<string>): Variant {
     label: "Nuova variante",
     priceCents: 0,
     _priceText: "0.00",
-    sku: "",
+    sku: makeSuggestedSku(productId, id),
     imageSrc: "",
     imageAlt: "",
     specs: {},
@@ -569,7 +616,7 @@ export default function ProductsManagerForm({ initialCatalog }: { initialCatalog
   function addVariantLocal() {
     if (!draft) return;
     const ids = new Set((draft.variants || []).map((v) => String(v.id)));
-    const v = makeNewVariantTemplate(ids);
+    const v = makeNewVariantTemplate(String(draft.id || ""), ids);
     setDraft((prev) => (prev ? { ...prev, variants: [...(prev.variants || []), v] } : prev));
   }
 
@@ -602,6 +649,7 @@ export default function ProductsManagerForm({ initialCatalog }: { initialCatalog
     }
 
     const ids = new Set<string>();
+    const skus = new Set<string>();
     for (const v of draft.variants) {
       if (!v.id || !String(v.id).trim()) {
         setMsg("Errore: ogni variante deve avere un id.");
@@ -613,6 +661,17 @@ export default function ProductsManagerForm({ initialCatalog }: { initialCatalog
         return;
       }
       ids.add(key);
+
+      const sku = String(v.sku || "").trim();
+      if (!sku) {
+        setMsg(`Errore: SKU mancante per la variante ${key}.`);
+        return;
+      }
+      if (skus.has(sku)) {
+        setMsg(`Errore: SKU duplicato: ${sku}`);
+        return;
+      }
+      skus.add(sku);
     }
 
     setBusy(true);
@@ -921,6 +980,27 @@ export default function ProductsManagerForm({ initialCatalog }: { initialCatalog
                     value={String(draft.specsTitle || "")}
                     placeholder="Es: Specifiche Tecniche, Dettagli, Caratteristiche"
                     onChange={(v) => patchDraft({ specsTitle: v })}
+                  />
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  <CheckboxField
+                    label="Pubblicato"
+                    description="Se disattivato, il prodotto sparisce dal catalogo pubblico e dalle schede prodotto."
+                    checked={draft.isPublished !== false}
+                    onChange={(value) => patchDraft({ isPublished: value })}
+                  />
+                  <CheckboxField
+                    label="Acquistabile"
+                    description="Se disattivato, il prodotto non compare nello shop pubblico o nell'API prodotti."
+                    checked={draft.isPurchasable !== false}
+                    onChange={(value) => patchDraft({ isPurchasable: value })}
+                  />
+                  <CheckboxField
+                    label="Indicizzabile SEO"
+                    description="Se disattivato, il prodotto resta pubblico ma viene escluso da sitemap e meta indicizzazione."
+                    checked={draft.excludeFromSeo !== true}
+                    onChange={(value) => patchDraft({ excludeFromSeo: !value })}
                   />
                 </div>
 

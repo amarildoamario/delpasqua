@@ -197,8 +197,6 @@ export default function OrderStatusActions({
                 const Icon = step.icon;
                 const isCompleted = idx < activeStepIndex;
                 const isActive = idx === activeStepIndex;
-                const isPending = idx > activeStepIndex;
-
                 return (
                   <div key={step.id} className="flex flex-col items-center group relative">
                     <div
@@ -239,7 +237,7 @@ export default function OrderStatusActions({
           >
               <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
               <div>
-                <span className="font-bold">Attenzione:</span> L'ordine si trova in uno stato speciale (
+                <span className="font-bold">Attenzione:</span> L&apos;ordine si trova in uno stato speciale (
                 <span className="font-semibold">{localStatus}</span>) che ha interrotto la normale catena di avanzamento.
                 {localStatus === "ANNULLATO" && " L'ordine può essere ripristinato tramite il pulsante apposito."}
               </div>
@@ -250,7 +248,7 @@ export default function OrderStatusActions({
         <div className="mt-4 border-t border-neutral-100 pt-4 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-neutral-600 mb-1.5">
-              Messaggio di storico per l'azione (opzionale)
+              Messaggio di storico per l&apos;azione (opzionale)
             </label>
             <input
               value={msg}
@@ -377,8 +375,8 @@ export default function OrderStatusActions({
                 Verrà emesso un rimborso reale su Stripe per un importo di <b>{euro(remainingRefundCents)}</b>.
               </p>
               <p>
-                Dopo la conferma, lo stato dell'ordine verrà aggiornato in <b>RIMBORSATO</b> o{" "}
-                <b>PARZIALMENTE_RIMBORSATO</b> in base all'esito su Stripe.
+                Dopo la conferma, lo stato dell&apos;ordine verrà aggiornato in <b>RIMBORSATO</b> o{" "}
+                <b>PARZIALMENTE_RIMBORSATO</b> in base all&apos;esito su Stripe.
               </p>
             </div>
 

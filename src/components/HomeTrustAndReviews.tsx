@@ -247,7 +247,7 @@ const COPY: Record<string, LocaleCopy> = {
       {
         icon: PackageCheck,
         title: "Gesicherter Versand",
-        description: "Sto?sichere Verpackung aus Recyclingpapier und Sendungsverfolgung innerhalb von 48 Stunden.",
+        description: "Stossichere Verpackung aus Recyclingpapier und Sendungsverfolgung innerhalb von 48 Stunden.",
       },
       {
         icon: ShieldCheck,

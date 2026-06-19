@@ -8,6 +8,8 @@ import { companyInfo } from "@/lib/companyInfo";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { Link } from "@/i18n/routing";
 
+const TASTING_IMAGE_PATH = "/blog/degustazione-olio.avif";
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "TastingsPage.metadata" });
@@ -270,11 +272,10 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
 
               {/* Right: Image & FAQs */}
               <div className="flex flex-col justify-center gap-8">
-                {/* Image Placeholder with strong SEO alt text */}
+                {/* Image with strong SEO alt text */}
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-xl group">
-                  {/* Replace '/percorso/immagine.jpg' with the actual image path when ready */}
                   <Image
-                    src="/images/placeholder-degustazione.jpg" // TODO: Update image path
+                    src={TASTING_IMAGE_PATH}
                     alt={t("image_alt")}
                     fill
                     className="object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-100 mix-blend-overlay"
@@ -359,12 +360,12 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
               dangerouslySetInnerHTML={{
                 __html: JSON.stringify({
                   "@context": "https://schema.org",
-                  "@type": "FoodEstablishment", // o "Winery" / "LocalBusiness"
+                  "@type": "FoodEstablishment",
                   "name": "Az. Agr. Del Pasqua - Degustazione Olio EVO",
-                  "image": "https://www.delpasqua.com/images/placeholder-degustazione.jpg", // Aggiornare URL
+                  "image": absoluteUrl(TASTING_IMAGE_PATH),
                   "@id": "https://www.delpasqua.com/degustazioni",
                   "url": "https://www.delpasqua.com/degustazioni",
-                  "telephone": "+390575810065", // Preso dai contatti
+                  "telephone": "+390575810065",
                   "priceRange": "€€",
                   "address": {
                     "@type": "PostalAddress",

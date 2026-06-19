@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import productsStatic from "@/db/products.json";
 import ProductPurchaseBox from "@/app/[locale]/shop/_components/ProductPurchaseBox.client";
 import { getLocalizedProductHref } from "@/lib/productSlugs";
 
@@ -30,13 +29,6 @@ type Product = {
   variants: ProductVariant[];
 };
 
-function getProductsList(): Product[] {
-  const raw = productsStatic as unknown as Product[] | { products: Product[] };
-  if (Array.isArray(raw)) return raw;
-  if (raw && "products" in raw && Array.isArray(raw.products)) return raw.products;
-  return [];
-}
-
 function Stars({ rating = 4.9, count = 312 }: { rating?: number; count?: number }) {
   return (
     <div className="flex items-center justify-center gap-2">
@@ -58,12 +50,12 @@ function Stars({ rating = 4.9, count = 312 }: { rating?: number; count?: number 
   );
 }
 
-export default function HeroSplitEvo() {
+export default function HeroSplitEvo({ initialProducts = [] }: { initialProducts?: Product[] }) {
   const t = useTranslations("HomePage.HeroSplitEvo");
   const tp = useTranslations("Products");
   const locale = useLocale();
 
-  const [catalog, setCatalog] = useState<Product[]>([]);
+  const [catalog, setCatalog] = useState<Product[]>(initialProducts);
 
   useEffect(() => {
     let alive = true;
@@ -81,7 +73,7 @@ export default function HeroSplitEvo() {
   }, []);
 
   const evo = useMemo(() => {
-    const list = catalog.length ? catalog : getProductsList();
+    const list = catalog;
     return (
       list.find((p) => String(p.slug).toLowerCase() === "evo") ??
       list.find((p) => p.id === "evo") ??
