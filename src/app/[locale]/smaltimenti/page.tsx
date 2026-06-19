@@ -6,27 +6,27 @@ import SmaltimentiClient from "@/components/SmaltimentiClient";
 
 const translations = {
   it: {
-    title: "Smaltimento Imballaggi",
+    title: "Etichette Ambientali",
     description: "Guida alla raccolta differenziata e allo smaltimento degli imballaggi dei prodotti Frantoio Del Pasqua."
   },
   en: {
-    title: "Packaging Disposal Guide",
+    title: "Environmental Labeling",
     description: "Guide to waste separation and recycling of Frantoio Del Pasqua product packaging."
   },
   de: {
-    title: "Entsorgungshandbuch",
+    title: "Umweltkennzeichnung",
     description: "Leitfaden zur Mülltrennung und Entsorgung von Verpackungen der Produkte von Frantoio Del Pasqua."
   },
   nl: {
-    title: "Afvalwijzer Verpakkingen",
+    title: "Milieu-etikettering",
     description: "Gids voor afvalscheiding en recycling van productverpakkingen van Frantoio Del Pasqua."
   },
   da: {
-    title: "Affaldsguide for emballage",
+    title: "Miljømærkning",
     description: "Guide til affaldssortering og genanvendelse av Frantoio Del Pasqua-produktemballage."
   },
   no: {
-    title: "Avfallsguide for emballasje",
+    title: "Miljømerking",
     description: "Guide til kildesortering og gjenvinning av emballasje fra Frantoio Del Pasqua-produkter."
   }
 };

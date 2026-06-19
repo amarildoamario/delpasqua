@@ -44,9 +44,9 @@ type TranslationType = {
 
 const translations: Record<string, TranslationType> = {
   it: {
-    title: "Smaltimento Imballaggi",
+    title: "Etichette Ambientali",
     description: "Guida alla raccolta differenziata e allo smaltimento degli imballaggi dei prodotti Frantoio Del Pasqua.",
-    heroTitle: "Raccolta Differenziata",
+    heroTitle: "Etichette Ambientali",
     heroSub: "Guida al riciclo e allo smaltimento corretto degli imballaggi per la salvaguardia dell'ambiente.",
     searchPlaceholder: "Cerca un prodotto...",
     filterAll: "Tutti i prodotti",
@@ -86,9 +86,9 @@ const translations: Record<string, TranslationType> = {
     }
   },
   en: {
-    title: "Packaging Disposal Guide",
+    title: "Environmental Labeling",
     description: "Guide to waste separation and recycling of Frantoio Del Pasqua product packaging.",
-    heroTitle: "Waste Separation",
+    heroTitle: "Environmental Labeling",
     heroSub: "Guide to recycling and correct disposal of packaging to help protect the environment.",
     searchPlaceholder: "Search products...",
     filterAll: "All Products",
@@ -128,9 +128,9 @@ const translations: Record<string, TranslationType> = {
     }
   },
   de: {
-    title: "Entsorgungshandbuch",
+    title: "Umweltkennzeichnung",
     description: "Leitfaden zur Mülltrennung und Entsorgung von Verpackungen der Produkte von Frantoio Del Pasqua.",
-    heroTitle: "Mülltrennung",
+    heroTitle: "Umweltkennzeichnung",
     heroSub: "Leitfaden zum Recycling und zur korrekten Entsorgung von Verpackungen zum Schutz der Umwelt.",
     searchPlaceholder: "Produkte suchen...",
     filterAll: "Alle Produkte",
@@ -170,9 +170,9 @@ const translations: Record<string, TranslationType> = {
     }
   },
   nl: {
-    title: "Afvalwijzer Verpakkingen",
+    title: "Milieu-etikettering",
     description: "Gids voor afvalscheiding en recycling van productverpakkingen van Frantoio Del Pasqua.",
-    heroTitle: "Afvalscheiding",
+    heroTitle: "Milieu-etikettering",
     heroSub: "Gids voor recycling en correcte verwijdering van verpakkingen om het milieu te beschermen.",
     searchPlaceholder: "Zoek producten...",
     filterAll: "Alle Producten",
@@ -212,9 +212,9 @@ const translations: Record<string, TranslationType> = {
     }
   },
   da: {
-    title: "Affaldsguide for emballage",
+    title: "Miljømærkning",
     description: "Guide til affaldssortering og genanvendelse av Frantoio Del Pasqua-produktemballage.",
-    heroTitle: "Affaldssortering",
+    heroTitle: "Miljømærkning",
     heroSub: "Guide til genanvendelse og korrekt bortskaffelse af emballage for at beskytte miljoeet.",
     searchPlaceholder: "Soeg efter produkter...",
     filterAll: "Alle produkter",
@@ -254,9 +254,9 @@ const translations: Record<string, TranslationType> = {
     }
   },
   no: {
-    title: "Avfallsguide for emballasje",
+    title: "Miljømerking",
     description: "Guide til kildesortering og gjenvinning av emballasje fra Frantoio Del Pasqua-produkter.",
-    heroTitle: "Kildesortering",
+    heroTitle: "Miljømerking",
     heroSub: "Guide til gjenvinning og riktig avfallshaandtering av emballasje for aa beskytte miljoeet.",
     searchPlaceholder: "Soek etter produkter...",
     filterAll: "Alle produkter",

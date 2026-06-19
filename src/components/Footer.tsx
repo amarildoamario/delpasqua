@@ -163,6 +163,12 @@ export default function Footer() {
                   {t("info.contacts")}
                 </Link>
               </li>
+              <li>
+                <Link className="group flex items-center gap-2 text-stone-400 hover:text-emerald-400 transition-colors" href="/smaltimenti">
+                  <span className="w-1 h-1 rounded-full bg-stone-700 group-hover:bg-emerald-500 transition-colors" />
+                  {t("info.disposal")}
+                </Link>
+              </li>
             </ul>
           </div>
 
