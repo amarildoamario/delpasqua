@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { companyInfo } from "@/lib/companyInfo";
 import PaymentMethodsBadges from "@/components/PaymentMethodsBadges";
 import {
@@ -17,6 +17,56 @@ import {
 export default function Footer() {
   const t = useTranslations("Common.footer");
   const tNav = useTranslations("Common.navbar");
+  const locale = useLocale();
+
+  const selectionLinks = {
+    it: [
+      { href: "/olio-toscano", label: "Olio Extravergine Toscano" },
+      { href: "/olio-biologico", label: "Olio EVO Biologico" },
+      { href: "/nuovo-raccolto", label: "Olio Nuovo Raccolto" },
+      { href: "/olio-5-litri", label: "Latta da 5 Litri" }
+    ],
+    en: [
+      { href: "/olio-toscano", label: "Tuscan Extra Virgin Oil" },
+      { href: "/olio-biologico", label: "Organic EVO Oil" },
+      { href: "/nuovo-raccolto", label: "New Harvest Olive Oil" },
+      { href: "/olio-5-litri", label: "5 Liters Can" }
+    ],
+    de: [
+      { href: "/olio-toscano", label: "Toskanisches Olivenöl" },
+      { href: "/olio-biologico", label: "Bio-Olivenöl extra" },
+      { href: "/nuovo-raccolto", label: "Frische Olivenernte" },
+      { href: "/olio-5-litri", label: "5-Liter-Kanister" }
+    ],
+    nl: [
+      { href: "/olio-toscano", label: "Toscaanse Olijfolie" },
+      { href: "/olio-biologico", label: "Biologische Olijfolie" },
+      { href: "/nuovo-raccolto", label: "Nieuwe Oogst" },
+      { href: "/olio-5-litri", label: "5 Liter Blik" }
+    ],
+    da: [
+      { href: "/olio-toscano", label: "Toscansk Olivenolie" },
+      { href: "/olio-biologico", label: "Økologisk Olivenolie" },
+      { href: "/nuovo-raccolto", label: "Ny Høst" },
+      { href: "/olio-5-litri", label: "5 Liters Dunk" }
+    ],
+    no: [
+      { href: "/olio-toscano", label: "Toskansk Olivenolje" },
+      { href: "/olio-biologico", label: "Økologisk Olivenolje" },
+      { href: "/nuovo-raccolto", label: "Ny Høst" },
+      { href: "/olio-5-litri", label: "5 Liters Kanne" }
+    ]
+  };
+
+  const currentSelectionLinks = selectionLinks[locale as keyof typeof selectionLinks] || selectionLinks.it;
+  const selectionsLabel = {
+    it: "Le nostre Selezioni",
+    en: "Our Selections",
+    de: "Unsere Auswahlen",
+    nl: "Onze Selecties",
+    da: "Vores Udvalg",
+    no: "Vårt Utvalg"
+  }[locale] || "Le nostre Selezioni";
 
   const navLinks = [
     { href: "/", label: tNav("home") },
@@ -192,6 +242,23 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        {/* SEO Quick Links Bar */}
+        <div className="mt-16 border-t border-stone-900/60 pt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 justify-center text-xs text-stone-500">
+          <span className="font-semibold tracking-[0.1em] text-emerald-500/80 uppercase sm:border-r sm:border-stone-800/80 sm:pr-6 whitespace-nowrap">
+            {selectionsLabel}
+          </span>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2">
+            {currentSelectionLinks.map((link, idx) => (
+              <span key={idx} className="flex items-center gap-3">
+                {idx > 0 && <span className="hidden sm:inline text-stone-850">•</span>}
+                <Link href={link.href} className="hover:text-emerald-400 transition-colors font-sans font-medium">
+                  {link.label}
+                </Link>
+              </span>
+            ))}
           </div>
         </div>
 

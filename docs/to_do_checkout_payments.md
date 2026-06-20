@@ -4,11 +4,33 @@ Data audit: 2026-05-29
 
 ## Agent Status
 
-- FileStatus: COMPLETED
-- LastVerified: 2026-06-02
-- OpenItems: 0
-- AgentAction: trattare questo file come archivio completato; riaprirlo solo se una regressione futura riapre checkout, pagamenti o ordini.
-- Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02.
+- FileStatus: PARTIAL
+- LastVerified: 2026-06-20
+- OpenItems: 1
+- AgentAction: Aggiunto controllo go-live bloccante per endpoint Stripe live, dominio finale e signing secret produzione.
+- Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02; resta da verificare la configurazione reale Stripe/Vercel al go-live.
+
+## [⏳ TODO] P0 Go-live - Riallineare Stripe webhook e dominio production
+
+Problema:
+- Stripe live ha segnalato errori sull'endpoint `https://delpasqua.com/api/webhooks/stripe`.
+- Dalla mail Stripe: 52 richieste hanno restituito HTTP 404 dopo il primo fallimento del 26 maggio 2026 alle 23:37:17 UTC.
+- Durante lo sviluppo alcuni esiti pagamento/webhook sono stati fatti puntare al dominio attuale mentre il backend effettivo era in un altro ambiente.
+
+Impatto:
+- Se `checkout.session.completed` non arriva al backend production corretto, un pagamento puo essere incassato ma l'ordine puo restare non aggiornato o incompleto.
+- Possibili mancati aggiornamenti di stato, stock, email ordine, fattura e dashboard gestionale.
+
+Fix richiesto:
+- Collegare `delpasqua.com` al deployment Vercel corretto prima dei test live.
+- Verificare che `https://delpasqua.com/api/webhooks/stripe` risponda in produzione e non ritorni 404.
+- In Stripe Dashboard live, configurare un solo endpoint webhook corretto per production: `https://delpasqua.com/api/webhooks/stripe`.
+- Rimuovere o disattivare endpoint live vecchi, duplicati, preview o puntati ad ambienti non production.
+- Configurare in Vercel production il `STRIPE_WEBHOOK_SECRET` corrispondente esattamente all'endpoint live.
+- Verificare che `STRIPE_SECRET_KEY`, `STRIPE_LIVEMODE_EXPECTED`, `NEXT_PUBLIC_SITE_URL`, `SITE_URL`, `NEXT_PUBLIC_APP_URL` e `APP_ORIGIN` siano coerenti con il dominio finale.
+- Eseguire un ordine test live a basso importo/prodotto test e verificare in Stripe Dashboard che il webhook riceva risposta 2xx.
+- Verificare nel gestionale che l'ordine passi allo stato pagato e che stock/email/fattura/outbox siano coerenti.
+- Per sviluppo o preview, usare endpoint separati o Stripe CLI, senza far puntare i webhook live all'ambiente di sviluppo.
 
 ## [✅ RISOLTO] P0 - Webhook Stripe assorbe errori con HTTP 200
 

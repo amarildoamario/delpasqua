@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/client/adminFetch";
 import ProductCard, { type ProductCardVariantImage } from "@/components/ProductCard";
+import { HOME_MERCH_FALLBACK_SLUGS, pickHomeMerchSlots } from "@/lib/homeMerch";
 
 type MerchState = {
   showInHome: boolean;
@@ -144,51 +145,19 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
       homeRank: r.merch?.homeRank ?? 0,
     }));
 
-    // 2. Calcola quali prodotti sono visibili in Home (stessa logica di ShopHighlights)
-    const homeProducts = mapped
-      .filter((p) => p.showInHome === true)
-      .sort((a, b) => {
-        const rA = a.homeRank === 0 ? 99999 : a.homeRank;
-        const rB = b.homeRank === 0 ? 99999 : b.homeRank;
-        return rA - rB;
-      });
-
-    const picked = [...homeProducts];
-    const FEATURED_SLUGS = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
-
-    if (picked.length < 4) {
-      const already = new Set(picked.map((p) => p.slug));
-      for (const slug of FEATURED_SLUGS) {
-        if (picked.length >= 4) break;
-        const p = mapped.find((x) => x.slug === slug);
-        if (p && !already.has(p.slug) && p.showInHome !== false) {
-          picked.push(p);
-          already.add(p.slug);
-        }
-      }
-
-      for (const p of mapped) {
-        if (picked.length >= 4) break;
-        if (already.has(p.slug)) continue;
-        if (p.showInHome === false) continue;
-        picked.push(p);
-        already.add(p.slug);
-      }
-    }
-
-    const top4Keys = picked.slice(0, 4).map((p) => p.productKey);
+    const rankByKey = new Map(
+      pickHomeMerchSlots(mapped, { fallbackSlugs: HOME_MERCH_FALLBACK_SLUGS }).map(({ item, rank }) => [
+        item.productKey,
+        rank,
+      ])
+    );
 
     // 3. Costruisci lo stato iniziale per la tabella
     const m: Record<string, MerchState> = {};
     for (const r of rows) {
-      const top4Index = top4Keys.indexOf(r.productKey);
-      const isActiveInHome = top4Index !== -1;
-      const calculatedRank = isActiveInHome ? top4Index + 1 : 0;
-
-      const finalShowInHome = r.merch ? r.merch.showInHome : isActiveInHome;
-      const finalHomeRank = finalShowInHome
-        ? (r.merch && r.merch.homeRank > 0 ? r.merch.homeRank : calculatedRank)
-        : 0;
+      const effectiveRank = rankByKey.get(r.productKey) ?? 0;
+      const finalShowInHome = effectiveRank > 0;
+      const finalHomeRank = finalShowInHome ? effectiveRank : 0;
 
       m[r.productKey] = {
         showInHome: finalShowInHome,
@@ -283,38 +252,14 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
       };
     });
 
-    const homeProducts = mapped
-      .filter((p) => p.showInHome)
-      .sort((a, b) => {
-        const rA = a.homeRank === 0 ? 99999 : a.homeRank;
-        const rB = b.homeRank === 0 ? 99999 : b.homeRank;
-        return rA - rB;
-      });
-
-    const picked = [...homeProducts];
-
-    const FEATURED_SLUGS = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
-    if (picked.length < 4) {
-      const already = new Set(picked.map((p) => p.slug));
-      for (const slug of FEATURED_SLUGS) {
-        if (picked.length >= 4) break;
-        const p = mapped.find((x) => x.slug === slug);
-        if (p && !already.has(p.slug) && !isExplicitlyDisabled(p.id)) {
-          picked.push(p);
-          already.add(p.slug);
-        }
-      }
-
-      for (const p of mapped) {
-        if (picked.length >= 4) break;
-        if (already.has(p.slug)) continue;
-        if (isExplicitlyDisabled(p.id)) continue;
-        picked.push(p);
-        already.add(p.slug);
-      }
-    }
-
-    return picked.slice(0, 4);
+    return pickHomeMerchSlots(mapped, {
+      fallbackSlugs: HOME_MERCH_FALLBACK_SLUGS,
+      isDisabled: (p) => isExplicitlyDisabled(p.id),
+    }).map(({ item, rank }) => ({
+      ...item,
+      homeRank: rank,
+      showInHome: true,
+    }));
   }, [isDirty, rows, state]);
 
   function setField<K extends keyof MerchState>(key: string, field: K, value: MerchState[K]) {

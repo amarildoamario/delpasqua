@@ -7,9 +7,9 @@ Questo non e` un backlog tecnico: contiene verifiche manuali o semi-manuali da f
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-07
-- OpenItems: 69
-- AgentAction: trattare questo file come checklist manuale di go-live e post go-live; non usarlo come backlog di implementazione locale se non emerge un fix concreto da riportare nei `docs/to_do_*.md`.
+- LastVerified: 2026-06-20
+- OpenItems: 73
+- AgentAction: aggiunti controlli bloccanti per Stripe webhook live, dominio production e notifiche email production.
 - Note: lasciare questo file in `docs` anche quando alcune sezioni saranno chiuse; spostamenti o archiviazioni si decidono dopo il go-live.
 
 ## Regole d'uso
@@ -27,12 +27,16 @@ Questo non e` un backlog tecnico: contiene verifiche manuali o semi-manuali da f
 - [ ] Verificare dal deployment Vercel che le Serverless Functions risultino in `fra1`.
 - [ ] Verificare che `DATABASE_URL` e `DIRECT_URL` production puntino al database corretto, senza copiare i valori nel repo.
 - [ ] Verificare che Stripe production usi chiavi live e webhook live.
+- [ ] In Stripe Dashboard live, verificare che l'endpoint webhook production sia `https://delpasqua.com/api/webhooks/stripe`.
+- [ ] Disattivare o rimuovere endpoint Stripe live vecchi, preview o puntati ad ambienti di sviluppo.
+- [ ] Verificare che `STRIPE_WEBHOOK_SECRET` production corrisponda esattamente all'endpoint live configurato su Stripe.
 - [ ] Verificare che `STRIPE_LIVEMODE_EXPECTED` sia coerente con l'ambiente production.
 - [ ] Verificare che email production (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_NOTIFY`) siano corrette.
 - [ ] Verificare che `NEXT_PUBLIC_SITE_URL`, `SITE_URL`, `NEXT_PUBLIC_APP_URL` e `APP_ORIGIN` puntino al dominio finale.
 - [ ] Eseguire almeno un ordine test completo in production prima di rimuovere il prodotto test.
 - [ ] Verificare ricezione email ordine/admin sul test production.
 - [ ] Verificare che pagamento, webhook Stripe e pagina success funzionino end-to-end.
+- [ ] Dopo un ordine test live, verificare in Stripe Dashboard che `checkout.session.completed` abbia risposta webhook 2xx, non 404/500.
 - [ ] Verificare che il form contatti funzioni su production.
 - [ ] Verificare navigazione mobile reale su home, shop, PDP, carrello, checkout, contatti.
 - [ ] Verificare che non ci siano testi placeholder pubblici, in particolare su `/parita-di-genere/` e `/degustazioni/`.

@@ -456,6 +456,59 @@ const REVIEW_CAROUSEL_OPTS = {
   dragFree: true,
 };
 
+interface DoubleBgCardProps {
+  children: React.ReactNode;
+  className?: string;
+  offsetColor?: string;
+  borderColor?: string;
+  paddingClass?: string;
+  pattern?: "none" | "dots" | "grid";
+}
+
+function DoubleBgCard({
+  children,
+  className = "",
+  offsetColor = "bg-[#314030]/12 border-[#314030]/20",
+  borderColor = "border-[#ede8e0]",
+  paddingClass = "p-5",
+  pattern = "dots"
+}: DoubleBgCardProps) {
+  const getPatternStyle = () => {
+    switch (pattern) {
+      case "dots":
+        return {
+          backgroundImage: "radial-gradient(rgba(49, 64, 48, 0.18) 1px, transparent 1px)",
+          backgroundSize: "6px 6px"
+        };
+      case "grid":
+        return {
+          backgroundImage: `
+            linear-gradient(rgba(49, 64, 48, 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(49, 64, 48, 0.08) 1px, transparent 1px)
+          `,
+          backgroundSize: "8px 8px"
+        };
+      default:
+        return {};
+    }
+  };
+
+  return (
+    <div className={`relative group isolate ${className}`}>
+      {/* Shifted outline card */}
+      <div
+        className={`absolute inset-0 border ${offsetColor} rounded-[5px] translate-x-1.5 translate-y-1.5 z-0 transition-transform duration-300 group-hover:translate-x-2.5 group-hover:translate-y-2.5`}
+        style={getPatternStyle()}
+      />
+
+      {/* Foreground card */}
+      <div className={`relative bg-[#fbf9f5] border ${borderColor} ${paddingClass} rounded-[5px] shadow-[0_4px_12px_rgba(31,26,23,0.02)] transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-[#314030]/30 h-full flex flex-col justify-between z-10`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function HomeTrustAndReviews() {
   const locale = useLocale();
   const copy = COPY[locale] ?? COPY.en;
@@ -464,32 +517,107 @@ export default function HomeTrustAndReviews() {
       ? copy.reviews
       : [...copy.reviews, ...COPY.en.reviews.slice(copy.reviews.length)];
   const textRef = useRef<HTMLDivElement | null>(null);
-
   useScrollTextReveal(textRef);
 
   return (
-    <section className="bg-[#FBF6F0] text-[#1f1a17]">
+    <section className="bg-[#FBF6F0] text-[#1f1a17] overflow-hidden">
       <div className="bg-[#A7AF99]">
-        <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
-          <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-6 px-6 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-10 sm:overflow-visible sm:pb-0">
-            {copy.trust.map((item) => {
+        <div className="mx-auto max-w-7xl px-6 py-6 sm:py-12 sm:px-8 lg:px-12">
+          {/* On Mobile: Continuous Marquee Banner */}
+          <div className="relative -mx-6 block sm:hidden">
+            {/* Gradient Masks */}
+            <div className="absolute top-0 bottom-0 left-0 z-10 w-8 bg-gradient-to-r from-[#A7AF99] to-transparent pointer-events-none" />
+            <div className="absolute top-0 bottom-0 right-0 z-10 w-8 bg-gradient-to-l from-[#A7AF99] to-transparent pointer-events-none" />
+
+            {/* Marquee Track */}
+            <div className="animate-marquee-horizontal flex py-3">
+              {/* First Set of Items */}
+              <div className="flex gap-6 pr-6 shrink-0">
+                {copy.trust.map((item, idx) => {
+                  const Icon = item.icon;
+                  const pattern = idx % 2 === 0 ? ("dots" as const) : ("grid" as const);
+                  return (
+                    <DoubleBgCard
+                      key={`trust-m1-${idx}`}
+                      pattern={pattern}
+                      paddingClass="p-3"
+                      className="w-[270px] shrink-0"
+                    >
+                      <div className="flex items-center gap-3 text-left">
+                        <div className="text-[#314030] shrink-0">
+                          <Icon className="h-5 w-5" strokeWidth={1.7} />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#314030]">
+                            {item.title}
+                          </h3>
+                          <p className="text-[10px] leading-tight text-[#54483E] mt-0.5 line-clamp-2 font-light">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </DoubleBgCard>
+                  );
+                })}
+              </div>
+
+              {/* Second Set of Items for Seamless Loop */}
+              <div className="flex gap-6 pr-6 shrink-0" aria-hidden="true">
+                {copy.trust.map((item, idx) => {
+                  const Icon = item.icon;
+                  const pattern = idx % 2 === 0 ? ("dots" as const) : ("grid" as const);
+                  return (
+                    <DoubleBgCard
+                      key={`trust-m2-${idx}`}
+                      pattern={pattern}
+                      paddingClass="p-3"
+                      className="w-[270px] shrink-0"
+                    >
+                      <div className="flex items-center gap-3 text-left">
+                        <div className="text-[#314030] shrink-0">
+                          <Icon className="h-5 w-5" strokeWidth={1.7} />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#314030]">
+                            {item.title}
+                          </h3>
+                          <p className="text-[10px] leading-tight text-[#54483E] mt-0.5 line-clamp-2 font-light">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </DoubleBgCard>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* On Desktop: Standard Grid */}
+          <div className="hidden sm:grid sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-10">
+            {copy.trust.map((item, idx) => {
               const Icon = item.icon;
+              const pattern = idx % 2 === 0 ? ("dots" as const) : ("grid" as const);
 
               return (
-                <div
-                  key={item.title}
-                  className="flex min-w-[calc(50%-12px)] snap-center flex-col items-center text-center sm:min-w-0"
+                <DoubleBgCard
+                  key={`trust-d-${idx}`}
+                  pattern={pattern}
+                  className="h-full"
                 >
-                  <div className="mb-2.5 sm:mb-4 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-[#41503A]/16 bg-white/16 text-[#314030] backdrop-blur-sm">
-                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={1.7} />
+                  <div className="flex flex-col items-center text-center">
+                    {/* Icon Container (Without Circular Box Wrapper) */}
+                    <div className="mb-3 text-[#314030] transition-transform duration-300 group-hover:scale-110">
+                      <Icon className="h-6 w-6" strokeWidth={1.7} />
+                    </div>
+                    <h3 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#314030] group-hover:text-[#41503A] transition-colors duration-200">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 max-w-[16rem] text-xs sm:text-sm leading-relaxed text-[#54483E]">
+                      {item.description}
+                    </p>
                   </div>
-                  <h3 className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] sm:tracking-[0.18em] text-[#314030]">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 sm:mt-2 max-w-[130px] sm:max-w-[16rem] text-[10px] sm:text-sm leading-normal sm:leading-6 text-[#314030]/78">
-                    {item.description}
-                  </p>
-                </div>
+                </DoubleBgCard>
               );
             })}
           </div>

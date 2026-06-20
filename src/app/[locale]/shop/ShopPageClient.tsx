@@ -310,6 +310,222 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
   const sortRef = useRef<HTMLDivElement>(null);
   const sentListRef = useRef(false);
 
+  const selectionsHeader = useMemo(() => {
+    const headers: Record<string, { title: string; subtitle: string }> = {
+      it: {
+        title: "Le nostre Selezioni & Formati",
+        subtitle: "Scopri i percorsi dedicati del nostro frantoio toscano e i formati pensati per la tua cucina.",
+      },
+      en: {
+        title: "Our Selections & Sizes",
+        subtitle: "Discover our Tuscan mill's dedicated selections and formats tailored for your kitchen.",
+      },
+      de: {
+        title: "Unsere Auswahlen & Größen",
+        subtitle: "Entdecken Sie die speziellen Angebote und Formate unserer toskanischen Mühle für Ihre Küche.",
+      },
+      nl: {
+        title: "Onze Selecties & Formaten",
+        subtitle: "Ontdek de specifieke selecties en formaten van onze Toscaanse molen voor uw keuken.",
+      },
+      da: {
+        title: "Vores Udvalg & Formater",
+        subtitle: "Oplev vores toscanske mølles udvalg og format, der er skræddersyet til dit køkken.",
+      },
+      no: {
+        title: "Vårt Utvalg & Formater",
+        subtitle: "Oppdag vår toskanske mølles utvalg og format skreddersydd for ditt kjøkken.",
+      },
+    };
+    return headers[locale] || headers.it;
+  }, [locale]);
+
+  const selectionsCards = useMemo(() => {
+    const cards: Record<string, { badge: string; title: string; description: string; cta: string; href: string }[]> = {
+      it: [
+        {
+          badge: "Territorio",
+          title: "Olio Extravergine Toscano",
+          description: "Ottenuto al 100% da olive toscane raccolte e frante ad Arezzo, dal sapore erbaceo e profondo.",
+          cta: "Esplora la Selezione",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Sostenibilità",
+          title: "Olio EVO Biologico",
+          description: "La pura espressione della natura, ricavato da oliveti coltivati senza l'uso di pesticidi o sostanze chimiche.",
+          cta: "Vedi il Biologico",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Stagionalità",
+          title: "Nuovo Raccolto (Novello)",
+          description: "Il profumo inebriante dell'olio freschissimo di frangitura, estratto a freddo e disponibile in autunno.",
+          cta: "Scopri il Novello",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Scorta Famiglia",
+          title: "Latta 5 Litri",
+          description: "La massima convenienza per il consumo quotidiano, in un contenitore che scherma luce e aria al 100%.",
+          cta: "Scopri le Latte",
+          href: "/olio-5-litri",
+        },
+      ],
+      en: [
+        {
+          badge: "Origin",
+          title: "Tuscan Extra Virgin Oil",
+          description: "Obtained 100% from Tuscan olives harvested and pressed in Arezzo, with a deep and herbal taste.",
+          cta: "Explore Selection",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Sustainability",
+          title: "Organic EVO Oil",
+          description: "The pure expression of nature, obtained from olive groves cultivated without pesticides or chemical inputs.",
+          cta: "View Organic",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Seasonality",
+          title: "New Harvest (Novello)",
+          description: "The exhilarating aroma of fresh olive oil, cold-extracted and available during the autumn harvest.",
+          cta: "Discover Novello",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Family Reserve",
+          title: "5 Liters Can",
+          description: "The best value for daily cooking, in a container that blocks 100% of light and air to preserve quality.",
+          cta: "Discover Cans",
+          href: "/olio-5-litri",
+        },
+      ],
+      de: [
+        {
+          badge: "Herkunft",
+          title: "Toskanisches Olivenöl",
+          description: "Zu 100 % aus toskanischen Oliven hergestellt, die in Arezzo geerntet und gepresst werden, mit tiefem Aroma.",
+          cta: "Auswahl Erkunden",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Nachhaltigkeit",
+          title: "Bio-Olivenöl",
+          description: "Reiner Ausdruck der Natur, gewonnen aus Olivenhainen, die ohne Pestizide oder Chemie bewirtschaftet werden.",
+          cta: "Bio Ansehen",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Saisonalität",
+          title: "Frische Ernte (Novello)",
+          description: "Das betörende Aroma von frisch gepresstem Olivenöl, kaltgepresst und im Herbst erhältlich.",
+          cta: "Novello Entdecken",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Familienvorrat",
+          title: "5-Liter-Kanister",
+          description: "Optimal für den täglichen Gebrauch, in einem Metallkanister, der Licht und Luft vollständig abhält.",
+          cta: "Kanister Entdecken",
+          href: "/olio-5-litri",
+        },
+      ],
+      nl: [
+        {
+          badge: "Herkomst",
+          title: "Toscaanse Olijfolie",
+          description: "100% verkregen uit Toscaanse olijven geoogst en geperst in Arezzo, met een diepe, kruidige smaak.",
+          cta: "Ontdek de Selectie",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Duurzaamheid",
+          title: "Biologische Olijfolie",
+          description: "De pure uitdrukking van de natuur, afkomstig van olijfgaarden geteeld zonder bestrijdingsmiddelen.",
+          cta: "Bekijk Biologisch",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Seizoensgebonden",
+          title: "Nieuwe Oogst (Novello)",
+          description: "Het intense aroma van vers geperste olijfolie, koud geëxtraheerd en verkrijgbaar in de herfst.",
+          cta: "Ontdek Nieuwe Oogst",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Gezinsvoorraad",
+          title: "5 Liter Blik",
+          description: "De beste waarde voor dagelijks gebruik, in een verpakking die licht en lucht 100% buitensluit.",
+          cta: "Ontdek Blikken",
+          href: "/olio-5-litri",
+        },
+      ],
+      da: [
+        {
+          badge: "Oprindelse",
+          title: "Toscansk Olivenolie",
+          description: "Fremstillet 100% af toscanske oliven høstet og presset i Arezzo, med en dyb og urteagtig smag.",
+          cta: "Udforsk Udvalg",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Bæredygtighed",
+          title: "Økologisk Olivenolie",
+          description: "Det rene udtryk for naturen, fremstillet af olivenlunde dyrket uden brug af sprøjtemidler.",
+          cta: "Se Økologisk",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Sæsonbestemt",
+          title: "Ny Høst (Novello)",
+          description: "Den fantastiske duft af friskpresset olivenolie, koldpresset og tilgængelig om efteråret.",
+          cta: "Se Ny Høst",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Familiereserve",
+          title: "5 Liters Dunk",
+          description: "Den bedste værdi til daglig madlavning, i en dunk der beskytter mod lys og luft 100%.",
+          cta: "Udforsk Dunke",
+          href: "/olio-5-litri",
+        },
+      ],
+      no: [
+        {
+          badge: "Opprinnelse",
+          title: "Toskansk Olivenolje",
+          description: "Utvunnet 100% fra toscanske oliven høstet og presset i Arezzo, med en dyp og urteaktig smak.",
+          cta: "Utforsk Utvalg",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Bærekraft",
+          title: "Økologisk Olivenolje",
+          description: "Det rene uttrykket for naturen, oppnådd fra olivenlunder dyrket uten kjemiske sprøytemidler.",
+          cta: "Se Økologisk",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Sesong",
+          title: "Ny Høst (Novello)",
+          description: "Den herlige duften av ferskpresset olivenolje, kaldpresset og tilgjengelig om høsten.",
+          cta: "Utforsk Ny Høst",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Familiereserve",
+          title: "5 Liters Kanne",
+          description: "Beste verdi for daglig madlaging, i en kanne som blokkerer lys og luft 100%.",
+          cta: "Se Kanner",
+          href: "/olio-5-litri",
+        },
+      ],
+    };
+    return cards[locale] || cards.it;
+  }, [locale]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
@@ -520,8 +736,8 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
             </div>
           </div>
 
-          <div className="border border-neutral-200 bg-white p-2.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-[5px]">
-            <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
               {CATEGORIES.map((cat) => (
                 <FilterPill
                   key={cat.id}
@@ -533,17 +749,17 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
               ))}
             </div>
 
-            <div ref={sortRef} className="relative self-end sm:self-auto min-w-[200px] z-20">
+            <div ref={sortRef} className="relative z-20 w-full sm:w-auto sm:min-w-[220px]">
               <button
                 onClick={() => setIsSortOpen(!isSortOpen)}
-                className="w-full flex items-center justify-between gap-3 rounded-[5px] border border-neutral-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#5f554c] hover:border-neutral-400 hover:bg-neutral-50 transition"
+                className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-[5px] border border-[#d7cbbb] bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_58%,#f8f2ea_100%)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#4f463d] shadow-[0_10px_24px_rgba(31,26,23,0.07),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-200 before:absolute before:inset-x-3 before:top-0 before:h-px before:bg-white/90 hover:-translate-y-0.5 hover:border-[#8b7355]/60 hover:text-[#132c1c] hover:shadow-[0_14px_30px_rgba(31,26,23,0.1),inset_0_1px_0_rgba(255,255,255,0.95)] active:translate-y-0"
               >
-                <span>{hCopy.sortLabel}: {currentSortText}</span>
+                <span className="truncate">{hCopy.sortLabel}: {currentSortText}</span>
                 <IconChevronDown className={`h-3 w-3 text-[#8a7258] transition-transform duration-200 ${isSortOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isSortOpen && (
-                <div className="absolute right-0 mt-1 w-full rounded-[5px] border border-neutral-200 bg-white py-1 shadow-lg animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="absolute right-0 mt-2 w-full overflow-hidden rounded-[5px] border border-[#d7cbbb] bg-white py-1 shadow-[0_18px_40px_rgba(31,26,23,0.12)] animate-in fade-in slide-in-from-top-1 duration-150">
                   {sortOptions.map((opt) => (
                     <button
                       key={opt.value}
@@ -551,8 +767,8 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
                         setSortOrder(opt.value);
                         setIsSortOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2.5 text-xs font-medium transition-colors hover:bg-neutral-50 ${
-                        sortOrder === opt.value ? "text-[#132c1c] font-bold bg-[#132c1c]/5" : "text-[#5f554c]"
+                      className={`w-full px-4 py-2.5 text-left text-xs font-medium transition-colors hover:bg-[#f8f2ea] ${
+                        sortOrder === opt.value ? "bg-[#132c1c]/5 font-bold text-[#132c1c]" : "text-[#5f554c]"
                       }`}
                     >
                       {opt.label}
@@ -645,6 +861,59 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
             </div>
           )}
 
+          {/* SEZIONI E FORMATI SPECIALI */}
+          <div className="mt-24 border-t border-[#e8dfd5] pt-16">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="font-serif text-3xl font-light tracking-tight text-[#1f1a17] sm:text-4xl">
+                {selectionsHeader.title}
+              </h2>
+              <p className="mt-4 text-sm text-[#5f554c] leading-relaxed">
+                {selectionsHeader.subtitle}
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {selectionsCards.map((card, idx) => (
+                <div key={idx} className="relative group flex flex-col h-full">
+                  {/* Sfondo sfasato decorativo con pattern grigliato */}
+                  <div className="absolute inset-0 translate-x-1.5 translate-y-1.5 rounded-[5px] bg-[radial-gradient(#d7cbbb_1px,transparent_1px)] [background-size:9px_9px] bg-[#fcf9f5] border border-[#e8dfd5] transition-all duration-300 group-hover:translate-x-2.5 group-hover:translate-y-2.5 group-hover:bg-[#132c1c]/5 group-hover:border-[#132c1c]/15" />
+
+                  {/* Card principale */}
+                  <Link
+                    href={card.href}
+                    className="relative flex-1 flex flex-col justify-between p-6 bg-white border border-[#e8dfd5] rounded-[5px] transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-[#8b7355]/40 group-hover:shadow-[0_6px_16px_rgba(139,115,85,0.06)]"
+                  >
+                    <div>
+                      {/* Icon/Badge decorativo */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-[10px] font-bold tracking-[0.15em] text-[#8b7355] uppercase">
+                          {card.badge}
+                        </div>
+                        <div className="p-1.5 rounded-full bg-[#fdfaf7] text-[#8b7355] group-hover:bg-[#132c1c] group-hover:text-white transition-colors duration-300">
+                          <svg className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 transition-transform duration-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <h3 className="font-serif text-xl font-medium text-[#1f1a17] group-hover:text-[#8b7355] transition-colors">
+                        {card.title}
+                      </h3>
+                      <p className="mt-2.5 text-xs text-[#5f554c] leading-relaxed">
+                        {card.description}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 inline-flex items-center gap-1 text-[10px] font-bold tracking-wider text-[#132c1c] uppercase group-hover:text-[#8b7355] transition-colors">
+                      <span>{card.cta}</span>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-16 flex flex-col items-center justify-center gap-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#d7cbbb] bg-white/72 px-4 py-2 text-xs font-medium text-[#5f554c] shadow-sm shadow-[#1f1a17]/5">
               <IconTruck className="h-4 w-4" />
@@ -674,9 +943,9 @@ function FilterPill({
   return (
     <button
       onClick={onClick}
-      className={`rounded-[5px] border px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition ${active
-        ? "border-transparent bg-[#132c1c] text-white shadow-sm"
-        : "border-neutral-200 bg-white text-[#5f554c] hover:border-neutral-400 hover:bg-neutral-50"
+      className={`relative isolate shrink-0 overflow-hidden rounded-[5px] border px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] transition-all duration-200 before:absolute before:inset-x-2 before:top-0 before:h-px before:transition-colors after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:-translate-x-1/2 after:bg-[#b68a3a] after:transition-all after:duration-200 ${active
+        ? "border-[#132c1c] bg-[linear-gradient(180deg,#173823_0%,#132c1c_100%)] text-white shadow-[0_12px_24px_rgba(19,44,28,0.22),inset_0_1px_0_rgba(255,255,255,0.16)] before:bg-white/25 after:w-8"
+        : "border-[#d7cbbb] bg-[linear-gradient(180deg,#ffffff_0%,#fffaf4_100%)] text-[#5f554c] shadow-[0_7px_18px_rgba(31,26,23,0.045),inset_0_1px_0_rgba(255,255,255,0.9)] before:bg-white/80 hover:-translate-y-0.5 hover:border-[#8b7355]/60 hover:text-[#132c1c] hover:shadow-[0_12px_26px_rgba(31,26,23,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] hover:after:w-6 active:translate-y-0"
         }`}
     >
       {children}
@@ -757,4 +1026,3 @@ function IconList({ className }: { className?: string }) {
     </svg>
   );
 }
-

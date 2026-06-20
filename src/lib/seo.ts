@@ -101,6 +101,10 @@ const REQUIRED_CORE_INTERNAL_PATHS = [
   "/cookie/",
   "/termini/",
   "/degustazioni/",
+  "/olio-toscano/",
+  "/olio-biologico/",
+  "/nuovo-raccolto/",
+  "/olio-5-litri/",
 ] as const;
 
 export const REQUIRED_CORE_INDEXABLE_PATHS = REQUIRED_CORE_INTERNAL_PATHS.flatMap((path) =>
@@ -132,6 +136,10 @@ const HREFLANG_CORE_PATHS = new Set([
   "/resi/",
   "/spedizioni/",
   "/blog/",
+  "/olio-toscano/",
+  "/olio-biologico/",
+  "/nuovo-raccolto/",
+  "/olio-5-litri/",
 ]);
 
 const OG_LOCALES: Record<string, string> = {

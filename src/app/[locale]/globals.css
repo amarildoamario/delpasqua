@@ -120,6 +120,22 @@ html {
   }
 }
 
+@keyframes marquee-horizontal {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-horizontal {
+  display: flex;
+  width: max-content;
+  animation: marquee-horizontal 28s linear infinite;
+}
+
+
 :root {
   --viewport-height: 100svh; /* overridden on desktop below */
   --background: oklch(1 0 0);

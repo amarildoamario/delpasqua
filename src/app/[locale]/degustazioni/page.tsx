@@ -7,6 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { companyInfo } from "@/lib/companyInfo";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { Link } from "@/i18n/routing";
+import TastingsSeoSection from "./TastingsSeoSection";
 
 const TASTING_IMAGE_PATH = "/blog/degustazione-olio.avif";
 
@@ -230,198 +231,113 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
             </div>
           </div>
         </section>
-        {/* SEO & FAQ Section (Premium Dark Theme) */}
-        <section className="relative overflow-hidden bg-[#1C1917] py-20 lg:py-28 lg:mt-20">
-          {/* Decorative Blur Backgrounds */}
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#3D5A3D]/20 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/4 pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#B8860B]/15 rounded-full blur-[80px] translate-y-1/3 translate-x-1/3 pointer-events-none" />
 
-          <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="grid gap-16 lg:grid-cols-[1fr_1.5fr] lg:gap-24">
-              {/* Left: Intro & Highlights */}
-              <div className="flex flex-col justify-start pt-4">
-                <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#B8860B] uppercase">
-                  <span className="h-px w-6 bg-[#B8860B]" />
-                  {t("seo.subtitle")}
-                </div>
-                <h2 className="mt-6 font-serif text-3xl font-light tracking-tight text-white lg:text-4xl xl:text-5xl leading-tight">
-                  {t("seo.title_part1")} <span className="italic text-[#B8860B]">{t("seo.title_italic")}</span> {t("seo.title_part2")}
-                </h2>
-                <p className="mt-6 text-base leading-relaxed text-[#A8A29E] lg:text-lg">
-                  {t("seo.description")}
-                </p>
+        <TastingsSeoSection
+          seoSubtitle={t("seo.subtitle")}
+          seoTitlePart1={t("seo.title_part1")}
+          seoTitleItalic={t("seo.title_italic")}
+          seoTitlePart2={t("seo.title_part2")}
+          seoDescription={t("seo.description")}
+          imageSrc={TASTING_IMAGE_PATH}
+          imageAlt={t("image_alt")}
+          imageBadge={t("image_badge")}
+          features={[
+            { id: "map", title: t("features.f1_title"), desc: t("features.f1_desc") },
+            { id: "drop", title: t("features.f2_title"), desc: t("features.f2_desc") },
+            { id: "star", title: t("features.f3_title"), desc: t("features.f3_desc") },
+          ]}
+          faqs={[
+            { question: t("faq.q1"), answer: t("faq.a1") },
+            { question: t("faq.q2"), answer: t("faq.a2") },
+            { question: t("faq.q3"), answer: t("faq.a3") },
+            { question: t("faq.q4"), answer: t("faq.a4") },
+          ]}
+        />
 
-                <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
-                  <FeatureHighlight
-                    icon={<IconMapPin className="h-5 w-5 text-[#B8860B]" />}
-                    title={t("features.f1_title")}
-                    desc={t("features.f1_desc")}
-                  />
-                  <FeatureHighlight
-                    icon={<IconDrop className="h-5 w-5 text-[#B8860B]" />}
-                    title={t("features.f2_title")}
-                    desc={t("features.f2_desc")}
-                  />
-                  <FeatureHighlight
-                    icon={<IconStar className="h-4 w-4 text-[#B8860B]" />}
-                    title={t("features.f3_title")}
-                    desc={t("features.f3_desc")}
-                  />
-                </div>
-              </div>
-
-              {/* Right: Image & FAQs */}
-              <div className="flex flex-col justify-center gap-8">
-                {/* Image with strong SEO alt text */}
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-xl group">
-                  <Image
-                    src={TASTING_IMAGE_PATH}
-                    alt={t("image_alt")}
-                    fill
-                    className="object-cover opacity-80 transition-opacity duration-500 group-hover:opacity-100 mix-blend-overlay"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
-                    <span className="text-sm font-medium tracking-widest text-white/50 uppercase border border-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
-                      {t("image_badge")}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col space-y-4">
-                  <FAQItemDark
-                    question={t("faq.q1")}
-                    answer={t("faq.a1")}
-                  />
-                  <FAQItemDark
-                    question={t("faq.q2")}
-                    answer={t("faq.a2")}
-                  />
-                  <FAQItemDark
-                    question={t("faq.q3")}
-                    answer={t("faq.a3")}
-                  />
-                  <FAQItemDark
-                    question={t("faq.q4")}
-                    answer={t("faq.a4")}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* FAQ Schema Markup */}
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  "@context": "https://schema.org",
-                  "@type": "FAQPage",
-                  mainEntity: [
-                    {
-                      "@type": "Question",
-                      name: t("faq.q1"),
-                      acceptedAnswer: {
-                        "@type": "Answer",
-                        text: t("faq.a1")
-                      }
-                    },
-                    {
-                      "@type": "Question",
-                      name: t("faq.q2"),
-                      acceptedAnswer: {
-                        "@type": "Answer",
-                        text: t("faq.a2")
-                      }
-                    },
-                    {
-                      "@type": "Question",
-                      name: t("faq.q3"),
-                      acceptedAnswer: {
-                        "@type": "Answer",
-                        text: t("faq.a3")
-                      }
-                    },
-                    {
-                      "@type": "Question",
-                      name: t("faq.q4"),
-                      acceptedAnswer: {
-                        "@type": "Answer",
-                        text: t("faq.a4")
-                      }
-                    }
-                  ]
-                })
-              }}
-            />
-
-            {/* LocalBusiness / FoodEstablishment Schema Markup per Local SEO */}
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  "@context": "https://schema.org",
-                  "@type": "FoodEstablishment",
-                  "name": "Az. Agr. Del Pasqua - Degustazione Olio EVO",
-                  "image": absoluteUrl(TASTING_IMAGE_PATH),
-                  "@id": "https://www.delpasqua.com/degustazioni",
-                  "url": "https://www.delpasqua.com/degustazioni",
-                  "telephone": "+390575810065",
-                  "priceRange": "€€",
-                  "address": {
-                    "@type": "PostalAddress",
-                    "streetAddress": companyInfo.postalAddress.streetAddress,
-                    "addressLocality": companyInfo.postalAddress.addressLocality,
-                    "addressRegion": companyInfo.postalAddress.addressRegion,
-                    "postalCode": companyInfo.postalAddress.postalCode,
-                    "addressCountry": companyInfo.postalAddress.addressCountry
-                  },
-                  "geo": {
-                    "@type": "GeoCoordinates",
-                    "latitude": companyInfo.geo.latitude,
-                    "longitude": companyInfo.geo.longitude
-                  },
-                  "description": t("seo.description"),
-                  "offers": {
-                    "@type": "Offer",
-                    "url": "https://www.delpasqua.com/degustazioni",
-                    "priceCurrency": "EUR",
-                    "availability": "https://schema.org/InStock",
-                    "validFrom": new Date().toISOString()
+        {/* SEO Schemas */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: t("faq.q1"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("faq.a1")
                   }
-                })
-              }}
-            />
+                },
+                {
+                  "@type": "Question",
+                  name: t("faq.q2"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("faq.a2")
+                  }
+                },
+                {
+                  "@type": "Question",
+                  name: t("faq.q3"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("faq.a3")
+                  }
+                },
+                {
+                  "@type": "Question",
+                  name: t("faq.q4"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("faq.a4")
+                  }
+                }
+              ]
+            })
+          }}
+        />
 
-          </div>
-        </section>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FoodEstablishment",
+              "name": "Az. Agr. Del Pasqua - Degustazione Olio EVO",
+              "image": absoluteUrl(TASTING_IMAGE_PATH),
+              "@id": "https://www.delpasqua.com/degustazioni",
+              "url": "https://www.delpasqua.com/degustazioni",
+              "telephone": "+390575810065",
+              "priceRange": "€€",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": companyInfo.postalAddress.streetAddress,
+                "addressLocality": companyInfo.postalAddress.addressLocality,
+                "addressRegion": companyInfo.postalAddress.addressRegion,
+                "postalCode": companyInfo.postalAddress.postalCode,
+                "addressCountry": companyInfo.postalAddress.addressCountry
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": companyInfo.geo.latitude,
+                "longitude": companyInfo.geo.longitude
+              },
+              "description": t("seo.description"),
+              "offers": {
+                "@type": "Offer",
+                "url": "https://www.delpasqua.com/degustazioni",
+                "priceCurrency": "EUR",
+                "availability": "https://schema.org/InStock",
+                "validFrom": new Date().toISOString()
+              }
+            })
+          }}
+        />
       </main>
       <Footer />
     </>
-  );
-}
-
-function IconStar({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-}
-
-function IconMapPin({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  );
-}
-
-function IconDrop({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />
-    </svg>
   );
 }
 
@@ -431,32 +347,5 @@ function IconLeaf({ className }: { className?: string }) {
       <path d="M11 21c-4.5 0-8-3.6-8-8 0-6 7-10 18-11-1 11-5 19-10 19Z" />
       <path d="M7 13c2 0 5 0 9-4" />
     </svg>
-  );
-}
-
-function FeatureHighlight({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
-  return (
-    <div className="flex items-start gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 backdrop-blur-md transition-colors hover:bg-white/10">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#B8860B]/10">
-        {icon}
-      </div>
-      <div className="pt-0.5">
-        <h4 className="font-serif text-lg font-medium text-white">{title}</h4>
-        <p className="mt-1 text-sm text-[#A8A29E] leading-relaxed">{desc}</p>
-      </div>
-    </div>
-  );
-}
-
-function FAQItemDark({ question, answer }: { question: string; answer: string }) {
-  return (
-    <div className="group rounded-2xl border border-white/5 bg-white/5 p-6 transition-all duration-300 hover:border-[#B8860B]/30 hover:bg-white/10 lg:p-8">
-      <h3 className="font-serif text-xl font-medium text-white transition-colors group-hover:text-[#B8860B]">
-        {question}
-      </h3>
-      <p className="mt-3 text-sm leading-relaxed text-[#A8A29E]">
-        {answer}
-      </p>
-    </div>
   );
 }

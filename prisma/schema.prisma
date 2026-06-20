@@ -178,6 +178,19 @@ enum OutboxStatus {
   failed
 }
 
+enum ContactMessageStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum ContactNotificationStatus {
+  pending
+  sent
+  failed
+  skipped
+}
+
 model StripeWebhookEvent {
   id       String  @id @default(cuid())
   eventId  String  @unique
@@ -219,6 +232,35 @@ model OutboxEvent {
   updatedAt DateTime     @updatedAt
 
   @@index([status, runAt])
+}
+
+model ContactMessage {
+  id String @id @default(cuid())
+
+  status ContactMessageStatus @default(UNREAD)
+
+  name    String
+  email   String
+  subject String
+  message String
+  consent Boolean @default(true)
+
+  sourcePath String?
+  ipAddress  String?
+  userAgent  String?
+
+  notificationStatus ContactNotificationStatus @default(pending)
+  notificationSentAt DateTime?
+  notificationError  String?
+
+  readAt     DateTime?
+  archivedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email, createdAt])
+  @@index([notificationStatus, createdAt])
 }
 
 model Promotion {

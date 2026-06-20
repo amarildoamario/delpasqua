@@ -8,6 +8,7 @@ import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
 import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
+import { HOME_MERCH_FALLBACK_SLUGS, pickHomeMerchSlots } from "@/lib/homeMerch";
 
 type HighlightProduct = ProductCardProduct;
 type MerchAwareProduct = DbProduct & {
@@ -15,8 +16,6 @@ type MerchAwareProduct = DbProduct & {
   homeRank?: number;
   merchBadge?: string | null;
 };
-
-const FEATURED_SLUGS: string[] = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"];
 
 const SHOP_HIGHLIGHTS_COPY = {
   it: {
@@ -71,40 +70,7 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
   const products: HighlightProduct[] = useMemo(() => {
     const all = catalog ?? [];
 
-    // Filter products that are marked to show in home, and sort by homeRank ascending (lower rank = higher priority, 0 at the bottom)
-    const homeProducts = all
-      .filter((p) => p.showInHome === true)
-      .sort((a, b) => {
-        const rA = a.homeRank === 0 ? 99999 : (a.homeRank ?? 99999);
-        const rB = b.homeRank === 0 ? 99999 : (b.homeRank ?? 99999);
-        return rA - rB;
-      });
-
-    const picked: MerchAwareProduct[] = [...homeProducts];
-
-    // Fallback: if we have fewer than 4 products, fill it up using the default FEATURED_SLUGS
-    if (picked.length < 4) {
-      const already = new Set(picked.map((p) => p.slug));
-      for (const s of FEATURED_SLUGS) {
-        if (picked.length >= 4) break;
-        const p = all.find((x) => x.slug === s);
-        if (p && !already.has(p.slug) && p.showInHome !== false) {
-          picked.push(p);
-          already.add(p.slug);
-        }
-      }
-
-      // If still fewer than 4, add any other products
-      for (const p of all) {
-        if (picked.length >= 4) break;
-        if (already.has(p.slug)) continue;
-        if (p.showInHome === false) continue;
-        picked.push(p);
-        already.add(p.slug);
-      }
-    }
-
-    return picked.slice(0, 4).map((p) => {
+    return pickHomeMerchSlots(all, { fallbackSlugs: HOME_MERCH_FALLBACK_SLUGS }).map(({ item: p }) => {
       const minPriceCents = Math.min(...(p.variants?.map((v) => v.priceCents) ?? [0]));
       const hasMany = (p.variants?.length ?? 0) > 1;
       const fmt = new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {

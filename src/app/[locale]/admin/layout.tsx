@@ -16,6 +16,7 @@ import {
   Webhook,
   CalendarDays,
   Coins,
+  Mail,
 } from "lucide-react";
 import { BarChart3 } from "lucide-react";
 
@@ -67,7 +68,7 @@ function NavItem({
 // Con cache 30s: 0 query se i dati sono freschi, 4 query al massimo ogni 30s.
 const ADMIN_BADGE_TTL_MS = process.env.NODE_ENV === "production" ? 30_000 : 0;
 interface AdminBadgeCache {
-  data: [number, number, number, number];
+  data: [number, number, number, number, number];
   cachedAt: number;
 }
 let adminBadgeCache: AdminBadgeCache | null = null;
@@ -96,7 +97,10 @@ async function fetchAdminDashboardData() {
     prisma.tastingBooking.count({
       where: { status: "PENDING", slotStart: { gte: new Date() } },
     }),
-  ]) as [number, number, number, number];
+    prisma.contactMessage.count({
+      where: { status: "UNREAD" },
+    }),
+  ]) as [number, number, number, number, number];
 
   adminBadgeCache = { data, cachedAt: Date.now() };
   return data;
@@ -110,7 +114,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect(`/login?next=${encodeURIComponent(nextPathWithSearch)}`);
   }
 
-  const [toShip, outboxIssues, webhookIssues, pendingTastings] = await fetchAdminDashboardData();
+  const [toShip, outboxIssues, webhookIssues, pendingTastings, unreadMessages] = await fetchAdminDashboardData();
 
   return (
     <div className="h-screen w-full flex bg-neutral-50 overflow-hidden admin-panel">
@@ -136,6 +140,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               badge={pendingTastings}
               icon={CalendarDays}
             />
+            <NavItem href="/admin/messages" label="Messaggi" badge={unreadMessages} icon={Mail} />
 
             <SectionLabel>Marketing</SectionLabel>
             <NavItem href="/admin/sales" label="Merchandising" icon={BadgePercent} />
@@ -191,6 +196,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-bold text-neutral-900 hover:bg-neutral-50 transition-colors"
               >
                 Ordini
+              </Link>
+              <Link
+                href="/admin/messages"
+                className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-bold text-neutral-900 hover:bg-neutral-50 transition-colors"
+              >
+                Messaggi
               </Link>
               <AdminLogoutButton />
             </div>

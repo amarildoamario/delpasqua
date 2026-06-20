@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
+import { prisma } from "@/lib/server/prisma";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 
 export const runtime = "nodejs";
@@ -46,6 +47,19 @@ export async function POST(req: Request) {
       );
     }
 
+    const contactMessage = await prisma.contactMessage.create({
+      data: {
+        name,
+        email,
+        subject,
+        message,
+        consent,
+        sourcePath: req.headers.get("referer"),
+        ipAddress: ip,
+        userAgent: req.headers.get("user-agent"),
+      },
+    });
+
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
     const EMAIL_FROM = process.env.EMAIL_FROM;
     const ADMIN_TO = process.env.ADMIN_NOTIFY_EMAIL || process.env.EMAIL_NOTIFY;
@@ -56,16 +70,20 @@ export async function POST(req: Request) {
         hasEmailFrom: !!EMAIL_FROM,
         hasAdminTo: !!ADMIN_TO,
       });
-      return NextResponse.json(
-        { ok: false, error: "Si è verificato un errore di configurazione del server. Riprova più tardi." },
-        { status: 500 }
-      );
+      await prisma.contactMessage.update({
+        where: { id: contactMessage.id },
+        data: {
+          notificationStatus: "skipped",
+          notificationError: "Missing contact email configuration",
+        },
+      });
+      return NextResponse.json({ ok: true, stored: true, emailNotification: "skipped" });
     }
 
     const resend = new Resend(RESEND_API_KEY);
     const now = new Date().toISOString();
 
-    const adminSubject = `📩 Contatti — ${subject}`;
+    const adminSubject = `Contatti - ${subject}`;
 
     const text = `Nuovo messaggio dal form Contatti
 
@@ -78,6 +96,7 @@ ${message}
 
 ---
 Time: ${now}
+Messaggio gestionale: ${contactMessage.id}
 `;
 
     const html = `
@@ -95,27 +114,54 @@ Time: ${now}
         <p style="margin:0; color:#666; font-size:12px">
           <b>Time:</b> ${escapeHtml(now)}
         </p>
+        <p style="margin:6px 0 0 0; color:#666; font-size:12px">
+          <b>ID messaggio gestionale:</b> ${escapeHtml(contactMessage.id)}
+        </p>
       </div>
     `;
 
-    await resend.emails.send({
-      from: EMAIL_FROM,
-      to: ADMIN_TO,
-      subject: adminSubject,
-      text,
-      html,
-      // IMPORTANTISSIMO: così l'admin può cliccare "Rispondi" e rispondere al cliente
-      replyTo: email,
-    });
+    try {
+      const sendResult = await resend.emails.send({
+        from: EMAIL_FROM,
+        to: ADMIN_TO,
+        subject: adminSubject,
+        text,
+        html,
+        // L'admin puo usare "Rispondi" per rispondere direttamente al cliente.
+        replyTo: email,
+      });
 
-    return NextResponse.json({ ok: true });
+      if (sendResult.error) {
+        throw new Error(sendResult.error.message);
+      }
+
+      await prisma.contactMessage.update({
+        where: { id: contactMessage.id },
+        data: {
+          notificationStatus: "sent",
+          notificationSentAt: new Date(),
+          notificationError: null,
+        },
+      });
+    } catch (emailError: unknown) {
+      console.error("[CONTACT][EMAIL] failed to send notification", emailError);
+      await prisma.contactMessage.update({
+        where: { id: contactMessage.id },
+        data: {
+          notificationStatus: "failed",
+          notificationError: emailError instanceof Error ? emailError.message.slice(0, 1000) : "Unknown email error",
+        },
+      });
+    }
+
+    return NextResponse.json({ ok: true, stored: true });
   } catch (e: unknown) {
     if (e instanceof Response) {
       return e;
     }
     console.error("[CONTACT][POST] failed to process contact form", e);
     return NextResponse.json(
-      { ok: false, error: "Errore nell'invio del messaggio. Riprova più tardi." },
+      { ok: false, error: "Errore nell'invio del messaggio. Riprova piu tardi." },
       { status: 500 }
     );
   }
@@ -128,4 +174,4 @@ function escapeHtml(s: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
+}

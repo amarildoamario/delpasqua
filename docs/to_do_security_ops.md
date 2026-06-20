@@ -4,11 +4,26 @@ Data audit: 2026-05-29
 
 ## Agent Status
 
-- FileStatus: COMPLETED
-- LastVerified: 2026-06-04
-- OpenItems: 0
-- AgentAction: Tutti i punti di sicurezza, outbox concurrent safety e oscuramento PII sono stati completati con successo e coperti da test unitari.
+- FileStatus: PARTIAL
+- LastVerified: 2026-06-20
+- OpenItems: 1
+- AgentAction: Aggiunto controllo go-live per configurazione Resend e recapito notifiche form contatti.
 - Note: alcuni punti sono gia` risolti solo su singole route; controllare sempre le verifiche aggiunte sotto.
+
+## [⏳ TODO] Go-live - Verificare Resend e notifiche form contatti
+
+Problema:
+- In sviluppo e` comparso in gestionale l'errore `API key is invalid` sulla notifica e-mail del form contatti.
+- La mailbox interna salva correttamente il messaggio, ma se Resend rifiuta la richiesta l'e-mail admin non viene recapitata.
+
+Impatto:
+- Al go-live i messaggi contatto restano consultabili nel gestionale, ma l'admin potrebbe non ricevere la notifica in casella.
+
+Fix richiesto:
+- Configurare una `RESEND_API_KEY` valida negli env di produzione.
+- Verificare che `EMAIL_FROM` usi un dominio/mittente verificato su Resend.
+- Verificare `ADMIN_NOTIFY_EMAIL` o `EMAIL_NOTIFY` come destinatario reale.
+- Inviare un messaggio di test dal form contatti dopo il deploy e confermare sia salvataggio in `/admin/messages` sia recapito nella casella e-mail.
 
 ## [✅ RISOLTO] P0 - Build puo ignorare errori TypeScript
 

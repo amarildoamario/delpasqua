@@ -20,6 +20,10 @@ const CORE_PATHS = [
   "/resi",
   "/spedizioni",
   "/blog",
+  "/olio-toscano",
+  "/olio-biologico",
+  "/nuovo-raccolto",
+  "/olio-5-litri",
 ];
 
 function getPageParams(path: string) {
