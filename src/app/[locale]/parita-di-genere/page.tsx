@@ -85,7 +85,8 @@ const translations = {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const t = translations[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const t = translations[displayLocale];
 
   return pageMetadata({
     title: t.title,
@@ -99,7 +100,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function ParitaDiGenerePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const t = translations[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const t = translations[displayLocale];
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 sm:py-16">

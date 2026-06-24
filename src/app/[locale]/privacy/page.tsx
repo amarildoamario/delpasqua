@@ -784,7 +784,8 @@ const translations = {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const t = translations[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const t = translations[displayLocale];
 
   return pageMetadata({
     title: t.title,
@@ -821,7 +822,8 @@ function Section({
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const t = translations[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const t = translations[displayLocale];
 
   const sectionsList = [
     { id: "titolare", title: t.sections.titolare.title },

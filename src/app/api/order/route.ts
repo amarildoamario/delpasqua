@@ -19,7 +19,7 @@ type StripeAllowedCountry = NonNullable<
   Stripe.Checkout.SessionCreateParams.ShippingAddressCollection["allowed_countries"]
 >[number];
 
-const SUPPORTED_STRIPE_COUNTRIES = ["IT", "DE", "NL", "DK", "NO", "US", "GB"] as const satisfies readonly StripeAllowedCountry[];
+const SUPPORTED_STRIPE_COUNTRIES = ["IT"] as const satisfies readonly StripeAllowedCountry[];
 
 function toStripeAllowedCountry(countryCode: string): StripeAllowedCountry {
   const normalized = countryCode.trim().toUpperCase();

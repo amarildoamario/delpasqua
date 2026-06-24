@@ -11,7 +11,7 @@ import fetch from "node-fetch";
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 // Active locales configured in Del Pasqua
-const LOCALES = ["it", "en", "de", "nl", "da", "no"];
+const LOCALES = ["it", "en", "de", "nl", "da", "no", "es", "fr", "us"];
 
 // Route mapping per language
 const ROUTE_MAPS = {
@@ -22,6 +22,9 @@ const ROUTE_MAPS = {
     nl: "/nl",
     da: "/da",
     no: "/no",
+    es: "/es",
+    fr: "/fr",
+    us: "/us",
   },
   "/shop": {
     it: "/shop",
@@ -30,6 +33,9 @@ const ROUTE_MAPS = {
     nl: "/nl/winkel",
     da: "/da/butik",
     no: "/no/butikk",
+    es: "/es/tienda",
+    fr: "/fr/boutique",
+    us: "/us/shop",
   },
   "/storia": {
     it: "/storia",
@@ -38,6 +44,9 @@ const ROUTE_MAPS = {
     nl: "/nl/over-ons",
     da: "/da/om-os",
     no: "/no/om-oss",
+    es: "/es/sobre-nosotros",
+    fr: "/fr/a-propos",
+    us: "/us/about-us",
   },
   "/produzione": {
     it: "/produzione",
@@ -46,6 +55,9 @@ const ROUTE_MAPS = {
     nl: "/nl/productie",
     da: "/da/produktion",
     no: "/no/produksjon",
+    es: "/es/produccion",
+    fr: "/fr/production",
+    us: "/us/production",
   },
   "/degustazioni": {
     it: "/degustazioni",
@@ -54,6 +66,9 @@ const ROUTE_MAPS = {
     nl: "/nl/proeverijen",
     da: "/da/smagninger",
     no: "/no/smakinger",
+    es: "/es/degustaciones",
+    fr: "/fr/degustations",
+    us: "/us/tastings",
   },
   "/contatti": {
     it: "/contatti",
@@ -62,6 +77,9 @@ const ROUTE_MAPS = {
     nl: "/nl/contact",
     da: "/da/kontakt",
     no: "/no/kontakt",
+    es: "/es/contacto",
+    fr: "/fr/contact",
+    us: "/us/contact",
   },
   "/cart": {
     it: "/carrello",
@@ -70,6 +88,9 @@ const ROUTE_MAPS = {
     nl: "/nl/winkelwagen",
     da: "/da/kurv",
     no: "/no/handlekurv",
+    es: "/es/carrito",
+    fr: "/fr/panier",
+    us: "/us/cart",
   },
 };
 

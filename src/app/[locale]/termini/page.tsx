@@ -807,7 +807,8 @@ function Section({
 export default async function TerminiPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const t = translations[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const t = translations[displayLocale];
 
   const toc = [
     { id: "venditore", label: t.sections.venditore.title },
@@ -912,7 +913,8 @@ export default async function TerminiPage({ params }: { params: Promise<{ locale
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const t = translations[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const t = translations[displayLocale];
 
   return pageMetadata({
     title: t.title,

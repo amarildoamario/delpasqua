@@ -248,8 +248,9 @@ export const mockBlogPosts: BlogPost[] = [
 
 export function hasBlogPostTranslation(post: { id: string }, locale: string): boolean {
     if (locale === "it") return true;
+    const supportedLocale = (locale === "us") ? "en" : locale;
     const trans = BLOG_POST_TRANSLATIONS[post.id];
-    return !!(trans && trans[locale as Locale]);
+    return !!(trans && trans[supportedLocale as Locale]);
 }
 
 export async function loadMarkdownPost(post: BlogPost, locale: string): Promise<BlogPost> {
@@ -275,7 +276,11 @@ export async function loadMarkdownPost(post: BlogPost, locale: string): Promise<
         const basePost = mockBlogPosts.find(p => p.id === post.id);
         const folderName = basePost ? basePost.slug : post.slug;
 
-        const mdPath = path.join(process.cwd(), "content", "blog", folderName, `${locale}.md`);
+        let mdPath = path.join(process.cwd(), "content", "blog", folderName, `${locale}.md`);
+        if (!fs.existsSync(mdPath)) {
+            const fallbackLocale = (locale === "es" || locale === "fr" || locale === "us") ? "en" : "it";
+            mdPath = path.join(process.cwd(), "content", "blog", folderName, `${fallbackLocale}.md`);
+        }
         if (fs.existsSync(mdPath)) {
             const fileContent = fs.readFileSync(mdPath, "utf-8");
             const { data, content } = matter(fileContent);
@@ -323,7 +328,8 @@ export async function getBlogPostBySlug(slug: string, locale: string = "it"): Pr
 export function localizeBlogPost(post: BlogPost, locale: string): BlogPost {
     const translations = BLOG_POST_TRANSLATIONS[post.id];
     if (!translations) return post;
-    const trans = translations[locale as Locale];
+    const supportedLocale = (locale === "us") ? "en" : locale;
+    const trans = translations[supportedLocale as Locale];
     if (!trans) return post;
 
     return {

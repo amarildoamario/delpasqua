@@ -77,7 +77,7 @@ export default function ContactForm() {
             onChange={(e) => setName(e.target.value)}
             name="name"
             placeholder={t("name_placeholder")}
-            className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
+            className="mt-2 w-full rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
             required
             minLength={2}
             maxLength={120}
@@ -94,7 +94,7 @@ export default function ContactForm() {
             name="email"
             type="email"
             placeholder="nome@email.com"
-            className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
+            className="mt-2 w-full rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
             required
             maxLength={200}
           />
@@ -110,7 +110,7 @@ export default function ContactForm() {
           onChange={(e) => setSubject(e.target.value)}
           name="subject"
           placeholder={t("subject_placeholder")}
-          className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
+          className="mt-2 w-full rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
           required
           minLength={2}
           maxLength={200}
@@ -127,7 +127,7 @@ export default function ContactForm() {
           name="message"
           rows={5}
           placeholder={t("message_placeholder")}
-          className="mt-2 w-full rounded-xl border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
+          className="mt-2 w-full rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:border-[#3D5A3D] focus:outline-none focus:ring-1 focus:ring-[#3D5A3D]"
           required
           minLength={5}
           maxLength={5000}
@@ -139,7 +139,7 @@ export default function ContactForm() {
           type="checkbox"
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
-          className="mt-1 h-4 w-4 rounded border-[#E7E5E4] text-[#3D5A3D] focus:ring-[#3D5A3D]"
+          className="mt-1 h-4 w-4 rounded-[5px] border-[#E7E5E4] text-[#3D5A3D] focus:ring-[#3D5A3D]"
           required
         />
         <span>
@@ -148,13 +148,13 @@ export default function ContactForm() {
       </label>
 
       {status === "ok" && (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+        <div className="rounded-[5px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
           {t("success_msg")} ✅
         </div>
       )}
 
       {status === "error" && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+        <div className="rounded-[5px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
           {t("error_prefix")}: {error || t("error_fallback")}
         </div>
       )}
@@ -163,7 +163,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={!canSubmit}
-          className="inline-flex items-center justify-center rounded-full bg-[#1C1917] px-8 py-3 text-xs font-medium tracking-[0.2em] text-white transition hover:bg-[#3D5A3D] disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-[5px] bg-[#1C1917] px-8 py-3 text-xs font-medium tracking-[0.2em] text-white transition hover:bg-[#3D5A3D] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {status === "sending" ? t("button_sending") : t("button_idle")}
         </button>

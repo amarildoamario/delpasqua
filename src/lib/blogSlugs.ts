@@ -62,13 +62,15 @@ for (const translations of Object.values(BLOG_POST_TRANSLATIONS)) {
 
 export function getLocalizedBlogSlug(post: BlogSlugSource, locale: string): string {
   const supportedLocale: Locale = isLocale(locale) ? locale : "it";
-  const mapped = BLOG_POST_TRANSLATIONS[post.id]?.[supportedLocale]?.slug;
+  const translations = BLOG_POST_TRANSLATIONS[post.id];
+  const mapped = translations?.[supportedLocale]?.slug ?? translations?.en?.slug ?? translations?.it?.slug;
   return normalizeBlogSlug(mapped ?? post.slug ?? post.id);
 }
 
 export function getLocalizedBlogCategory(post: BlogSlugSource, locale: string): string {
   const supportedLocale: Locale = isLocale(locale) ? locale : "it";
-  return BLOG_POST_TRANSLATIONS[post.id]?.[supportedLocale]?.category ?? post.category ?? "";
+  const translations = BLOG_POST_TRANSLATIONS[post.id];
+  return translations?.[supportedLocale]?.category ?? translations?.en?.category ?? translations?.it?.category ?? post.category ?? "";
 }
 
 export function getBlogCategorySlug(category: string): string {

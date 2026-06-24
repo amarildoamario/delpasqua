@@ -54,6 +54,9 @@ const LOCALE_NAMES: Record<string, string> = {
   nl: "Nederlands",
   da: "Dansk",
   no: "Norsk",
+  es: "Español",
+  fr: "Français",
+  us: "English (US)",
 };
 
 

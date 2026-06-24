@@ -99,6 +99,9 @@ const LOCALE_META: Record<Locale, LocaleMeta> = {
   nl: { flag: "🇳🇱", label: "NL" },
   da: { flag: "🇩🇰", label: "DA" },
   no: { flag: "🇳🇴", label: "NO" },
+  es: { flag: "🇪🇸", label: "ES" },
+  fr: { flag: "🇫🇷", label: "FR" },
+  us: { flag: "🇺🇸", label: "US" },
 };
 
 function parseArgs(argv: string[]): CliOptions {

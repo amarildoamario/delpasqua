@@ -174,6 +174,72 @@ const cardCopy = {
     favoriteRemove: "Fjern fra favoritter",
     secondaryBadge: "100% ITALIENSK",
   },
+  es: {
+    chooseSize: "Abre el producto para elegir el formato.",
+    added: (title: string) => `${title} añadido al carrito`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Solo ${available} artículos disponibles. Carrito actualizado.`
+        : "Cantidad reducida según disponibilidad.",
+    rejected: "Producto agotado.",
+    oilCategory: "ACEITE DE OLIVA EXTRA VIRGEN",
+    wineCategory: "VINO",
+    oneFormat: "DISPONIBILE EN UN SOLO FORMATO",
+    manyFormats: (count: number) => `DISPONIBLE EN ${count} FORMATOS DIFERENTES`,
+    from: "A partir de",
+    price: "Precio",
+    vat: "IVA incl.",
+    details: "Ver detalles",
+    productImage: "Imagen del producto",
+    addToCart: "Añadir al carrito",
+    favoriteAdd: "Añadir a favoritos",
+    favoriteRemove: "Quitar de favoritos",
+    secondaryBadge: "100% ITALIANO",
+  },
+  fr: {
+    chooseSize: "Ouvrez le produit pour choisir le format.",
+    added: (title: string) => `${title} ajouté au panier`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Seulement ${available} articles disponibles. Panier mis à jour.`
+        : "Quantité réduite selon la disponibilité.",
+    rejected: "Produit épuisé.",
+    oilCategory: "HUILE D'OLIVE EXTRA VIERGE",
+    wineCategory: "VIN",
+    oneFormat: "DISPONIBLE EN UN SEUL FORMAT",
+    manyFormats: (count: number) => `DISPONIBLE EN ${count} FORMATS DIFFÉRENTS`,
+    from: "À partir de",
+    price: "Prix",
+    vat: "TVA incl.",
+    details: "Voir les détails",
+    productImage: "Image du produit",
+    addToCart: "Ajouter au panier",
+    favoriteAdd: "Ajouter aux favoris",
+    favoriteRemove: "Retirer des favoris",
+    secondaryBadge: "100% ITALIEN",
+  },
+  us: {
+    chooseSize: "Open the product to choose the size.",
+    added: (title: string) => `${title} added to cart`,
+    adjusted: (available: number | null) =>
+      available != null
+        ? `Only ${available} items available. Cart updated.`
+        : "Quantity reduced based on availability.",
+    rejected: "Product sold out.",
+    oilCategory: "EXTRA VIRGIN OLIVE OIL",
+    wineCategory: "WINE",
+    oneFormat: "AVAILABLE IN ONE FORMAT ONLY",
+    manyFormats: (count: number) => `AVAILABLE IN ${count} DIFFERENT FORMATS`,
+    from: "From",
+    price: "Price",
+    vat: "VAT incl.",
+    details: "View details",
+    productImage: "Product Image",
+    addToCart: "Add to cart",
+    favoriteAdd: "Add to favorites",
+    favoriteRemove: "Remove from favorites",
+    secondaryBadge: "100% ITALIAN",
+  },
 };
 
 const MERCH_BADGES: Record<string, Record<string, string>> = {
@@ -184,6 +250,9 @@ const MERCH_BADGES: Record<string, Record<string, string>> = {
     nl: "Bestseller",
     da: "Bestseller",
     no: "Bestseller",
+    es: "Más vendido",
+    fr: "Meilleure vente",
+    us: "Best seller",
   },
   IN_OFFERTA: {
     it: "In offerta",
@@ -192,6 +261,9 @@ const MERCH_BADGES: Record<string, Record<string, string>> = {
     nl: "Aanbieding",
     da: "Tilbud",
     no: "Tilbud",
+    es: "En oferta",
+    fr: "En promotion",
+    us: "Special offer",
   },
   NOVITA: {
     it: "Novità",
@@ -200,6 +272,9 @@ const MERCH_BADGES: Record<string, Record<string, string>> = {
     nl: "Nieuw",
     da: "Nyhed",
     no: "Nyhet",
+    es: "Novedad",
+    fr: "Nouveauté",
+    us: "New",
   },
   HOT: {
     it: "Hot",
@@ -208,6 +283,9 @@ const MERCH_BADGES: Record<string, Record<string, string>> = {
     nl: "Hot",
     da: "Hot",
     no: "Hot",
+    es: "Hot",
+    fr: "Hot",
+    us: "Hot",
   },
   IN_HOME: {
     it: "In home",
@@ -216,6 +294,9 @@ const MERCH_BADGES: Record<string, Record<string, string>> = {
     nl: "Aanbevolen",
     da: "Udvalgt",
     no: "Utvalgt",
+    es: "Destacado",
+    fr: "En vedette",
+    us: "Featured",
   },
 };
 
@@ -235,6 +316,19 @@ export default function ProductCard({
   const [toastMsg, setToastMsg] = useState("")
   const locale = useLocale()
   const text = cardCopy[(locale as CardLocale)] ?? cardCopy.it
+
+  const addTextMap: Record<string, string> = {
+    it: "Aggiungi",
+    en: "Add",
+    us: "Add",
+    de: "Hinzufügen",
+    nl: "Toevoegen",
+    da: "Tilføj",
+    no: "Legg til",
+    es: "Añadir",
+    fr: "Ajouter",
+  };
+  const addText = addTextMap[locale] ?? "Add";
 
   const activeVariantId = product.defaultVariantId
 
@@ -347,7 +441,7 @@ export default function ProductCard({
               aria-label={text.addToCart}
             >
               <ShoppingCart className="h-3.5 w-3.5" />
-              <span>{locale === "it" ? "Aggiungi" : "Add"}</span>
+              <span>{addText}</span>
             </button>
           </div>
         </div>

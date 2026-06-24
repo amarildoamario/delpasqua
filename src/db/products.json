@@ -22,7 +22,8 @@
     "imageSrc": "/products/EVO-750-ml-gpt.png",
     "imageAlt": "Olio EVO 500 ml",
     "description": "EVO Del Pasqua è l'olio extravergine da tenere sempre in cucina: equilibrato, pulito e profumato, pensato per accompagnare ogni giorno piatti semplici e ricette curate.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-15T10:00:00.000Z"
   },
   {
     "id": "evo-latta",
@@ -69,7 +70,8 @@
     "imageSrc": "/products/EVO-latta-5lt.png",
     "imageAlt": "Olio EVO Latta in latta",
     "description": "EVO Del Pasqua in latta protegge al meglio l'olio dalla luce e lo rende pratico da conservare, senza rinunciare al profilo equilibrato del nostro extravergine.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-12T11:30:00.000Z"
   },
   {
     "id": "fruttato-leggero",
@@ -122,7 +124,8 @@
       "imballaggio": "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
       "spedizione": "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50€.",
       "resi": "Reso gratuito entro 14 giorni. Rimborso completo senza domande."
-    }
+    },
+    "updatedAt": "2026-06-10T09:00:00.000Z"
   },
   {
     "id": "fruttato-leggero-latta",
@@ -158,7 +161,8 @@
     "imageSrc": "/products/fruttato-medio-latta-5lt.png",
     "imageAlt": "Olio Fruttato Leggero Latta",
     "description": "Il Fruttato Leggero in latta mantiene la sua delicatezza in un formato pratico, protetto e conveniente per l'uso quotidiano.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-10T09:15:00.000Z"
   },
   {
     "id": "fruttato-medio",
@@ -205,7 +209,8 @@
     "imageSrc": "/products/fruttato-medio-bottiglia-1lt.jpg",
     "imageAlt": "Olio Fruttato Medio",
     "description": "Il Fruttato Medio è l'equilibrio più versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-08T14:20:00.000Z"
   },
   {
     "id": "fruttato-medio-latta",
@@ -241,7 +246,8 @@
     "imageSrc": "/products/fruttato-medio-latta-5lt.png",
     "imageAlt": "Olio Fruttato Medio Latta",
     "description": "Il Fruttato Medio in latta è la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-08T14:45:00.000Z"
   },
   {
     "id": "fruttato-intenso",
@@ -288,7 +294,8 @@
     "imageSrc": "/products/fruttato-intenso-bottiglia-1lt.jpg",
     "imageAlt": "Olio Fruttato Intenso",
     "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale più marcato: ideale per chi cerca un olio capace di farsi sentire.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-05T08:10:00.000Z"
   },
   {
     "id": "fruttato-intenso-latta",
@@ -324,7 +331,8 @@
     "imageSrc": "/products/fruttato-intenso-latta-5lt.png",
     "imageAlt": "Olio Fruttato Intenso Latta",
     "description": "Il Fruttato Intenso in latta conserva forza e profumi in un formato pratico, ideale per chi usa con frequenza un olio dal profilo deciso.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-05T08:30:00.000Z"
   },
   {
     "id": "tartufo",
@@ -349,7 +357,8 @@
     "imageSrc": "/products/tartufo.jpg",
     "imageAlt": "Olio Aromatizzato al Tartufo",
     "description": "Condimento pregiato a base di olio extravergine di oliva aromatizzato al tartufo. Il tocco gourmet perfetto per esaltare uova, patate, carpacci e primi piatti della tradizione.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-05-28T16:00:00.000Z"
   },
   {
     "id": "peperoncino",
@@ -374,7 +383,8 @@
     "imageSrc": "/products/peperoncino.jpg",
     "imageAlt": "Olio Aromatizzato al Peperoncino",
     "description": "Un olio extravergine aromatizzato dal temperamento vivace e dalla piccantezza pulita, perfetto per accendere di gusto pizze, primi piatti mediterranei e grigliate sfiziose.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-06-18T10:45:00.000Z"
   },
   {
     "id": "vino",
@@ -410,7 +420,8 @@
     "imageSrc": "/products/vino-vittoria.png",
     "imageAlt": "Vino Vittoria Sangiovese",
     "description": "Rosso toscano di grande carattere ed eleganza, profumato e morbido al palato, ideale da servire con grigliate di carne, primi saporiti e formaggi locali.",
-    "specs": {}
+    "specs": {},
+    "updatedAt": "2026-05-20T12:00:00.000Z"
   },
   {
     "id": "prodotto-test",
@@ -435,6 +446,7 @@
     "description": "Prodotto di test a 0.50€ con spedizione gratuita.",
     "specs": {},
     "freeShipping": true,
-    "excludeFromSeo": true
+    "excludeFromSeo": true,
+    "updatedAt": "2026-04-01T00:00:00.000Z"
   }
 ]

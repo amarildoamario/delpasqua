@@ -106,7 +106,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
     const categories = Array.from(new Set(allPosts.map(p => p.category)));
     const relatedPosts = allPosts.filter(p => p.category === post.category && p.id !== post.id).slice(0, 3);
-
     const ui = {
         updated: {
             it: "Agg.",
@@ -114,7 +113,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Akt.",
             nl: "Bijgew.",
             da: "Opd.",
-            no: "Oppd."
+            no: "Oppd.",
+            es: "Act.",
+            fr: "Mis à jour",
+            us: "Upd."
         }[locale] || "Agg.",
         readingTime: {
             it: "di lettura",
@@ -122,7 +124,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Lesezeit",
             nl: "leestijd",
             da: "læsetid",
-            no: "lesetid"
+            no: "lesetid",
+            es: "de lectura",
+            fr: "de lecture",
+            us: "read"
         }[locale] || "di lettura",
         inThisArticle: {
             it: "In questo articolo",
@@ -130,7 +135,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "In diesem Artikel",
             nl: "In dit artikel",
             da: "I denne artikel",
-            no: "I denne artikkel"
+            no: "I denne artikkel",
+            es: "En este artículo",
+            fr: "Dans cet article",
+            us: "In this article"
         }[locale] || "In questo articolo",
         contents: {
             it: "Contenuti",
@@ -138,7 +146,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Inhalt",
             nl: "Inhoud",
             da: "Indhold",
-            no: "Innhold"
+            no: "Innhold",
+            es: "Contenidos",
+            fr: "Sommaire",
+            us: "Contents"
         }[locale] || "Contenuti",
         sources: {
             it: "Fonti e riferimenti scientifici",
@@ -146,7 +157,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Quellen & wissenschaftliche Belege",
             nl: "Bronnen & wetenschappelijke referenties",
             da: "Kilder & videnskabelige referencer",
-            no: "Kilder & vitenskapelige referanser"
+            no: "Kilder & vitenskapelige referanser",
+            es: "Fuentes y referencias científicas",
+            fr: "Sources & Références scientifiques",
+            us: "Sources & Scientific References"
         }[locale] || "Fonti e riferimenti scientifici",
         share: {
             it: "Condividi",
@@ -154,7 +168,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Teilen",
             nl: "Delen",
             da: "Del",
-            no: "Del"
+            no: "Del",
+            es: "Compartir",
+            fr: "Partager",
+            us: "Share"
         }[locale] || "Condividi",
         print: {
             it: "Stampa",
@@ -162,7 +179,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Drucken",
             nl: "Printen",
             da: "Print",
-            no: "Skriv ut"
+            no: "Skriv ut",
+            es: "Imprimir",
+            fr: "Imprimer",
+            us: "Print"
         }[locale] || "Stampa",
         topics: {
             it: "Argomenti",
@@ -170,7 +190,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Themen",
             nl: "Onderwerpen",
             da: "Emner",
-            no: "Emner"
+            no: "Emner",
+            es: "Temas",
+            fr: "Thèmes",
+            us: "Topics"
         }[locale] || "Argomenti",
         inSameCategory: {
             it: "Nella stessa categoria",
@@ -178,7 +201,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "In derselben Kategorie",
             nl: "In dezelfde categorie",
             da: "I samme kategori",
-            no: "I samme kategori"
+            no: "I samme kategori",
+            es: "En la misma categoría",
+            fr: "Dans la même catégorie",
+            us: "In the same category"
         }[locale] || "Nella stessa categoria",
         promoTitle: {
             it: "Prenota una degustazione",
@@ -186,7 +212,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Verkostung buchen",
             nl: "Proeverij boeken",
             da: "Book en smagning",
-            no: "Bestill en smaking"
+            no: "Bestill en smaking",
+            es: "Reservar una degustación",
+            fr: "Réserver une dégustation",
+            us: "Book a tasting"
         }[locale] || "Prenota una degustazione",
         promoText: {
             it: "Vivi l'esperienza dal vivo nel nostro Frantoio in Toscana.",
@@ -194,7 +223,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Erleben Sie die Erfahrung live in unserer Ölmühle in der Toskana.",
             nl: "Beleef de ervaring live in onze olijfmolen in Toscane.",
             da: "Oplev det live på vores oliemølle i Toscana.",
-            no: "Oppdag det live på oljemøllen vår i Toscana."
+            no: "Oppdag det live på oljemøllen vår i Toscana.",
+            es: "Vive la experiencia en vivo en nuestra Almazara en Toscana.",
+            fr: "Vivez l'expérience en direct dans notre Moulin en Toscane.",
+            us: "Live the experience live at our Olive Mill in Tuscany."
         }[locale] || "Vivi l'esperienza dal vivo nel nostro Frantoio in Toscana.",
         promoBtn: {
             it: "Scopri di più",
@@ -202,7 +234,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Mehr erfahren",
             nl: "Meer informatie",
             da: "Læs mere",
-            no: "Les mer"
+            no: "Les mer",
+            es: "Saber más",
+            fr: "En savoir plus",
+            us: "Learn more"
         }[locale] || "Scopri di più"
         , home: {
             it: "Home",
@@ -210,7 +245,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Startseite",
             nl: "Home",
             da: "Hjem",
-            no: "Hjem"
+            no: "Hjem",
+            es: "Inicio",
+            fr: "Accueil",
+            us: "Home"
         }[locale] || "Home",
         magazine: {
             it: "Il Magazine",
@@ -218,7 +256,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Magazin",
             nl: "Magazine",
             da: "Magasin",
-            no: "Magasin"
+            no: "Magasin",
+            es: "El Magazine",
+            fr: "Le Magazine",
+            us: "Magazine"
         }[locale] || "Il Magazine",
         articleImageAlt: {
             it: "Immagine per",
@@ -226,7 +267,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "Bild für",
             nl: "Afbeelding voor",
             da: "Billede til",
-            no: "Bilde for"
+            no: "Bilde for",
+            es: "Imagen para",
+            fr: "Image pour",
+            us: "Image for"
         }[locale] || "Immagine per",
         evoTag: {
             it: "Olio EVO",
@@ -234,7 +278,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             de: "EVOO",
             nl: "EVOO",
             da: "EVOO",
-            no: "EVOO"
+            no: "EVOO",
+            es: "Aceite de Oliva Virgen Extra",
+            fr: "Huile d'Olive Vierge Extra",
+            us: "EVOO"
         }[locale] || "Olio EVO"
     };
 
@@ -446,7 +493,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
-            <main className="flex-1 pt-20 sm:pt-28 pb-24 sm:pb-32">
+            <style dangerouslySetInnerHTML={{ __html: `
+                .blog-page-custom-radius .rounded-2xl { border-radius: 5px !important; }
+                .blog-page-custom-radius .rounded-xl { border-radius: 5px !important; }
+                .blog-page-custom-radius .rounded-lg { border-radius: 5px !important; }
+                .blog-page-custom-radius .rounded-full { border-radius: 5px !important; }
+            `}} />
+            <main className="flex-1 pt-20 sm:pt-28 pb-24 sm:pb-32 blog-page-custom-radius">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-stone-400 mb-8 pt-4 sm:pt-6">
                         <Link href="/" className="hover:text-zinc-900 transition-colors">{ui.home}</Link>

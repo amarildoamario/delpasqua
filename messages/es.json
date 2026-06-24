@@ -1,0 +1,1063 @@
+{
+  "TastingsPage": {
+        "metadata": {
+            "title": "Cata de aceite de oliva virgen extra en Toscana | Frantoio del Pasqua Arezzo",
+            "description": "Descubra los verdaderos sabores del aceite de oliva virgen extra toscano. Reserve una cata de aceite de oliva virgen extra en el Frantoio del Pasqua en Monte San Savino, Arezzo.",
+            "keywords": "cata de aceite de oliva toscana, cata de aceite de oliva arezzo, almazara arezzo, aceite de oliva virgen extra toscano, visita a la almazara toscana, cata de aceite de oliva virgen extra"
+        },
+        "hero": {
+            "subtitle": "Visitas y catas",
+            "title_part1": "Reserve una ",
+            "title_italic": "cata",
+            "title_part2": " en la almazara",
+            "description": "Un viaje sensorial guiado para aprender a reconocer los aromas y las notas del aceite de oliva virgen extra, descubrir nuestros cultivares y conocer de cerca la almazara.",
+            "duration": "min",
+            "from": "A partir de",
+            "child_policy": "* Las catas son gratuitas para niños de hasta 12 años.",
+            "types": {
+                "classica": {
+                    "title": "Visita y cata",
+                    "subtitle": "Venga a visitarnos directamente a la Almazara en Monte San Savino y descubra todo lo que hay que saber sobre el aceite de oliva virgen extra y las aceitunas.",
+                    "includes": [
+                        "Descripción y explicación del cultivo del olivo y las variedades típicas de la zona",
+                        "Introducción a los diferentes métodos de cultivo, cosecha, producción y almacenamiento",
+                        "Cata guiada para aprender a reconocer las cualidades sensoriales del aceite de oliva e identificar posibles defectos",
+                        "Cata de nuestros aceites maridados con productos locales: bruschetta de pan molido en piedra, verduras frescas de pinzimonio y una copa de Rosso di Sangiovese"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Cata intermedia",
+                    "subtitle": "Servicio y maridaje de aceites y vino con quesos y embutidos locales, con experiencia de cata guiada.",
+                    "includes": [
+                        "Descripción y explicación del cultivo del olivo y las variedades típicas de la zona",
+                        "Introducción a los métodos de cultivo, cosecha, producción y almacenamiento",
+                        "Experiencia de cata guiada para reconocer cualidades sensoriales e identificar posibles defectos",
+                        "Servicio y maridaje de aceites y vino con quesos y embutidos locales",
+                        "Bruschetta de pan molido en piedra y verduras frescas de pinzimonio"
+                    ]
+                },
+                "premium": {
+                    "title": "Experiencia en el campo",
+                    "subtitle": "Una experiencia única en el olivar de Pozzo della Chiana con un picnic barbacoa y molienda en la almazara.",
+                    "includes": [
+                        "Una cálida bienvenida de Marta en nuestro olivar de Pozzo della Chiana con vistas al Templo de Santo Stefano della Vittoria",
+                        "Cosecha tradicional de aceitunas a mano utilizando solo un pequeño peine y redes de recolección",
+                        "Almuerzo de picnic con barbacoa directamente en el olivar bajo los árboles",
+                        "Visita a la almazara familiar para ver la molienda de las aceitunas cosechadas, siguiendo el proceso paso a paso hasta el aceite fresco",
+                        "Cata final de aceites de oliva virgen extra y aromatizados con bruschetta"
+                    ]
+                }
+            }
+        },
+        "calendar": {
+            "subtitle": "Calendario",
+            "title_part1": "Reserve su ",
+            "title_italic": "horario",
+            "description": "Seleccione un horario disponible y complete su solicitud. Recibirá una confirmación por parte de los administradores.",
+            "badge": "Prensado en frío"
+        },
+        "seo": {
+            "subtitle": "Descubra más",
+            "title_part1": "Experiencia de ",
+            "title_italic": "cata",
+            "title_part2": " en Toscana",
+            "description": "Viva un viaje único en el corazón de la provincia de Arezzo. Frantoio del Pasqua le da la bienvenida en Monte San Savino para revelarle los secretos del aceite de oliva virgen extra toscano. Un auténtico viaje desde el prensado en frío hasta el análisis sensorial."
+        },
+        "features": {
+            "f1_title": "Arezzo, Toscana",
+            "f1_desc": "Inmerso en el típico y evocador paisaje toscano.",
+            "f2_title": "Aceite AOVE Auténtico",
+            "f2_desc": "Prensado en frío en la maquinaria de nuestra almazara.",
+            "f3_title": "Análisis Sensorial",
+            "f3_desc": "Aprenda a reconocer los aromas y sabores de los cultivares."
+        },
+        "image_alt": "Cata profesional de aceite de oliva virgen extra en el Frantoio del Pasqua, Monte San Savino, Arezzo, Toscana",
+        "image_badge": "[Imagen de cata]",
+        "faq": {
+            "q1": "¿Dónde se realizan las catas?",
+            "a1": "Las visitas y catas se realizan directamente dentro de nuestro Frantoio del Pasqua, ubicado en Loc. Infernaccio 510/B, Monte San Savino (in the provincia de Arezzo). Descubrirá cómo se produce nuestro aceite mientras está rodeado de la maquinaria de extracción.",
+            "q2": "¿En qué consiste el análisis en la almazara?",
+            "a2": "Le guiaremos en el descubrimiento de nuestros cultivares. Aprenderá a reconocer las notas frutales, amargas y picantes que caracterizan a un verdadero aceite de oliva virgen extra toscano de alta calidad.",
+            "q3": "¿Cuánto dura la experiencia y qué incluye?",
+            "a3": "La experiencia dura de 30 a 90 minutos. Incluye una explicación del proceso de prensado de ciclo continuo y una cata técnica, a menudo enriquecida con refinados maridajes gastronómicos.",
+            "q4": "¿Es posible comprar aceite al final?",
+            "a4": "Por supuesto. Puede comprar nuestro aceite AOVE prensado en frío directamente en nuestra tienda de la granja. Un recuerdo perfecto y exclusivo de la excelencia de Arezzo."
+        }
+    },
+  "TastingsCalendar": {
+        "loading": "Cargando...",
+        "today": "HOY",
+        "no_slots": "Sin horarios",
+        "booked": "Reservado",
+        "free": "Libre",
+        "empty_state": {
+            "title": "No hay horarios disponibles",
+            "desc": "Intente seleccionar otra semana"
+        },
+        "modal": {
+            "title": "Reservar una Cata",
+            "close": "Cerrar",
+            "success": {
+                "title": "Solicitud enviada",
+                "desc": "Nos pondremos en contacto con usted para la confirmación",
+                "mail_sent": "✓ Notificación enviada",
+                "mail_skipped": "⚠ Notificación omitida",
+                "mail_error": "⚠ Error de notificación"
+            },
+            "form": {
+                "selected_date": "Fecha seleccionada",
+                "type_label": "Tipo de cata",
+                "people_label": "Número de personas",
+                "children_label": "Número de niños (gratis hasta 12 años)",
+                "time_label": "Hora preferida *",
+                "use_suggestion": "usar {time}",
+                "name_label": "Nombre completo",
+                "name_placeholder": "Juan Pérez",
+                "email_label": "Correo electrónico",
+                "email_placeholder": "juan@example.com",
+                "phone_label": "Teléfono",
+                "phone_placeholder": "+34 ...",
+                "notes_label": "Notas / Alergias",
+                "notes_placeholder": "Escriba aquí...",
+                "submit": "Enviar solicitud",
+                "submit_pay": "Pagar y enviar solicitud",
+                "submitting": "Enviando..."
+            },
+            "errors": {
+                "morning_only": "Por favor, seleccione una hora de la mañana (ej. 10:30).",
+                "afternoon_only": "Por favor, seleccione una hora de la tarde (ej. 16:00).",
+                "conflict": "La hora entra en conflicto con una reserva. Verifique la sugerencia.",
+                "just_booked": "Este horario se acaba de reservar. Por favor, seleccione otra hora.",
+                "generic": "Error durante la reserva."
+            }
+        },
+        "shifts": {
+            "morning": "Mañana",
+            "evening": "Tarde"
+        }
+    },
+  "Common": {
+        "navbar": {
+            "home": "Inicio",
+            "about_us": "Sobre nosotros",
+            "storia": "Historia",
+            "frantoio": "Almazara",
+            "olio": "Aceite de Oliva",
+            "degustazioni": "Catas",
+            "shop": "Tienda",
+            "contatti": "Contacto",
+            "menu": "Menú",
+            "login": "Iniciar sesión / Registrarse",
+            "cart": "Carrito",
+            "open_menu": "Abrir menú",
+            "close_menu": "Cerrar menú",
+            "location": "Italia",
+            "language": "Idioma",
+            "blog": "Blog"
+        },
+        "ticker": {
+            "shipping": "Envío rápido 24/48 horas",
+            "artisanal": "Aceite de oliva virgen extra artesanal",
+            "family_mill": "Almazara familiar",
+            "tastings": "Catas disponibles bajo reserva"
+        },
+        "footer": {
+            "brand": {
+                "description": "Tradición agrícola, calidad y cuidado artesanal. Producimos aceites de oliva virgen extra con técnicas modernas y respeto por las materias primas."
+            },
+            "contacts": {
+                "title": "CONTACTOS",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
+                "gender_policy": "Política de Igualdad de Género UNI PDR 125"
+            },
+            "info": {
+                "title": "INFORMACIÓN",
+                "privacy": "Política de Privacidad",
+                "cookie": "Política de Cookies",
+                "terms": "Términos y Condiciones",
+                "shipping": "Envíos",
+                "returns": "Devoluciones y Reembolsos",
+                "contacts": "Contactos",
+                "disposal": "Etiquetas Ambientales"
+            },
+            "navigation": {
+                "title": "NAVEGACIÓN"
+            },
+            "bottom": {
+                "rights": "© {year} Az. Agr. Del Pasqua — Todos los derechos reservados.",
+                "legal_office": "Domicilio social",
+                "back_to_top": "Volver arriba",
+                "powered_by": "Desarrollado por Modern Tech",
+                "secure_payments": "Pagos seguros"
+            }
+        }
+    },
+  "Products": {
+        "evo": {
+            "title": "Virgen Extra - AOVE",
+            "subtitle": "Aceite de oliva virgen extra",
+            "description": "El AOVE Del Pasqua es el aceite de oliva virgen extra para tener en la cocina todos los días: equilibrado, limpio y aromático, elaborado tanto para comidas sencillas como para recetas refinadas.",
+            "badge": "AOVE",
+            "variants": {
+                "500ml": "Botella de 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La botella de AOVE de 500 ml es ideal para la mesa: elegante, práctica y perfecta para el uso diario cuando se desea un aceite de oliva virgen extra italiano armonioso."
+            }
+        },
+        "fruttato-leggero": {
+            "title": "Virgen Extra - Frutado Ligero",
+            "subtitle": "Aceite de oliva virgen extra",
+            "description": "El Frutado Ligero es delicado, suave e inmediato: realza los platos sin cubrirlos, ideal para pescados, verduras, ensaladas y recetas refinadas.",
+            "badge": "CLÁSICO",
+            "variants": {
+                "500ml": "Botella de 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La botella de Frutado Ligero de 500 ml aporta a la mesa un aceite de oliva suave y aromático, perfecto para un aderezo elegante y sutil."
+            }
+        },
+        "fruttato-medio": {
+            "title": "Virgen Extra - Frutado Medio",
+            "subtitle": "Aceite de oliva virgen extra",
+            "description": "El Frutado Medio es el equilibrio más versátil: aromas herbáceos, sabor pleno y un final armonioso, adecuado tanto en crudo como para cocinar.",
+            "badge": "CLÁSICO",
+            "variants": {
+                "500ml": "Botella de 500 ml",
+                "750ml": "Botella de 750 ml",
+                "1lt": "Botella de 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La botella de Frutado Medio de 500 ml es perfecta para degustar o regalar un aceite de oliva equilibrado para bruschetta, verduras y platos de pasta.",
+                "750ml": "La botella de Frutado Medio de 750 ml es el formato cotidiano para quienes desean un aceite de oliva virgen extra versátil con la intensidad justa.",
+                "1lt": "La botella de Frutado Medio de 1 L ofrece mayor continuidad en la cocina: equilibrada, práctica y adaptada a muchos usos mediterráneos."
+            }
+        },
+        "fruttato-intenso": {
+            "title": "Virgen Extra - Frutado Intenso",
+            "subtitle": "Aceite de oliva virgen extra",
+            "description": "El Frutado Intenso tiene un carácter audaz, notas verdes y un final más marcado: ideal para quienes buscan un aceite de oliva que destaque.",
+            "badge": "CLÁSICO",
+            "variants": {
+                "500ml": "Botella de 500 ml",
+                "750ml": "Botella de 750 ml",
+                "1lt": "Botella de 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La botella de Frutado Intenso de 500 ml concentra personalidad y aroma en un formato ágil, perfecto para sopas, legumbres, carnes y bruschetta.",
+                "750ml": "La botella de Frutado Intenso de 750 ml es ideal para quienes aman un aceite de oliva virgen extra enérgico, persistente y con verdadero carácter.",
+                "1lt": "La botella de Frutado Intenso de 1 L está pensada para un uso frecuente en recetas rústicas y platos con sabores importantes."
+            }
+        },
+        "tartufo": {
+            "title": "Virgen Extra - Trufa",
+            "subtitle": "Virgen extra aromatizado",
+            "description": "Perfecto sobre huevos, patatas y carpaccio.",
+            "badge": "AROMATIZADO"
+        },
+        "peperoncino": {
+            "title": "Virgen Extra - Guindilla",
+            "subtitle": "Virgen extra aromatizado",
+            "description": "Picante limpio, excelente para pizzas y pastas.",
+            "badge": "AROMATIZADO"
+        },
+        "vino": {
+            "title": "Vino Vittoria",
+            "subtitle": "100% Sangiovese",
+            "description": "Un vino tinto con carácter, expresión de nuestro territorio.",
+            "badge": "NUEVO"
+        },
+        "prodotto-test": {
+            "title": "Producto de prueba",
+            "subtitle": "Envío gratis para pruebas de pago",
+            "description": "Este es un producto de prueba de 0,50 € con envío gratuito para comprobar el flujo de pago y el inventario.",
+            "badge": "PRUEBA"
+        },
+        "evo-latta": {
+            "title": "Virgen Extra - Lata AOVE",
+            "subtitle": "Aceite de oliva virgen extra en lata",
+            "description": "El AOVE Del Pasqua en lata protege el aceite de la luz y hace que el almacenamiento sea práctico, manteniendo el perfil equilibrado de nuestro aceite de oliva virgen extra.",
+            "badge": "LATA",
+            "variants": {
+                "750ml": "Lata de 750 ml",
+                "3lt": "Lata de 3 L",
+                "5lt": "Lata de 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "La lata de AOVE de 750 ml es compacta y distintiva: un formato original para un almacenamiento práctico, mejor protección y uso diario.",
+                "3lt": "La lata de AOVE de 3 L está pensada para usuarios diarios de aceite de oliva que desean un tamaño de despensa práctico y protegido de la luz.",
+                "5lt": "La lata de AOVE de 5 L es el formato familiar para tener siempre disponible un aceite de oliva virgen extra equilibrado, aromático y versátil."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Virgen Extra - Lata Frutado Ligero",
+            "subtitle": "Aceite de oliva virgen extra frutado ligero en lata",
+            "description": "El Frutado Ligero en lata mantiene su perfil delicado en un formato cotidiano práctico, protegido y conveniente.",
+            "badge": "LATA",
+            "variants": {
+                "3lt": "Lata de 3 L",
+                "5lt": "Lata de 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "La lata de Frutado Ligero de 3 L es ideal para quienes desean un suministro diario de aceite de oliva delicado para pescados, verduras y platos frescos.",
+                "5lt": "La lata de Frutado Ligero de 5 L proporciona mayor autonomía en la cocina manteniendo un perfil suave, equilibrado y fácil de maridar."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Virgen Extra - Lata Frutado Medio",
+            "subtitle": "Aceite de oliva virgen extra frutado medio en lata",
+            "description": "El Frutado Medio en lata es la elección práctica para un uso frecuente, con un sabor equilibrado y una mejor protección frente a la luz.",
+            "badge": "LATA",
+            "variants": {
+                "3lt": "Lata de 3 L",
+                "5lt": "Lata de 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "La lata de Frutado Medio de 3 L está diseñada para cocinas activas: versátil, equilibrada y conveniente para aderezar, cocinar y terminar platos.",
+                "5lt": "La lata de Frutado Medio de 5 L es el formato de despensa para quienes nunca quieren quedarse sin un aceite de oliva virgen extra de confianza y aromático."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Virgen Extra - Lata Frutado Intenso",
+            "subtitle": "Aceite de oliva virgen extra frutado intenso en lata",
+            "description": "El Frutado Intenso en lata conserva su fuerza y aromas en un formato práctico para uso frecuente.",
+            "badge": "LATA",
+            "variants": {
+                "3lt": "Lata de 3 L",
+                "5lt": "Lata de 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "La lata de Frutado Intenso de 3 L es un suministro inteligente para quienes buscan un aceite de oliva robusto, herbáceo y persistente para platos estructurados.",
+                "5lt": "La lata de Frutado Intenso de 5 L es el formato generoso para cocinas que siempre desean tener a mano un aceite de oliva virgen extra potente y reconocible."
+            }
+        }
+    },
+  "ShopPage": {
+        "header": {
+            "label": "Tienda",
+            "title_part1": "Todos los ",
+            "title_italic": "productos",
+            "description": "Selección de nuestros aceites de oliva virgen extra, disponibles en diferentes tamaños y envases."
+        },
+        "categories": {
+            "all": "Todos",
+            "fruttato": "Frutado",
+            "igp": "IGP",
+            "bio": "Bío / Orgánico",
+            "aromatico": "Aromatizados"
+        },
+        "empty": {
+            "text": "No se encontraron productos en esta categoría.",
+            "reset": "Mostrar todos los productos"
+        },
+        "info": {
+            "shipping": "Envío gratis en pedidos superiores a 50 €",
+            "notes": "Los precios son orientativos e incluyen IVA. Contáctenos para pedidos personalizados."
+        },
+        "filters": {
+            "from": "Desde "
+        }
+    },
+  "HomePage": {
+        "HeroCarousel": {
+            "sr_title": "Almazara y producción: historia, productos y tradición moderna",
+            "slides": {
+                "storia": {
+                    "title": "Nuestra Historia",
+                    "excerpt": "Raíces familiares, gestos antiguos y una visión contemporánea: descubra cómo nace nuestra identidad.",
+                    "cta": "Leer más",
+                    "alt": "Olivos al atardecer y paisaje rural"
+                },
+                "oli": {
+                    "title": "Nuestros Aceites",
+                    "excerpt": "Una selección de nuestros mejores aceites, queridos y certificados: calidad, equilibrio y carácter.",
+                    "cta": "Descubrir",
+                    "alt": "Aceitunas verdes en la mano (cosecha)"
+                },
+                "tradizione": {
+                    "title": "Tradición Moderna",
+                    "excerpt": "Técnicas modernas, respeto por las materias primas y cuidado artesanal: el futuro empieza en la tierra.",
+                    "cta": "Saber más",
+                    "alt": "Detalle de la almazara o procesamiento artesanal"
+                }
+            },
+            "aria": {
+                "prev": "Diapositiva anterior",
+                "next": "Diapositiva siguiente",
+                "go_to": "Ir a la diapositiva",
+                "main_sections": "Secciones principales de presentación",
+                "hero_highlight": "Presentación destacada"
+            }
+        },
+        "HeroSplitEvo": {
+            "label": "ACEITE DE OLIVA VIRGEN EXTRA — AOVE",
+            "title": "AOVE, el adecuado para todos los días.",
+            "description": "El AOVE clásico para el día a día. Calidad, elegancia y sabor limpio: una botella que luce bien tanto en la cocina como en la mesa.",
+            "buy_btn": "Comprar AOVE",
+            "explore_btn": "Explorar tienda"
+        },
+        "ShopHighlights": {
+            "label": "Tienda",
+            "title_part1": "Los más ",
+            "title_italic": "populares",
+            "subtitle": "Los productos más vendidos de nuestro catálogo.",
+            "cta": "Ir a la tienda",
+            "add": "AÑADIR",
+            "from": "Desde ",
+            "iva": "+ IVA"
+        },
+        "BioMethod": {
+            "label": "MÉTODO BIO / ORGÁNICO",
+            "title": "Pequeña escala. Calidad controlada.",
+            "description": "Un aceite artesanal no se produce en una línea industrial: nace del tiempo adecuado, pequeños lotes y atención constante.",
+            "points": {
+                "control": "Control real",
+                "control_text": " sobre cada paso",
+                "aroma": "Aromas intactos",
+                "aroma_text": " gracias a un procesamiento delicado",
+                "stability": "Estabilidad",
+                "stability_text": " con almacenamiento protegido"
+            },
+            "cta_prod": "Descubrir producción",
+            "cta_oil": "Cualidades del aceite",
+            "card_header": {
+                "label": "CARTA DE PRODUCCIÓN",
+                "title": "Método Bio – Artesanal",
+                "subtitle": "Calidad de cadena de suministro corta, no volúmenes industriales."
+            },
+            "specs": {
+                "prod": "Producción",
+                "prod_val": "Lotes pequeños",
+                "work": "Procesamiento",
+                "work_val": "Temp. controlada",
+                "chain": "Proceso",
+                "chain_val": "Trazabilidad",
+                "storage": "Almacenamiento",
+                "storage_val": "Acero • Oscuridad"
+            },
+            "process": {
+                "label": "PROCESO",
+                "step1_title": "Cosecha selectiva",
+                "step1_text": "Cuidado del fruto y entrega rápida",
+                "step2_title": "Prensado en frío",
+                "step2_text": "Procesamiento preciso para preservar aromas",
+                "step3_title": "Separación limpia",
+                "step3_text": "Control para un perfil sensorial claro",
+                "step4_title": "Conservación protegida",
+                "step4_text": "Acero y condiciones estables"
+            },
+            "guarantees": {
+                "non_industrial": "No industrial",
+                "non_industrial_text": "Calidad antes que cantidad",
+                "fresh": "Fresco y limpio",
+                "fresh_text": "Aceite vivo y aromático",
+                "control": "Control total",
+                "control_text": "Cada fase cuidada"
+            },
+            "footer": "PRODUCCIÓN BIO • ARTESANAL",
+            "details": "Detalles"
+        },
+        "Discover": {
+            "label": "Explorar",
+            "title": "Descubra la Almazara Del Pasqua",
+            "cards": {
+                "produzione": {
+                    "title": "ALMAZARA",
+                    "subtitle": "Del campo a la almazara"
+                },
+                "degustazioni": {
+                    "title": "CATAS",
+                    "subtitle": "Visitas y catas"
+                },
+                "contatti": {
+                    "title": "CONTACTOS",
+                    "subtitle": "Venga a visitarnos"
+                }
+            }
+        },
+        "HeritageBridge": {
+            "label": "TRADICIÓN Y CONTROL",
+            "title_part1": "Un puente visual entre gestos antiguos",
+            "title_italic": "y precisión moderna.",
+            "subtitle": "Imágenes que hablan de artesanía, materias primas y control.",
+            "cta": "Historia y Territorio",
+            "tradition": {
+                "label": "TRADICIÓN",
+                "title": "Gesto humano, tiempo adecuado",
+                "text": "Cosecha, atención, cuidado: la calidad nace antes de la almazara.",
+                "tag1": "Cadena corta",
+                "tag2": "Pequeña escala"
+            },
+            "control": {
+                "label": "CONTROL",
+                "title": "Precisión sin escala industrial",
+                "text": "Cosecha, atención, cuidado: la calidad nace antes de la almazara.",
+                "tag1": "Frescura preservada",
+                "tag2": "Perfil limpio"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "CATAS",
+            "title": "Experiencias en la Almazara",
+            "description": "Viva una cata guiada única en nuestra almazara. Un viaje sensorial para descubrir nuestra pasión, aprender el arte de catar aceite de oliva virgen extra ecológico e IGP, y disfrutar de auténticos maridajes con comida toscana de la mano de nuestros expertos.",
+            "cta": "DESCUBRIR CATAS"
+        },
+        "HomeAboutTerritory": {
+            "label": "LA ALMAZARA",
+            "title": "Una tradición que continúa",
+            "description": "Incluso hoy en Toscana, gran parte de la cosecha de aceitunas se sigue realizando de forma tradicional, mediante recolección manual. Las aceitunas cosechadas se transportan a la almazara y se procesan en un plazo de 24 horas para salvaguardar la integridad de sus componentes aromáticos y fenólicos...",
+            "cta": "LEER MÁS"
+        },
+        "HomeUniqueness": {
+            "title": "Lo que nos hace únicos",
+            "items": {
+                "tradition": {
+                    "title": "Tradición Agrícola",
+                    "desc": "Durante generaciones, hemos cultivado cereales, olivos y viñedos respetando nuestra tierra."
+                },
+                "passion": {
+                    "title": "Pasión Familiar",
+                    "desc": "Los valores transmitidos siguen guiando nuestro trabajo hoy en día, con dedicación y continuidad."
+                },
+                "innovation": {
+                    "title": "Innovación Consciente",
+                    "desc": "Invertimos en nuevas tecnologías sin renunciar a los métodos tradicionales."
+                },
+                "quality": {
+                    "title": "Calidad Auténtica",
+                    "desc": "Nuestros productos conservan el sabor natural y el aroma del tiempo."
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "BOTELLAS Y SELECCIÓN",
+            "carouselLabel": "BOTELLAS EN ESCENA",
+            "title": "El carácter de nuestra tierra, en una botella",
+            "description": "Llevamos la excelencia de nuestro aceite de oliva virgen extra a su mesa en envases cuidadosamente diseñados. Desde el vidrio oscuro que conserva la frescura del aceite, hasta las latas clásicas para el uso diario en la cocina: una selección creada para enriquecer cada plato.",
+            "cta": "ENTRAR EN LA TIENDA",
+            "groups": {
+                "signature": {
+                    "label": "SELECCIÓN DEL PASQUA",
+                    "title": "Aceite, vino e identidad de la finca"
+                },
+                "table": {
+                    "label": "PARA LA MESA",
+                    "title": "Formas diferentes, misma firma"
+                },
+                "gift": {
+                    "label": "PARA REGALAR",
+                    "title": "Botellas que hablan por sí solas"
+                },
+                "daily": {
+                    "label": "LÍNEA DIARIA",
+                    "title": "Una presencia compacta y reconocible"
+                }
+            },
+            "products": {
+                "evo": "Botella de aceite AOVE Del Pasqua",
+                "magnifico": "Botella Del Pasqua Magnifico",
+                "vittoria": "Botella de vino Del Pasqua Vittoria"
+            }
+        },
+        "HomeGallery": {
+            "title": "Arraigados en la tradición toscana",
+            "carouselLabel": "Atmósfera y tradición toscanas",
+            "previousImage": "Imagen anterior",
+            "nextImage": "Siguiente imagen",
+            "imageAlt": "Imagen de la galería Del Pasqua {index}"
+        },
+        "BlogHighlights": {
+            "title": "Del Diario de Del Pasqua",
+            "cta": "Explorar todos los artículos"
+        }
+    },
+  "StoriaPage": {
+        "header": {
+            "subtitle": "Historia",
+            "title_part1": "Nuestra ",
+            "title_italic": "historia",
+            "description": "Fundada en la década de 1960 en la región de Valdichiana, la empresa Del Pasqua ha evolucionado a lo largo de los años apostando por la diversificación. Nos centramos en la calidad del producto, la innovación y la sostenibilidad ambiental, sin perder nunca de vista los valores y sabores de las auténticas tradiciones toscanas e italianas. Este enfoque ha abierto nuevos caminos tanto en la olivicultura como en la vitivinicultura. Toda nuestra cadena de producción es local: desde el cultivo de olivos y viñedos hasta la cosecha y el envasado del producto final.",
+            "description_top": "Fundada en la década de 1960 en la región de Valdichiana, la empresa Del Pasqua ha ido configurando gradualmente su identidad en torno a la diversificación, la calidad del producto y la innovación.",
+            "description_bottom": "Al mismo tiempo, se ha mantenido fiel al respeto al medio ambiente y a los valores y sabores de la verdadera tradición toscana e italiana, abriendo nuevos caminos tanto en la olivicultura como en la vitivinicultura. Toda nuestra cadena de producción permanece arraigada en nuestro territorio, desde los olivares y viñedos hasta la cosecha y el envasado final."
+        },
+        "section1": {
+            "subtitle": "Los olivares",
+            "title_part1": "Tradición e innovación ",
+            "title_italic": "en el verde",
+            "p1": "Nuestros olivares se extienden sobre 4 hectáreas, divididas entre los cultivares típicos de la zona.",
+            "p2": "Respetando los métodos de cultivo tradicionales, utilizamos técnicas modernas e innovadoras. La salud de nuestros olivos recién plantados es controlada constantemente por nuestro agrónomo, quien también evalúa la madurez de las aceitunas.",
+            "stats": {
+                "hectares": "Hectáreas",
+                "cultivars": "Cultivares",
+                "years": "Años"
+            }
+        },
+        "section2": {
+            "subtitle": "La cosecha",
+            "title_part1": "Nuestra ",
+            "title_italic": "cosecha",
+            "p1": "La cosecha se realiza 'en el momento adecuado' para obtener un aceite rico en polifenoles, aromas y sabor. Las aceitunas se procesan el mismo día mediante extracción en frío en nuestra moderna almazara.",
+            "p2": "Hoy en día, nuestros productos son adecuados para todo tipo de dietas, atendiendo a un mercado diverso: desde conocedores de aceites frutados intensos hasta quienes prefieren un sabor más ligero y delicado, además de proporcionar una nutrición saludable para los niños durante el destete.",
+            "badge": "Extracción en frío"
+        },
+        "philosophy": {
+            "subtitle": "Filosofía",
+            "title_part1": "Sabores toscanos con respeto por ",
+            "title_italic": "el medio ambiente",
+            "description": "Una historia familiar, trabajo paciente y cuidado constante: la calidad nace de la suma de pequeños gestos, repetidos bien, cada año.",
+            "tags": {
+                "tradition": "Tradición",
+                "innovation": "Innovación",
+                "quality": "Calidad"
+            }
+        }
+    },
+  "ProduzionePage": {
+        "nav": {
+            "section": "Sección",
+            "sections": {
+                "capitolo-1": {
+                    "label": "El Origen",
+                    "kicker": "Cosecha manual"
+                },
+                "capitolo-2": {
+                    "label": "La Extracción",
+                    "kicker": "Los 5 pasos de la almazara"
+                },
+                "capitolo-3": {
+                    "label": "La Custodia",
+                    "kicker": "Acero y nitrógeno"
+                },
+                "capitolo-4": {
+                    "label": "El Sello",
+                    "kicker": "Botella y certificaciones"
+                },
+                "capitolo-5": {
+                    "label": "Servicios y visitas",
+                    "kicker": "Molienda y catas"
+                }
+            }
+        },
+        "origin": {
+            "tag1": "Lotes limitados",
+            "tag2": "Cosechado a mano",
+            "tag3": "Molienda en 24h"
+        },
+        "badges": {
+            "premium_quality": "CALIDAD PREMIUM",
+            "certified_origin": "ORIGEN CERTIFICADO"
+        },
+        "hero": {
+            "label": "Almazara",
+            "title_part1": "El corazón de",
+            "title_italic": "nuestra calidad",
+            "description": "En la almazara, cada detalle cuenta: desde la limpieza de las aceitunas hasta el batido controlado, la extracción y el almacenamiento. Aquí, la tecnología y el cuidado artesanal se unen para preservar la frescura, los aromas y la estabilidad.",
+            "tag1": "Extracción en frío",
+            "tag2": "Certificado IGP",
+            "tag3": "100% Ecológico y Artesanal",
+            "img_alt": "Frantoio del Pasqua - exterior"
+        },
+        "machines": {
+            "label": "Máquinas y Líneas",
+            "title_part1": "Instalaciones modernas,",
+            "title_italic": "proceso controlado",
+            "subtitle": "Deshojado, triturado, batido, extracción y filtrado: cada etapa está diseñada para preservar los aromas y la estabilidad.",
+            "defogliazione": {
+                "title": "Deshojado",
+                "desc": "Eliminación de hojas e impurezas, seguida de un lavado suave."
+            },
+            "frangitura": {
+                "title": "Triturado",
+                "desc": "Triturado rápido para minimizar el calentamiento y la oxidación."
+            },
+            "gramolazione": {
+                "title": "Batido / Malaxación",
+                "desc": "Mezclado lento para unir las microgotas de aceite."
+            },
+            "estrazione": {
+                "title": "Extracción",
+                "desc": "Separación sin estrés térmico, parámetros monitorizados."
+            },
+            "separazione": {
+                "title": "Separación",
+                "desc": "Refinamiento y clarificación del aceite."
+            },
+            "filtrazione": {
+                "title": "Filtración",
+                "desc": "Estabilidad en el tiempo y perfil limpio."
+            },
+            "divider_1": {
+                "label": "CUIDADO Y CONSERVACIÓN",
+                "title_part1": "Del procesamiento ",
+                "title_italic": "a la botella",
+                "text": "Una vez extraído, protegemos nuestro aceite de la luz y del oxígeno. Solo así los aromas de la almazara llegan intactos a su mesa."
+            },
+            "divider_2": {
+                "label": "CALIDAD GARANTIZADA",
+                "title_part1": "Control en ",
+                "title_italic": "cada fase",
+                "text": "No dejamos nada al azar: desde la llegada de las aceitunas hasta los controles del producto final."
+            }
+        },
+        "showcase": {
+            "trasporto": {
+                "kicker": "TRANSPORTE",
+                "title": "Limpieza y estabilidad",
+                "text": "Dentro de la almazara, el aceite se mueve únicamente a través de recipientes de acero inoxidable. Se excluye el plástico porque puede transferir sabores extraños y comprometer la claridad, el aroma y la estabilidad del producto.",
+                "img_label": "Filtration and stainless steel transfer"
+            },
+            "stoccaggio": {
+                "kicker": "Almacenamiento",
+                "title": "Almacenamiento bajo nitrógeno",
+                "text": "Tras la extracción, el aceite se almacena en tanques de acero inoxidable protegido de la luz, las oscilaciones térmicas y la exposición al oxígeno. El almacenamiento con nitrógeno ayuda a preservar los aromas, la frescura y los polifenoles hasta el embotellado.",
+                "img_label": "Protected storage tanks"
+            },
+            "imbottigliamento": {
+                "kicker": "Embotellado",
+                "title": "Línea de llenado y envasado",
+                "text": "Nuestra línea de embotellado gestiona diferentes formatos, un etiquetado preciso y un envasado ordenado, manteniendo la continuidad y la limpieza durante toda la fase final del proceso.",
+                "tag1": "Formatos variables",
+                "tag2": "Etiquetado preciso",
+                "img_label": "Bottling line"
+            },
+            "controllo": {
+                "kicker": "Control",
+                "title": "Calidad y trazabilidad",
+                "text": "Cada lote se sigue cuidadosamente desde la entrega de la aceituna hasta el envasado final. La trazabilidad, los controles del proceso y la verificación del aceite terminado nos ayudan a mantener constante la calidad de la almazara.",
+                "list1": "Sensory analysis",
+                "list2": "Full traceability",
+                "list3": "Updated certifications",
+                "img_label": "Quality control and traceability"
+            }
+        },
+        "technology": {
+            "label": "La Almazara",
+            "title_part1": "Tecnología, cuidado",
+            "title_italic": "y trazabilidad",
+            "description": "En nuestra almazara, cada fase está diseñada para proteger los aromas y los polifenoles: entrega rápida, limpieza cuidadosa, extracción en frío y almacenamiento en condiciones controladas.",
+            "checks": {
+                "chain": {
+                    "title": "Cadena corta",
+                    "desc": "Desde la cosecha hasta la molienda en tiempos rápidos."
+                },
+                "clean": {
+                    "title": "Limpieza y selección",
+                    "desc": "Deshojado y lavado para eliminar impurezas."
+                },
+                "extraction": {
+                    "title": "Extracción en frío",
+                    "desc": "Proceso controlado para preservar la calidad y los aromas."
+                },
+                "storage": {
+                    "title": "Almacenamiento bajo nitrógeno",
+                    "desc": "Protección contra la oxidación antes del embotellado."
+                }
+            },
+            "cards": {
+                "molitura": {
+                    "title": "Molienda para terceros",
+                    "text": "Procesamiento de molienda y envasado con trazabilidad de lotes.",
+                    "badge": "Servicios"
+                },
+                "conferimento": {
+                    "title": "Entrega de aceitunas",
+                    "text": "Recepción y gestión con prioridad en la frescura.",
+                    "badge": "Operaciones"
+                },
+                "controlli": {
+                    "title": "Controles de calidad",
+                    "text": "Monitoreo de parámetros de proceso y almacenamiento.",
+                    "badge": "Calidad"
+                },
+                "visite": {
+                    "title": "Visitas y catas",
+                    "text": "Momentos de visita para descubrir las fases de procesamiento.",
+                    "badge": "Experiencia"
+                }
+            }
+        },
+        "steps_section": {
+            "label": "Producción",
+            "title_part1": "Del campo a la",
+            "title_italic": "almazara",
+            "subtitle": "Cosecha, procesamiento y certificaciones: las etapas que guían la calidad de nuestro aceite de oliva virgen extra."
+        },
+        "steps": {
+            "raccolta": {
+                "kicker": "COSECHA",
+                "title": "Cosecha manual",
+                "paragraphs": [
+                    "Incluso hoy en Toscana, la cosecha de aceitunas se sigue haciendo tradicionalmente a mano. Las aceitunas recién cosechadas se transportan a la almazara y se procesan en un plazo de 12 horas para salvaguardar la integridad de sus componentes aromáticos y fenólicos, utilizando un moderno sistema de extracción en frío Alfa Laval."
+                ],
+                "placeholder": "Cosecha manual de las aceitunas"
+            },
+            "imbottigliamento": {
+                "kicker": "PLANTA",
+                "title": "La línea de embotellado",
+                "paragraphs": [
+                    "La planta está equipada con una línea de embotellado y envasado, y almacenamiento bajo nitrógeno para garantizar las cualidades sensoriales del aceite antes del embotellado.",
+                    "Sin embargo, no nos detenemos ahí: también ofrecemos servicios personalizados de molienda y envasado para terceros."
+                ],
+                "placeholder": "Línea de embotellado y envasado"
+            },
+            "evo": {
+                "kicker": "CALIDAD",
+                "title": "Nuestro Aceite AOVE",
+                "paragraphs": [
+                    "Todos estos factores son una garantía absoluta para la producción de un aceite de oliva virgen extra de la más alta calidad, capaz de conservar la frescura y los aromas que caracterizan al aceite recién prensado durante un período más largo."
+                ],
+                "placeholder": "Aceite AOVE recién procesado"
+            },
+            "igp_bio": {
+                "kicker": "CERTIFICACIONES",
+                "title": "IGP Y ECOLÓGICO",
+                "paragraphs": [
+                    "Nuestro aceite de oliva virgen extra italiano no solo se produce a partir de aceitunas cultivadas con respeto al medio ambiente, sino que todas las actividades para su procesamiento están sujetas a los estrictos controles de organismos de certificación autorizados para garantizar al consumidor final un producto natural, controlado y certificado. La almazara Del Pasqua está certificada por Suolo e Salute para el procesamiento y producción de productos ecológicos y está registrada en el Consorcio del Aceite de Oliva Toscano para la producción de aceite de oliva virgen extra Toscano IGP."
+                ],
+                "placeholder": "Certificaciones IGP y ecológicas"
+            },
+            "iqo": {
+                "title": "Certificación IQO",
+                "text": "Nuestro aceite de oliva virgen extra cuenta con la certificación IQO; los análisis químicos y científicos garantizan un alto valor nutricional natural, estabilidad a largo plazo y trazabilidad garantizada sin riesgo de fraude."
+            }
+        },
+        "shared": {
+            "machine": "Máquina"
+        }
+    },
+  "OlioPage": {
+        "header": {
+            "label": "Nuestro aceite",
+            "title_part1": "Nuestro",
+            "title_italic": "aceite AOVE"
+        },
+        "sections": {
+            "intro": {
+                "title": "Nuestro aceite AOVE",
+                "body": [
+                    "Nuestro aceite de oliva virgen extra italiano no solo se produce a partir de aceitunas cultivadas con respeto al medio ambiente, sino que todas las actividades para su procesamiento están sujetas a los estrictos controles de organismos de certificación autorizados para garantizar al consumidor final un producto natural, controlado y certificado. La almazara Del Pasqua está certificada por Suolo e Salute para el procesamiento y producción de productos ecológicos y está registrada en el Consorcio del Aceite de Oliva Toscano para la producción de aceite de oliva virgen extra Toscano IGP.",
+                    "Nuestro aceite de oliva virgen extra cuenta con la certificación IQO; los análisis químicos y científicos garantizan un alto valor nutricional natural, estabilidad a largo plazo y trazabilidad garantizada sin riesgo de fraude."
+                ],
+                "placeholder": "IMAGEN — INTRO"
+            },
+            "fruttato_leggero": {
+                "short_title": "Frutado Ligero",
+                "title": "Aceite de Oliva Virgen Extra - Frutado Ligero 100% Italiano",
+                "body": [
+                    "Perfil delicado y armonioso: ligero amargor y picor, con sensaciones herbáceas y notas suaves.",
+                    "Ideal en crudo sobre platos ligeros, pescados, verduras y ensaladas."
+                ],
+                "formats": [
+                    "Botella: 250/500/750",
+                    "Lata: 1/3/5L"
+                ],
+                "placeholder": "IMAGEN — FRUTADO LIGERO"
+            },
+            "fruttato_intenso": {
+                "short_title": "Frutado Intenso",
+                "title": "Aceite de Oliva Virgen Extra - Frutado Intenso 100% Italiano",
+                "body": [
+                    "Con un sabor audaz pero equilibrado, tiene un amargor y picor medio-alto con un agradable retrogusto a alcachofa y un color verde brillante.",
+                    "Las aceitunas se cosechan antes de alcanzar su madurez completa."
+                ],
+                "formats": [
+                    "Botella: 250/500/750",
+                    "Lata: 1/3/5L"
+                ],
+                "placeholder": "IMAGEN — FRUTADO INTENSO"
+            },
+            "fruttato_medio": {
+                "short_title": "Frutado Medio",
+                "title": "Aceite de Oliva Virgen Extra - Frutado Medio 100% Italiano",
+                "body": [
+                    "Mezcla de aceitunas Leccino, Frantoio y Moraiolo; equilibrado en picor y amargor, con toques de almendra y notas de hierba fresca.",
+                    "Color verde con vetas amarillas."
+                ],
+                "formats": [
+                    "Botella: 250/500/750/1000ml",
+                    "Lata: 1/3/5L"
+                ],
+                "placeholder": "IMAGEN — FRUTADO MEDIO"
+            },
+            "evo": {
+                "short_title": "AOVE",
+                "title": "Aceite de Oliva Virgen Extra - AOVE",
+                "body": [
+                    "Con la selección de las mejores aceitunas nace nuestro aceite 'AOVE', extraído en frío según los principios de la tradición y con un enfoque en la innovación. Presenta un color verde brillante y un aroma herbáceo con toques de almendra."
+                ],
+                "formats": [
+                    "Botella: 500ml",
+                    "Lata: 3/5L"
+                ],
+                "placeholder": "IMAGEN — AOVE"
+            },
+            "aromatico": {
+                "short_title": "Aromatizado",
+                "title": "Aceites Aromatizados - Aceite de Oliva Virgen Extra",
+                "body": [
+                    "Nuestra selección especial de aceites aromatizados.",
+                    "Versiones disponibles: trufa, guindilla y limón."
+                ],
+                "formats": [
+                    "Botella: 250ml"
+                ],
+                "placeholder": "IMAGEN — AROMÁTICO"
+            }
+        },
+        "sidebar": {
+            "id_label": "Índice",
+            "note_label": "Nota",
+            "note_text1": "Sección descriptiva: las imágenes están en"
+        },
+        "trust_bar": {
+            "text": "CALIDAD • TRADICIÓN • INNOVACIÓN",
+            "badge": "SELECCIÓN EXTRACCIÓN EN FRÍO"
+        }
+    },
+  "ContactPage": {
+        "hero": {
+            "label": "Contacto",
+            "title_part1": "Estamos",
+            "title_italic": "aquí",
+            "description": "Para solicitudes comerciales, información sobre productos o colaboraciones, escríbanos o llámenos.",
+            "pills": {
+                "response": "RESPUESTA RÁPIDA",
+                "support": "SOPORTE DE PEDIDOS",
+                "b2b": "SOLICITUDES B2B"
+            }
+        },
+        "info": {
+            "company_label": "Empresa",
+            "address_label": "Dirección",
+            "phone_label": "Teléfono",
+            "mobile_label": "Móvil",
+            "email_label": "Correo electrónico",
+            "docs_label": "Documentos",
+            "docs_gender": "Política de Igualdad de Género",
+            "docs_privacy": "Privacidad",
+            "social_label": "Redes sociales"
+        },
+        "form": {
+            "label": "Escríbanos",
+            "title": "Enviar un mensaje",
+            "subtitle": "Complete el formulario: responderemos lo antes posible.",
+            "name_label": "Nombre",
+            "name_placeholder": "Su nombre",
+            "email_label": "Correo electrónico",
+            "subject_label": "Asunto",
+            "subject_placeholder": "Ej. información de producto / pedido / B2B",
+            "message_label": "Mensaje",
+            "message_placeholder": "Escriba aquí...",
+            "privacy_consent": "Consiento el tratamiento de mis datos y declaro haber leído la política de privacidad",
+            "success_msg": "Mensaje enviado. Responderemos lo antes posible.",
+            "error_prefix": "Error",
+            "error_fallback": "Error al enviar.",
+            "button_idle": "ENVIAR MENSAJE",
+            "button_sending": "ENVIANDO..."
+        },
+        "map": {
+            "label": "Dónde estamos",
+            "button": "Abrir en Maps"
+        }
+    },
+  "Cart": {
+        "common": {
+            "product_fallback": "Producto",
+            "discount_code_placeholder": "Código de descuento",
+            "apply": "Aplicar",
+            "remove": "Eliminar",
+            "subtotal": "Subtotal",
+            "discount_with_code": "Descuento ({code})",
+            "vat": "IVA",
+            "vat_estimate": "IVA 4% (estimado)",
+            "shipping": "Envío",
+            "shipping_estimate": "Envío (estimado)",
+            "free": "Gratis",
+            "total": "Total",
+            "line_total": "Total de línea",
+            "per_item_with_price": "{price} / ud.",
+            "continue_shopping": "Continuar comprando",
+            "quantity": "Cantidad"
+        },
+        "actions": {
+            "remove_product": "Eliminar producto",
+            "decrease_quantity": "Disminuir cantidad",
+            "increase_quantity": "Aumentar cantidad"
+        },
+        "drawer": {
+            "eyebrow": "Carrito",
+            "title": "Sus productos",
+            "close_cart": "Cerrar carrito",
+            "close": "Cerrar",
+            "free_shipping_above": "Envío gratis a partir de",
+            "free_shipping_missing": "Le faltan",
+            "free_shipping_active": "¡Envío gratis activo!",
+            "items_count": "{count, plural, =0 {VACÍO} one {# PRODUCTO} other {# PRODUCTOS}}",
+            "clear": "Vaciar",
+            "empty": "Su carrito está vacío.",
+            "shipping_from": "Envío desde {amount}",
+            "discounted_total": "Total con descuento",
+            "redirecting": "Redirigiendo...",
+            "go_to_checkout": "Ir a la caja",
+            "view_cart": "Ver carrito",
+            "server_note": "El total final (IVA + envío) es verificado por el servidor antes del pago."
+        },
+        "page": {
+            "eyebrow": "Carrito",
+            "title": "Su carrito",
+            "back_to_shop": "Volver a la tienda",
+            "empty_state": "Su carrito está vacío. Vaya a la <shop>tienda</shop>.",
+            "open_product": "Abrir {title}",
+            "remove_from_cart_aria": "Eliminar del carrito",
+            "invalid_line": "Línea no válida: producto o variante no encontrada en el catálogo.",
+            "clear_cart": "Vaciar carrito",
+            "summary": "Resumen",
+            "opening_checkout": "Abriendo la caja...",
+            "go_to_checkout": "Ir a la caja",
+            "secure_payment": "Pago seguro.",
+            "email_confirmation": "Recibirá una confirmación por correo electrónico.",
+            "empty_title": "Su carrito está vacío",
+            "empty_desc": "Aún no ha añadido ningún producto a su carrito. Descubra nuestra selección especial de aceites finos.",
+            "bestsellers_title": "Bestsellers recomendados",
+            "bestsellers_desc": "Nuestros mejores productos seleccionados directamente de la Almazara.",
+            "free_shipping_notice": "🚚 Envío gratis desde 69 €",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Comprar ahora +",
+            "free_shipping_progress": "Está a {amount} del envío gratis",
+            "free_shipping_unlocked": "¡Envío gratis desbloqueado! 🎉",
+            "you_may_also_like": "También podría gustarle...",
+            "add_more": "Añadir +"
+        },
+        "errors": {
+            "promo_invalid": "Código no válido.",
+            "promo_not_active": "Código de descuento no encontrado o inactivo.",
+            "promo_invalid_discount": "Código de descuento no válido.",
+            "network_retry": "Error de red. Inténtelo de nuevo.",
+            "network": "Error de red.",
+            "empty_cart": "El carrito está vacío.",
+            "invalid_products": "Hay productos no válidos en el carrito. Vacíe el carrito e inténtelo de nuevo.",
+            "product_unavailable": "Producto no disponible.",
+            "too_many_requests": "Demasiadas solicitudes. Inténtelo de nuevo en unos instantes.",
+            "invalid_cart": "Carrito no válido.",
+            "order_creation": "Error al crear el pedido.",
+            "invalid_server_response": "Respuesta del servidor no válida.",
+            "checkout_unavailable": "Caja no disponible.",
+            "missing_checkout_url": "Falta la URL de la caja.",
+            "checkout_generic": "Error en la caja."
+        },
+        "panel": {
+            "bottle_format": "TAMAÑO DE LA BOTELLA",
+            "select_format_aria": "Seleccionar tamaño de la botella",
+            "quantity": "CANTIDAD",
+            "sold_out": "Agotado",
+            "add_to_cart": "Añadir al carrito",
+            "selected_format": "Tamaño seleccionado: ",
+            "added_to_cart_toast": "Añadido al carrito",
+            "out_of_stock_toast": "Producto agotado.",
+            "close_toast_aria": "Cerrar",
+            "max_qty": "MÁX {max}",
+            "available": "DISPONIBLE",
+            "plus_vat": "IVA incl."
+        }
+    }
+}

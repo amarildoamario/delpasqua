@@ -10,7 +10,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import type { Metadata } from "next";
-import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { getSeoLocale, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { readPublicCatalog } from "@/lib/server/catalog";
 
 const uiSans = Manrope({
@@ -48,7 +48,7 @@ export default async function RootLayout({
   const messages = await getMessages();
   const initialCatalog = await readPublicCatalog();
   return (
-    <html lang={locale} className={uiSans.variable}>
+    <html lang={getSeoLocale(locale)} className={uiSans.variable}>
       <head>
         {/* Forza il browser a usare SOLO light UI */}
         <meta name="color-scheme" content="light" />

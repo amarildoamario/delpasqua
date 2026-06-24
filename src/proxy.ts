@@ -52,7 +52,7 @@ const LEGACY_301_REDIRECTS = new Map<string, string>([
     ["/zblog-list-2", "/blog/"],
 ]);
 
-const LOCALES_WITH_PREFIX = ["en", "de", "nl", "da", "no"];
+const LOCALES_WITH_PREFIX = ["en", "de", "nl", "da", "no", "es", "fr", "us"];
 
 function extractLocaleAndPath(pathname: string): { locale: string | null; cleanPath: string } {
     const segments = pathname.split('/').filter(Boolean);
@@ -77,7 +77,7 @@ export async function proxy(request: NextRequest) {
     if (legacyDestination) {
         // If it's the English cart (which is a valid native route /en/cart in Next.js),
         // bypass the legacy redirect to avoid an infinite loop with next-intl.
-        if (locale === 'en' && normalizedPath === '/cart') {
+        if ((locale === 'en' || locale === 'us') && normalizedPath === '/cart') {
             // Proceed to intlMiddleware
         } else {
             let finalDestination = legacyDestination;

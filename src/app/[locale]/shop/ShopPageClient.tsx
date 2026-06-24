@@ -7,6 +7,11 @@ import { track } from "@/lib/analytics/track";
 import Footer from "@/components/Footer";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
+import { translateVariantLabel, translateVariantTitle, getCleanSize } from "@/lib/productSlugs";
+
+const hasTranslation = (t: { has?: (key: string) => boolean }, key: string) =>
+  typeof t.has === "function" && t.has(key);
+
 
 type ApiProduct = {
   id: string;
@@ -79,6 +84,27 @@ const shopCopy = {
     box: "Box",
     from: "Fra",
     price: "Pris",
+  },
+  es: {
+    evo: "EVO",
+    wine: "Vino",
+    box: "Caja",
+    from: "A partir de",
+    price: "Precio",
+  },
+  fr: {
+    evo: "EVO",
+    wine: "Vin",
+    box: "Coffret",
+    from: "À partir de",
+    price: "Prix",
+  },
+  us: {
+    evo: "EVO",
+    wine: "Wine",
+    box: "Box",
+    from: "From",
+    price: "Price",
   },
 };
 
@@ -173,6 +199,51 @@ const shopHeaderCopy = {
     sortPriceAsc: "Pris: Lav til Høy",
     sortPriceDesc: "Pris: Høy til Lav",
   },
+  es: {
+    title: "Nuestra excelencia",
+    sub1: "Aceite de oliva virgen extra toscano, vinos de la finca y cajas regalo.",
+    sub2: "Calidad artesanal, formatos para cada necesidad.",
+    badge1_title: "100% Artesanal",
+    badge1_sub: "Aceite, vino y especialidades",
+    badge2_title: "Varios Formatos",
+    badge2_sub: "Botellas, latas y cajas",
+    badge3_title: "Cajas de Regalo",
+    badge3_sub: "Ideal para cualquier ocasión",
+    sortLabel: "Ordenar",
+    sortPopular: "Más populares",
+    sortPriceAsc: "Precio: Menor a Mayor",
+    sortPriceDesc: "Precio: Mayor a Menor",
+  },
+  fr: {
+    title: "Nos excellences",
+    sub1: "Huile d'olive extra vierge toscane, vins du domaine et coffrets cadeaux.",
+    sub2: "Qualité artisanale, des formats pour chaque besoin.",
+    badge1_title: "100% Artisanal",
+    badge1_sub: "Huile, vin et spécialités",
+    badge2_title: "Plusieurs Formats",
+    badge2_sub: "Bouteilles, bidons et coffrets",
+    badge3_title: "Coffrets Cadeaux",
+    badge3_sub: "Idéal pour toute occasion",
+    sortLabel: "Trier",
+    sortPopular: "Plus populaires",
+    sortPriceAsc: "Prix : Croissant",
+    sortPriceDesc: "Prix : Décroissant",
+  },
+  us: {
+    title: "Our excellences",
+    sub1: "Tuscan EVO oil, estate wines and gift boxes.",
+    sub2: "Artisanal quality, sizes for every need.",
+    badge1_title: "100% Artisanal",
+    badge1_sub: "Oil, wine & specialties",
+    badge2_title: "Many Sizes",
+    badge2_sub: "Bottles, cans & packs",
+    badge3_title: "Gift Boxes",
+    badge3_sub: "Ideal for any occasion",
+    sortLabel: "Sort",
+    sortPopular: "Most popular",
+    sortPriceAsc: "Price: Low to High",
+    sortPriceDesc: "Price: High to Low",
+  },
 };
 
 type ShopCopyLocale = keyof typeof shopCopy;
@@ -233,6 +304,18 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
   const copy = shopCopy[(locale as ShopCopyLocale)] ?? shopCopy.it;
   const hCopy = shopHeaderCopy[(locale as ShopCopyLocale)] ?? shopHeaderCopy.it;
 
+  const viewModeLabels = {
+    it: { list: "Visualizzazione Lista", grid: "Visualizzazione Griglia" },
+    en: { list: "List View", grid: "Grid View" },
+    us: { list: "List View", grid: "Grid View" },
+    de: { list: "Listenansicht", grid: "Rasteransicht" },
+    nl: { list: "Lijstweergave", grid: "Rasterweergave" },
+    da: { list: "Listevisning", grid: "Gittervisning" },
+    no: { list: "Listevisning", grid: "Rutenettvisning" },
+    es: { list: "Vista de lista", grid: "Vista de cuadrícula" },
+    fr: { list: "Vue en liste", grid: "Vue en grille" },
+  };
+
   const categoriesCopy = useMemo(() => {
     const dict: Record<string, Record<ShopFilterId, string>> = {
       it: {
@@ -289,6 +372,33 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
         vino: "Vin",
         box: "Box",
       },
+      es: {
+        all: "Todos",
+        evo: "EVO",
+        fruttato: "Afrutados",
+        latte: "Las latas",
+        aromatico: "Aromatizados",
+        vino: "Vino",
+        box: "Cajas",
+      },
+      fr: {
+        all: "Tous",
+        evo: "EVO",
+        fruttato: "Fruités",
+        latte: "Bidons",
+        aromatico: "Aromatisés",
+        vino: "Vin",
+        box: "Coffrets",
+      },
+      us: {
+        all: "All",
+        evo: "EVO",
+        fruttato: "Fruity",
+        latte: "Cans",
+        aromatico: "Flavored",
+        vino: "Wine",
+        box: "Box",
+      },
     };
     return dict[locale] ?? dict.it;
   }, [locale]);
@@ -335,6 +445,18 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
       no: {
         title: "Vårt Utvalg & Formater",
         subtitle: "Oppdag vår toskanske mølles utvalg og format skreddersydd for ditt kjøkken.",
+      },
+      es: {
+        title: "Nuestras Selecciones y Formatos",
+        subtitle: "Descubra las secciones dedicadas de nuestra almazara toscana y los formatos pensados para su cocina.",
+      },
+      fr: {
+        title: "Nos Sélections & Formats",
+        subtitle: "Découvrez les sélections dédiées de notre moulin toscan et les formats conçus pour votre cuisine.",
+      },
+      us: {
+        title: "Our Selections & Sizes",
+        subtitle: "Discover our Tuscan mill's dedicated selections and formats tailored for your kitchen.",
       },
     };
     return headers[locale] || headers.it;
@@ -522,6 +644,96 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
           href: "/olio-5-litri",
         },
       ],
+      es: [
+        {
+          badge: "Origen",
+          title: "Aceite de Oliva Virgen Extra Toscano",
+          description: "Obtenido al 100% de aceitunas toscanas recolectadas y prensadas en Arezzo, de sabor herbal y profundo.",
+          cta: "Explorar Selección",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Sostenibilidad",
+          title: "Aceite EVO Biológico",
+          description: "La pura expresión de la naturaleza, obtenido de olivares cultivados sin pesticidas ni sustancias químicas.",
+          cta: "Ver el Biológico",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Estacionalidad",
+          title: "Nueva Cosecha (Novello)",
+          description: "El aroma embriagador del aceite recién prensado, extraído en frío y disponible en otoño.",
+          cta: "Descubrir Novello",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Reserva Familiar",
+          title: "Lata de 5 Litros",
+          description: "La máxima conveniencia para el consumo diario, en un envase que protege al 100% de la luz y el aire.",
+          cta: "Descubrir Latas",
+          href: "/olio-5-litri",
+        },
+      ],
+      fr: [
+        {
+          badge: "Origine",
+          title: "Huile d'Olive Extra Vierge Toscane",
+          description: "Obtenue à 100% à partir d'olives toscanes récoltées et pressées à Arezzo, avec un goût profond et herbacé.",
+          cta: "Explorer la Sélection",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Durabilité",
+          title: "Huile EVO Biologique",
+          description: "L'expression pure de la nature, issue d'oliveraies cultivées sans pesticides ni produits chimiques.",
+          cta: "Voir le Bio",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Saisonnalité",
+          title: "Nouvelle Récolte (Novello)",
+          description: "L'arôme enivrant de l'huile fraîchement pressée, extraite à froid et disponible en automne.",
+          cta: "Découvrir le Novello",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Format Familial",
+          title: "Bidon de 5 Litres",
+          description: "Le meilleur rapport qualité-prix pour un usage quotidien, dans un récipient qui bloque 100% de la lumière et de l'air.",
+          cta: "Découvrir les Bidons",
+          href: "/olio-5-litri",
+        },
+      ],
+      us: [
+        {
+          badge: "Origin",
+          title: "Tuscan Extra Virgin Oil",
+          description: "Obtained 100% from Tuscan olives harvested and pressed in Arezzo, with a deep and herbal taste.",
+          cta: "Explore Selection",
+          href: "/olio-toscano",
+        },
+        {
+          badge: "Sustainability",
+          title: "Organic EVO Oil",
+          description: "The pure expression of nature, obtained from olive groves cultivated without pesticides or chemical inputs.",
+          cta: "View Organic",
+          href: "/olio-biologico",
+        },
+        {
+          badge: "Seasonality",
+          title: "New Harvest (Novello)",
+          description: "The exhilarating aroma of fresh olive oil, cold-extracted and available during the autumn harvest.",
+          cta: "Discover Novello",
+          href: "/nuovo-raccolto",
+        },
+        {
+          badge: "Family Reserve",
+          title: "5 Liters Can",
+          description: "The best value for daily cooking, in a container that blocks 100% of light and air to preserve quality.",
+          cta: "Discover Cans",
+          href: "/olio-5-litri",
+        },
+      ],
     };
     return cards[locale] || cards.it;
   }, [locale]);
@@ -545,10 +757,28 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
       const badge = locale === "it" ? (p.badge || "") : (tp(`${p.id}.badge`) || p.badge || "");
       const merchBadge = p.merchBadge || null;
       const filterTags = inferFilterTags(p);
-      const variants = (p.variants ?? []).filter(
+      const rawVariants = (p.variants ?? []).filter(
         (variant): variant is NonNullable<ApiProduct["variants"]>[number] & { id: string } =>
           typeof variant?.id === "string" && variant.id.length > 0
       );
+
+      const variants = rawVariants.map((v) => {
+        const label =
+          locale === "it"
+            ? (v.label || "")
+            : hasTranslation(tp, `${p.id}.variants.${v.id}`)
+            ? tp(`${p.id}.variants.${v.id}`)
+            : translateVariantLabel(v.id, v.label || "", locale);
+        const variantTitle =
+          locale === "it"
+            ? (v.title || "")
+            : translateVariantTitle(v.id, v.title || "", title, locale);
+        return {
+          ...v,
+          label,
+          title: variantTitle,
+        };
+      });
 
       if (variants.length === 0) {
         return {
@@ -585,7 +815,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
       }).format(cheapestVariant.priceCents / 100);
 
       const formatLabels = sortedVariants
-        .map(v => v.label?.replace("Bottiglia ", "").replace("Latta ", "").trim() || "")
+        .map(v => getCleanSize(v.id, locale))
         .filter(Boolean)
         .join(" • ");
 
@@ -782,9 +1012,7 @@ export default function ShopPageClient({ initialProducts }: { initialProducts: A
           {/* Toggle visualizzazione solo su mobile */}
           <div className="sm:hidden flex items-center justify-between border-b border-neutral-200/60 pb-3 mt-6">
             <div className="text-[11px] font-bold tracking-wider text-[#1f1a17] uppercase">
-              {viewMode === "list"
-                ? `${locale === "it" ? "Visualizzazione Lista" : "List View"}`
-                : `${locale === "it" ? "Visualizzazione Griglia" : "Grid View"}`}
+              {(viewModeLabels[locale as keyof typeof viewModeLabels] || viewModeLabels.en)[viewMode]}
             </div>
             <div className="border border-neutral-200 bg-white p-0.5 rounded-[5px] flex items-center shadow-sm">
               <button

@@ -2,8 +2,10 @@ import { locales, type Locale } from "@/i18n/pathnames";
 import { readPublicCatalog } from "@/lib/server/catalog";
 import Olio5LitriClient, { type LandingPageContent } from "./Olio5LitriClient";
 import { pageMetadata } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
+import { translateVariantTitle } from "@/lib/productSlugs";
 
-const pageContent: Record<Locale, LandingPageContent> = {
+const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageContent> = {
   it: {
     kicker: "Convenienza",
     title: "Olio Extravergine 5 Litri",
@@ -211,7 +213,11 @@ export function generateStaticParams() {
 export default async function Olio5LitriPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const content = pageContent[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const content = pageContent[displayLocale];
+
+  const tp = await getTranslations({ locale: activeLocale, namespace: "Products" });
+  const hasTranslation = (key: string) => typeof tp.has === "function" && tp.has(key);
 
   const rawCatalog = await readPublicCatalog();
   const targetIds = ["evo-latta", "fruttato-medio-latta", "fruttato-intenso-latta"];
@@ -226,9 +232,19 @@ export default async function Olio5LitriPage({ params }: { params: Promise<{ loc
         currency: "EUR",
       }).format(priceCents / 100);
 
+      const translatedProductTitle = activeLocale === "it"
+        ? (product.title ?? product.id)
+        : (hasTranslation(`${product.id}.title`) ? tp(`${product.id}.title`) : product.title || product.id);
+
+      const title = activeLocale === "it"
+        ? (targetVariant?.title ?? product.title ?? product.id)
+        : (hasTranslation(`${product.id}.variants.5lt`)
+            ? tp(`${product.id}.variants.5lt`)
+            : translateVariantTitle("5lt", targetVariant?.title || "", translatedProductTitle, activeLocale));
+
       return {
         id: product.id,
-        title: targetVariant?.title ?? product.title ?? product.id,
+        title,
         priceLabel,
         imageSrc: targetVariant?.imageSrc ?? product.imageSrc ?? "",
         slug: product.slug ?? product.id,
@@ -241,7 +257,8 @@ export default async function Olio5LitriPage({ params }: { params: Promise<{ loc
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const content = pageContent[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const content = pageContent[displayLocale];
 
   return pageMetadata({
     title: content.title,

@@ -6,7 +6,7 @@
  */
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
-const ACTIVE_LOCALES = ["it", "en", "de", "nl", "da", "no"];
+const ACTIVE_LOCALES = ["it", "en", "de", "nl", "da", "no", "es", "fr", "us"];
 
 function extractLocs(xml) {
   const locRegex = /<loc>\s*([^<\s]+)\s*<\/loc>/gi;

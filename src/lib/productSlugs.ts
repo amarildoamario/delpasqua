@@ -13,6 +13,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "evo",
     da: "evo",
     no: "evo",
+    es: "evo",
+    fr: "evo",
+    us: "evo",
   },
   "evo-latta": {
     it: "olio-evo-latta",
@@ -21,6 +24,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "evo-olijfolie-blik",
     da: "evo-olivenolie-dunk",
     no: "evo-olivenolje-kanne",
+    es: "lata-aceite-evo",
+    fr: "bidon-huile-evo",
+    us: "evo-oil-can",
   },
   "fruttato-leggero": {
     it: "fruttato-leggero",
@@ -29,6 +35,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "licht-fruitig",
     da: "let-frugtig",
     no: "lett-fruktig",
+    es: "frutado-ligero",
+    fr: "fruite-leger",
+    us: "light-fruity",
   },
   "fruttato-leggero-latta": {
     it: "olio-extra-vergine-di-oliva-fruttato-leggero-latta",
@@ -37,6 +46,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "licht-fruitige-extra-vierge-olijfolie-blik",
     da: "let-frugtig-ekstra-jomfruolivenolie-dunk",
     no: "lett-fruktig-extra-virgin-olivenolje-kanne",
+    es: "lata-aceite-virgen-extra-frutado-ligero",
+    fr: "bidon-huile-d-olive-vierge-extra-fruite-leger",
+    us: "light-fruity-extra-virgin-olive-oil-can",
   },
   "fruttato-medio": {
     it: "fruttato-medio",
@@ -45,6 +57,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "medium-fruitig",
     da: "medium-frugtig",
     no: "middels-fruktig",
+    es: "frutado-medio",
+    fr: "fruite-moyen",
+    us: "medium-fruity",
   },
   "fruttato-medio-latta": {
     it: "olio-extra-vergine-di-oliva-fruttato-medio-latta",
@@ -53,6 +68,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "medium-fruitige-extra-vierge-olijfolie-blik",
     da: "medium-frugtig-ekstra-jomfruolivenolie-dunk",
     no: "middels-fruktig-extra-virgin-olivenolje-kanne",
+    es: "lata-aceite-virgen-extra-frutado-medio",
+    fr: "bidon-huile-d-olive-vierge-extra-fruite-moyen",
+    us: "medium-fruity-extra-virgin-olive-oil-can",
   },
   "fruttato-intenso": {
     it: "fruttato-intenso",
@@ -61,6 +79,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "intens-fruitig",
     da: "intens-frugtig",
     no: "intens-fruktig",
+    es: "frutado-intenso",
+    fr: "fruite-intense",
+    us: "intense-fruity",
   },
   "fruttato-intenso-latta": {
     it: "olio-extra-vergine-di-oliva-fruttato-intenso-latta",
@@ -69,6 +90,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "intens-fruitige-extra-vierge-olijfolie-blik",
     da: "intens-frugtig-ekstra-jomfruolivenolie-dunk",
     no: "intens-fruktig-extra-virgin-olivenolje-kanne",
+    es: "lata-aceite-virgen-extra-frutado-intenso",
+    fr: "bidon-huile-d-olive-vierge-extra-fruite-intense",
+    us: "intense-fruity-extra-virgin-olive-oil-can",
   },
   tartufo: {
     it: "tartufo",
@@ -77,6 +101,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "truffel",
     da: "troeffel",
     no: "troffel",
+    es: "trufa",
+    fr: "truffe",
+    us: "truffle",
   },
   peperoncino: {
     it: "peperoncino",
@@ -85,6 +112,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "chilipeper",
     da: "chili",
     no: "chili",
+    es: "guindilla",
+    fr: "piment",
+    us: "chili-pepper",
   },
   vino: {
     it: "vino-vittoria",
@@ -93,6 +123,9 @@ const PRODUCT_LOCALE_SLUGS: Partial<Record<string, Partial<Record<Locale, string
     nl: "vittoria-wijn",
     da: "vittoria-vin",
     no: "vittoria-vin",
+    es: "vino-vittoria",
+    fr: "vin-vittoria",
+    us: "vittoria-wine",
   },
 };
 
@@ -150,3 +183,93 @@ export function findProductBySlug<T extends ProductSlugSource>(products: T[], ro
     return candidates.has(wanted);
   });
 }
+
+export function getCleanSize(variantId: string, locale: string) {
+  const isL = ["en", "es", "fr", "us", "de"].includes(locale);
+  if (variantId === "500ml") return "500 ml";
+  if (variantId === "750ml") return "750 ml";
+  if (variantId === "1lt") return isL ? "1 L" : "1 lt";
+  if (variantId === "3lt") return isL ? "3 L" : "3 lt";
+  if (variantId === "5lt") return isL ? "5 L" : "5 lt";
+  return "";
+}
+
+export function translateVariantLabel(id: string, fallback: string, locale: string) {
+  const targetLocale = locale === "us" ? "en" : locale;
+  const labels: Record<string, Record<string, string>> = {
+    "500ml": {
+      it: "Bottiglia 500 ml",
+      en: "Bottle 500 ml",
+      de: "Flasche 500 ml",
+      nl: "Fles 500 ml",
+      da: "Flaske 500 ml",
+      no: "Flaske 500 ml",
+      es: "Botella 500 ml",
+      fr: "Bouteille 500 ml",
+    },
+    "750ml": {
+      it: "Bottiglia 750 ml",
+      en: "Bottle 750 ml",
+      de: "Flasche 750 ml",
+      nl: "Fles 750 ml",
+      da: "Flaske 750 ml",
+      no: "Flaske 750 ml",
+      es: "Botella 750 ml",
+      fr: "Bouteille 750 ml",
+    },
+    "1lt": {
+      it: "Bottiglia 1 L",
+      en: "Bottle 1 L",
+      de: "Flasche 1 L",
+      nl: "Fles 1 L",
+      da: "Flaske 1 L",
+      no: "Flaske 1 L",
+      es: "Botella 1 L",
+      fr: "Bouteille 1 L",
+    },
+    "3lt": {
+      it: "Latta 3 L",
+      en: "Can 3 L",
+      de: "Kanister 3 L",
+      nl: "Blik 3 L",
+      da: "Dunk 3 L",
+      no: "Kanne 3 L",
+      es: "Lata 3 L",
+      fr: "Bidon 3 L",
+    },
+    "5lt": {
+      it: "Latta 5 L",
+      en: "Can 5 L",
+      de: "Kanister 5 L",
+      nl: "Blik 5 L",
+      da: "Dunk 5 L",
+      no: "Kanne 5 L",
+      es: "Lata 5 L",
+      fr: "Bidon 5 L",
+    },
+    bottiglia: {
+      it: "Bottiglia",
+      en: "Bottle",
+      de: "Flasche",
+      nl: "Fles",
+      da: "Flaske",
+      no: "Flaske",
+      es: "Botella",
+      fr: "Bouteille",
+    },
+  };
+
+  return labels[id]?.[targetLocale] ?? labels[id]?.[locale] ?? fallback;
+}
+
+export function translateVariantTitle(
+  variantId: string,
+  variantTitle: string,
+  translatedProductTitle: string,
+  locale: string
+) {
+  if (locale === "it") return variantTitle;
+  const size = getCleanSize(variantId, locale);
+  return size ? `${translatedProductTitle} ${size}` : translatedProductTitle;
+}
+

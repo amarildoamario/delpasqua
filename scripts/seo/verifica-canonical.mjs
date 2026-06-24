@@ -10,7 +10,7 @@ import { URL } from "url";
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 const EXPECTED_SITE_URL = process.env.EXPECTED_SITE_URL || BASE_URL;
 
-const ACTIVE_LOCALES = ["it", "en", "de", "nl", "da", "no"];
+const ACTIVE_LOCALES = ["it", "en", "de", "nl", "da", "no", "es", "fr", "us"];
 const FORBIDDEN_WORDS = [
   "cart",
   "carrello",

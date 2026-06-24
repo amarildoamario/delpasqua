@@ -1,7 +1,6 @@
 import { getTastingTypes } from "@/lib/tasting/slots";
 import TastingsCalendar from "./TastingCalendar";
 import Footer from "@/components/Footer";
-import Image from "next/image";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { companyInfo } from "@/lib/companyInfo";

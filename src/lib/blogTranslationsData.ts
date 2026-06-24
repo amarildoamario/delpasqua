@@ -6,9 +6,9 @@ export interface BlogTranslation {
   content?: string;
 }
 
-export type Locale = 'it' | 'en' | 'de' | 'nl' | 'da' | 'no';
+export type Locale = 'it' | 'en' | 'de' | 'nl' | 'da' | 'no' | 'es' | 'fr' | 'us';
 
-export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslation>> = {
+export const BLOG_POST_TRANSLATIONS: Record<string, Partial<Record<Locale, BlogTranslation>>> = {
 "post-1": {
     "it": {
       slug: "benefici-olio-evo-salute",
@@ -45,6 +45,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Fordelene med ekstra jomfruolivenolje for din daglige helse",
       excerpt: "Det er ikke bare et tilbehør, det er rent drivstoff for et aktivt liv. Oppdag hvordan ekstra jomfruolivenolje støtter hverdagen, nærer musklene og beskytter hjertet.",
       category: "Helse & Velvære"
+    },
+  
+    "es": {
+      slug: "los-beneficios-para-la-salud-del-aceite-de-oliva-virgen-extra-en-la-vida-diaria",
+      title: "Los Beneficios para la Salud del Aceite de Oliva Virgen Extra en la Vida Diaria",
+      excerpt: "No es solo un condimento; es combustible limpio para una vida activa. Descubre cómo el AOVE apoya tu día a día, nutre los músculos y protege el corazón.",
+      category: "Salud y Bienestar"
+    },
+    "fr": {
+      slug: "les-bienfaits-pour-la-sante-de-l-huile-d-olive-extra-vierge-au-quotidien",
+      title: "Les bienfaits pour la santé de l'huile d'olive extra vierge au quotidien",
+      excerpt: "Ce n'est pas seulement un condiment, c'est un carburant propre pour une vie active. Découvrez comment l'EVOO soutient votre journée, nourrit les muscles et protège le cœur.",
+      category: "Santé & Bien-être"
     },
   },
 "post-chem-1": {
@@ -84,6 +97,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Mante forveksler den kildrende følelsen i halsen med syreinnholdet. La oss oppdage hva det egentlig er og hvordan det måles.",
       category: "Olivenoljekjemi"
     },
+  
+    "es": {
+      slug: "acidez-en-el-aceite-de-oliva-virgen-extra-desmitificando-mitos-comunes",
+      title: "Acidez en el Aceite de Oliva Virgen Extra: Desmitificando Mitos Comunes",
+      excerpt: "A menudo se confunde la sensación de ardor en la garganta con la acidez. Descubramos qué es realmente la acidez y cómo se mide.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "l-acidite-dans-l-huile-d-olive-extra-vierge-demystifier-les-croyances-communes",
+      title: "L'acidité dans l'huile d'olive extra vierge : démystifier les croyances communes",
+      excerpt: "On confond souvent la sensation de brûlure dans la gorge avec l'acidité. Découvrons ce qu'est réellement l'acidité et comment elle est mesurée.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
 "post-chem-2": {
     "it": {
@@ -121,6 +147,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Polyfenoler og peroksider: Slik tyder du olivenoljeanalyser",
       excerpt: "La oss lære å lese den kjemiske rapporten for en ekstra jomfruolivenolje: Hva betyr verdiene for peroksider og polyfenoler.",
       category: "Olivenoljekjemi"
+    },
+  
+    "es": {
+      slug: "polifenoles-y-peroxidos-como-descifrar-los-analisis-del-aceite-de-oliva",
+      title: "Polifenoles y peróxidos: cómo descifrar los análisis del aceite de oliva",
+      excerpt: "Aprendamos a leer el informe de laboratorio del aceite de oliva virgen extra y lo que realmente significan los valores de peróxidos y polifenoles.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "polyphenols-et-peroxydes-comment-decrypter-les-analyses-de-lhuile-dolive",
+      title: "Polyphénols et peroxydes : comment décrypter les analyses de l'huile d'olive",
+      excerpt: "Apprenons à lire le rapport d'analyse en laboratoire de l'huile d'olive vierge extra et ce que signifient réellement les valeurs de peroxydes et de polyphénols.",
+      category: "Chimie de l'Huile d'Olive"
     },
   },
 "post-buy-2": {
@@ -160,6 +199,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Hvorfor finner vi ekstra jomfruolivenolje til 5 € i hyllene når det koster mer enn det dobbelte hos møllen? La oss regne det ut uten filtre.",
       category: "Kjøpsguide"
     },
+  
+    "es": {
+      slug: "supermercado-vs-almazara-la-verdad-detras-del-precio-del-aceite-de-oliva-artesanal",
+      title: "Supermercado vs. Almazara: La verdad detrás del precio del aceite de oliva artesanal",
+      excerpt: "¿Por qué encontramos AOVE a 5 € en las estanterías cuando en la almazara cuesta más del doble? Analicemos las cifras reales y descubramos qué estamos comprando de verdad.",
+      category: "Guía de Compra"
+    },
+    "fr": {
+      slug: "supermarche-vs-moulin-la-verite-derriere-le-prix-de-l-huile-d-olive-artisanale",
+      title: "Supermarché vs. Moulin : La vérité derrière le prix de l'huile d'olive artisanale",
+      excerpt: "Pourquoi trouve-t-on de l'HOVE à 5 € en rayon alors qu'elle coûte plus du double au moulin ? Regardons les vrais chiffres et découvrons ce que nous achetons réellement.",
+      category: "Guide d'Achat"
+    },
   },
 "post-store-1": {
     "it": {
@@ -197,6 +249,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Hvor lenge holder ekstra jomfruolivenolje, og hvordan lagres den best",
       excerpt: "Olivenolje gaar ikke ut paa dato, men den eldes. Laer aa lese best-foer-datoen, hvorfor varme og lys er de virkelige fiendene, og tips til lagring.",
       category: "Lagring"
+    },
+  
+    "es": {
+      slug: "cuanto-dura-el-aceite-de-oliva-virgen-extra-y-como-conservarlo",
+      title: "¿Cuánto dura el aceite de oliva virgen extra y cómo conservarlo?",
+      excerpt: "El aceite de oliva no se echa a perder como la leche, pero sí envejece. Aprende a leer las fechas de consumo preferente, por qué el calor y la luz son los verdaderos enemigos y consejos para su conservación en casa.",
+      category: "Conservación"
+    },
+    "fr": {
+      slug: "combien-de-temps-se-conserve-l-huile-d-olive-vierge-extra-et-comment-la-conserver",
+      title: "Combien de temps se conserve l'huile d'olive vierge extra et comment la conserver",
+      excerpt: "L'huile d'olive ne tourne pas comme le lait, mais elle vieillit. Apprenez à lire les dates de durabilité minimale, découvrez pourquoi la chaleur et la lumière sont ses pires ennemies, et comment bien la conserver chez soi.",
+      category: "Stockage et conservation"
     },
   },
 "post-store-2": {
@@ -236,6 +301,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Det virker kanskje bare som beholdere, men valget mellom blikkboks og glassflaske påvirker direkte hvor lenge oljen din bevarer kvalitet og polyfenoler. La oss se hvorfor.",
       category: "Lagring"
     }
+  ,
+    "es": {
+      slug: "botella-de-vidrio-oscuro-o-lata-cual-conserva-mejor-el-aceite-de-oliva-virgen-extra",
+      title: "¿Botella de Vidrio Oscuro o Lata? Cuál Conserva Mejor el Aceite de Oliva Virgen Extra",
+      excerpt: "Pueden parecer simples envases, pero la elección entre una lata y una botella de vidrio afecta directamente al tiempo que el aceite conserva su calidad y polifenoles. Veamos por qué.",
+      category: "Conservación"
+    },
+    "fr": {
+      slug: "bouteille-en-verre-fonce-ou-bidon-en-metal-quel-contenant-conserve-le-mieux-l-huile-d-olive-extra-vierge",
+      title: "Bouteille en verre foncé ou bidon en métal ? Quel contenant conserve le mieux l'huile d'olive extra vierge",
+      excerpt: "Ils peuvent sembler être de simples contenants, mais le choix entre un bidon en métal et une bouteille en verre affecte directement la durée pendant laquelle votre huile conserve sa qualité et ses polyphénols. Voyons pourquoi.",
+      category: "Stockage et conservation"
+    },
   },
 "post-use-1": {
     "it": {
@@ -274,6 +352,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Vi gjenreiser æren for fritert mat med ekstra jomfruolivenolje ved av avlive noen dypt forankrede myter om røykpunkter.",
       category: "Riktig Bruk"
     }
+  ,
+    "es": {
+      slug: "freir-con-aceite-de-oliva-virgen-extra-mito-o-realidad-culinaria",
+      title: "¿Freír con aceite de oliva virgen extra: mito o realidad culinaria?",
+      excerpt: "Restauremos el honor de freír con AOVE desmitificando creencias arraigadas sobre el punto de humo.",
+      category: "Uso correcto"
+    },
+    "fr": {
+      slug: "frire-a-l-huile-d-olive-extra-vierge-mythe-ou-realite-culinaire",
+      title: "Frire à l'huile d'olive extra vierge : mythe ou réalité culinaire ?",
+      excerpt: "Restaurons l'honneur de la friture à l'huile d'olive extra vierge en démystifiant les croyances ancrées sur le point de fumée.",
+      category: "Utilisation correcte"
+    },
   },
   "post-use-2": {
     "it": {
@@ -311,6 +402,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Frisk ny sesong olivenolje: Hvordan best nyte den rå",
       excerpt: "Det er bare én ubestridelig regel når oljen er fersk, smaragdgrønn og rik på polyfenoler: hold den unna varme!",
       category: "Riktig Bruk",
+    },
+  
+    "es": {
+      slug: "aceite-nuevo-de-campana-como-disfrutarlo-mejor-en-crudo",
+      title: "Aceite nuevo de campaña: cómo disfrutarlo mejor en crudo",
+      excerpt: "Solo existe una regla irrefutable cuando el aceite es nuevo, verde esmeralda y rico en polifenoles: ¡mantenerlo alejado del calor!",
+      category: "Uso correcto"
+    },
+    "fr": {
+      slug: "huile-d-olive-nouvelle-de-l-annee-comment-la-deguster-au-mieux-a-cru",
+      title: "Huile d'olive nouvelle de l'année : comment la déguster au mieux à cru",
+      excerpt: "Il n'existe qu'une seule règle irréfutable lorsque l'huile est nouvelle, vert émeraude et riche en polyphénols : tenez-la éloignée de la chaleur !",
+      category: "Utilisation correcte"
     },
   },
     "ric-1": {
@@ -350,6 +454,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Bruschetta virker kanskje enkelt, men olivenoljen gjør hele forskjellen. Her er de tre smaksprofilene som passer til, og teknikken for et perfekt resultat.",
       category: "Oppskrifter & Parringer",
     },
+  
+    "es": {
+      slug: "el-mejor-aceite-de-oliva-para-bruschetta-3-perfiles-y-como-elegir",
+      title: "El mejor aceite de oliva para bruschetta: 3 perfiles y cómo elegir",
+      excerpt: "La bruschetta parece simple, pero el aceite de oliva marca la diferencia. Aquí tienes los tres perfiles de sabor para maridar y la técnica para un resultado perfecto.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "meilleure-huile-dolive-pour-bruschetta-3-profils-et-comment-choisir",
+      title: "Meilleure huile d'olive pour bruschetta : 3 profils et comment choisir",
+      excerpt: "La bruschetta semble simple, mais l'huile d'olive fait toute la différence. Voici les trois profils de saveurs à associer et la technique pour un résultat parfait.",
+      category: "Recettes et Accords"
+    },
   },
   "ric-2": {
     "it": {
@@ -387,6 +504,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Beste olivenolje til salatdressing: Emulsjon, salt og den rette profilen",
       excerpt: "Å lage en god dressing med ekstra jomfruolivenolje er ikke så rett frem som man tror. Fra valg av profil til emulsjon med eddik eller sitron: en liten, komplett guide.",
       category: "Oppskrifter & Parringer",
+    },
+  
+    "es": {
+      slug: "el-mejor-aceite-de-oliva-para-ensaladas-emulsion-sal-y-el-perfil-adecuado",
+      title: "El mejor aceite de oliva para ensaladas: emulsión, sal y el perfil adecuado",
+      excerpt: "Preparar un buen aliño con AOVE no es trivial. Desde la elección del perfil hasta la emulsión con vinagre o limón: una guía breve pero completa.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "meilleure-huile-dolive-pour-la-salade-emulsion-sel-et-bon-profil",
+      title: "Meilleure huile d'olive pour la salade : émulsion, sel et bon profil",
+      excerpt: "Préparer une bonne vinaigrette avec de l'HOVE n'est pas trivial. Du choix du profil à l'émulsion avec du vinaigre ou du citron : un guide court mais complet.",
+      category: "Recettes et Accords"
     },
   },
   "ric-3": {
@@ -426,6 +556,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Hvitløk, olje og chili — tre ingredienser, ingen feilmargin. Oljekvaliteten i denne retten er alt. Slik velger du riktig og bruker riktig teknikk.",
       category: "Oppskrifter & Parringer",
     },
+  
+    "es": {
+      slug: "aceite-de-oliva-para-pasta-de-ajo-y-aceite-que-perfil-de-sabor-elegir",
+      title: "Aceite de oliva para pasta de ajo y aceite: qué perfil de sabor elegir",
+      excerpt: "Ajo, aceite y guindilla: tres ingredientes, cero margen de error. La calidad del aceite en este plato lo es todo. Te contamos cómo elegirlo y la técnica correcta.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "huile-dolive-pour-pates-ail-et-huile-quel-profil-aromatique-choisir",
+      title: "Huile d'olive pour pâtes ail et huile : quel profil aromatique choisir",
+      excerpt: "Ail, huile et piment — trois ingrédients, aucune marge d'erreur. La qualité de l'huile dans ce plat fait tout. Voici comment la choisir et la bonne technique.",
+      category: "Recettes et Accords"
+    },
   },
   "ric-4": {
     "it": {
@@ -463,6 +606,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Olivenolje til belgfrukter og supper: Hvilken fungerer best og hvordan brukes den",
       excerpt: "En stråle olivenolje over linsesuppen er en eldgammel og klok tradisjon. Men ikke alle oljer er luke på bønner, ribollita og minestrone.",
       category: "Oppskrifter & Parringer",
+    },
+  
+    "es": {
+      slug: "aceite-de-oliva-para-legumbres-y-sopas-cual-funciona-mejor-y-como-usarlo",
+      title: "Aceite de oliva para legumbres y sopas: cuál funciona mejor y cómo usarlo",
+      excerpt: "Un hilo de aceite de oliva sobre una sopa de lentejas es una tradición antigua y sabia. Pero no todos los aceites son iguales cuando se trata de alubias, ribollita y minestrone.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "huile-dolive-pour-legumes-et-soupes-laquelle-choisir-et-comment-lutiliser",
+      title: "Huile d'olive pour légumes et soupes : laquelle choisir et comment l'utiliser",
+      excerpt: "Un filet d'huile d'olive sur une soupe de lentilles est une tradition ancienne et sage. Mais toutes les huiles ne se valent pas lorsqu'il s'agit de haricots, de ribollita et de minestrone.",
+      category: "Recettes et Accords"
     },
   },
   "ric-5": {
@@ -502,6 +658,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Å servere brød og olivenolje er en handling av varm gjestfrihet. La oss gjøre det til et lite smaksspill for å hjelpe gjestene dine med å skille mellom profilene.",
       category: "Oppskrifter & Parringer",
     },
+  
+    "es": {
+      slug: "pan-y-aceite-una-miniguia-de-degustacion-para-invitados-y-caja-de-degustacion",
+      title: "Pan y aceite: una miniguía de degustación para invitados (y Caja de Degustación)",
+      excerpt: "Servir pan y aceite de oliva es un acto de cálida hospitalidad. Conviértelo en un divertido juego de degustación para ayudar a tus invitados a distinguir los distintos perfiles de sabor.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "pain-et-huile-un-mini-guide-de-degustation-pour-les-invites-et-coffret-degustation",
+      title: "Pain et huile : un mini-guide de dégustation pour les invités (et Coffret Dégustation)",
+      excerpt: "Servir du pain et de l'huile d'olive est un geste d'hospitalité chaleureux. Transformez-le en un jeu de dégustation ludique pour aider vos invités à distinguer les profils aromatiques.",
+      category: "Recettes et Accords"
+    },
   },
   "ric-6": {
     "it": {
@@ -539,6 +708,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Baking med ekstra jomfruolivenolje: Ja, du kan – med sitron, sjokolade og aromaer",
       excerpt: "Å erstatte smør med ekstra jomfruolivenolje i bakverk er fretent mulig og kjempegodt. Oppdag hvilke kaker som egner seg best og de perfekte forholdene.",
       category: "Oppskrifter & Parringer",
+    },
+  
+    "es": {
+      slug: "reposteria-con-aove-si-se-puede-con-limon-chocolate-y-aromas",
+      title: "Repostería con AOVE: sí, se puede (con limón, chocolate y aromas)",
+      excerpt: "Sustituir la mantequilla por aceite de oliva virgen extra en la repostería es posible y delicioso. Descubre qué postres funcionan mejor y las proporciones perfectas.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "patisserie-a-lhove-oui-cest-possible-avec-du-citron-du-chocolat-et-des-aromes",
+      title: "Pâtisserie à l'HOVE : oui, c'est possible (avec du citron, du chocolat et des arômes)",
+      excerpt: "Remplacer le beurre par l'huile d'olive vierge extra en pâtisserie est possible et délicieux. Découvrez quels desserts s'y prêtent le mieux et les proportions idéales.",
+      category: "Recettes et Accords"
     },
   },
   "ric-7": {
@@ -578,6 +760,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Rå fisk er sart — oljen må fremheve den uten å overdøve den. Her er den riktige profilen og teknikken for perfekte carpaccioer, tartarer og rå skalldyr.",
       category: "Oppskrifter & Parringer",
     },
+  
+    "es": {
+      slug: "aceite-de-oliva-para-pescado-crudo-y-carpaccio-cual-elegir-y-por-que",
+      title: "Aceite de oliva para pescado crudo y carpaccio: cuál elegir y por qué",
+      excerpt: "El pescado crudo es delicado: el aceite debe realzarlo sin abrumarlo. Te contamos el perfil correcto y la técnica para carpaccios, tartares y mariscos perfectos.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "huile-dolive-pour-poisson-cru-et-carpaccio-laquelle-choisir-et-pourquoi",
+      title: "Huile d'olive pour poisson cru et carpaccio : laquelle choisir et pourquoi",
+      excerpt: "Le poisson cru est délicat — l'huile doit le sublimer sans le masquer. Voici le bon profil et la bonne technique pour des carpaccios, tartares et fruits de mer parfaits.",
+      category: "Recettes et Accords"
+    },
   },
   "ric-8": {
     "it": {
@@ -615,6 +810,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Olivenolje til grillet kjøtt: Intens fruktighet og hemmeligheten bak kontrasten",
       excerpt: "Grillet biff med en stråle intens fruktig ekstra jomfruolivenolje er en kraftfull opplevelse. Kontrasten mellom animalsk fett og vegetabilsk bitterhet er mesterlig.",
       category: "Oppskrifter & Parringer",
+    },
+  
+    "es": {
+      slug: "aceite-de-oliva-para-carne-a-la-parrilla-frutado-intenso-y-el-porque-del-contraste",
+      title: "Aceite de oliva para carne a la parrilla: frutado intenso y el porqué del contraste",
+      excerpt: "El filete a la parrilla con un chorrito de AOVE frutado intenso es una potente experiencia sensorial. El contraste entre la grasa animal y el amargor vegetal es magistral.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "huile-dolive-pour-viande-grillee-le-fruite-intense-et-la-raison-du-contraste",
+      title: "Huile d'olive pour viande grillée : le fruité intense et la raison du contraste",
+      excerpt: "Une viande grillée avec un filet d'HOVE au fruité intense es une expérience sensorielle puissante. Le contraste entre le gras animal et l'amertume végétale est magistral.",
+      category: "Recettes et Accords"
     },
   },
   "ric-9": {
@@ -654,6 +862,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Olivenolje på pizza er nesten automatisk – men hvor mange tenker over hvilken olje man skal bruke, når den skal på og hvorfor? En liten guide for hjemmebaking.",
       category: "Oppskrifter & Parringer",
     },
+  
+    "es": {
+      slug: "aceite-de-oliva-para-pizza-en-crudo-o-al-horno-que-perfil-y-cuando-anadirlo",
+      title: "Aceite de oliva para pizza: ¿en crudo o al horno? Qué perfil y cuándo añadirlo",
+      excerpt: "Verter un hilo de aceite de oliva en la pizza es casi automático, pero ¿cuántos se preguntan qué aceite usar, cuándo añadirlo y por qué? Una guía rápida para pizzeros caseros.",
+      category: "Recetas y Maridajes"
+    },
+    "fr": {
+      slug: "huile-dolive-pour-pizza-crue-ou-au-four-quel-profil-et-quand-lajouter",
+      title: "Huile d'olive pour pizza : crue ou au four ? Quel profil et quand l'ajouter",
+      excerpt: "Verser un filet d'huile d'olive sur une pizza est presque un réflexe — mais combien se demandent quelle huile utiliser, quand l'ajouter et pourquoi ? Un guide rapide pour les pizzaïolos maison.",
+      category: "Recettes et Accords"
+    },
   },
   "com-2": {
     "it": {
@@ -691,6 +912,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Parringer med lett fruktig olivenolje",
       excerpt: "Lett fruktig olivenolje er den perfekte ledsageren for sarte oppskrifter. Oppdag hvordan du bruker den uten å dekke over smakene.",
       category: "Kjøpsguide",
+    },
+  
+    "es": {
+      slug: "maridajes-para-el-aceite-de-oliva-de-frutado-ligero",
+      title: "Maridajes para el aceite de oliva de frutado ligero",
+      excerpt: "El aceite de oliva de frutado ligero es el compañero perfecto para las recetas más delicadas. Descubra cómo usarlo sin enmascarar los sabores.",
+      category: "Guía de Compra"
+    },
+    "fr": {
+      slug: "accords-et-mariages-de-l-huile-d-olive-au-fruite-leger",
+      title: "Accords et mariages de l'huile d'olive au fruité léger",
+      excerpt: "L'huile d'olive au fruité léger est le compagnon idéal des recettes les plus délicates. Découvrez comment l'utiliser sans masquer les saveurs.",
+      category: "Guide d'Achat"
     },
   },
   "com-4": {
@@ -730,6 +964,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Kraftig bitterhet, markant skarphet og dufter av grønt. Intensiv fruktig olivenolje overrasker, men er et enestående næringskonsentrat.",
       category: "Kjøpsguide",
     },
+  
+    "es": {
+      slug: "como-y-cuando-usar-un-aove-de-frutado-intenso",
+      title: "Cómo y cuándo usar un AOVE de frutado intenso",
+      excerpt: "Amargor vigoroso, persistencia picante y aromas a bosque. El AOVE de frutado intenso sorprende a los paladares ocasionales, pero representa un concentrado nutricional sin igual.",
+      category: "Guía de Compra"
+    },
+    "fr": {
+      slug: "comment-et-quand-utiliser-une-huile-d-olive-extra-vierge-au-fruite-intense",
+      title: "Comment et quand utiliser une huile d'olive extra vierge au fruité intense",
+      excerpt: "Amertume vigoureuse, persistance piquante et arômes de forêt. L'huile d'olive extra vierge au fruité intense surprend les palais occasionnels, mais représente un concentré nutritionnel inégalé.",
+      category: "Guide d'Achat"
+    },
   },
   "com-6": {
     "it": {
@@ -767,6 +1014,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Hva er ny sesong-olivenolje og hvorfor bør du kjøpe den?",
       excerpt: "Nypresset og helt fersk fra møllen byr den nye olivenoljen på en fantastisk smaksbølge i noen uker. Oppdag hemmelighetene.",
       category: "Kjøpsguide",
+    },
+  
+    "es": {
+      slug: "que-es-el-aceite-de-oliva-nuevo-y-por-que-deberia-comprarlo",
+      title: "¿Qué es el aceite de oliva nuevo y por qué debería comprarlo?",
+      excerpt: "Recién prensado y tibio de la almazara, el aceite de oliva nuevo ofrece una increíble explosión de notas sensoriales durante solo unas semanas. Descubra los secretos del momento perfecto.",
+      category: "Guía de Compra"
+    },
+    "fr": {
+      slug: "quest-ce-que-lhuile-dolive-nouvelle-et-pourquoi-devriez-vous-lacheter",
+      title: "Qu'est-ce que l'huile d'olive nouvelle et pourquoi devriez-vous l'acheter ?",
+      excerpt: "Fraîchement pressée et encore tiède du moulin, l'huile d'olive nouvelle offre une incroyable explosion de notes sensorielles pendant quelques semaines seulement. Découvrez les secrets du moment idéal.",
+      category: "Guide d'Achat"
     },
   },
   "com-8": {
@@ -806,6 +1066,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Mellom industrielle merker og håndverksoljer hersker det stor forvirring i supermarkedet. Vi forklarer de reelle forskjellene.",
       category: "Kjøpsguide",
     },
+  
+    "es": {
+      slug: "dop-igp-o-100-italiano-que-significan-las-siglas-del-aceite",
+      title: "DOP, IGP o 100 % italiano: ¿qué significan las siglas del aceite?",
+      excerpt: "Entre marcas industriales y cadenas de suministro artesanales, los supermercados están llenos de confusión. Descubre las diferencias reales entre estas etiquetas clave.",
+      category: "Guía de Compra"
+    },
+    "fr": {
+      slug: "aop-igp-ou-100-italien-que-signifient-les-acronymes-de-l-huile-d-olive",
+      title: "AOP, IGP ou 100% italien : que signifient les acronymes de l'huile d'olive ?",
+      excerpt: "Entre marques industrielles et circuits courts artisanaux, les supermarchés sont source de confusion. Découvrez les vraies différences entre ces labels clés.",
+      category: "Guide d'Achat"
+    },
   },
   "dif-1": {
     "it": {
@@ -843,6 +1116,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Olivenoljefeil: En komplett guide til sensoriske feil",
       excerpt: "Harsk, vinedikksmak, muggen, bunndfall. Olivenoljefeil klassifiseres og evalueres i en Panel Test. Lær hva de betyr.",
       category: "Olivenoljefeil",
+    },
+  
+    "es": {
+      slug: "defectos-del-aceite-de-oliva-virgen-extra-guia-completa-de-los-vicios-sensoriales",
+      title: "Defectos del aceite de oliva virgen extra: guía completa de los vicios sensoriales",
+      excerpt: "Rancio, avinado, moho, borras. Los defectos del aceite de oliva se clasifican y evalúan en el Panel Test del COI. Aprende qué significan y su origen.",
+      category: "Defectos del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "defauts-de-l-huile-d-olive-extra-vierge-guide-complet-des-vices-sensoriels",
+      title: "Défauts de l'huile d'olive extra vierge : guide complet des vices sensoriels",
+      excerpt: "Rance, vinant, moisi, lies. Les défauts de l'huile d'olive sont classés et évalués par le Panel Test du COI. Découvrez leur signification et leur origine.",
+      category: "Défauts de l'huile d'olive"
     },
   },
   "dif-2": {
@@ -882,6 +1168,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Harskhet er den mest vanlige og skadelige feilen for oljens kvalitet. Å forstå den kjemiske prosessen hjelper deg med enkel forebygging.",
       category: "Olivenoljefeil",
     },
+  
+    "es": {
+      slug: "aceite-de-oliva-rancio-causas-y-prevencion",
+      title: "Aceite de oliva rancio: causas y prevención",
+      excerpt: "La rancidez es el defecto más común y perjudicial para la calidad del aceite. Entender su mecanismo químico ayuda a prevenirlo con pasos sencillos.",
+      category: "Defectos del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "huile-d-olive-rance-causes-et-prevention",
+      title: "Huile d'olive rance : causes et prévention",
+      excerpt: "Le rancissement est le défaut le plus courant et le plus préjudiciable pour la qualité de l'huile. Comprendre le mécanisme chimique aide à le prévenir par des gestes simples.",
+      category: "Défauts de l'huile d'olive"
+    },
   },
   "fid-1": {
     "it": {
@@ -919,6 +1218,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Hvordan oljen vår blir til: Høsting → Mølle → Lagring",
       excerpt: "Fra felt til flaske: Hver enkelt fase påvirker resultatet. Vi guider deg gjennom kaldpressingsprosessen trinn for trinn.",
       category: "Vår Mølle",
+    },
+  
+    "es": {
+      slug: "como-se-hace-nuestro-aceite-cosecha-almazara-almacenamiento",
+      title: "Cómo se Hace Nuestro Aceite: Cosecha -> Almazara -> Almacenamiento",
+      excerpt: "Del campo a la botella: cada fase de producción influye en el resultado final. Descubre nuestro proceso de extracción en frío paso a paso.",
+      category: "Nuestra Almazara"
+    },
+    "fr": {
+      slug: "comment-notre-huile-est-faite-recolte-moulin-stockage",
+      title: "Comment notre huile est faite : Récolte -> Moulin -> Stockage",
+      excerpt: "Du champ à la bouteille : chaque phase de production influence le résultat final. Découvrez notre processus d'extraction à froid étape par étape.",
+      category: "Notre Moulin"
     },
   },
   "fid-2": {
@@ -958,6 +1270,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Du trenger ikke å være profesjonell smaker. Med noen enkle trinn kan du smake olivenolje som en ekspert hjemme på fem minutter.",
       category: "Vår Mølle",
     },
+  
+    "es": {
+      slug: "como-catar-aove-en-5-minutos-guia-practica-para-todos",
+      title: "Cómo Catar AOVE en 5 Minutos: Guía Práctica para Todos",
+      excerpt: "No necesitas ser un catador profesional. Con unos sencillos pasos, podrás catar el aceite de oliva como un experto, en cinco minutos y en tu propia casa.",
+      category: "Nuestra Almazara"
+    },
+    "fr": {
+      slug: "comment-deguster-l-evoo-en-5-minutes-guide-pratique-pour-tous",
+      title: "Comment déguster l'EVOO en 5 minutes : guide pratique pour tous",
+      excerpt: "Nul besoin d'être un dégustateur professionnel. En quelques étapes simples, vous pouvez déguster l'huile d'olive comme un expert — en cinq minutes chez vous.",
+      category: "Notre Moulin"
+    },
   },
   "info-1": {
     "it": {
@@ -995,6 +1320,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Hvorfor bitterhet og skarphet i olivenolje er et sunnhetstegn",
       excerpt: "Det kileende prikket i halsen og den bitre ettersmaken skremmer mange. Men de er de beste indikatorene for kvalitet. Se hvorfor.",
       category: "Olivenolje-informasjon",
+    },
+  
+    "es": {
+      slug: "por-que-el-aove-es-amargo-y-picante-no-es-un-defecto",
+      title: "Por Qué el AOVE es Amargo y Picante (No Es un Defecto)",
+      excerpt: "El picor en la garganta y el amargor persistente asustan a muchos. Sin embargo, son los mejores indicadores de un aceite de oliva de calidad. Descubre por qué.",
+      category: "Información sobre el Aceite de Oliva"
+    },
+    "fr": {
+      slug: "pourquoi-l-huile-d-olive-extra-vierge-est-amere-et-piquante-ce-n-est-pas-un-défaut",
+      title: "Pourquoi l'huile d'olive extra vierge est amère et piquante (ce n'est pas un défaut)",
+      excerpt: "Le picotement dans la gorge et l'amertume persistante en effraient plus d'un. Pourtant, ce sont les meilleurs indicateurs d'une huile d'olive de qualité. Découvrez pourquoi.",
+      category: "Informations sur l'huile d'olive"
     },
   },
   "info-2": {
@@ -1034,6 +1372,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "De tre fiendene til ekstra jomfruolivenolje er lys, oksygen og varme. Unngå enkle feil som kan ødelegge en fantastisk olje på få uker.",
       category: "Lagring",
     },
+  
+    "es": {
+      slug: "como-conservar-el-aove-en-casa-luz-oxigeno-temperatura",
+      title: "Cómo conservar el AOVE en casa: luz, oxígeno, temperatura",
+      excerpt: "Los tres enemigos del aceite de oliva virgen extra son la luz, el oxígeno y el calor. Evita errores sencillos que pueden estropear un gran aceite en pocas semanas.",
+      category: "Conservación"
+    },
+    "fr": {
+      slug: "comment-conserver-l-evoo-a-la-maison-lumiere-oxygene-temperature",
+      title: "Comment conserver l'EVOO à la maison : lumière, oxygène, température",
+      excerpt: "Les trois ennemis de l'huile d'olive extra vierge sont la lumière, l'oxygène et la chaleur. Évitiez les erreurs simples qui peuvent gâcher une excellente huile en quelques semaines.",
+      category: "Stockage et conservation"
+    },
   },
   "dif-3": {
     "it": {
@@ -1071,6 +1422,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Vinedikksmak-feil i olivenolje: Årsaker, genkjenning og forebygging",
       excerpt: "Olje som smaker eddik er ikke en god olje — det er en olje med en gjæringsfeil. Se hvor den kommer fra, og hvordan den forebygges i produksjonen.",
       category: "Olivenoljefeil",
+    },
+  
+    "es": {
+      slug: "defecto-avinado-avinagrado-en-el-aceite-de-oliva-causas-reconocimiento-y-prevencion",
+      title: "Defecto avinado-avinagrado en el aceite de oliva: causas, reconocimiento y prevención",
+      excerpt: "El aceite que sabe a vinagre no es un buen aceite: presenta un defecto de fermentación. Descubre de dónde viene y cómo prevenirlo en la producción.",
+      category: "Defectos del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "defaut-vinant-vinaigre-de-l-huile-d-olive-causes-reconnaissance-et-prevention",
+      title: "Défaut vinant-vinaigré de l'huile d'olive : causes, reconnaissance et prévention",
+      excerpt: "Une huile qui a un goût de vinaigre n'est pas une bonne huile : elle présente un défaut de fermentation. Découvrez d'où il vient et comment le prévenir lors de la production.",
+      category: "Défauts de l'huile d'olive"
     },
   },
   "dif-4": {
@@ -1110,6 +1474,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "To forskjellige feil som ofte forveksles. Mugg kommer fra olivene, mens bunndfall skyldes skitne tanker eller manglende dekantering.",
       category: "Olivenoljefeil",
     },
+  
+    "es": {
+      slug: "defectos-de-moho-y-borras-en-el-aceite-de-oliva-causas-y-prevencion",
+      title: "Defectos de moho y borras en el aceite de oliva: causas y prevención",
+      excerpt: "Dos defectos distintos que a menudo se confunden. El moho proviene de las aceitunas, las borras de los depósitos sucios. Ambos estropean el aceite de forma irreparable.",
+      category: "Defectos del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "defauts-de-moisi-et-de-lies-dans-l-huile-d-olive-causes-et-prevention",
+      title: "Défauts de moisi et de lies dans l'huile d'olive : causes et prévention",
+      excerpt: "Deux défauts distincts souvent confondus. Le moisi provient des olives, les lies des cuves sales. Tous deux gâchent l'huile de manière irréparable.",
+      category: "Défauts de l'huile d'olive"
+    },
   },
   "fid-3": {
     "it": {
@@ -1147,6 +1524,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Sporbarhet: Batch, Analyse, Opprinnelse — Slik garanterer vi kvaliteten",
       excerpt: "Ordet 'kvalitet' er misbrukt. Vi dokumenterer det: Hver batch har et sporbart nummer, laboratorieanalyse og verifiserbar opprinnelse.",
       category: "Vår Mølle",
+    },
+  
+    "es": {
+      slug: "trazabilidad-lote-analisis-y-procedencia-como-garantizamos-la-calidad",
+      title: "Trazabilidad: lote, análisis y procedencia — Cómo garantizamos la calidad",
+      excerpt: "La palabra 'calidad' se usa en exceso. Nosotros la documentamos: cada lote cuenta con un número trazable, análisis de laboratorio y origen verificable. Así es como funciona.",
+      category: "Nuestra Almazara"
+    },
+    "fr": {
+      slug: "tracabilite-lot-analyse-et-provenance-comment-nous-garantissons-la-qualite",
+      title: "Traçabilité : Lot, analyse et provenance — Comment nous garantissons la qualité",
+      excerpt: "Le mot « qualité » est galvaudé. Nous le documentons : chaque lot possède un numéro traçable, des analyses de laboratoire et une origine vérifiable. Voici comment cela fonctionne.",
+      category: "Notre Moulin"
     },
   },
   "fid-4": {
@@ -1186,6 +1576,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Akkurat som vin endrer ekstra jomfruolivenolje seg hvert år. Farge, intensitet, aromaer — alt avhenger av årgangen. Det er helt normalt og vakkert.",
       category: "Vår Mølle",
     },
+  
+    "es": {
+      slug: "por-que-el-aceite-de-oliva-cambia-cada-ano-clima-rendimiento-y-maduracion",
+      title: "Por qué el aceite de oliva cambia cada año: clima, rendimiento y maduración",
+      excerpt: "Al igual que el vino, el AOVE cambia cada año. Color, intensidad, notas aromáticas: todo depende de la cosecha. Te explicamos por qué es normal y hermoso.",
+      category: "Nuestra Almazara"
+    },
+    "fr": {
+      slug: "pourquoi-lhuile-dolive-change-chaque-annee-climat-rendement-et-maturation",
+      title: "Pourquoi l'huile d'olive change chaque année : climat, rendement et maturation",
+      excerpt: "Tout comme le vin, l'HOVE change chaque année. Couleur, intégrité, notes aromatiques — tout dépend du millésime. Voici pourquoi c'est normal et merveilleux.",
+      category: "Notre Moulin"
+    },
   },
   "fid-5": {
     "it": {
@@ -1223,6 +1626,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Olivenoljeturisme og besøk på oliemølle: Hva man gjør, og hvorfor det er verdt det",
       excerpt: "Olivenoljeturisme (oleoturisme) er en av Italias mest autentiske mat- og vinopplevelser. Besøk oliemøllen under pressingen.",
       category: "Vår Mølle",
+    },
+  
+    "es": {
+      slug: "oleoturismo-y-visitas-a-almazaras-que-es-que-hacemos-y-por-que-merece-la-pena",
+      title: "Oleoturismo y visitas a almazaras: qué es, qué hacemos y por qué merece la pena",
+      excerpt: "El oleoturismo es una de las experiencias enogastronómicas más auténticas de Italia. Visitar una almazara durante la cosecha cambia para siempre la forma de vivir el aceite de oliva.",
+      category: "Nuestra Almazara"
+    },
+    "fr": {
+      slug: "oleotourisme-et-visites-de-moulins-quest-ce-que-cest-ce-que-nous-faisons-et-pourquoi-ca-en-vaut-la-peine",
+      title: "Oléotourisme et visites de moulins : qu'est-ce que c'est, ce que nous faisons et pourquoi ça en vaut la peine",
+      excerpt: "L'oléotourisme est l'une des expériences œnogastronomiques les plus authentiques d'Italie. Visiter un moulin à huile pendant la récolte change à jamais votre façon de vivre l'huile d'olive.",
+      category: "Notre Moulin"
     },
   },
   "faq-1": {
@@ -1262,6 +1678,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "De mest vanlige spørsmålene om ekstra jomfruolivenolje med direkte svar uten vanskelige fagord. Fra lagring til pris.",
       category: "Olivenolje-informasjon",
     },
+  
+    "es": {
+      slug: "preguntas-frecuentes-sobre-el-aove-por-que-pica-por-que-esta-turbio-cuanto-dura-y-por-que-cuesta",
+      title: "Preguntas frecuentes sobre el AOVE: por qué pica, por qué está turbio, cuánto dura y por qué cuesta",
+      excerpt: "Las preguntas más frecuentes sobre el aceite de oliva virgen extra, con respuestas directas y sin tecnicismos inútiles. De la conservación al precio, del aspecto al gusto.",
+      category: "Información sobre el Aceite de Oliva"
+    },
+    "fr": {
+      slug: "faq-sur-l-huile-d-olive-extra-vierge-pourquoi-elle-pique-pourquoi-elle-est-trouble-combien-de-temps-elle-se-conserve-et-pourquoi-elle-coute",
+      title: "FAQ sur l'huile d'olive extra vierge : pourquoi elle pique, pourquoi elle est trouble, combien de temps elle se conserve et pourquoi elle coûte",
+      excerpt: "Les questions les plus fréquemment posées sur l'huile d'olive extra vierge, avec des réponses directes et sans jargon inutile. De la conservation au prix, de l'aspect au goût.",
+      category: "Informations sur l'huile d'olive"
+    },
   },
   "info-4": {
     "it": {
@@ -1299,6 +1728,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Slik gjenkjenner du en harsk olivenolje: tegn og råd",
       excerpt: "Duften av harsk olivenolje er ikke til å ta feil av. Se hvordan du gjenkjenner den og hvorfor du bør kaste den.",
       category: "Olivenoljefeil",
+    },
+  
+    "es": {
+      slug: "como-saber-si-tu-aceite-de-oliva-virgen-extra-esta-rancio",
+      title: "Cómo Saber Si Tu Aceite de Oliva Virgen Extra Está Rancio",
+      excerpt: "El olor del aceite de oliva rancio es inconfundible una vez que lo conoces. Descubre las señales y por qué no vale la pena conservarlo en tu cocina.",
+      category: "Defectos del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "comment-savoir-si-votre-huile-d-olive-extra-vierge-est-rancie",
+      title: "Comment savoir si votre huile d'olive extra vierge est rancie",
+      excerpt: "L'odeur de l'huile d'olive rancie est inconfondable une fois que vous la connaissez. Découvrez les signes et pourquoi elle ne vaut plus la peine d'être conservée en cuisine.",
+      category: "Défauts de l'huile d'olive"
     },
   },
   "info-5": {
@@ -1338,6 +1780,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Den vakre grønnfargen på fersk olivenolje er flott. Men er fargen et tegn på kvalitet? Svaret vil overraske deg.",
       category: "Olivenolje-informasjon",
     },
+  
+    "es": {
+      slug: "color-del-aceite-de-oliva-es-el-verde-un-signo-de-mejor-calidad",
+      title: "Color del Aceite de Oliva: ¿Es el Verde un Signo de Mejor Calidad?",
+      excerpt: "El verde vibrante del aceite de oliva recién molido es hermoso. Pero ¿es el color un indicador fiable de calidad? La respuesta científica podría sorprenderte.",
+      category: "Información sobre el Aceite de Oliva"
+    },
+    "fr": {
+      slug: "couleur-de-l-huile-d-olive-le-vert-est-il-un-signe-de-meilleure-qualite",
+      title: "Couleur de l'huile d'olive : le vert est-il un signe de meilleure qualité ?",
+      excerpt: "Le vert éclatant de l'huile d'olive fraîchement pressée est magnifique. Mais la couleur est-elle un indicateur de qualité fiable ? La réponse scientifique pourrait vous surprendre.",
+      category: "Informations sur l'huile d'olive"
+    },
   },
   "info-6": {
     "it": {
@@ -1375,6 +1830,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Røkpunkt: Kan man steke i ekstra jomfruolivenolje?",
       excerpt: "Svaret er ja – og det er faktisk sunnere enn de fleste planteoljer. Se sannheten om røkpunktet.",
       category: "Riktig Bruk",
+    },
+  
+    "es": {
+      slug: "punto-de-humo-se-puede-freir-con-aceite-de-oliva-virgen-extra",
+      title: "Punto de humo: ¿Se puede freír con aceite de oliva virgen extra?",
+      excerpt: "La respuesta es sí, y científicamente es mejor que los aceites de semillas. Descubre los datos sobre el punto de humo y la estabilidad térmica.",
+      category: "Uso correcto"
+    },
+    "fr": {
+      slug: "point-de-fumee-peut-on-frire-avec-de-l-huile-d-olive-vierge-extra",
+      title: "Point de fumée : Peut-on frire avec de l'huile d'olive vierge extra ?",
+      excerpt: "La réponse est oui — et scientifiquement, c'est bien meilleur que les huiles de graines. Découvrez les faits sur le point de fumée et la stabilité thermique.",
+      category: "Utilisation correcte"
     },
   },
   "info-7": {
@@ -1414,6 +1882,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Er olivenolje fetende? Bare hvis du overdriver. Se kaloritallet og anbefalte porsjonsstørrelser.",
       category: "Helse & Velvære",
     },
+  
+    "es": {
+      slug: "cuantas-calorias-tiene-el-aove-y-porciones-recomendadas",
+      title: "Cuántas Calorías tiene el AOVE y Porciones Recomendadas",
+      excerpt: "¿Engorda el aceite de oliva virgen extra? Solo si se abusa de él. Comprender sus calorías te ayuda a disfrutarlo de manera consciente.",
+      category: "Salud y Bienestar"
+    },
+    "fr": {
+      slug: "combien-de-calories-dans-l-evoo-et-portions-recommandees",
+      title: "Combien de calories dans l'EVOO et portions recommandées",
+      excerpt: "L'huile d'olive extra vierge fait-elle grossir ? Seulement si vous en abusez. Comprendre ses calories vous aide à la savourer en toute conscience.",
+      category: "Santé & Bien-être"
+    },
   },
   "info-8": {
     "it": {
@@ -1451,6 +1932,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Olivenolje og helse: Hva sier vitenskapen om polyfenoler?",
       excerpt: "Les hvordan ekstra jomfruolivenolje beskytter hjertet ditt og demper inflammasjon basert på medisinsk forskning.",
       category: "Helse & Velvære",
+    },
+  
+    "es": {
+      slug: "aceite-de-oliva-y-salud-lo-que-realmente-dice-la-ciencia-polifenoles-y-mas-alla",
+      title: "Aceite de oliva y salud: lo que realmente dice la ciencia (polifenoles y más allá)",
+      excerpt: "Todo el mundo dice que el aceite de oliva es saludable, pero ¿por qué? Exploremos cómo el aceite de oliva virgen extra protege el corazón y reduce la inflamación con datos científicos objetivos.",
+      category: "Salud y Bienestar"
+    },
+    "fr": {
+      slug: "huile-dolive-et-sante-ce-que-dit-vraiment-la-science-polyphenols-et-au-dela",
+      title: "Huile d'olive et santé : ce que dit vraiment la science (polyphénols et au-delà)",
+      excerpt: "Tout le monde dit que l'huile d'olive est bonne pour la santé, mais pourquoi ? Découvrez comment l'huile d'olive vierge extra protège le cœur et réduit l'inflammation grâce à des données scientifiques concrètes.",
+      category: "Santé & Bien-être"
     },
   },
   "info-9": {
@@ -1490,6 +1984,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Ved siden av komfyren, i klart glass eller i kjøleskapet: Se de 7 klassiske feilene du må unngå.",
       category: "Lagring",
     },
+  
+    "es": {
+      slug: "los-7-errores-mas-comunes-al-conservar-el-aceite-de-oliva-en-la-cocina",
+      title: "Los 7 errores más comunes al conservar el aceite de oliva en la cocina",
+      excerpt: "Cerca de los fogones, en vidrio transparente o en la nevera: se cometen muchos errores a diario. Descubre los 7 fallos clásicos que debes evitar.",
+      category: "Conservación"
+    },
+    "fr": {
+      slug: "les-7-erreurs-les-plus-courantes-lors-du-stockage-de-l-huile-d-olive-en-cuisine",
+      title: "Les 7 erreurs les plus courantes lors du stockage de l'huile d'olive en cuisine",
+      excerpt: "Près de la cuisinière, dans du verre transparent ou au réfrigérateur : tant d'erreurs sont commises chaque jour. Découvrez les 7 erreurs classiques à éviter.",
+      category: "Stockage et conservation"
+    },
   },
   "info-10": {
     "it": {
@@ -1527,6 +2034,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Rå eller oppvarmet: Når gjør ekstra jomfruolivenolje forskjellen?",
       excerpt: "Å bruke oljen rå bevarer polyfenolene. Men er det en feil å steke i den? Få den praktiske guiden.",
       category: "Riktig Bruk",
+    },
+  
+    "es": {
+      slug: "en-crudo-o-cocinado-cuando-usar-aove-marca-realmente-la-diferencia",
+      title: "En crudo o cocinado: cuándo usar AOVE marca realmente la diferencia",
+      excerpt: "El uso del aceite de oliva en crudo preserva los polifenoles. ¿Pero es un error cocinar con él? Una guía práctica de cocina.",
+      category: "Uso correcto"
+    },
+    "fr": {
+      slug: "cru-ou-cuit-quand-l-utilisation-de-l-evoo-fait-vraiment-la-difference",
+      title: "Cru ou cuit : quand l'utilisation de l'EVOO fait vraiment la différence",
+      excerpt: "L'utilisation de l'huile d'olive à cru préserve les polyphénols. Mais est-ce une erreur de cuisiner avec ? Un guide pratique de cuisine.",
+      category: "Utilisation correcte"
     },
   },
   "chim-1": {
@@ -1566,6 +2086,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "En molekylær reise inn i det flytende gullet: Hva gjør ekstra jomfruolivenolje så unik?",
       category: "Olivenoljekjemi",
     },
+  
+    "es": {
+      slug: "composicion-quimica-del-aceite-de-oliva-virgen-extra-trigliceridos-y-saponificables",
+      title: "Composición química del aceite de oliva virgen extra: triglicéridos y saponificables",
+      excerpt: "Un viaje molecular por el interior del oro líquido: descubre qué hace del AOVE una obra maestra de la química natural.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "composition-chimique-de-l-huile-d-olive-extra-vierge-triglycerides-et-saponifiables",
+      title: "Composition chimique de l'huile d'olive extra vierge : triglycérides et saponifiables",
+      excerpt: "Un voyage moléculaire au cœur de l'or liquide : découvrez ce qui fait de l'EVOO un chef-d'œuvre de la chimie naturelle.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
   "chim-2": {
     "it": {
@@ -1603,6 +2136,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Polyfenoler i olivenolje: Oleocanthal, Oleuropein og Hydroxytyrosol",
       excerpt: "Lær kjemien bak olivenoljen å kjenne. Hvordan beskytter disse stoffene kroppen din og definerer smaken?",
       category: "Olivenoljekjemi",
+    },
+  
+    "es": {
+      slug: "polifenoles-en-el-aceite-de-oliva-oleocantal-oleuropeina-e-hidroxitirosol",
+      title: "Polifenoles en el aceite de oliva: Oleocantal, oleuropeína e hidroxitirosol",
+      excerpt: "Descubre la química detrás del AOVE de alta calidad. Aprende cómo el oleocantal, la oleuropeína y el hidroxitirosol protegen tu cuerpo y definen el sabor.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "polyphenols-dans-l-huile-d-olive-oleocanthal-oleuropeine-et-hydroxytyrosol",
+      title: "Polyphénols dans l'huile d'olive : Oléocanthal, oléuropeïne et hydroxytyrosol",
+      excerpt: "Découvrez la chimie derrière l'HOVE de haute qualité. Apprenez comment l'oléocanthal, l'oléuropeïne et l'hydroxytyrosol protègent votre corps et définissent le goût.",
+      category: "Chimie de l'Huile d'Olive"
     },
   },
   "chim-3": {
@@ -1642,6 +2188,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Se hvordan forholdet mellom fettsyrene bestemmer oljens stabilitet under oppvarming.",
       category: "Olivenoljekjemi",
     },
+  
+    "es": {
+      slug: "perfil-de-acidos-grasos-del-aceite-de-oliva-acido-oleico-linoleico-y-palmitico",
+      title: "Perfil de ácidos grasos del aceite de oliva: Ácido oleico, linoleico y palmítico",
+      excerpt: "Descubre los componentes básicos del aceite de oliva. Aprende cómo la proporción de los ácidos oleico, linoleico y palmítico determinan la estabilidad, resistencia a la fritura y sabor.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "profil-des-acides-gras-de-l-huile-d-olive-acide-oleique-linoleique-et-palmitique",
+      title: "Profil des acides gras de l'huile d'olive : Acide oléique, linoléique et palmitique",
+      excerpt: "Découvrez les composants de base de l'huile d'olive. Apprenez comment les proportions d'acides oléique, linoléique et palmitique déterminent la stabilité, la résistance à la friture et le goût.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
   "chim-4": {
     "it": {
@@ -1679,6 +2238,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Peroksidtall i olivenolje: Hva måler det, og hvorfor er det viktig?",
       excerpt: "Peroksidtallet er den første indikatoren på oljens oksidasjon. Se grensene og de ideelle verdiene.",
       category: "Olivenoljekjemi",
+    },
+  
+    "es": {
+      slug: "indice-de-peroxidos-en-el-aceite-de-oliva-comprender-la-frescura-y-la-calidad",
+      title: "Índice de peróxidos en el aceite de oliva: comprender la frescura y la calidad",
+      excerpt: "Descubre qué mide el índice de peróxidos, cómo comienza la oxidación en la aceituna y por qué los valores bajos de peróxidos son críticos para un AOVE fresco.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "indice-de-peroxydes-dans-lhuile-dolive-comprendre-la-fraicheur-et-la-qualite",
+      title: "Indice de peroxydes dans l'huile d'olive : comprendre la fraîcheur et la qualité",
+      excerpt: "Découvrez ce que mesure l'indice de peroxydes, comment l'oxydation commence dans l'olive, et pourquoi des indices bas sont essentiels pour une HOVE fraîche.",
+      category: "Chimie de l'Huile d'Olive"
     },
   },
   "chim-5": {
@@ -1718,6 +2290,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "K-verdiene måler oljens lysabsorpsjon og avslører om den er fersk, gammel eller blandet med raffinert olje.",
       category: "Olivenoljekjemi",
     },
+  
+    "es": {
+      slug: "k232-y-k270-que-miden-los-coeficientes-de-extincion-ultravioleta-en-el-aceite-de-oliva",
+      title: "K232 y K270: qué miden los coeficientes de extinción ultravioleta en el aceite de oliva",
+      excerpt: "Los indicadores espectrofotométricos UV son cruciales para detectar aceites viejos o adulterados. Entienda los valores K232, K270 y Delta-K.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "k232-et-k270-ce-que-mesurent-les-coefficients-d-extinction-uv-dans-l-huile-d-olive",
+      title: "K232 et K270 : ce que mesurent les coefficients d'extinction UV dans l'huile d'olive",
+      excerpt: "Les indicateurs spectrophotométriques UV sont cruciaux pour détecter les huiles vieilles ou frelatées. Comprendre les valeurs K232, K270 et Delta-K.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
   "chim-6": {
     "it": {
@@ -1756,6 +2341,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Eltningen er det mest kritiske trinnet i pressingen. Temperatur og varighet avgjør polyfenoler og aroma.",
       category: "Olivenoljekjemi",
     },
+  
+    "es": {
+      slug: "batido-la-quimica-y-la-ciencia-de-los-aromas-del-aceite-de-oliva",
+      title: "Batido: la química y la ciencia de los aromas del aceite de oliva",
+      excerpt: "El batido es el paso más crítico de la molienda. Descubra cómo la temperatura y el tiempo determinan los perfiles finales de polifenoles y aromas del AOVE.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "malaxage-la-chimie-et-la-science-des-aromes-de-l-huile-d-olive",
+      title: "Malaxage : la chimie et la science des arômes de l'huile d'olive",
+      excerpt: "Le malaxage est l'étape la plus critique du pressage. Découvrez comment la température et le temps dictent les profils finaux de polyphénols et d'arômes de l'EVOO.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
   "chim-7": {
     "it": {
@@ -1793,6 +2391,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Filtrering av olivenolje: Betydning for vann, enzymer og holdbarhet",
       excerpt: "Filtrering er ikke bare for utseendets skyld. Det fjerner vann og enzymer, noe som forlenger holdbarheten markant.",
       category: "Olivenoljekjemi",
+    },
+  
+    "es": {
+      slug: "filtracion-del-aove-efectos-sobre-el-agua-las-enzimas-y-la-estabilidad",
+      title: "Filtración del AOVE: efectos sobre el agua, las enzimas y la estabilidad",
+      excerpt: "La filtración no es solo una cuestión de aspecto. Elimina el agua en suspensión y las enzimas activas, mejorando drásticamente la vida útil del aceite.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "filtration-de-l-evoo-effets-sur-l-eau-les-enzymes-et-la-stabilite",
+      title: "Filtration de l'EVOO : effets sur l'eau, les enzymes et la stabilité",
+      excerpt: "La filtration n'est pas seulement une question d'apparence. Elle élimine l'eau en suspension et les enzymes actives, améliorant considérablement la durée de conservation de l'huile.",
+      category: "Chimie de l'Huile d'Olive"
     },
   },
 
@@ -1833,6 +2444,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "Kjernefysisk magnetisk resonans (NMR) er i dag et av de sterkeste verktøyene for autentisering av ekstra jomfruolivenolje. ¹H-NMR og ¹³C-NMR avslører fettsyreprofil og opprinnelse.",
       category: "Olivenoljekjemi",
     },
+  
+    "es": {
+      slug: "rmn-del-aceite-de-oliva-espectroscopia-de-1h-y-13c-para-autenticacion-y-deteccion-de-adulteraciones",
+      title: "RMN del aceite de oliva: Espectroscopia de ¹H y ¹³C para la autenticación y detección de adulteraciones",
+      excerpt: "La resonancia magnética nuclear es hoy en día una de las herramientas más potentes para la autenticación del AOVE. La RMN-¹H y la RMN-¹³C revelan la composición de ácidos grasos, los adulterantes y el origen geográfico.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "rmn-de-lhuile-dolive-spectroscopie-1h-et-13c-pour-lauthentification-et-la-detection-des-adulterations",
+      title: "RMN de l'huile d'olive : Spectroscopie ¹H et ¹³C pour l'authentification et la détection des adultérations",
+      excerpt: "La Résonance Magnétique Nucléaire est aujourd'hui l'un des outils les plus puissants pour l'authentification de l'HOVE. La RMN-¹H et la RMN-¹³C révèlent la composition en acides gras, les adultérants et l'origine géographique.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
   "tec-2": {
     "it": {
@@ -1870,6 +2494,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Massespektrometri av olivenolje: GC-MS for flyktige forbindelser, LC-MS for polyfenoler",
       excerpt: "GC-MS for flyktige forbindelser og LC-MS/MS for polyfenolprofilen: to teknikker som til sammen gir et komplett molekylært portrett av ekstra jomfruolivenolje.",
       category: "Olivenoljekjemi",
+    },
+  
+    "es": {
+      slug: "espectrometria-de-masas-del-aceite-de-oliva-gc-ms-para-compuestos-volatiles-y-lc-ms-para-polifenoles",
+      title: "Espectrometría de masas del aceite de oliva: GC-MS para compuestos volátiles y LC-MS para polifenoles",
+      excerpt: "¿Qué hay detrás de siglas como GC-MS y LC-MS? Descubramos de forma sencilla cómo la ciencia analiza las moléculas del aceite de oliva para garantizar los aromas, los beneficios para la salud y la autenticidad.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "spectrometrie-de-masse-de-l-huile-d-olive-gc-ms-pour-les-volatils-lc-ms-pour-les-polyphenols",
+      title: "Spectrométrie de masse de l'huile d'olive : GC-MS pour les volatils, LC-MS pour les polyphénols",
+      excerpt: "Qu'y a-t-il derrière les acronymes comme GC-MS et LC-MS ? Découvrons en termes simples comment la science analyse les molécules de l'huile d'olive pour en garantir les arômes, les bienfaits pour la santé et l'authenticité.",
+      category: "Chimie de l'Huile d'Olive"
     },
   },
   "tec-3": {
@@ -1909,6 +2546,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       excerpt: "ISO 660, 3960, 3961, 5509, 27107: De offisielle metodene for olivenoljeanalyse forklart i detalj, inkludert kjemiske prinsipper, prosedyrer og lovbestemte grenser.",
       category: "Olivenoljekjemi",
     },
+  
+    "es": {
+      slug: "metodos-iso-para-el-analisis-del-aceite-de-oliva-de-la-iso-660-a-la-iso-27107-una-guia-completa",
+      title: "Métodos ISO para el análisis del aceite de oliva: de la ISO 660 a la ISO 27107—Una guía completa",
+      excerpt: "ISO 660, 3960, 3961, 5509, 27107: los métodos oficiales para el análisis del aceite de oliva explicados al detalle, incluyendo principios químicos, procedimientos y límites legales.",
+      category: "Química del Aceite de Oliva"
+    },
+    "fr": {
+      slug: "methodes-iso-pour-l-analyse-de-l-huile-d-olive-de-l-iso-660-a-l-iso-27107-un-guide-complet",
+      title: "Méthodes ISO pour l'analyse de l'huile d'olive : de l'ISO 660 à l'ISO 27107—Un guide complet",
+      excerpt: "ISO 660, 3960, 3961, 5509, 27107 : les méthodes officielles pour l'analyse de l'huile d'olive expliquées en détail, y compris les principes chimiques, les procédures et les limites légales.",
+      category: "Chimie de l'Huile d'Olive"
+    },
   },
   "glos-1": {
     "it": {
@@ -1946,6 +2596,19 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Record<Locale, BlogTranslati
       title: "Ordliste for ekstra jomfruolivenolje: Fruktig, bitter, skarp, feil og mer",
       excerpt: "Alle begreper innen ekstra jomfruolivenolje forklart på en omhyggelig måte. Fra fruktig til Panel Test, fra bunnfall til cultivar.",
       category: "Olivenolje-informasjon",
+    },
+  
+    "es": {
+      slug: "glosario-del-aove-frutado-amargo-picante-defectos-batido-y-mas",
+      title: "Glosario del AOVE: frutado, amargo, picante, defectos, batido y más",
+      excerpt: "Todos los términos del mundo del aceite de oliva virgen extra explicados de forma sencilla. Del frutado al Panel Test, del poso a la variedad.",
+      category: "Información sobre el Aceite de Oliva"
+    },
+    "fr": {
+      slug: "glossaire-de-l-huile-d-olive-extra-vierge-fruite-amer-piquant-defauts-malaxation-et-plus",
+      title: "Glossaire de l'huile d'olive extra vierge : fruité, amer, piquant, défauts, malaxation et plus",
+      excerpt: "Tous les termes du monde de l'huile d'olive extra vierge expliqués simplement. Du fruité au Panel Test, de la lie au cultivar.",
+      category: "Informations sur l'huile d'olive"
     },
   },
 };

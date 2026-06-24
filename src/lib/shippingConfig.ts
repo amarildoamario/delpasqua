@@ -11,13 +11,19 @@ export interface ShippingRule {
   deliveryDaysMax: number;          // Estimated delivery maximum days
 }
 
+/**
+ * The storefront launches in Italy only. Keep future country rules below, but
+ * expose shipping, checkout and structured data exclusively for this market.
+ */
+export const ACTIVE_MARKET_COUNTRY_CODES = ["IT"] as const;
+
 export const SHIPPING_RULES: Record<string, ShippingRule> = {
   IT: {
     countryCode: "IT",
     nameIt: "Italia",
     nameEn: "Italy",
     shippingFlatCents: 590, // 5.90 EUR
-    freeShippingThresholdCents: 5000, // 50.00 EUR
+    freeShippingThresholdCents: 12000, // 120.00 EUR
     returnShippingFeeCents: 0, // Free returns in Italy
     deliveryDaysMin: 2,
     deliveryDaysMax: 3,
@@ -82,6 +88,26 @@ export const SHIPPING_RULES: Record<string, ShippingRule> = {
     deliveryDaysMin: 4,
     deliveryDaysMax: 7,
   },
+  ES: {
+    countryCode: "ES",
+    nameIt: "Spagna",
+    nameEn: "Spain",
+    shippingFlatCents: 1490, // 14.90 EUR
+    freeShippingThresholdCents: 11000, // 110.00 EUR
+    returnShippingFeeCents: 690, // 6.90 EUR return
+    deliveryDaysMin: 4,
+    deliveryDaysMax: 6,
+  },
+  FR: {
+    countryCode: "FR",
+    nameIt: "Francia",
+    nameEn: "France",
+    shippingFlatCents: 1290, // 12.90 EUR
+    freeShippingThresholdCents: 10000, // 100.00 EUR
+    returnShippingFeeCents: 690, // 6.90 EUR return
+    deliveryDaysMin: 3,
+    deliveryDaysMax: 5,
+  },
   // Default fallback zone for other European countries
   EU: {
     countryCode: "EU",
@@ -108,9 +134,19 @@ export function getShippingRule(countryCode: string): ShippingRule {
   return SHIPPING_RULES.EU;
 }
 
+export function isActiveMarketCountry(countryCode: string): boolean {
+  return ACTIVE_MARKET_COUNTRY_CODES.includes(
+    countryCode.trim().toUpperCase() as (typeof ACTIVE_MARKET_COUNTRY_CODES)[number]
+  );
+}
+
+export function getActiveShippingRules(): ShippingRule[] {
+  return ACTIVE_MARKET_COUNTRY_CODES.map((countryCode) => SHIPPING_RULES[countryCode]);
+}
+
 /**
  * Returns list of explicitly supported country codes for shipping
  */
 export function getSupportedCountries(): string[] {
-  return ["IT", "DE", "NL", "DK", "NO", "US", "GB"];
+  return [...ACTIVE_MARKET_COUNTRY_CODES];
 }

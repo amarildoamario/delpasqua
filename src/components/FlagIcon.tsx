@@ -84,6 +84,19 @@ export const FlagIcon = ({ locale, className }: { locale: string; className?: st
         <circle cx="2400" cy="1800" r="80" fill="#fff" />
       </svg>
     ),
+    es: (
+      <svg viewBox="0 0 750 500" className={className}>
+        <rect width="750" height="500" fill="#c11a2a" />
+        <rect width="750" height="250" y="125" fill="#f1bf00" />
+      </svg>
+    ),
+    fr: (
+      <svg viewBox="0 0 3 2" className={className}>
+        <rect width="1" height="2" fill="#00209f" />
+        <rect width="1" height="2" x="1" fill="#fff" />
+        <rect width="1" height="2" x="2" fill="#f31830" />
+      </svg>
+    ),
   };
 
   return flags[locale] || null;

@@ -87,10 +87,10 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
 
             <div>
               <div className="relative">
-                <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#3D5A3D]/5 to-[#B8860B]/5 blur-2xl" />
+                <div className="absolute -inset-4 rounded-[5px] bg-gradient-to-br from-[#3D5A3D]/5 to-[#B8860B]/5 blur-2xl" />
 
                 {/* ✅ IMMAGINE FRANTOIO */}
-                <div className="relative overflow-hidden rounded-3xl border border-[#E7E5E4] bg-[#F5F5F4]">
+                <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4]">
                   <div className="relative aspect-[16/10] w-full">
                     <Image
                       src="/contatti/frantoio.jpg"
@@ -111,7 +111,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
           <div className="mt-20 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
             {/* INFO */}
             <div className="space-y-6">
-              <div className="rounded-3xl border border-[#E7E5E4] bg-white p-6 lg:p-8">
+              <div className="rounded-[5px] border border-[#E7E5E4] bg-white p-6 lg:p-8">
                 <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
                   {t("info.company_label")}
                 </div>
@@ -156,7 +156,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
                       href="https://delpasqua.com/wp-content/uploads/2025/03/Politica-Parita-di-Genere-Frantoio-Del-Pasqua-gen-20251.pdf"
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
+                      className="inline-flex items-center gap-2 rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
                     >
                       <IconFile className="h-4 w-4 text-[#3D5A3D]" />
                       {t("info.docs_gender")}
@@ -164,7 +164,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
 
                     <Link
                       href="/privacy"
-                      className="inline-flex items-center gap-2 rounded-full border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
+                      className="inline-flex items-center gap-2 rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
                     >
                       <IconShield className="h-4 w-4 text-[#3D5A3D]" />
                       {t("info.docs_privacy")}
@@ -190,7 +190,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
             </div>
 
             {/* FORM */}
-            <div className="rounded-3xl border border-[#E7E5E4] bg-white p-6 lg:p-8">
+            <div className="rounded-[5px] border border-[#E7E5E4] bg-white p-6 lg:p-8">
               <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
                 {t("form.label")}
               </div>
@@ -209,7 +209,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
 
           {/* MAP */}
           <div className="mt-8">
-            <div className="rounded-3xl border border-[#E7E5E4] bg-white p-6 lg:p-8">
+            <div className="rounded-[5px] border border-[#E7E5E4] bg-white p-6 lg:p-8">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <div className="text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
@@ -221,7 +221,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
                 </div>
 
                 <a
-                  className="inline-flex items-center gap-2 rounded-full border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs font-medium text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
+                  className="inline-flex items-center gap-2 rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] px-4 py-2 text-xs font-medium text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white"
                   href={`https://www.google.com/maps/search/?api=1&query=${CONTACT_LAT},${CONTACT_LNG}`}
                   target="_blank"
                   rel="noreferrer"
@@ -250,8 +250,7 @@ export default async function ContattiPage({ params }: { params: Promise<{ local
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3D5A3D]/10 px-4 py-2 text-xs font-medium text-[#3D5A3D]">
-      <span className="h-1.5 w-1.5 rounded-full bg-[#3D5A3D]" />
+    <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#3D5A3D]/10 px-4 py-2 text-xs font-medium text-[#3D5A3D]">
       {children}
     </span>
   );
@@ -282,7 +281,7 @@ function GoogleMapEmbed({
   const src = `https://maps.google.com/maps?hl=it&q=${latitude},${longitude}&t=&z=17&ie=UTF8&iwloc=B&output=embed`;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-[#E7E5E4] bg-[#F5F5F4]">
+    <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4]">
       <div className="h-[420px] w-full sm:h-auto sm:aspect-[21/9]">
         <iframe
           title={`Mappa - ${address}`}
@@ -312,7 +311,7 @@ function SocialChip({
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E7E5E4] bg-[#FDFCF8] text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#3D5A3D]"
+      className="inline-flex h-10 w-10 items-center justify-center rounded-[5px] border border-[#E7E5E4] bg-[#FDFCF8] text-[#57534E] transition hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#3D5A3D]"
     >
       {children}
     </a>

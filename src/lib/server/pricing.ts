@@ -6,7 +6,7 @@ import { evaluatePromotionEligibility } from "@/lib/server/promotionUsage";
 import { getStoreSettings } from "@/lib/server/settings";
 import { calcVatCentsFromSubtotal } from "@/lib/server/vat";
 import type { Product } from "@/lib/shopTypes";
-import { getShippingRule } from "@/lib/shippingConfig";
+import { getShippingRule, isActiveMarketCountry } from "@/lib/shippingConfig";
 
 export type PricingInputLine = {
   productId: string;
@@ -130,7 +130,10 @@ export async function computeOrderPricing(args: {
   promotionCode?: string;
   countryCode?: string;
 }): Promise<PricingResult> {
-  const countryCode = args.countryCode || "IT";
+  const countryCode = (args.countryCode || "IT").trim().toUpperCase();
+  if (!isActiveMarketCountry(countryCode)) {
+    throw Object.assign(new Error("Le spedizioni sono attualmente disponibili solo in Italia."), { status: 400 });
+  }
   const catalog = (await readCatalog()) as unknown as Product[];
   const now = new Date();
   const productKeys = [...new Set(args.lines.map((line) => line.productId))];
@@ -259,7 +262,7 @@ export async function computeOrderPricing(args: {
   if (!orderFreeShipping) {
     const isItaly = countryCode.toUpperCase() === "IT";
     if (isItaly) {
-      shippingCents = subtotalCents >= shippingRule.freeShippingThresholdCents
+      shippingCents = subtotalCents > shippingRule.freeShippingThresholdCents
         ? 0
         : shippingRule.shippingFlatCents;
     } else {

@@ -218,7 +218,7 @@ export default function CartDrawer({
   }, [catalog, clearAvailabilityNotice, lastAvailabilityNotice, open, statusText, t]);
 
   const subtotal = totals.subtotalCents;
-  const remainingForFreeShipping = Math.max(0, shippingRule.freeShippingThresholdCents - subtotal);
+  const remainingForFreeShipping = Math.max(0, shippingRule.freeShippingThresholdCents + 1 - subtotal);
   const shippingPreview = totals.shippingCents;
   const discountCents = totals.discountCents;
   const total = totals.totalCents;

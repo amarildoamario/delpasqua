@@ -274,7 +274,7 @@ export default function CartPageClient() {
   }, [catalog, lines]);
 
   const shippingRule = getShippingRule(countryCode);
-  const remainingForFreeShipping = Math.max(0, shippingRule.freeShippingThresholdCents - totals.subtotalCents);
+  const remainingForFreeShipping = Math.max(0, shippingRule.freeShippingThresholdCents + 1 - totals.subtotalCents);
 
   const linesCount = lines.length;
   useEffect(() => {

@@ -8,7 +8,7 @@
 import { URL } from "url";
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
-const ACTIVE_LOCALES = new Set(["it", "en", "de", "nl", "da", "no"]);
+const ACTIVE_HREFLANGS = new Set(["it", "en", "de", "nl", "da", "no", "es", "fr", "en-US"]);
 const FORBIDDEN_WORDS = [
   "cart",
   "carrello",
@@ -148,7 +148,7 @@ async function run() {
             pageErrors.push(`Hreflang for '${lang}' is not an absolute URL: '${href}'`);
           }
 
-          if (lang !== "x-default" && !ACTIVE_LOCALES.has(lang)) {
+          if (lang !== "x-default" && !ACTIVE_HREFLANGS.has(lang)) {
             pageErrors.push(`Inactive/unsupported locale '${lang}' found in hreflangs.`);
           }
 

@@ -2,8 +2,9 @@ import { locales, type Locale } from "@/i18n/pathnames";
 import { readPublicCatalog } from "@/lib/server/catalog";
 import OlioBiologicoClient, { type BiologicoContent } from "./OlioBiologicoClient";
 import { pageMetadata } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
 
-const pageContent: Record<Locale, BiologicoContent> = {
+const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent> = {
   it: {
     kicker: "Sostenibilità",
     title: "Olio EVO Biologico",
@@ -487,7 +488,11 @@ export function generateStaticParams() {
 export default async function OlioBiologicoPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const content = pageContent[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const content = pageContent[displayLocale];
+
+  const tp = await getTranslations({ locale: activeLocale, namespace: "Products" });
+  const hasTranslation = (key: string) => typeof tp.has === "function" && tp.has(key);
 
   const rawCatalog = await readPublicCatalog();
   const targetIds = ["fruttato-leggero", "evo"];
@@ -501,9 +506,13 @@ export default async function OlioBiologicoPage({ params }: { params: Promise<{ 
         currency: "EUR",
       }).format(priceCents / 100);
 
+      const title = activeLocale === "it"
+        ? (product.title ?? product.id)
+        : (hasTranslation(`${product.id}.title`) ? tp(`${product.id}.title`) : product.title || product.id);
+
       return {
         id: product.id,
-        title: product.title ?? product.id,
+        title,
         priceLabel,
         imageSrc: firstVariant?.imageSrc ?? product.imageSrc ?? "",
         slug: product.slug ?? product.id,
@@ -516,7 +525,8 @@ export default async function OlioBiologicoPage({ params }: { params: Promise<{ 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const content = pageContent[activeLocale];
+  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const content = pageContent[displayLocale];
 
   return pageMetadata({
     title: content.title,

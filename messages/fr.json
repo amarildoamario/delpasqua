@@ -1,0 +1,1063 @@
+{
+  "TastingsPage": {
+        "metadata": {
+            "title": "Dégustation d'huile d'olive extra vierge en Toscane | Frantoio del Pasqua Arezzo",
+            "description": "Découvrez les vraies saveurs de l'huile d'olive extra vierge toscane. Réservez une dégustation d'huile d'olive extra vierge au Frantoio del Pasqua à Monte San Savino, Arezzo.",
+            "keywords": "dégustation d'huile d'olive toscane, dégustation d'huile d'olive arezzo, moulin à huile arezzo, huile d'olive extra vierge toscane, visite de moulin à huile toscane, dégustation d'huile d'olive extra vierge"
+        },
+        "hero": {
+            "subtitle": "Visites & dégustations",
+            "title_part1": "Réservez une ",
+            "title_italic": "dégustation",
+            "title_part2": " au moulin",
+            "description": "Un voyage sensoriel guidé pour apprendre à reconnaître les arômes et les notes de l'huile d'olive extra vierge, découvrir nos variétés et explorer le moulin de près.",
+            "duration": "min",
+            "from": "À partir de",
+            "child_policy": "* Les dégustations sont gratuites pour les enfants jusqu'à 12 ans.",
+            "types": {
+                "classica": {
+                    "title": "Visite et dégustation",
+                    "subtitle": "Venez nous rendre visite directement au Moulin à Monte San Savino et découvrez tout ce qu'il y a à savoir sur l'huile d'olive extra vierge et les olives.",
+                    "includes": [
+                        "Description et explication de la culture de l'olivier et des variétés typiques de la région",
+                        "Introduction aux différentes méthodes de culture, de récolte, de production et de stockage",
+                        "Dégustation guidée pour apprendre à reconnaître les qualités sensorielles de l'huile d'olive et identifier les éventuels défauts",
+                        "Dégustation de nos huiles associées à des produits locaux : bruschetta de pain moulu sur pierre, légumes frais en pinzimonio et un verre de Rosso di Sangiovese"
+                    ]
+                },
+                "intermedia": {
+                    "title": "Dégustation intermédiaire",
+                    "subtitle": "Service et association d'huiles et de vin avec des fromages et de la charcuterie locaux, avec expérience de dégustation guidée.",
+                    "includes": [
+                        "Description et explication de la culture de l'olivier et des variétés typiques de la région",
+                        "Introduction aux méthodes de culture, de récolte, de production et de stockage",
+                        "Expérience de dégustation guidée pour reconnaître les qualités sensorielles et identifier les éventuels défauts",
+                        "Service et association d'huiles et de vin avec des fromages et de la charcuterie locaux",
+                        "Bruschetta de pain moulu sur pierre et légumes frais en pinzimonio"
+                    ]
+                },
+                "premium": {
+                    "title": "Expérience sur le terrain",
+                    "subtitle": "Une expérience unique dans l'oliveraie de Pozzo della Chiana avec un pique-nique barbecue et pressurage au moulin à huile.",
+                    "includes": [
+                        "Un accueil chaleureux de la part de Marta dans notre oliveraie de Pozzo della Chiana avec vue sur le Temple de Santo Stefano della Vittoria",
+                        "Cueillette traditionnelle des olives à la main en utilisant uniquement un petit peigne et des filets de récolte",
+                        "Pique-nique avec barbecue directement dans l'oliveraie sous les arbres",
+                        "Visite du moulin familial pour assister au pressurage des olives récoltées, en suivant le processus étape par étape jusqu'à l'huile fraîche",
+                        "Dégustation finale d'huiles d'olive extra vierges et aromatisées avec bruschetta"
+                    ]
+                }
+            }
+        },
+        "calendar": {
+            "subtitle": "Calendrier",
+            "title_part1": "Réservez votre ",
+            "title_italic": "créneau",
+            "description": "Sélectionnez un créneau disponible et complétez votre demande. Vous recevrez une confirmation de la part des administrateurs.",
+            "badge": "Pressée à froid"
+        },
+        "seo": {
+            "subtitle": "Découvrir plus",
+            "title_part1": "Expérience de ",
+            "title_italic": "dégustation",
+            "title_part2": " en Toscane",
+            "description": "Vivez un voyage unique au cœur de la province d'Arezzo. Le Frantoio del Pasqua vous accueille à Monte San Savino pour vous révéler les secrets de l'huile d'olive extra vierge toscane. Un voyage authentique du pressurage à froid à l'analyse sensorielle."
+        },
+        "features": {
+            "f1_title": "Arezzo, Toscane",
+            "f1_desc": "Immergé dans le paysage typique et évocateur de la Toscane.",
+            "f2_title": "Huile d'olive extra vierge authentique",
+            "f2_desc": "Pressée à froid dans les machines de notre moulin.",
+            "f3_title": "Analyse sensorielle",
+            "f3_desc": "Apprenez à reconnaître les arômes et les saveurs des variétés."
+        },
+        "image_alt": "Dégustation professionnelle d'huile d'olive extra vierge au Frantoio del Pasqua, Monte San Savino, Arezzo, Toscane",
+        "image_badge": "[Image Dégustation]",
+        "faq": {
+            "q1": "Où se déroulent les dégustations ?",
+            "a1": "Les visites et dégustations ont lieu directement au sein de notre Frantoio del Pasqua, situé Loc. Infernaccio 510/B, Monte San Savino (dans la province d'Arezzo). Vous découvrirez comment notre huile est produite tout en étant entouré par les machines d'extraction.",
+            "q2": "En quoi consiste l'analyse au moulin ?",
+            "a2": "Nous vous guiderons dans la découverte de nos variétés. Vous apprendrez à reconnaître les notes fruitées, amères et piquantes qui caractérisent une véritable huile d'olive extra vierge toscane de haute qualité.",
+            "q3": "Combien de temps dure l'expérience et qu'inclus-t-elle ?",
+            "a3": "L'expérience dure de 30 à 90 minutes. Elle comprend une explication du processus de pressurage en continu et une dégustation technique, souvent enrichie par des accords gastronomiques raffinés.",
+            "q4": "Est-il possible d'acheter de l'huile à la fin ?",
+            "a4": "Tout à fait. Vous pouvez acheter notre huile d'olive extra vierge pressée à froid directement dans notre boutique à la ferme. Un souvenir parfait et exclusif de l'excellence d'Arezzo."
+        }
+    },
+  "TastingsCalendar": {
+        "loading": "Chargement...",
+        "today": "AUJOURD'HUI",
+        "no_slots": "Aucun créneau",
+        "booked": "Réservé",
+        "free": "Libre",
+        "empty_state": {
+            "title": "Aucun créneau disponible",
+            "desc": "Essayez de sélectionner une autre semaine"
+        },
+        "modal": {
+            "title": "Réserver une dégustation",
+            "close": "Fermer",
+            "success": {
+                "title": "Demande envoyée",
+                "desc": "Nous vous contacterons pour confirmation",
+                "mail_sent": "✓ Notification envoyée",
+                "mail_skipped": "⚠ Notification ignorée",
+                "mail_error": "⚠ Erreur de notification"
+            },
+            "form": {
+                "selected_date": "Date sélectionnée",
+                "type_label": "Type de dégustation",
+                "people_label": "Nombre de personnes",
+                "children_label": "Nombre d'enfants (gratuit jusqu'à 12 ans)",
+                "time_label": "Heure souhaitée *",
+                "use_suggestion": "utiliser {time}",
+                "name_label": "Nom complet",
+                "name_placeholder": "Jean Dupont",
+                "email_label": "E-mail",
+                "email_placeholder": "jean.dupont@example.com",
+                "phone_label": "Téléphone",
+                "phone_placeholder": "+33 ...",
+                "notes_label": "Notes / Allergies",
+                "notes_placeholder": "Écrivez ici...",
+                "submit": "Envoyer la demande",
+                "submit_pay": "Payer et envoyer la demande",
+                "submitting": "Envoi en cours..."
+            },
+            "errors": {
+                "morning_only": "Veuillez sélectionner un horaire le matin (ex: 10:30).",
+                "afternoon_only": "Veuillez sélectionner un horaire l'après-midi (ex: 16:00).",
+                "conflict": "L'horaire entre en conflit avec une réservation. Vérifiez la suggestion.",
+                "just_booked": "Ce créneau vient d'être réservé. Veuillez sélectionner une autre heure.",
+                "generic": "Erreur lors de la réservation."
+            }
+        },
+        "shifts": {
+            "morning": "Matin",
+            "evening": "Soir"
+        }
+    },
+  "Common": {
+        "navbar": {
+            "home": "Accueil",
+            "about_us": "À propos de nous",
+            "storia": "Histoire",
+            "frantoio": "Moulin à huile",
+            "olio": "Huile d'olive",
+            "degustazioni": "Dégustations",
+            "shop": "Boutique",
+            "contatti": "Contact",
+            "menu": "Menu",
+            "login": "Connexion / Inscription",
+            "cart": "Panier",
+            "open_menu": "Ouvrir le menu",
+            "close_menu": "Fermer le menu",
+            "location": "Italie",
+            "language": "Langue",
+            "blog": "Blog"
+        },
+        "ticker": {
+            "shipping": "Livraison rapide 24/48 heures",
+            "artisanal": "Huile d'olive extra vierge artisanale",
+            "family_mill": "Moulin familial",
+            "tastings": "Dégustations disponibles sur réservation"
+        },
+        "footer": {
+            "brand": {
+                "description": "Tradition agricole, qualité et soin artisanal. Nous produisons des huiles d'olive extra vierges avec des techniques modernes et le respect des matières premières."
+            },
+            "contacts": {
+                "title": "CONTACTS",
+                "address": "Loc. Infernaccio, 510/B, 52048 Monte San Savino (AR)",
+                "gender_policy": "Charte sur l'égalité des genres UNI PDR 125"
+            },
+            "info": {
+                "title": "INFORMATIONS",
+                "privacy": "Politique de confidentialité",
+                "cookie": "Politique relative aux cookies",
+                "terms": "Conditions générales",
+                "shipping": "Livraison",
+                "returns": "Retours et remboursements",
+                "contacts": "Contacts",
+                "disposal": "Étiquettes environnementales"
+            },
+            "navigation": {
+                "title": "NAVIGATION"
+            },
+            "bottom": {
+                "rights": "© {year} Az. Agr. Del Pasqua — Tous droits réservés.",
+                "legal_office": "Siège social",
+                "back_to_top": "Retour en haut",
+                "powered_by": "Propulsé par Modern Tech",
+                "secure_payments": "Paiements sécurisés"
+            }
+        }
+    },
+  "Products": {
+        "evo": {
+            "title": "Extra Vierge - EVO",
+            "subtitle": "Huile d'olive extra vierge",
+            "description": "L'EVO Del Pasqua est l'huile d'olive extra vierge à garder en cuisine au quotidien : équilibrée, propre et aromatique, faite aussi bien pour les repas simples que pour les recettes raffinées.",
+            "badge": "EVO",
+            "variants": {
+                "500ml": "Bouteille de 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La bouteille EVO de 500 ml est idéale pour la table : élégante, pratique et parfaite pour un usage quotidien lorsque vous souhaitez une huile d'olive extra vierge italienne harmonieuse."
+            }
+        },
+        "fruttato-leggero": {
+            "title": "Extra Vierge - Fruité Léger",
+            "subtitle": "Huile d'olive extra vierge",
+            "description": "Le Fruité Léger est délicat, doux et immédiat : il rehausse les plats sans les masquer, idéal pour les poissons, les légumes, les salades et les recettes raffinées.",
+            "badge": "CLASSIQUE",
+            "variants": {
+                "500ml": "Bouteille de 500 ml"
+            },
+            "variantDescriptions": {
+                "500ml": "La bouteille de Fruité Léger de 500 ml apporte à table une huile d'olive douce et aromatique, parfaite pour un assaisonnement élégant et subtil."
+            }
+        },
+        "fruttato-medio": {
+            "title": "Extra Vierge - Fruité Moyen",
+            "subtitle": "Huile d'olive extra vierge",
+            "description": "Le Fruité Moyen est l'équilibre le plus polyvalent : des arômes d'herbe coupée, un goût plein et une finale harmonieuse, convenant aussi bien cru qu'en cuisson.",
+            "badge": "CLASSIQUE",
+            "variants": {
+                "500ml": "Bouteille de 500 ml",
+                "750ml": "Bouteille de 750 ml",
+                "1lt": "Bouteille de 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La bouteille de Fruité Moyen de 500 ml est parfaite pour la dégustation ou pour offrir une huile d'olive équilibrée pour les bruschettas, les légumes et les plats de pâtes.",
+                "750ml": "La bouteille de Fruité Moyen de 750 ml est le format quotidien pour ceux qui veulent une huile d'olive extra vierge polyvalente avec juste ce qu'il faut d'intensité.",
+                "1lt": "La bouteille de Fruité Moyen de 1 L offre plus de continuité en cuisine : équilibrée, pratique et adaptée à de nombreux usages méditerranéens."
+            }
+        },
+        "fruttato-intenso": {
+            "title": "Extra Vierge - Fruité Intense",
+            "subtitle": "Huile d'olive extra vierge",
+            "description": "Le Fruité Intense a un caractère affirmé, des notes vertes et une finale plus marquée : idéal pour ceux qui veulent une huile d'olive qui se distingue.",
+            "badge": "CLASSIQUE",
+            "variants": {
+                "500ml": "Bouteille de 500 ml",
+                "750ml": "Bouteille de 750 ml",
+                "1lt": "Bouteille de 1 L"
+            },
+            "variantDescriptions": {
+                "500ml": "La bouteille de Fruité Intense de 500 ml concentre personnalité et arôme dans un format agile, parfait sur les soupes, les légumineuses, les viandes et les bruschettas.",
+                "750ml": "La bouteille de Fruité Intense de 750 ml convient à ceux qui aiment une huile d'olive extra vierge énergique, persistante et dotée d'un vrai caractère.",
+                "1lt": "La bouteille de Fruité Intense de 1 L est faite pour un usage fréquent dans les recettes rustiques et les plats aux saveurs prononcées."
+            }
+        },
+        "tartufo": {
+            "title": "Extra Vierge - Truffe",
+            "subtitle": "Extra vierge aromatisée",
+            "description": "Parfait sur les œufs, les pommes de terre et le carpaccio.",
+            "badge": "AROMATISÉE"
+        },
+        "peperoncino": {
+            "title": "Extra Vierge - Piment",
+            "subtitle": "Extra vierge aromatisée",
+            "description": "Piquant net, excellent sur les pizzas et les pâtes.",
+            "badge": "AROMATISÉE"
+        },
+        "vino": {
+            "title": "Vino Vittoria",
+            "subtitle": "100% Sangiovese",
+            "description": "Un vin rouge de caractère, expression de notre terroir.",
+            "badge": "NOUVEAU"
+        },
+        "prodotto-test": {
+            "title": "Produit Test",
+            "subtitle": "Livraison gratuite pour test de paiement",
+            "description": "Ceci est un produit de test à 0,50 € avec livraison gratuite pour vérifier le flux de paiement et les stocks.",
+            "badge": "TEST"
+        },
+        "evo-latta": {
+            "title": "Extra Vierge - Bidon EVO",
+            "subtitle": "Huile d'olive extra vierge en bidon",
+            "description": "L'EVO Del Pasqua en bidon protège l'huile de la lumière et rend le stockage pratique, tout en conservant le profil équilibré de notre huile d'olive extra vierge.",
+            "badge": "BIDON",
+            "variants": {
+                "750ml": "Bidon de 750 ml",
+                "3lt": "Bidon de 3 L",
+                "5lt": "Bidon de 5 L"
+            },
+            "variantDescriptions": {
+                "750ml": "Le bidon EVO de 750 ml est compact et distinctif : un format original pour un stockage pratique, une meilleure protection et un usage quotidien.",
+                "3lt": "Le bidon EVO de 3 L est fait pour les utilisateurs quotidiens d'huile d'olive qui souhaitent un format de garde-manger pratique protégé de la lumière.",
+                "5lt": "Le bidon EVO de 5 L est le format familial pour toujours avoir à disposition une huile d'olive extra vierge équilibrée, aromatique et polyvalente."
+            }
+        },
+        "fruttato-leggero-latta": {
+            "title": "Extra Vierge - Bidon Fruité Léger",
+            "subtitle": "Huile d'olive extra vierge fruité léger en bidon",
+            "description": "Le Fruité Léger en bidon conserve son profil délicat dans un format quotidien pratique, protégé et pratique.",
+            "badge": "BIDON",
+            "variants": {
+                "3lt": "Bidon de 3 L",
+                "5lt": "Bidon de 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Le bidon de Fruité Léger de 3 L est idéal pour tous ceux qui veulent un approvisionnement quotidien en huile d'olive délicate pour les poissons, les légumes et les plats frais.",
+                "5lt": "Le bidon de Fruité Léger de 5 L donne plus d'autonomie en cuisine tout en conservant un profil doux, équilibré et facile à associer."
+            }
+        },
+        "fruttato-medio-latta": {
+            "title": "Extra Vierge - Bidon Fruité Moyen",
+            "subtitle": "Huile d'olive extra vierge fruité moyen en bidon",
+            "description": "Le Fruité Moyen en bidon est le choix pratique pour un usage fréquent, avec un goût équilibré et une meilleure protection contre la lumière.",
+            "badge": "BIDON",
+            "variants": {
+                "3lt": "Bidon de 3 L",
+                "5lt": "Bidon de 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Le bidon de Fruité Moyen de 3 L est fait pour les cuisines actives : polyvalent, équilibré et pratique pour assaisonner, cuisiner et finaliser les plats.",
+                "5lt": "Le bidon de Fruité Moyen de 5 L est le format de garde-manger pour ceux qui ne veulent jamais manquer d'une huile d'olive extra vierge fiable et aromatique."
+            }
+        },
+        "fruttato-intenso-latta": {
+            "title": "Extra Vierge - Bidon Fruité Intense",
+            "subtitle": "Huile d'olive extra vierge fruité intense en bidon",
+            "description": "Le Fruité Intense en bidon préserve la force et les arômes dans un format pratique pour un usage fréquent.",
+            "badge": "BIDON",
+            "variants": {
+                "3lt": "Bidon de 3 L",
+                "5lt": "Bidon de 5 L"
+            },
+            "variantDescriptions": {
+                "3lt": "Le bidon de Fruité Intense de 3 L est un approvisionnement judicieux pour ceux qui recherchent une huile d'olive riche, verte et persistante pour les plats structurés.",
+                "5lt": "Le bidon de Fruité Intense de 5 L est le format généreux pour les cuisines qui veulent toujours avoir sous la main une huile d'olive extra vierge puissante et reconnaissable."
+            }
+        }
+    },
+  "ShopPage": {
+        "header": {
+            "label": "Boutique",
+            "title_part1": "Tous les ",
+            "title_italic": "produits",
+            "description": "Sélection de nos huiles d'olive extra vierges, disponibles en différentes tailles et emballages."
+        },
+        "categories": {
+            "all": "Tous",
+            "fruttato": "Fruité",
+            "igp": "IGP",
+            "bio": "Bio",
+            "aromatico": "Aromatisés"
+        },
+        "empty": {
+            "text": "Aucun produit trouvé dans cette catégorie.",
+            "reset": "Afficher tous les produits"
+        },
+        "info": {
+            "shipping": "Livraison gratuite pour les commandes de plus de 50 €",
+            "notes": "Les prix sont indicatifs et incluent la TVA. Contactez-nous pour des commandes personnalisées."
+        },
+        "filters": {
+            "from": "À partir de "
+        }
+    },
+  "HomePage": {
+        "HeroCarousel": {
+            "sr_title": "Moulin à huile et production : histoire, produits et tradition moderne",
+            "slides": {
+                "storia": {
+                    "title": "Notre Histoire",
+                    "excerpt": "Racines familiales, gestes ancestraux et vision contemporaine : découvrez comment naît notre identité.",
+                    "cta": "Lire la suite",
+                    "alt": "Oliviers au coucher du soleil et paysage rural"
+                },
+                "oli": {
+                    "title": "Nos Huiles",
+                    "excerpt": "Une sélection de nos meilleures huiles, appréciées et certifiées : qualité, équilibre et caractère.",
+                    "cta": "Découvrir",
+                    "alt": "Olives vertes dans la main (récolte)"
+                },
+                "tradizione": {
+                    "title": "Tradition Moderne",
+                    "excerpt": "Techniques modernes, respect des matières premières et soin artisanal : l'avenir commence par la terre.",
+                    "cta": "En savoir plus",
+                    "alt": "Détail du moulin à huile ou processus de fabrication artisanal"
+                }
+            },
+            "aria": {
+                "prev": "Diapositive précédente",
+                "next": "Diapositive suivante",
+                "go_to": "Aller à la diapositive",
+                "main_sections": "Sections de présentation principales",
+                "hero_highlight": "Présentation à la une"
+            }
+        },
+        "HeroSplitEvo": {
+            "label": "HUILE D'OLIVE EXTRA VIERGE — EVO",
+            "title": "EVO, l'huile idéale au quotidien.",
+            "description": "L'EVO classique de tous les jours. Qualité, élégance et goût propre : une bouteille qui trouve sa place en cuisine comme sur la table.",
+            "buy_btn": "Acheter EVO",
+            "explore_btn": "Découvrir la boutique"
+        },
+        "ShopHighlights": {
+            "label": "Boutique",
+            "title_part1": "Les plus ",
+            "title_italic": "populaires",
+            "subtitle": "Les produits les plus vendus de notre catalogue.",
+            "cta": "Aller à la boutique",
+            "add": "AJOUTER",
+            "from": "À partir de ",
+            "iva": "+ TVA"
+        },
+        "BioMethod": {
+            "label": "MÉTHODE BIO",
+            "title": "Petite échelle. Qualité contrôlée.",
+            "description": "Une huile artisanale n'est pas produite sur une ligne industrielle : elle naît du bon timing, de petits lots et d'une attention de chaque instant.",
+            "points": {
+                "control": "Contrôle réel",
+                "control_text": " sur chaque étape",
+                "aroma": "Arômes intacts",
+                "aroma_text": " grâce à un processus délicat",
+                "stability": "Stabilité",
+                "stability_text": " avec un stockage protégé"
+            },
+            "cta_prod": "Découvrir la production",
+            "cta_oil": "Qualités de l'huile",
+            "card_header": {
+                "label": "CHARTE DE PRODUCTION",
+                "title": "Méthode Bio – Artisanale",
+                "subtitle": "Qualité en circuit court, pas de volumes industriels."
+            },
+            "specs": {
+                "prod": "Production",
+                "prod_val": "Petits lots",
+                "work": "Traitement",
+                "work_val": "Température contrôlée",
+                "chain": "Processus",
+                "chain_val": "Traçabilité",
+                "storage": "Stockage",
+                "storage_val": "Acier • Obscurité"
+            },
+            "process": {
+                "label": "PROCESSUS",
+                "step1_title": "Récolte sélective",
+                "step1_text": "Soin du fruit et livraison rapide",
+                "step2_title": "Pressurage à froid",
+                "step2_text": "Processus précis pour préserver les arômes",
+                "step3_title": "Séparation propre",
+                "step3_text": "Contrôle pour un profil sensoriel net",
+                "step4_title": "Conservation protégée",
+                "step4_text": "Acier et conditions stables"
+            },
+            "guarantees": {
+                "non_industrial": "Non industriel",
+                "non_industrial_text": "La qualité avant la quantité",
+                "fresh": "Frais et propre",
+                "fresh_text": "Huile vivante et aromatique",
+                "control": "Contrôle total",
+                "control_text": "Chaque phase est soignée"
+            },
+            "footer": "PRODUCTION BIO • ARTISANALE",
+            "details": "Détails"
+        },
+        "Discover": {
+            "label": "Explorer",
+            "title": "Découvrez le Moulin Del Pasqua",
+            "cards": {
+                "produzione": {
+                    "title": "MOULIN À HUILE",
+                    "subtitle": "Du champ au moulin"
+                },
+                "degustazioni": {
+                    "title": "DÉGUSTATIONS",
+                    "subtitle": "Visites & dégustations"
+                },
+                "contatti": {
+                    "title": "CONTACTS",
+                    "subtitle": "Venez nous voir"
+                }
+            }
+        },
+        "HeritageBridge": {
+            "label": "TRADITION & CONTRÔLE",
+            "title_part1": "Un pont visuel entre gestes ancestraux",
+            "title_italic": "et précision moderne.",
+            "subtitle": "Des images qui racontent le savoir-faire, les matières premières et le contrôle.",
+            "cta": "Histoire & Territoire",
+            "tradition": {
+                "label": "TRADITION",
+                "title": "Geste humain, bon timing",
+                "text": "Récolte, attention, soin : la qualité naît bien avant le moulin.",
+                "tag1": "Circuit court",
+                "tag2": "Petite échelle"
+            },
+            "control": {
+                "label": "CONTRÔLE",
+                "title": "Précision sans échelle industrielle",
+                "text": "Récolte, attention, soin : la qualité naît bien avant le moulin.",
+                "tag1": "Fraîcheur préservée",
+                "tag2": "Profil propre"
+            }
+        },
+        "HomeAboutFamily": {
+            "label": "DÉGUSTATIONS",
+            "title": "Expériences au Moulin",
+            "description": "Vivez une dégustation guidée unique dans notre moulin à huile. Un voyage sensoriel pour découvrir notre passion, apprendre l'art de déguster l'huile d'olive extra vierge biologique et IGP, et savourer d'authentiques accords mets-vins toscans guidés par nos experts.",
+            "cta": "DÉCOUVRIR LES DÉGUSTATIONS"
+        },
+        "HomeAboutTerritory": {
+            "label": "LE MOULIN",
+            "title": "Une tradition qui se perpétue",
+            "description": "Aujourd'hui encore en Toscane, une grande partie de la récolte des olives se fait de manière traditionnelle, par cueillette manuelle. Les olives récoltées sont transportées au moulin et pressées dans les 24 heures afin de préserver l'intégrité de leurs composants aromatiques et phénoliques...",
+            "cta": "LIRE LA SUITE"
+        },
+        "HomeUniqueness": {
+            "title": "Ce qui nous rend uniques",
+            "items": {
+                "tradition": {
+                    "title": "Tradition agricole",
+                    "desc": "Depuis des générations, nous cultivons céréales, oliviers et vignes dans le respect de notre terre."
+                },
+                "passion": {
+                    "title": "Passion familiale",
+                    "desc": "Les valeurs transmises guident aujourd'hui encore notre travail, avec dévouement et continuité."
+                },
+                "innovation": {
+                    "title": "Innovation consciente",
+                    "desc": "Nous investissons dans les nouvelles technologies sans renoncer aux méthodes traditionnelles."
+                },
+                "quality": {
+                    "title": "Qualité authentique",
+                    "desc": "Nos produits préservent le goût naturel et l'arôme d'autrefois."
+                }
+            }
+        },
+        "HomeProductShowcase": {
+            "label": "BOUTEILLES & SÉLECTION",
+            "carouselLabel": "BOUTEILLES EN SCÈNE",
+            "title": "Le caractère de notre terroir, en bouteille",
+            "description": "Nous apportons l'excellence de notre huile d'olive extra vierge à votre table dans des emballages soigneusement conçus. Du verre foncé qui préserve la fraîcheur de l'huile, aux bidons classiques pour un usage quotidien en cuisine : une sélection créée pour enrichir chaque plat.",
+            "cta": "ENTRER DANS LA BOUTIQUE",
+            "groups": {
+                "signature": {
+                    "label": "SÉLECTION DEL PASQUA",
+                    "title": "Huile, vin et identité du domaine"
+                },
+                "table": {
+                    "label": "POUR LA TABLE",
+                    "title": "Différentes formes, même signature"
+                },
+                "gift": {
+                    "label": "À OFFRIR",
+                    "title": "Des bouteilles qui parlent d'elles-mêmes"
+                },
+                "daily": {
+                    "label": "GAMME QUOTIDIENNE",
+                    "title": "Une présence compacte et reconnaissable"
+                }
+            },
+            "products": {
+                "evo": "Bouteille d'huile EVO Del Pasqua",
+                "magnifico": "Bouteille Del Pasqua Magnifico",
+                "vittoria": "Bouteille de vin Del Pasqua Vittoria"
+            }
+        },
+        "HomeGallery": {
+            "title": "Enraciné dans la tradition toscane",
+            "carouselLabel": "Atmosphère et tradition toscanes",
+            "previousImage": "Image précédente",
+            "nextImage": "Image suivante",
+            "imageAlt": "Image de la galerie Del Pasqua {index}"
+        },
+        "BlogHighlights": {
+            "title": "Le Journal de Del Pasqua",
+            "cta": "Découvrir tous les articles"
+        }
+    },
+  "StoriaPage": {
+        "header": {
+            "subtitle": "Histoire",
+            "title_part1": "Notre ",
+            "title_italic": "histoire",
+            "description": "Fondée dans les années 1960 dans la région de la Valdichiana, l'entreprise Del Pasqua a évolué au fil des ans en s'ouvrant à la diversification. Nous nous concentrons sur la qualité des produits, l'innovation et la durabilité environnementale, sans jamais perdre de vue les valeurs et les saveurs des traditions toscanes et italiennes authentiques. Cette approche a ouvert de nouvelles voies tant dans l'oléiculture que dans la viticulture. Toute notre chaîne de production est locale : de la culture des oliviers et des vignes à la récolte et au conditionnement du produit final.",
+            "description_top": "Fondée dans les années 1960 dans la région de la Valdichiana, l'entreprise Del Pasqua a progressivement façonné son identité autour de la diversification, de la qualité des produits et de l'innovation.",
+            "description_bottom": "Dans le même temps, elle est restée fidèle au respect de l'environnement et aux valeurs et saveurs de la véritable tradition toscane et italienne, ouvrant de nouvelles voies tant dans l'oléiculture que dans la viticulture. Toute notre chaîne de production reste ancrée dans notre territoire, des oliveraies et vignobles à la récolte et au conditionnement final."
+        },
+        "section1": {
+            "subtitle": "Les oliveraies",
+            "title_part1": "Tradition et innovation ",
+            "title_italic": "dans le vert",
+            "p1": "Nos oliveraies s'étendent sur 4 hectares, répartis entre les variétés typiques de la région.",
+            "p2": "Tout en respectant les méthodes de culture traditionnelles, nous utilisons des techniques modernes et innovantes. La santé de nos oliviers nouvellement plantés est constamment surveillée par notre agronome, qui évalue également la maturité des olives.",
+            "stats": {
+                "hectares": "Hectares",
+                "cultivars": "Variétés",
+                "years": "Années"
+            }
+        },
+        "section2": {
+            "subtitle": "La récolte",
+            "title_part1": "Notre ",
+            "title_italic": "récolte",
+            "p1": "La récolte a lieu 'au bon moment' pour obtenir une huile riche en polyphénols, en arômes et en goût. Les olives sont pressées le jour même par extraction à froid dans notre moulin à huile de pointe.",
+            "p2": "Aujourd'hui, nos produits conviennent à tout type de régime alimentaire, desservant un marché diversifié : de l'amateur d'huiles fruitées intenses à celui qui préfère une saveur plus légère et délicate, tout en offrant une alimentation saine pour les enfants pendant le sevrage.",
+            "badge": "Extraction à froid"
+        },
+        "philosophy": {
+            "subtitle": "Philosophie",
+            "title_part1": "Des saveurs toscanes dans le respect de ",
+            "title_italic": "l'environnement",
+            "description": "Une histoire de famille, un travail patient et un soin constant : la qualité naît de la somme de petits gestes, bien répétés, année après année.",
+            "tags": {
+                "tradition": "Tradition",
+                "innovation": "Innovation",
+                "quality": "Qualité"
+            }
+        }
+    },
+  "ProduzionePage": {
+        "nav": {
+            "section": "Section",
+            "sections": {
+                "capitolo-1": {
+                    "label": "L'Origine",
+                    "kicker": "Récolte manuelle"
+                },
+                "capitolo-2": {
+                    "label": "L'Extraction",
+                    "kicker": "Les 5 étapes du pressurage"
+                },
+                "capitolo-3": {
+                    "label": "La Conservation",
+                    "kicker": "Acier & Azote"
+                },
+                "capitolo-4": {
+                    "label": "Le Sceau",
+                    "kicker": "Bouteille & Certifications"
+                },
+                "capitolo-5": {
+                    "label": "Services & Visites",
+                    "kicker": "Pressurage & Dégustations"
+                }
+            }
+        },
+        "origin": {
+            "tag1": "Lots limités",
+            "tag2": "Récolté à la main",
+            "tag3": "Pressurage sous 24h"
+        },
+        "badges": {
+            "premium_quality": "QUALITÉ PREMIUM",
+            "certified_origin": "ORIGINE CERTIFIÉE"
+        },
+        "hero": {
+            "label": "Moulin",
+            "title_part1": "Le cœur de",
+            "title_italic": "notre qualité",
+            "description": "Au moulin, chaque détail compte : du nettoyage des olives au malaxage contrôlé, en passant par l'extraction et le stockage. Ici, la technologie et le soin artisanal s'allient pour préserver la fraîcheur, les arômes et la stabilité.",
+            "tag1": "Extraction à froid",
+            "tag2": "Certifié IGP",
+            "tag3": "100% Bio & Artisanal",
+            "img_alt": "Frantoio del Pasqua - extérieur"
+        },
+        "machines": {
+            "label": "Machines & Lignes",
+            "title_part1": "Installations modernes,",
+            "title_italic": "processus contrôlé",
+            "subtitle": "Effeuillage, broyage, malaxage, extraction et filtration : chaque étape est conçue pour préserver les arômes et la stabilité.",
+            "defogliazione": {
+                "title": "Effeuillage",
+                "desc": "Élimination des feuilles et des impuretés, suivie d'un lavage doux."
+            },
+            "frangitura": {
+                "title": "Broyage",
+                "desc": "Broyage rapide pour minimiser le réchauffement et l'oxydation."
+            },
+            "gramolazione": {
+                "title": "Malaxage",
+                "desc": "Mélange lent pour agglomérer les micro-gouttes d'huile."
+            },
+            "estrazione": {
+                "title": "Extraction",
+                "desc": "Séparation sans stress thermique, paramètres surveillés."
+            },
+            "separazione": {
+                "title": "Séparation",
+                "desc": "Affinage et clarification de l'huile."
+            },
+            "filtrazione": {
+                "title": "Filtration",
+                "desc": "Stabilité dans le temps et profil propre."
+            },
+            "divider_1": {
+                "label": "SOIN ET CONSERVATION",
+                "title_part1": "De la fabrication ",
+                "title_italic": "à la bouteille",
+                "text": "Une fois extraite, nous protégeons notre huile de la lumière et de l'oxygène. C'est le seul moyen pour que les arômes du moulin arrivent intacts sur votre table."
+            },
+            "divider_2": {
+                "label": "QUALITÉ GARANTIE",
+                "title_part1": "Le contrôle à ",
+                "title_italic": "chaque étape",
+                "text": "Nous ne laissons rien au hasard : de l'arrivée des olives aux contrôles sur le produit fini."
+            }
+        },
+        "showcase": {
+            "trasporto": {
+                "kicker": "TRANSPORT",
+                "title": "Propreté et stabilité",
+                "text": "À l'intérieur du moulin, l'huile ne transite que par des cuves en acier inoxydable. Le plastique est exclu car il peut transmettre des goûts indésirables et compromettre la clarté, l'arôme et la stabilité du produit.",
+                "img_label": "Filtration and stainless steel transfer"
+            },
+            "stoccaggio": {
+                "kicker": "Stockage",
+                "title": "Stockage sous azote",
+                "text": "Après l'extraction, l'huile est stockée dans des cuves en acier inoxydable à l'abri de la lumière, des variations de température et de l'oxygène. Le stockage sous azote permet de préserver les arômes, la fraîcheur et les polyphénols jusqu'à la mise en bouteille.",
+                "img_label": "Protected storage tanks"
+            },
+            "imbottigliamento": {
+                "kicker": "Mise en bouteille",
+                "title": "Ligne de remplissage et de conditionnement",
+                "text": "Notre ligne d'embouteillage gère différents formats, un étiquetage précis et un conditionnement ordonné, tout en maintenant la continuité et la propreté à l'étape finale du processus.",
+                "tag1": "Formats variables",
+                "tag2": "Étiquetage précis",
+                "img_label": "Bottling line"
+            },
+            "controllo": {
+                "kicker": "Contrôle",
+                "title": "Qualité et traçabilité",
+                "text": "Chaque lot est suivi avec attention, de la livraison des olives au conditionnement final. La traçabilité, les contrôles de processus et la vérification de l'huile finie nous aident à maintenir constante la qualité du moulin.",
+                "list1": "Sensory analysis",
+                "list2": "Full traceability",
+                "list3": "Updated certifications",
+                "img_label": "Quality control and traceability"
+            }
+        },
+        "technology": {
+            "label": "Le Moulin",
+            "title_part1": "Technologie, soin",
+            "title_italic": "et traçabilité",
+            "description": "Dans notre moulin, chaque étape est pensée pour protéger les arômes et les polyphénols : livraison rapide, lavage minutieux, extraction à froid et stockage dans des conditions contrôlées.",
+            "checks": {
+                "chain": {
+                    "title": "Circuit court",
+                    "desc": "Dans des délais très courts entre la cueillette et le pressurage."
+                },
+                "clean": {
+                    "title": "Nettoyage et sélection",
+                    "desc": "Effeuillage et lavage pour éliminer les impuretés."
+                },
+                "extraction": {
+                    "title": "Extraction à froid",
+                    "desc": "Processus contrôlé pour préserver la qualité et les arômes."
+                },
+                "storage": {
+                    "title": "Stockage sous azote",
+                    "desc": "Protection contre l'oxydation avant la mise en bouteille."
+                }
+            },
+            "cards": {
+                "molitura": {
+                    "title": "Pressurage pour tiers",
+                    "text": "Opérations de pressurage et de conditionnement avec traçabilité des lots.",
+                    "badge": "Services"
+                },
+                "conferimento": {
+                    "title": "Livraison des olives",
+                    "text": "Réception et gestion avec priorité à la fraîcheur.",
+                    "badge": "Opérations"
+                },
+                "controlli": {
+                    "title": "Contrôles qualité",
+                    "text": "Surveillance des paramètres de processus et de stockage.",
+                    "badge": "Qualité"
+                },
+                "visite": {
+                    "title": "Visites et dégustations",
+                    "text": "Visites pour découvrir les différentes étapes de fabrication.",
+                    "badge": "Expérience"
+                }
+            }
+        },
+        "steps_section": {
+            "label": "Production",
+            "title_part1": "Du champ au",
+            "title_italic": "moulin",
+            "subtitle": "Récolte, transformation et certifications : les étapes qui guident la qualité de notre huile d'olive extra vierge."
+        },
+        "steps": {
+            "raccolta": {
+                "kicker": "RÉCOLTE",
+                "title": "Récolte manuelle",
+                "paragraphs": [
+                    "Aujourd'hui encore en Toscane, la récolte des olives se fait traditionnellement à la main. Les olives fraîchement récoltées sont transportées au moulin et pressées dans les 12 heures afin de préserver l'intégrité de leurs composants aromatiques et phénoliques, à l'aide d'un système moderne d'extraction à froid Alfa Laval."
+                ],
+                "placeholder": "Récolte manuelle des olives"
+            },
+            "imbottigliamento": {
+                "kicker": "INSTALLATION",
+                "title": "La ligne d'embouteillage",
+                "paragraphs": [
+                    "L'installation est équipée d'une ligne d'embouteillage et de conditionnement, ainsi que d'un stockage sous azote pour garantir les qualités sensorielles de l'huile avant la mise en bouteille.",
+                    "Cependant, nous ne nous arrêtons pas là : nous proposons également des services de pressurage et de conditionnement personnalisés pour les tiers."
+                ],
+                "placeholder": "Ligne de remplissage et de conditionnement"
+            },
+            "evo": {
+                "kicker": "QUALITÉ",
+                "title": "Notre huile EVO",
+                "paragraphs": [
+                    "Tous ces facteurs sont une garantie absolue pour la production d'une huile d'olive extra vierge de qualité supérieure, capable de conserver plus longtemps la fraîcheur et les arômes caractérisant l'huile fraîchement pressée."
+                ],
+                "placeholder": "Huile EVO fraîchement extraite"
+            },
+            "igp_bio": {
+                "kicker": "CERTIFICATIONS",
+                "title": "IGP ET BIO",
+                "paragraphs": [
+                    "Notre huile d'olive extra vierge italienne est non seulement produite à partir d'olives cultivées dans le respect de l'environnement, mais toutes ses étapes de transformation sont soumises aux contrôles stricts d'organismes de certification agréés afin de garantir au consommateur final un produit naturel, contrôlé et certifié. Le moulin Del Pasqua est certifié par Suolo e Salute pour la transformation et la production de produits biologiques et est enregistré auprès du Consortium de l'huile d'olive toscane pour la production d'huile d'olive extra vierge Toscano PGI."
+                ],
+                "placeholder": "Certifications IGP et biologiques"
+            },
+            "iqo": {
+                "title": "Certification IQO",
+                "text": "Notre huile d'olive extra vierge est certifiée IQO ; les analyses chimiques et scientifiques garantissent une valeur nutritionnelle naturelle élevée, une stabilité à long terme et une traçabilité garantie sans risque de fraude."
+            }
+        },
+        "shared": {
+            "machine": "Machine"
+        }
+    },
+  "OlioPage": {
+        "header": {
+            "label": "Notre huile",
+            "title_part1": "Notre",
+            "title_italic": "huile EVO"
+        },
+        "sections": {
+            "intro": {
+                "title": "Notre huile EVO",
+                "body": [
+                    "Notre huile d'olive extra vierge italienne est non seulement produite à partir d'olives cultivées dans le respect de l'environnement, mais toutes ses étapes de transformation sont soumises aux contrôles stricts d'organismes de certification agréés afin de garantir au consommateur final un produit naturel, contrôlé et certifié. Le moulin Del Pasqua est certifié par Suolo e Salute pour la transformation et la production de produits biologiques et est enregistré auprès du Consortium de l'huile d'olive toscane pour la production d'huile d'olive extra vierge Toscano PGI.",
+                    "Notre huile d'olive extra vierge est certifiée IQO ; les analyses chimiques et scientifiques garantissent une valeur nutritionnelle naturelle élevée, une stabilité à long terme et une traçabilité garantie sans risque de fraude."
+                ],
+                "placeholder": "IMAGE — INTRO"
+            },
+            "fruttato_leggero": {
+                "short_title": "Fruité Léger",
+                "title": "Huile d'olive extra vierge - Fruité Léger 100% italienne",
+                "body": [
+                    "Profil délicat et harmonieux : amertume et piquant légers, avec des sensations herbacées et des notes douces.",
+                    "Idéal cru sur des plats légers, poissons, légumes et salades."
+                ],
+                "formats": [
+                    "Bouteille : 250/500/750",
+                    "Bidon : 1/3/5L"
+                ],
+                "placeholder": "IMAGE — FRUITÉ LÉGER"
+            },
+            "fruttato_intenso": {
+                "short_title": "Fruité Intense",
+                "title": "Huile d'olive extra vierge - Fruité Intense 100% italienne",
+                "body": [
+                    "Avec une saveur audacieuse mais équilibrée, elle présente une amertume et un piquant moyens-élevés avec un agréable arrière-goût d'artichaut et une couleur vert vif.",
+                    "Les olives sont récoltées avant leur pleine maturité."
+                ],
+                "formats": [
+                    "Bouteille : 250/500/750",
+                    "Bidon : 1/3/5L"
+                ],
+                "placeholder": "IMAGE — FRUITÉ INTENSE"
+            },
+            "fruttato_medio": {
+                "short_title": "Fruité Moyen",
+                "title": "Huile d'olive extra vierge - Fruité Moyen 100% italienne",
+                "body": [
+                    "Assemblage d'olives Leccino, Frantoio et Moraiolo ; équilibré en piquant et en amertume, avec des notes d'amande et d'herbe fraîche.",
+                    "Couleur verte aux reflets jaunes."
+                ],
+                "formats": [
+                    "Bouteille : 250/500/750/1000ml",
+                    "Bidon : 1/3/5L"
+                ],
+                "placeholder": "IMAGE — FRUITÉ MOYEN"
+            },
+            "evo": {
+                "short_title": "EVO",
+                "title": "Huile d'olive extra vierge - EVO",
+                "body": [
+                    "De la sélection des meilleures olives naît notre huile 'EVO', extraite à froid selon les principes de la tradition et tournée vers l'innovation. Elle se caractérise par une couleur vert vif et un parfum herbacé avec des notes d'amande."
+                ],
+                "formats": [
+                    "Bouteille : 500ml",
+                    "Bidon : 3/5L"
+                ],
+                "placeholder": "IMAGE — EVO"
+            },
+            "aromatico": {
+                "short_title": "Aromatisée",
+                "title": "Huiles aromatisées - Huile d'olive extra vierge",
+                "body": [
+                    "Notre sélection spéciale d'huiles aromatisées.",
+                    "Versions disponibles : truffe, piment et citron."
+                ],
+                "formats": [
+                    "Bouteille : 250ml"
+                ],
+                "placeholder": "IMAGE — AROMATISÉE"
+            }
+        },
+        "sidebar": {
+            "id_label": "Sommaire",
+            "note_label": "Note",
+            "note_text1": "Section descriptive : les images sont dans"
+        },
+        "trust_bar": {
+            "text": "QUALITÉ • TRADITION • INNOVATION",
+            "badge": "SÉLECTION EXTRACTION À FROID"
+        }
+    },
+  "ContactPage": {
+        "hero": {
+            "label": "Contact",
+            "title_part1": "Nous sommes",
+            "title_italic": "ici",
+            "description": "Pour les demandes commerciales, des informations sur les produits ou des collaborations, écrivez-nous ou appelez-nous.",
+            "pills": {
+                "response": "RÉPONSE RAPIDE",
+                "support": "SUPPORT COMMANDES",
+                "b2b": "DEMANDES B2B"
+            }
+        },
+        "info": {
+            "company_label": "Entreprise",
+            "address_label": "Adresse",
+            "phone_label": "Téléphone",
+            "mobile_label": "Portable",
+            "email_label": "E-mail",
+            "docs_label": "Documents",
+            "docs_gender": "Charte sur l'égalité des genres",
+            "docs_privacy": "Confidentialité",
+            "social_label": "Réseaux sociaux"
+        },
+        "form": {
+            "label": "Écrivez-nous",
+            "title": "Envoyer un message",
+            "subtitle": "Remplissez le formulaire : nous vous répondrons dans les plus brefs délais.",
+            "name_label": "Nom",
+            "name_placeholder": "Votre nom",
+            "email_label": "E-mail",
+            "subject_label": "Objet",
+            "subject_placeholder": "Ex. info produit / commande / B2B",
+            "message_label": "Message",
+            "message_placeholder": "Écrivez ici...",
+            "privacy_consent": "Je consens au traitement de mes données et déclare avoir lu la politique de confidentialité",
+            "success_msg": "Message envoyé. Nous vous répondrons dans les plus brefs délais.",
+            "error_prefix": "Erreur",
+            "error_fallback": "L'envoi a échoué.",
+            "button_idle": "ENVOYER LE MESSAGE",
+            "button_sending": "ENVOI EN COURS..."
+        },
+        "map": {
+            "label": "Où nous trouver",
+            "button": "Ouvrir dans Maps"
+        }
+    },
+  "Cart": {
+        "common": {
+            "product_fallback": "Produit",
+            "discount_code_placeholder": "Code promo",
+            "apply": "Appliquer",
+            "remove": "Supprimer",
+            "subtotal": "Sous-total",
+            "discount_with_code": "Remise ({code})",
+            "vat": "TVA",
+            "vat_estimate": "TVA 4 % (est.)",
+            "shipping": "Livraison",
+            "shipping_estimate": "Livraison (est.)",
+            "free": "Gratuit",
+            "total": "Total",
+            "line_total": "Total de la ligne",
+            "per_item_with_price": "{price} / pièce",
+            "continue_shopping": "Continuer mes achats",
+            "quantity": "Quantité"
+        },
+        "actions": {
+            "remove_product": "Supprimer le produit",
+            "decrease_quantity": "Diminuer la quantité",
+            "increase_quantity": "Augmenter la quantité"
+        },
+        "drawer": {
+            "eyebrow": "Panier",
+            "title": "Vos produits",
+            "close_cart": "Fermer le panier",
+            "close": "Fermer",
+            "free_shipping_above": "Livraison gratuite à partir de",
+            "free_shipping_missing": "Il vous manque",
+            "free_shipping_active": "Livraison gratuite activée !",
+            "items_count": "{count, plural, =0 {VIDE} one {# PRODUIT} other {# PRODUITS}}",
+            "clear": "Vider",
+            "empty": "Votre panier est vide.",
+            "shipping_from": "Livraison à partir de {amount}",
+            "discounted_total": "Total remisé",
+            "redirecting": "Redirection...",
+            "go_to_checkout": "Passer à la caisse",
+            "view_cart": "Voir le panier",
+            "server_note": "Le total final (TVA + livraison) est validé par le serveur avant le paiement."
+        },
+        "page": {
+            "eyebrow": "Panier",
+            "title": "Votre panier",
+            "back_to_shop": "Retour à la boutique",
+            "empty_state": "Votre panier est vide. Visitez la <shop>boutique</shop>.",
+            "open_product": "Ouvrir {title}",
+            "remove_from_cart_aria": "Retirer du panier",
+            "invalid_line": "Ligne non valide : produit ou variante introuvable dans le catalogue.",
+            "clear_cart": "Vider le panier",
+            "summary": "Récapitulatif",
+            "opening_checkout": "Ouverture de la caisse...",
+            "go_to_checkout": "Passer à la caisse",
+            "secure_payment": "Paiement sécurisé.",
+            "email_confirmation": "Vous recevrez une confirmation par e-mail.",
+            "empty_title": "Votre panier est vide",
+            "empty_desc": "Vous n'avez pas encore ajouté de produits à votre panier. Découvrez notre sélection spéciale d'huiles d'exception.",
+            "bestsellers_title": "Bestsellers recommandés",
+            "bestsellers_desc": "Nos meilleurs produits sélectionnés directement au Moulin.",
+            "free_shipping_notice": "🚚 Livraison gratuite dès 69 €",
+            "bestseller_badge": "Bestseller",
+            "buy_now": "Acheter +",
+            "free_shipping_progress": "Plus que {amount} pour bénéficier de la livraison gratuite",
+            "free_shipping_unlocked": "Livraison gratuite activée ! 🎉",
+            "you_may_also_like": "Vous aimerez aussi...",
+            "add_more": "Ajouter +"
+        },
+        "errors": {
+            "promo_invalid": "Code non valide.",
+            "promo_not_active": "Code promo introuvable ou inactif.",
+            "promo_invalid_discount": "Code promo non valide.",
+            "network_retry": "Erreur réseau. Veuillez réessayer.",
+            "network": "Erreur réseau.",
+            "empty_cart": "Le panier est vide.",
+            "invalid_products": "Des produits non valides se trouvent dans le panier. Videz le panier et réessayez.",
+            "product_unavailable": "Produit non disponible.",
+            "too_many_requests": "Trop de requêtes. Veuillez réessayer dans quelques instants.",
+            "invalid_cart": "Panier non valide.",
+            "order_creation": "Erreur lors de la création de la commande.",
+            "invalid_server_response": "Réponse du serveur non valide.",
+            "checkout_unavailable": "Caisse indisponible.",
+            "missing_checkout_url": "URL de caisse manquante.",
+            "checkout_generic": "Erreur lors du passage à la caisse."
+        },
+        "panel": {
+            "bottle_format": "FORMAT DE LA BOUTEILLE",
+            "select_format_aria": "Sélectionner le format de la bouteille",
+            "quantity": "QUANTITÉ",
+            "sold_out": "Épuisé",
+            "add_to_cart": "Ajouter au panier",
+            "selected_format": "Format sélectionné : ",
+            "added_to_cart_toast": "Ajouté au panier",
+            "out_of_stock_toast": "Produit épuisé.",
+            "close_toast_aria": "Fermer",
+            "max_qty": "MAX {max}",
+            "available": "DISPONIBLE",
+            "plus_vat": "TVA incl."
+        }
+    }
+}

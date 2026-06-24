@@ -2,11 +2,20 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { readPublicCatalog, readPublicCatalogWithMerch } from "@/lib/server/catalog";
-import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
+import { findProductBySlug, getLocalizedProductSlug, translateVariantTitle } from "@/lib/productSlugs";
 import { makeInventorySku } from "@/lib/inventorySku";
+import { prisma } from "@/lib/server/prisma";
+import { SHIPPING_RULES } from "@/lib/shippingConfig";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
-import { getProductAlternateUrls, absoluteUrl, localizedPath, SITE_URL } from "@/lib/seo";
+import {
+  getProductAlternateUrls,
+  getSeoLocale,
+  absoluteUrl,
+  localizedPath,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/seo";
 import type { Metadata } from "next";
 import { locales } from "@/i18n/pathnames";
 
@@ -179,6 +188,47 @@ export async function generateMetadata({
   };
 }
 
+function parseMeasurement(label: string, id: string) {
+  const str = `${label} ${id}`.toLowerCase();
+
+  // Match "500 ml", "750ml", "3 l", "3lt", "5lt", "5 l"
+  const volMatch = str.match(/(\d+(?:\.\d+)?)\s*(ml|l|lt|litre|litri|litro)/i);
+  if (volMatch) {
+    const value = parseFloat(volMatch[1]);
+    const unit = volMatch[2].toLowerCase();
+    const unitCode = (unit === "ml") ? "MLT" : "LTR";
+    return {
+      type: "netVolume",
+      value,
+      unitCode,
+    };
+  }
+
+  // Match weights: "500 g", "1 kg", "500g", "1kg"
+  const wtMatch = str.match(/(\d+(?:\.\d+)?)\s*(g|kg|grammi|chili|kg)/i);
+  if (wtMatch) {
+    const value = parseFloat(wtMatch[1]);
+    const unit = wtMatch[2].toLowerCase();
+    const unitCode = (unit === "g" || unit === "grammi") ? "GRM" : "KGM";
+    return {
+      type: "weight",
+      value,
+      unitCode,
+    };
+  }
+
+  // Fallback for standard wine bottles if it says "bottiglia" or "bottle" without specific ml:
+  if (str.includes("bottiglia") || str.includes("bottle")) {
+    return {
+      type: "netVolume",
+      value: 750,
+      unitCode: "MLT",
+    };
+  }
+
+  return null;
+}
+
 export default async function ProductPage({
   params,
   searchParams,
@@ -236,7 +286,7 @@ export default async function ProductPage({
     }));
 
   const languages = getProductAlternateUrls(product);
-  const canonical = languages[locale];
+  const canonical = languages[getSeoLocale(locale)];
   const homeUrl = absoluteUrl(localizedPath("/", locale));
   const shopUrl = absoluteUrl(localizedPath("/shop", locale));
 
@@ -266,32 +316,111 @@ export default async function ProductPage({
     return vSrc.startsWith("http") ? vSrc : `${SITE_URL}${vSrc}`;
   };
 
+  // Fetch real availability for each variant SKU from the database
+  const skus = variants.map(v => makeInventorySku(product.id, v.id, v.sku));
+  const inventoryItems = await prisma.inventoryItem.findMany({
+    where: { sku: { in: skus } },
+    select: { sku: true, stock: true, reserved: true }
+  });
+  const availabilityMap = new Map(
+    inventoryItems.map(item => [item.sku, Math.max(0, item.stock - item.reserved)])
+  );
+
+  const returnUrl = absoluteUrl(localizedPath("/resi", locale));
+
+  const shippingDetails = Object.values(SHIPPING_RULES)
+    .filter(rule => rule.countryCode !== "EU")
+    .map(rule => ({
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": (rule.shippingFlatCents / 100).toFixed(2),
+        "currency": "EUR"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": rule.countryCode
+      },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 1,
+          "unitCode": "d"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": rule.deliveryDaysMin,
+          "maxValue": rule.deliveryDaysMax,
+          "unitCode": "d"
+        }
+      }
+    }));
+
+  const returnPolicies = Object.values(SHIPPING_RULES)
+    .filter(rule => rule.countryCode !== "EU")
+    .map(rule => {
+      const isFree = rule.returnShippingFeeCents === 0;
+      return {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": rule.countryCode,
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 14,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": isFree ? "https://schema.org/FreeReturn" : "https://schema.org/ReturnShippingFees",
+        ...(isFree ? {} : {
+          "returnShippingFeesAmount": {
+            "@type": "MonetaryAmount",
+            "value": (rule.returnShippingFeeCents / 100).toFixed(2),
+            "currency": "EUR"
+          }
+        }),
+        "merchantReturnLink": returnUrl
+      };
+    });
+
   const offersList = variants.map((variant) => {
     const variantUrl = `${canonical}?v=${variant.id}`;
     const variantSku = makeInventorySku(product.id, variant.id, variant.sku);
     const variantImage = variantImageAbsolute(variant.imageSrc);
+    const availableQty = availabilityMap.get(variantSku) ?? 0;
+    const availability = availableQty > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock";
+
+    const measurement = parseMeasurement(variant.label || "", variant.id || "");
+    const measurementFields = measurement
+      ? {
+          [measurement.type]: {
+            "@type": "QuantitativeValue",
+            "value": measurement.value,
+            "unitCode": measurement.unitCode,
+          },
+        }
+      : {};
+
     return {
       "@type": "Offer",
       "sku": variantSku,
+      "mpn": variantSku,
       "price": (variant.priceCents / 100).toFixed(2),
       "priceCurrency": "EUR",
       "url": variantUrl,
       "image": variantImage,
       "itemCondition": "https://schema.org/NewCondition",
-      "priceValidUntil": new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split("T")[0]
+      "availability": availability,
+      "priceValidUntil": new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split("T")[0],
+      "seller": {
+        "@type": "Organization",
+        "name": SITE_NAME,
+        "url": SITE_URL
+      },
+      "shippingDetails": shippingDetails,
+      "hasMerchantReturnPolicy": returnPolicies,
+      ...measurementFields
     };
   });
 
-  const offersJson = variants.length === 1 ? {
-    "@type": "Offer",
-    "sku": offersList[0].sku,
-    "price": offersList[0].price,
-    "priceCurrency": "EUR",
-    "url": offersList[0].url,
-    "image": offersList[0].image,
-    "itemCondition": "https://schema.org/NewCondition",
-    "priceValidUntil": offersList[0].priceValidUntil
-  } : {
+  const offersJson = variants.length === 1 ? offersList[0] : {
     "@type": "AggregateOffer",
     "priceCurrency": "EUR",
     "lowPrice": lowPrice,

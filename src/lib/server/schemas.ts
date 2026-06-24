@@ -51,7 +51,7 @@ export const CustomerSchema = z
       .string()
       .trim()
       .toUpperCase()
-      .refine((v) => ["IT", "DE", "NL", "DK", "NO", "US", "GB"].includes(v), "Unsupported country")
+      .refine((v) => ["IT", "DE", "NL", "DK", "NO", "US", "GB", "ES", "FR"].includes(v), "Unsupported country")
       .optional(),
 
     phone: z

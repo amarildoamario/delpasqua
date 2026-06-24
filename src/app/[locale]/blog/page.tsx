@@ -232,7 +232,13 @@ export default async function BlogPage({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
-            <main className="flex-1 pt-24 pb-24 sm:pt-32 sm:pb-32">
+            <style dangerouslySetInnerHTML={{ __html: `
+                .blog-page-custom-radius .rounded-2xl { border-radius: 5px !important; }
+                .blog-page-custom-radius .rounded-xl { border-radius: 5px !important; }
+                .blog-page-custom-radius .rounded-lg { border-radius: 5px !important; }
+                .blog-page-custom-radius .rounded-full { border-radius: 5px !important; }
+            `}} />
+            <main className="flex-1 pt-24 pb-24 sm:pt-32 sm:pb-32 blog-page-custom-radius">
 
                 {/* Page Header */}
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-12">

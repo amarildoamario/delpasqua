@@ -1,4 +1,4 @@
-export const locales = ["it", "en", "de", "nl", "da", "no"] as const;
+export const locales = ["it", "en", "de", "nl", "da", "no", "es", "fr", "us"] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -12,6 +12,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/privacybeleid",
     da: "/privatlivspolitik",
     no: "/personvernerklaering",
+    es: "/politica-de-privacidad",
+    fr: "/politique-de-confidentialite",
+    us: "/privacy-policy",
   },
   "/cookie": {
     it: "/cookie-policy",
@@ -20,6 +23,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/cookiebeleid",
     da: "/cookiepolitik",
     no: "/cookiepolicy",
+    es: "/politica-de-cookies",
+    fr: "/politique-de-cookies",
+    us: "/cookie-policy",
   },
   "/termini": {
     it: "/condizioni-generali-di-vendita",
@@ -28,6 +34,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/voorwaarden",
     da: "/vilkaar",
     no: "/vilkar",
+    es: "/condiciones-generales-de-venta",
+    fr: "/conditions-generales-de-vente",
+    us: "/terms",
   },
   "/resi": {
     it: "/resi",
@@ -36,6 +45,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/retourneren",
     da: "/returnering",
     no: "/retur",
+    es: "/devoluciones",
+    fr: "/retours",
+    us: "/returns",
   },
   "/spedizioni": {
     it: "/spedizioni",
@@ -44,6 +56,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/verzending",
     da: "/forsendelse",
     no: "/frakt",
+    es: "/envios",
+    fr: "/livraison",
+    us: "/shipping",
   },
   "/parita-di-genere": {
     it: "/parita-di-genere",
@@ -52,6 +67,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/gendergelijkheid",
     da: "/ligestilling",
     no: "/likestilling",
+    es: "/igualdad-de-genero",
+    fr: "/egalite-des-sexes",
+    us: "/gender-equality",
   },
   "/smaltimenti": {
     it: "/smaltimenti",
@@ -60,6 +78,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/afvalverwerking",
     da: "/affaldssortering",
     no: "/avfallshandtering",
+    es: "/eliminacion-de-residuos",
+    fr: "/elimination-des-dechets",
+    us: "/waste-disposal",
   },
   "/cart": {
     it: "/carrello",
@@ -68,6 +89,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/winkelwagen",
     da: "/kurv",
     no: "/handlekurv",
+    es: "/carrito",
+    fr: "/panier",
+    us: "/cart",
   },
   "/shop": {
     it: "/shop",
@@ -76,6 +100,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/winkel",
     da: "/butik",
     no: "/butikk",
+    es: "/tienda",
+    fr: "/boutique",
+    us: "/shop",
   },
   "/shop/[prodotto]": {
     it: "/shop/[prodotto]",
@@ -84,6 +111,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/winkel/[prodotto]",
     da: "/butik/[prodotto]",
     no: "/butikk/[prodotto]",
+    es: "/tienda/[prodotto]",
+    fr: "/boutique/[prodotto]",
+    us: "/shop/[prodotto]",
   },
   "/acquista": {
     it: "/acquista",
@@ -92,6 +122,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/kopen",
     da: "/koeb",
     no: "/kjop",
+    es: "/comprar",
+    fr: "/acheter",
+    us: "/buy",
   },
   "/storia": {
     it: "/storia",
@@ -100,6 +133,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/over-ons",
     da: "/om-os",
     no: "/om-oss",
+    es: "/sobre-nosotros",
+    fr: "/a-propos",
+    us: "/about-us",
   },
   "/produzione": {
     it: "/produzione",
@@ -108,6 +144,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/productie",
     da: "/produktion",
     no: "/produksjon",
+    es: "/produccion",
+    fr: "/production",
+    us: "/production",
   },
   "/il-nostro-olio": {
     it: "/il-nostro-olio",
@@ -116,6 +155,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/olijfolie",
     da: "/olivenolie",
     no: "/olivenolje",
+    es: "/nuestro-aceite",
+    fr: "/notre-huile",
+    us: "/olive-oil",
   },
   "/contatti": {
     it: "/contatti",
@@ -124,6 +166,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/contact",
     da: "/kontakt",
     no: "/kontakt",
+    es: "/contacto",
+    fr: "/contact",
+    us: "/contact",
   },
   "/degustazioni": {
     it: "/degustazioni",
@@ -132,6 +177,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/proeverijen",
     da: "/smagninger",
     no: "/smakinger",
+    es: "/degustaciones",
+    fr: "/degustations",
+    us: "/tastings",
   },
   "/blog": {
     it: "/blog",
@@ -140,6 +188,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/blog",
     da: "/blog",
     no: "/blog",
+    es: "/blog",
+    fr: "/blog",
+    us: "/blog",
   },
   "/blog/[slug]": {
     it: "/blog/[slug]",
@@ -148,6 +199,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/blog/[slug]",
     da: "/blog/[slug]",
     no: "/blog/[slug]",
+    es: "/blog/[slug]",
+    fr: "/blog/[slug]",
+    us: "/blog/[slug]",
   },
   "/blog/category/[category]": {
     it: "/blog/categoria/[category]",
@@ -156,6 +210,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/blog/categorie/[category]",
     da: "/blog/kategori/[category]",
     no: "/blog/kategori/[category]",
+    es: "/blog/categoria/[category]",
+    fr: "/blog/categorie/[category]",
+    us: "/blog/category/[category]",
   },
   "/blog/category/[category]/[slug]": {
     it: "/blog/categoria/[category]/[slug]",
@@ -164,6 +221,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/blog/categorie/[category]/[slug]",
     da: "/blog/kategori/[category]/[slug]",
     no: "/blog/kategori/[category]/[slug]",
+    es: "/blog/categoria/[category]/[slug]",
+    fr: "/blog/categorie/[category]/[slug]",
+    us: "/blog/category/[category]/[slug]",
   },
   "/developer/email-template": {
     it: "/developer/email-template",
@@ -172,6 +232,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/developer/email-template",
     da: "/developer/email-template",
     no: "/developer/email-template",
+    es: "/developer/email-template",
+    fr: "/developer/email-template",
+    us: "/developer/email-template",
   },
   "/olio-toscano": {
     it: "/olio-toscano",
@@ -180,6 +243,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/toscane-olijfolie",
     da: "/toscansk-olivenolie",
     no: "/toskansk-olivenolje",
+    es: "/aceite-toscano",
+    fr: "/huile-toscane",
+    us: "/tuscan-olive-oil",
   },
   "/olio-biologico": {
     it: "/olio-biologico",
@@ -188,6 +254,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/biologische-olijfolie-kopen",
     da: "/oekologisk-olivenolie",
     no: "/okologisk-olivenolje",
+    es: "/comprar-aceite-organico",
+    fr: "/acheter-huile-biologique",
+    us: "/buy-organic-olive-oil",
   },
   "/nuovo-raccolto": {
     it: "/nuovo-raccolto",
@@ -196,6 +265,9 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/nieuwe-oogst-olijfolie",
     da: "/ny-hoest",
     no: "/ny-host",
+    es: "/nueva-cosecha",
+    fr: "/nouvelle-recolte",
+    us: "/new-harvest-olive-oil",
   },
   "/olio-5-litri": {
     it: "/olio-5-litri",
@@ -204,5 +276,8 @@ export const localizedPathnames: Record<string, LocalizedPathname> = {
     nl: "/5-liter-olijfolie",
     da: "/5-liters-dunk",
     no: "/5-liters-kanne",
+    es: "/aceite-5-litros",
+    fr: "/huile-5-litres",
+    us: "/5-liters-olive-oil",
   },
 };
