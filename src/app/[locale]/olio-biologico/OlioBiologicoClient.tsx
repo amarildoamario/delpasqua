@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { motion } from "motion/react";
-import { ArrowRight, Leaf, ShieldCheck, Percent, ShoppingBag, Droplet, Award, Wine, CheckCircle2, XCircle, MapPin, Clock, Heart, Sprout, Sparkles } from "lucide-react";
+import { ArrowRight, Leaf, ShieldCheck, Percent, ShoppingBag, Droplet, Award, Wine, CheckCircle2, XCircle, MapPin, Clock, Heart, Sprout } from "lucide-react";
 import Footer from "@/components/Footer";
 
 export type BiologicoContent = {
@@ -15,7 +15,7 @@ export type BiologicoContent = {
   introTitle: string;
   introText: string;
   features: {
-    icon: "leaf" | "shield" | "sparkles" | "bag";
+    icon: "leaf" | "shield" | "droplet" | "bag";
     title: string;
     description: string;
   }[];
@@ -246,8 +246,8 @@ export default function OlioBiologicoClient({ locale, content, products }: Props
         return <Leaf className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
       case "shield":
         return <ShieldCheck className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
-      case "sparkles":
-        return <Sparkles className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
+      case "droplet":
+        return <Droplet className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
       default:
         return <Award className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
     }

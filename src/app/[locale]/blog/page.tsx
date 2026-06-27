@@ -43,10 +43,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function BlogPage({
     params,
-    searchParams
 }: {
     params: Promise<{ locale: string; category?: string }>;
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
     const { locale, category } = await params;
     
@@ -71,10 +69,6 @@ export default async function BlogPage({
             }
         ]
     };
-    const resolvedSearchParams = await searchParams;
-    const categoryParam = resolvedSearchParams.category;
-    const legacyCategory = typeof categoryParam === "string" ? safeDecodeURIComponent(categoryParam) : undefined;
-
     const allPosts = await getBlogPosts(locale);
     const categories = Array.from(new Set(allPosts.map(p => p.category)));
 
@@ -91,14 +85,6 @@ export default async function BlogPage({
                     locale,
                 });
             }
-        }
-    } else if (legacyCategory) {
-        const correctCategoryName = findCategoryNameBySlug(legacyCategory, locale);
-        if (correctCategoryName) {
-            redirect({
-                href: getBlogCategoryHref(correctCategoryName),
-                locale,
-            });
         }
     }
     const filteredPosts = selectedCategory

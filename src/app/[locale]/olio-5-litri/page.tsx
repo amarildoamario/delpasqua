@@ -16,7 +16,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Protezione Totale", description: "La latta scherma completamente la luce solare, preservando intatte le proprietà nutrizionali." },
       { icon: "shield", title: "Convenienza Famiglia", description: "Miglior rapporto qualità-prezzo grazie al risparmio sul confezionamento in vetro." },
-      { icon: "sparkles", title: "Dosaggio Facile", description: "Progettate con beccuccio salvagoccia estensibile per un travaso comodo e pulito." }
+      { icon: "droplet", title: "Dosaggio Facile", description: "Progettate con beccuccio salvagoccia estensibile per un travaso comodo e pulito." }
     ],
     ctaTitle: "Scegli il Tuo Formato Convenienza",
     ctaText: "Acquista le nostre latte da 5 litri direttamente dal frantoio toscano.",
@@ -49,7 +49,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Total Protection", description: "The tin completely blocks sunlight, preserving the nutritional properties intact." },
       { icon: "shield", title: "Family Value", description: "Best price-to-quality ratio due to savings on glass packaging." },
-      { icon: "sparkles", title: "Easy Pouring", description: "Designed with an extendable drip-free spout for clean and easy pouring." }
+      { icon: "droplet", title: "Easy Pouring", description: "Designed with an extendable drip-free spout for clean and easy pouring." }
     ],
     ctaTitle: "Choose Your Value Format",
     ctaText: "Buy our 5-liter tins directly from the Tuscan mill.",
@@ -82,7 +82,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Vollständiger Schutz", description: "Der Kanister schützt das Öl zu 100% vor Licht und bewahrt die Nährstoffe." },
       { icon: "shield", title: "Familien-Vorteil", description: "Bestes Preis-Leistungs-Verhältnis durch Einsparungen bei Glasflaschen." },
-      { icon: "sparkles", title: "Einfaches Ausgießen", description: "Mit ausziehbarem, tropffreiem Ausgießer für sauberes Dosieren." }
+      { icon: "droplet", title: "Einfaches Ausgießen", description: "Mit ausziehbarem, tropffreiem Ausgießer für sauberes Dosieren." }
     ],
     ctaTitle: "Wählen Sie Ihr Vorteilsformat",
     ctaText: "Kaufen Sie unsere 5-Liter-Kanister direkt ab der toskanischen Ölmühle.",
@@ -115,7 +115,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Totale Bescherming", description: "Het blik weert zonlicht volledig, waardoor de voedingswaarden intact blijven." },
       { icon: "shield", title: "Gezinsvoordeel", description: "Beste prijs-kwaliteitverhouding dankzij besparingen op glazen verpakkingen." },
-      { icon: "sparkles", title: "Eenvoudig Schenken", description: "Ontworpen met een uittrekbare schenktuit voor schoon en handig gebruik." }
+      { icon: "droplet", title: "Eenvoudig Schenken", description: "Ontworpen met een uittrekbare schenktuit voor schoon en handig gebruik." }
     ],
     ctaTitle: "Kies uw Voordeelformaat",
     ctaText: "Koop onze blikken van 5 liter rechtstreeks van de Toscaanse perserij.",
@@ -148,7 +148,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Total Beskyttelse", description: "Dunken blokerer fuldstændigt sollys, hvilket bevarer de ernæringsmæssige egenskaber intakte." },
       { icon: "shield", title: "Familieøkonomi", description: "Bedste pris-kvalitetsforhold takket være besparelser på glasemballage." },
-      { icon: "sparkles", title: "Nem Hældning", description: "Designet med en udtrækkelig hældetud for ren og nem hældning." }
+      { icon: "droplet", title: "Nem Hældning", description: "Designet med en udtrækkelig hældetud for ren og nem hældning." }
     ],
     ctaTitle: "Vælg dit Fordelsformat",
     ctaText: "Køb vores 5-liters dunke direkte fra den toscanske mølle.",
@@ -181,7 +181,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Total Beskyttelse", description: "Kannen blokkerer sollys fullstendig, noe som bevarer næringsegenskapene intakt." },
       { icon: "shield", title: "Familieøkonomi", description: "Beste pris-kvalitetsforhold takket være besparelser på glassemballasje." },
-      { icon: "sparkles", title: "Enkel Helling", description: "Designet med en uttrekkbar helletut for ren og enkel helling." }
+      { icon: "droplet", title: "Enkel Helling", description: "Designet med en uttrekkbar helletut for ren og enkel helling." }
     ],
     ctaTitle: "Velg ditt Fordelsformat",
     ctaText: "Kjøp våre 5-liters kanner direkte fra den toscanske møllen.",

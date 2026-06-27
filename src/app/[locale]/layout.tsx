@@ -2,11 +2,10 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import GA4RouteTracker from "@/components/analytics/GA4RouteTracker";
 import { Manrope } from "next/font/google";
 
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import type { Metadata } from "next";
@@ -32,6 +31,8 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+export const dynamicParams = false;
+
 export default async function RootLayout({
   children,
   params
@@ -44,6 +45,8 @@ export default async function RootLayout({
   if (!(routing.locales as readonly string[]).includes(locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
 
   const messages = await getMessages();
   const initialCatalog = await readPublicCatalog();
@@ -59,7 +62,6 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <Providers initialCatalog={initialCatalog}>
             <GoogleAnalytics />
-            <GA4RouteTracker />
             <Navbar initialCatalog={initialCatalog.map((product) => ({ id: product.id, slug: product.slug }))} />
 
             <main>

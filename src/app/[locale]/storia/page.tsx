@@ -5,10 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 
 const STORIA_IMAGES = {
-  iniziale: "/storia/sezione_iniziale.jpg",
-  oliveti: "/storia/storia-1.jpg",
-  raccolta: "/storia/storia-3.jpg",
-  territorio: "/storia/storia-4.jpg",
+  iniziale: "/storia/sezione_iniziale.webp",
+  oliveti: "/storia/storia-1.webp",
+  raccolta: "/storia/storia-3.webp",
+  territorio: "/storia/storia-4.webp",
 } as const;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -198,17 +198,14 @@ export default async function StoriaPage({ params }: { params: Promise<{ locale:
                   {t("philosophy.description")}
                 </p>
 
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-2 rounded-[5px] border border-[#3E3A36] bg-[#292524]/40 px-3.5 py-2 text-xs font-medium text-[#D6D3D1] transition-all duration-300 hover:bg-[#3E3A36]/60 hover:text-white hover:border-[#8B7355]/40">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#3D5A3D]" />
+                <div className="mt-8 flex flex-wrap gap-2.5">
+                  <span className="inline-flex rounded-full border border-[#8B7355]/25 bg-[#FAFAF9]/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E7E5E4] transition-all duration-300 hover:border-[#B8860B]/45 hover:bg-[#B8860B]/10 hover:text-white">
                     {t("philosophy.tags.tradition")}
                   </span>
-                  <span className="inline-flex items-center gap-2 rounded-[5px] border border-[#3E3A36] bg-[#292524]/40 px-3.5 py-2 text-xs font-medium text-[#D6D3D1] transition-all duration-300 hover:bg-[#3E3A36]/60 hover:text-white hover:border-[#8B7355]/40">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#B8860B]" />
+                  <span className="inline-flex rounded-full border border-[#8B7355]/25 bg-[#FAFAF9]/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E7E5E4] transition-all duration-300 hover:border-[#B8860B]/45 hover:bg-[#B8860B]/10 hover:text-white">
                     {t("philosophy.tags.innovation")}
                   </span>
-                  <span className="inline-flex items-center gap-2 rounded-[5px] border border-[#3E3A36] bg-[#292524]/40 px-3.5 py-2 text-xs font-medium text-[#D6D3D1] transition-all duration-300 hover:bg-[#3E3A36]/60 hover:text-white hover:border-[#8B7355]/40">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#8B7355]" />
+                  <span className="inline-flex rounded-full border border-[#8B7355]/25 bg-[#FAFAF9]/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E7E5E4] transition-all duration-300 hover:border-[#B8860B]/45 hover:bg-[#B8860B]/10 hover:text-white">
                     {t("philosophy.tags.quality")}
                   </span>
                 </div>

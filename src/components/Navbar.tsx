@@ -80,22 +80,7 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
-  const [catalog, setCatalog] = useState<NavbarCatalogProduct[]>(initialCatalog);
-
-  useEffect(() => {
-    let alive = true;
-    fetch(`/api/products?t=${Date.now()}`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) => {
-        if (alive && Array.isArray(data)) {
-          setCatalog(data);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const catalog = initialCatalog;
   // All localized variants of the "category" path segment, from pathnames.ts
   // it: "categoria", en: "category", de: "kategorie", nl: "categorie", da/no: "kategori"
   const BLOG_CATEGORY_SEGMENTS = new Set(["category", "categoria", "kategorie", "categorie", "kategori"]);

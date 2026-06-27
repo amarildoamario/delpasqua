@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { prisma } from "@/lib/server/prisma";
 import { releaseReserved } from "@/lib/server/inventory";
@@ -6,6 +7,18 @@ import CancelTrack from "./_components/CancelTrack";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+const intlLocaleByRouteLocale: Record<string, string> = {
+  it: "it-IT",
+  en: "en-GB",
+  de: "de-DE",
+  nl: "nl-NL",
+  da: "da-DK",
+  no: "nb-NO",
+  es: "es-ES",
+  fr: "fr-FR",
+  us: "en-US",
+};
 
 function getStripeOrNull() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -19,20 +32,27 @@ function getOne(v: string | string[] | undefined) {
 
 function clampId(id: string) {
   if (id.length <= 18) return id;
-  return `${id.slice(0, 8)}…${id.slice(-8)}`;
+  return `${id.slice(0, 8)}...${id.slice(-8)}`;
 }
 
-function euro(cents: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
+function euro(cents: number, locale: string) {
+  return new Intl.NumberFormat(intlLocaleByRouteLocale[locale] ?? "it-IT", {
+    style: "currency",
+    currency: "EUR",
+  }).format(cents / 100);
 }
 
 export default async function CancelPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams:
   | Record<string, string | string[] | undefined>
   | Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Cart.cancel" });
   const sp = await Promise.resolve(searchParams);
   const sessionId = getOne(sp.session_id) ?? null;
 
@@ -106,7 +126,6 @@ export default async function CancelPage({
 
   return (
     <main className="min-h-[75vh] bg-gradient-to-b from-neutral-50 via-white to-white">
-      {/* ✅ TRACK GA4 */}
       <CancelTrack
         orderId={order?.id ?? orderId ?? null}
         sessionId={sessionId}
@@ -117,111 +136,103 @@ export default async function CancelPage({
       />
 
       <div className="mx-auto max-w-4xl px-4 py-10 sm:py-12">
-        {/* Header mini */}
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="text-xs tracking-[0.22em] text-neutral-500">
-            CHECKOUT
+            {t("eyebrow")}
           </div>
-          {/* se hai ThemeToggle qui nel progetto puoi metterlo, altrimenti lascia così */}
-          {/* <ThemeToggle /> */}
         </div>
 
-        {/* Card principale */}
-        <div className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-          {/* top ribbon */}
+        <div className="overflow-hidden rounded-[5px] border border-neutral-200 bg-white shadow-sm">
           <div className="h-1.5 w-full bg-gradient-to-r from-rose-500 via-amber-400 to-neutral-900" />
 
           <div className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-              {/* Left */}
               <div className="min-w-0">
                 <div className="flex items-start gap-4">
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-rose-50 text-rose-700 ring-1 ring-rose-200">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[5px] bg-rose-50 text-rose-700 ring-1 ring-rose-200">
                     <CancelIcon className="h-6 w-6" />
                   </div>
 
                   <div className="min-w-0">
                     <h1 className="text-2xl font-semibold text-neutral-900">
-                      Pagamento annullato
+                      {t("title")}
                     </h1>
 
                     <p className="mt-1 text-sm text-neutral-600">
-                      Nessun addebito è stato effettuato.
                       {visibleId ? (
                         <>
-                          {" "}
-                          Il tuo ordine{" "}
-                          <code className="rounded bg-neutral-100 px-1.5 py-0.5">
+                          {t("description_with_order_before")}{" "}
+                          <code className="rounded-[5px] bg-neutral-100 px-1.5 py-0.5">
                             {visibleId}
                           </code>{" "}
-                          è stato annullato.
+                          {t("description_with_order_after")}
                         </>
-                      ) : null}
+                      ) : (
+                        t("description_no_order")
+                      )}
                     </p>
 
-                    <div className="mt-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
+                    <div className="mt-4 rounded-[5px] border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
                       <div className="flex items-start gap-3">
                         <InfoIcon className="mt-0.5 h-5 w-5 shrink-0 text-neutral-500" />
                         <div className="space-y-1">
                           <p className="font-medium text-neutral-900">
-                            Il carrello è stato mantenuto
+                            {t("cart_kept_title")}
                           </p>
                           <p className="text-neutral-600">
-                            Puoi tornare indietro, modificare quantità o riprovare il pagamento quando vuoi.
+                            {t("cart_kept_body")}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Extra tip */}
                     <p className="mt-4 text-xs text-neutral-500">
-                      Se hai annullato per errore, puoi riprovare: il checkout si riapre in pochi secondi.
+                      {t("retry_tip")}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Right (mini riepilogo) */}
               <div className="w-full lg:w-[320px]">
-                <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+                <div className="rounded-[5px] border border-neutral-200 bg-white p-5 shadow-sm">
                   <div className="text-xs font-semibold tracking-[0.16em] text-neutral-500">
-                    RIEPILOGO
+                    {t("summary")}
                   </div>
 
                   <div className="mt-3 space-y-2 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-neutral-600">Stato</span>
-                      <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-rose-200">
-                        Annullato
+                      <span className="text-neutral-600">{t("status_label")}</span>
+                      <span className="inline-flex items-center rounded-[5px] bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-rose-200">
+                        {t("cancelled_status")}
                       </span>
                     </div>
 
                     {order ? (
                       <>
                         <div className="flex items-center justify-between">
-                          <span className="text-neutral-600">Articoli</span>
+                          <span className="text-neutral-600">{t("items_label")}</span>
                           <span className="font-medium text-neutral-900">
                             {itemsCount}
                           </span>
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <span className="text-neutral-600">Totale ordine</span>
+                          <span className="text-neutral-600">{t("order_total")}</span>
                           <span className="font-semibold text-neutral-900">
-                            {euro(order.totalCents)}
+                            {euro(order.totalCents, locale)}
                           </span>
                         </div>
                       </>
                     ) : (
                       <div className="text-xs text-neutral-500">
-                        Dettagli ordine non disponibili.
+                        {t("order_details_unavailable")}
                       </div>
                     )}
 
                     {stripeCustomerEmail ? (
                       <div className="pt-2 text-xs text-neutral-500">
-                        Email:{" "}
-                        <code className="rounded bg-neutral-100 px-1.5 py-0.5">
+                        {t("email_label")}{" "}
+                        <code className="rounded-[5px] bg-neutral-100 px-1.5 py-0.5">
                           {stripeCustomerEmail}
                         </code>
                       </div>
@@ -231,59 +242,51 @@ export default async function CancelPage({
                   <div className="mt-5 grid gap-3">
                     <Link
                       href="/cart"
-                      className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-neutral-900 px-4 text-sm font-medium text-white hover:opacity-90"
+                      className="inline-flex h-11 w-full items-center justify-center rounded-[5px] bg-neutral-900 px-4 text-sm font-medium text-white hover:opacity-90"
                     >
-                      Torna al carrello
+                      {t("back_to_cart")}
                     </Link>
 
                     <Link
                       href="/"
-                      className="inline-flex h-11 w-full items-center justify-center rounded-xl border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+                      className="inline-flex h-11 w-full items-center justify-center rounded-[5px] border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
                     >
-                      Continua lo shopping
+                      {t("continue_shopping")}
                     </Link>
                   </div>
 
-                  {/* micro note */}
-                  <div className="mt-4 flex items-start gap-2 rounded-xl bg-neutral-50 p-3 text-xs text-neutral-600">
+                  <div className="mt-4 flex items-start gap-2 rounded-[5px] bg-neutral-50 p-3 text-xs text-neutral-600">
                     <LockIcon className="mt-0.5 h-4 w-4 shrink-0 text-neutral-500" />
-                    <p>
-                      Nessun pagamento completato. Se hai visto una notifica bancaria, potrebbe essere solo una
-                      pre-autorizzazione che verrà rilasciata automaticamente.
-                    </p>
+                    <p>{t("no_payment_note")}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Bottom CTA */}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/cart"
-                className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+                className="inline-flex h-11 flex-1 items-center justify-center rounded-[5px] border border-neutral-200 bg-white px-4 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
               >
-                Modifica carrello
+                {t("edit_cart")}
               </Link>
               <Link
                 href="/contatti"
-                className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-medium text-white hover:opacity-90"
+                className="inline-flex h-11 flex-1 items-center justify-center rounded-[5px] bg-rose-600 px-4 text-sm font-medium text-white hover:opacity-90"
               >
-                Serve aiuto?
+                {t("need_help")}
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Footer note */}
         <p className="mt-6 text-center text-xs text-neutral-500">
-          Se hai annullato volontariamente, tutto ok 🙂 Il carrello resta lì pronto per quando vuoi riprovare.
+          {t("footer_note")}
         </p>
       </div>
     </main>
   );
 }
-
-/* ---------- Icons ---------- */
 
 function CancelIcon({ className }: { className?: string }) {
   return (

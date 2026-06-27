@@ -7,6 +7,7 @@
  *   node scripts/generate-barcode.mjs [codice_12_o_13_cifre] [nome_file]
  * Esempio:
  *   node scripts/generate-barcode.mjs 805902340500 olio-evo-500ml
+ *   node scripts/generate-barcode.mjs 805902340501 olio-evo-750ml
  */
 
 import { promises as fs } from 'fs';
@@ -272,7 +273,7 @@ async function main() {
     await generatePNG(code13, modules, pngPath);
     console.log(`🚀 File PNG salvato con successo in: ${pngPath}`);
 
-    console.log(`\n🎉 Generazione completata con successo per: Olio Extravergine di Oliva Del Pasqua 500 ml`);
+    console.log(`\n🎉 Generazione completata con successo.`);
     console.log(`   Codice EAN-13: ${code13}`);
   } catch (error) {
     console.error('❌ Errore durante la generazione del codice a barre:', error);

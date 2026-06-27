@@ -1,701 +1,208 @@
-DELPASQUA.COM — TO-DO LIST ROUTING PRINCIPALE WORDPRESS -> VERCEL
+# TODO Migrazione SEO e Go-live
 
-Obiettivo:
-spuntare ogni voce prima di collegare definitivamente delpasqua.com al progetto Vercel.
+Obiettivo: mantenere una lista operativa aggiornata per la migrazione SEO da WordPress a Vercel e per il go-live di `delpasqua.com`.
+
+Questo file non deve essere uno storico completo di tutto quello che e` gia stato fatto. Le verifiche manuali estese di produzione restano in `docs/to_check_live/README.md`; qui restano solo i punti SEO ancora utili.
 
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-07
-- OpenItems: 23
-- AgentAction: non trattare questo file come backlog solo di codice; qui dentro convivono task di codice, QA manuale, contenuto editoriale e go-live produzione.
-- Note: al 2026-06-07 i gap locali sui placeholder pubblici sono stati chiusi. Il box recensioni resta intenzionalmente in pagina come sezione da collegare a Google; restano inoltre verifiche manuali mobile/checkout/form contatti, dominio, Search Console e task post go-live.
+- LastVerified: 2026-06-27
+- OpenItems: 7
+- AgentAction: usare questo file come lista SEO corrente; prima di chiudere un punto, verificare il codice locale o l'ambiente production reale.
+- Note: aggiornato allo stato attuale del repo. La copertura locale di routing, sitemap, canonical, hreflang e noindex preview esiste; restano soprattutto verifiche production, Search Console, recensioni reali e pulizia finale del prodotto test.
 
-## Lettura Rapida
+## Lettura rapida
 
-- I placeholder pubblici di contenuto sono stati rimossi; il box recensioni resta aperto come integrazione futura con Google.
-- Le verifiche manuali pre-go-live e post go-live sono duplicate intenzionalmente anche in `docs/to_check_live/README.md`, che va usato come checklist operativa.
-- Le voci Search Console, dominio, HTTPS e redirect restano qui come contesto SEO, ma non vanno lette come lavoro locale sul repo finche non esiste l'ambiente live definitivo.
+- Il sito ora lavora su 9 locale: `it`, `en`, `de`, `nl`, `da`, `no`, `es`, `fr`, `us`.
+- La struttura italiana resta senza prefisso, per esempio `/shop/`; le altre lingue usano prefisso quando serve, per esempio `/en/shop/`, `/de/laden/`, `/fr/boutique/`.
+- `sitemap.xml` e` un sitemap index con `sitemap-pages.xml`, `sitemap-products.xml` e `sitemap-blog.xml`.
+- `robots.txt` permette la produzione finale e blocca preview/staging quando `SITE_URL` o `VERCEL_ENV` indicano preview.
+- `src/proxy.ts` aggiunge `X-Robots-Tag: noindex, nofollow` sugli host production non finali.
+- Le vecchie voci SEO locali gia chiuse non vanno riaperte solo perche erano presenti nel vecchio documento.
 
-## Note Operative Verificate Al 2026-06-07
+## Stato locale verificato
 
-- Preview / `.vercel.app`: il blocco SEO base esiste gia`:
-  - `src/app/robots.ts` disabilita interamente l'indicizzazione in preview / host `vercel.app`;
-  - `src/proxy.ts` aggiunge `X-Robots-Tag: noindex, nofollow` sui domini non finali in produzione.
-- Placeholder pubblici rimossi il 2026-06-07:
-  - `src/app/[locale]/parita-di-genere/page.tsx` contiene ora testo pubblico reale di impegno aziendale;
-  - `src/app/[locale]/degustazioni/page.tsx` usa ora `/blog/degustazione-olio.avif` anche nel JSON-LD.
-- Recensioni non definitive:
-  - `src/components/HomeTrustAndReviews.tsx` mantiene il box recensioni e il layout Google-ready per scelta operativa; va collegato a recensioni Google reali prima di considerare chiusa la voce.
-- Task da non trattare come implementazione locale pura:
-  - collegamento dominio, HTTPS, redirect www/non-www;
-  - invio sitemap a Search Console;
-  - monitoraggio copertura/canonical/query dopo il go-live;
-  - verifica manuale checkout reale, mobile e form contatti.
+### [RISOLTO] Routing e path localizzati
 
-Aggiornamento Search Console del 2026-05-29:
-- Dalla lista "Ultima scansione" condivisa il 2026-05-29 risulta che Google ha ancora scansionato di recente:
-  - URL core corrette: `/`, `/il-nostro-olio/`, `/shop/`, `/contatti/`, `/produzione/`, `/storia/`, `/acquista/`
-  - URL inglesi legacy/di transizione: `/en/storia/`, `/en/il-nostro-olio/`, `/en/produzione/`, `/en/contatti/`, `/en/acquista/`, `/en/privacy-policy/`, `/en/condizioni-generali-di-vendita/`
-  - URL WordPress legacy prodotto: `/product/...`, `/en/product/...`
-  - URL WordPress legacy portfolio/tag/category: `/portfolio-item/...`, `/en/portfolio-item/...`, `/portfolio-tag/...`, `/product-category/...`, `/en/portfolio-category/...`
-  - URL parametrica legacy: `/shop/?add-to-cart=12018`
-  - Asset PDF pubblico: `/wp-content/uploads/2025/03/Politica-Parita-di-Genere-Frantoio-Del-Pasqua-gen-20251.pdf`
-- Interpretazione:
-  - le scansioni tra il 5 aprile 2026 e il 21 maggio 2026 confermano che Google sta ancora seguendo parecchi segnali legacy WordPress
-  - per molte di queste URL e` normale vedere nuove scansioni se i redirect 301 sono presenti
-  - dove la URL legacy non e` desiderata, il focus non e` bloccare la scansione ma garantire `301`, canonical coerente, assenza dalla sitemap e nessuna linkatura interna
+Stato attuale:
+- `src/i18n/pathnames.ts` definisce le route localizzate per pagine core, shop, prodotti, blog, legali, carrello e landing SEO.
+- `src/i18n/routing.ts` usa `localePrefix: "as-needed"`, quindi l'italiano e` canonico senza prefisso.
+- Le landing SEO `olio-toscano`, `olio-biologico`, `nuovo-raccolto` e `olio-5-litri` sono registrate nei path localizzati e hanno `generateStaticParams`.
 
-────────────────────────────────────
-1. ROUTING ITALIANO PRINCIPALE
-────────────────────────────────────
+Non resta lavoro SEO locale qui, salvo regressioni future.
 
-[✅ RISOLTO] Creare route Vercel per /
+### [RISOLTO] Sitemap
 
-[✅ RISOLTO] Verificare che / risponda 200
+Stato attuale:
+- `src/app/sitemap.xml/route.ts` genera il sitemap index.
+- `src/app/sitemap-pages.xml/route.ts` include le pagine core, legali, blog index, degustazioni, resi, spedizioni, parita di genere e landing olio per tutti i locale.
+- `src/app/sitemap-products.xml/route.ts` usa `filterSeoCatalog(...)`, quindi esclude prodotti non SEO-visible.
+- `src/app/sitemap-blog.xml/route.ts` include solo le traduzioni blog disponibili e usa URL/category slug localizzati.
 
-[✅ RISOLTO] Verificare che / sia in italiano
+Nota:
+- La sitemap index usa ancora un `lastmod` dinamico per `sitemap-pages.xml`; non e` un blocco go-live, ma se si vuole massima pulizia SEO si puo rimuovere o sostituire con una data reale di contenuto.
 
-[✅ RISOLTO] Verificare che / abbia canonical:
-https://delpasqua.com/
+### [RISOLTO] Canonical e hreflang
 
-[✅ RISOLTO] Verificare che / sia presente in sitemap.xml
+Stato attuale:
+- `src/lib/seo.ts` centralizza `SITE_URL`, canonical, metadata e hreflang.
+- `HREFLANG_CORE_PATHS` include pagine core, legali, blog, degustazioni, resi, spedizioni, parita di genere e landing olio.
+- Le sitemap generano link `xhtml:link` alternate; `sitemap-pages.xml` include anche `x-default` verso italiano.
+- Le pagine prodotto e blog generano alternate URL dedicate in base a slug tradotti.
 
-[✅ RISOLTO] Creare route Vercel per /storia/
+Non resta lavoro SEO locale qui, salvo controllare in production che `NEXT_PUBLIC_SITE_URL` / `SITE_URL` puntino al dominio finale.
 
-[✅ RISOLTO] Verificare che /storia/ risponda 200
+### [RISOLTO] Preview e host non finali noindex
 
-[✅ RISOLTO] Verificare che /storia/ abbia contenuto reale su storia, famiglia, frantoio, territorio
+Stato attuale:
+- `src/app/robots.ts` disabilita l'indicizzazione se `VERCEL_ENV === "preview"` o se `SITE_URL` contiene `vercel.app`.
+- `src/proxy.ts` aggiunge `X-Robots-Tag: noindex, nofollow` in produzione su host diversi da `delpasqua.com` e `www.delpasqua.com`.
 
-[✅ RISOLTO] Verificare che /storia/ non sia vuota o placeholder
+Resta solo la verifica reale dopo il deploy, perche dipende dagli host Vercel effettivi.
 
-[✅ RISOLTO] Verificare che /storia/ abbia canonical:
-https://delpasqua.com/storia/
+### [RISOLTO] Placeholder pubblici principali
 
-[✅ RISOLTO] Verificare che /storia/ sia presente in sitemap.xml
+Stato attuale:
+- I placeholder segnalati in passato su `produzione`, `parita-di-genere` e `degustazioni` risultano gia chiusi nel codice.
+- I `placeholder` rimasti nei risultati di ricerca locale sono per input form, UI admin o label tecniche, non contenuti pubblici SEO da correggere.
 
-[✅ RISOLTO] Creare route Vercel per /produzione/
+Eccezione ancora aperta: recensioni Home, vedi task dedicato sotto.
 
-[✅ RISOLTO] Verificare che /produzione/ risponda 200
+## Task aperti
 
-[✅ RISOLTO] Verificare che /produzione/ parli di raccolta, lavorazione, frangitura, gramolazione, estrazione, stoccaggio e imbottigliamento
+### [PARZIALE] P0 - Verificare dominio production, env SEO e sitemap live
 
-[✅ RISOLTO] Verificare che /produzione/ non abbia testi placeholder
-    (Nota: placeholder rimossi dalla pagina /produzione/)
+Perche resta aperto:
+- Questo non si puo chiudere dal solo codice locale: dipende dal dominio collegato a Vercel e dagli env production.
 
-[✅ RISOLTO] Verificare che /produzione/ abbia canonical:
-https://delpasqua.com/produzione/
+Da fare:
+- Confermare che `delpasqua.com` punti al progetto Vercel corretto.
+- Decidere e verificare canonical finale tra apex e `www`.
+- Verificare redirect `http -> https`.
+- Verificare redirect o canonicalizzazione `www/non-www`.
+- Verificare env production: `NEXT_PUBLIC_SITE_URL`, `SITE_URL`, `NEXT_PUBLIC_APP_URL`, `APP_ORIGIN`.
+- Aprire in production:
+  - `https://delpasqua.com/robots.txt`
+  - `https://delpasqua.com/sitemap.xml`
+  - `https://delpasqua.com/sitemap-pages.xml`
+  - `https://delpasqua.com/sitemap-products.xml`
+  - `https://delpasqua.com/sitemap-blog.xml`
 
-[✅ RISOLTO] Verificare che /produzione/ sia presente in sitemap.xml
+Definition of Done:
+- Tutti gli URL sopra rispondono 200 sul dominio finale.
+- Le sitemap contengono URL del dominio finale, non preview.
+- `robots.txt` punta a `https://delpasqua.com/sitemap.xml`.
 
-[✅ RISOLTO] Creare route Vercel per /il-nostro-olio/
+### [PARZIALE] P0 - Smoke test SEO production dopo deploy
 
-[✅ RISOLTO] Verificare che /il-nostro-olio/ risponda 200
+Perche resta aperto:
+- La verifica locale non basta per dominio, header, canonical reali e comportamento Edge/Vercel.
 
-[✅ RISOLTO] Verificare che /il-nostro-olio/ parli di olio EVO, qualità, fruttato medio, fruttato intenso, BIO, IGP e aromatici
+Da fare su production:
+- Home, shop, PDP principali, acquista, contatti, blog e landing olio rispondono 200.
+- Carrello, checkout e my-account non compaiono in sitemap e restano noindex.
+- Le pagine principali hanno canonical coerente con il dominio finale.
+- Il menu lingua non crea URL rotti o duplicati.
+- La navigazione mobile reale non nasconde link importanti.
 
-[✅ RISOLTO] Verificare che /il-nostro-olio/ non sia una pagina generica debole
+Definition of Done:
+- Nessuna pagina core produce 404/500.
+- Nessuna pagina core e` marcata noindex per errore.
+- Nessuna utility ecommerce finisce indicizzabile.
 
-[✅ RISOLTO] Verificare che /il-nostro-olio/ abbia canonical:
-https://delpasqua.com/il-nostro-olio/
+### [TODO] P1 - Collegare recensioni reali o rimuovere recensioni provvisorie
 
-[✅ RISOLTO] Verificare che /il-nostro-olio/ sia presente in sitemap.xml
+Stato attuale:
+- `src/components/HomeTrustAndReviews.tsx` contiene una sezione recensioni pronta per Google.
+- Il copy dice esplicitamente che le recensioni Google sono "pronte da collegare".
+- Il componente contiene testi recensione hardcoded.
 
-[✅ RISOLTO] Creare route Vercel per /shop/
+Rischio:
+- Se quelle recensioni non sono reali, la Home mostra trust proof non verificato.
 
-[✅ RISOLTO] Verificare che /shop/ risponda 200
+Da fare:
+- Collegare recensioni Google reali, oppure sostituire la sezione con testimonianze verificate, oppure rimuovere temporaneamente il blocco recensioni.
 
-[✅ RISOLTO] Verificare che /shop/ sia in italiano
+Definition of Done:
+- Ogni recensione pubblica e` verificabile o dichiarata correttamente.
+- Non resta copy tipo "Google reviews ready to connect" visibile al cliente finale.
 
-[✅ RISOLTO] Verificare che /shop/ mostri prodotti visibili lato HTML
+### [TODO] P1 - Disattivare prodotto test dopo i test live
 
-[✅ RISOLTO] Verificare che ogni prodotto in /shop/ abbia nome, prezzo, immagine, descrizione breve e link
+Stato attuale:
+- `src/db/products.json` contiene `prodotto-test`.
+- Il prodotto test ha `excludeFromSeo: true`, quindi non dovrebbe entrare in `sitemap-products.xml`.
+- Non ha pero` `isPublished: false` o `isPurchasable: false` nel JSON corrente.
 
-[✅ RISOLTO] Verificare che /shop/ non mandi automaticamente a /en/shop/
+Rischio:
+- SEO pura: basso, perche e` escluso dalla sitemap.
+- Commerciale/pubblico: medio, perche puo restare acquistabile o visibile se il catalogo pubblico non lo filtra come prodotto non pubblicato.
 
-[✅ RISOLTO] Verificare che /shop/ abbia canonical:
-https://delpasqua.com/shop/
+Da fare dopo ordine test reale:
+- Impostare `isPublished: false` e `isPurchasable: false`, oppure rimuovere il prodotto test.
+- Verificare che non appaia in `/shop/`, `/acquista/`, `/api/products` e `sitemap-products.xml`.
+- Verificare che carrelli vecchi non possano completare checkout con il prodotto test.
 
-[✅ RISOLTO] Verificare che /shop/ sia presente in sitemap.xml
+Definition of Done:
+- `prodotto-test` non e` acquistabile pubblicamente e non e` presente in sitemap/API pubbliche.
 
-[✅ RISOLTO] Creare route Vercel per /acquista/
+### [TODO] P1 - Verificare redirect legacy WordPress dopo go-live
 
-[✅ RISOLTO] Verificare che /acquista/ risponda 200
+Stato attuale:
+- `src/proxy.ts` contiene redirect 301 per molte vecchie URL WordPress: cart, portfolio, product, product-category e `zblog-list-2`.
+- Search Console aveva mostrato scansioni legacy ancora recenti nell'export del 2026-05-29.
 
-[✅ RISOLTO] Decidere se /acquista/ è pagina autonoma o pagina commerciale simile a /shop/
-    (Nota: è una landing page di vendita autonoma che rimanda a /shop/)
+Da fare dopo il dominio live:
+- Controllare da browser/curl un campione di URL legacy `product`, `product-category`, `portfolio-item`, `portfolio-tag`, `portfolio-category`.
+- Controllare in Search Console le 404 reali dopo il cambio dominio.
+- Aggiungere redirect mancanti solo per URL con impression, click, backlink o crawl significativo.
 
-[✅ RISOLTO] Se /acquista/ è autonoma, verificare canonical:
-https://delpasqua.com/acquista/
+Definition of Done:
+- Le vecchie URL importanti fanno 301 singolo verso una pagina finale sensata.
+- Non ci sono URL legacy importanti che rispondono 200 come duplicati o 404 evitabili.
 
-[✅ RISOLTO] Se /acquista/ è duplicata dello shop, impostare canonical: (Saltato - autonoma)
-https://delpasqua.com/shop/
+### [TODO] P2 - Valutare protezione preview
 
-[✅ RISOLTO] Se /acquista/ è autonoma e utile, inserirla in sitemap.xml
+Stato attuale:
+- Il noindex preview e` gia presente via `robots.ts` e `proxy.ts`.
 
-[✅ RISOLTO] Se /acquista/ è duplicata, non inserirla in sitemap.xml (Saltato - autonoma)
+Resta da decidere:
+- Se il sito finale e` indicizzabile e riceve traffico reale, valutare password/protection sugli ambienti preview Vercel.
 
-[✅ RISOLTO] Creare route Vercel per /contatti/
+Definition of Done:
+- Decisione esplicita: lasciare preview accessibile ma noindex, oppure proteggerla.
 
-[✅ RISOLTO] Verificare che /contatti/ risponda 200
+### [TODO] P2 - Monitorare Search Console dopo go-live
 
-[✅ RISOLTO] Verificare che /contatti/ contenga indirizzo, telefono, email, form, mappa e dati aziendali
+Da fare:
+- Inviare `https://delpasqua.com/sitemap.xml` in Google Search Console.
+- Verificare che la sitemap venga accettata.
+- Controllare copertura, pagine escluse, 404, canonical scelti da Google.
+- Monitorare query perse e query nuove nelle prime settimane.
+- Evitare modifiche continue alle URL appena dopo il go-live.
 
-[✅ RISOLTO] Verificare che /contatti/ abbia canonical:
-https://delpasqua.com/contatti/
+Definition of Done:
+- Search Console non segnala problemi bloccanti su sitemap, DNS, HTTPS o indicizzazione pagine principali.
 
-[✅ RISOLTO] Verificare che /contatti/ sia presente in sitemap.xml
+## Collegamenti ad altri file
 
-────────────────────────────────────
-2. PAGINE LEGALI
-────────────────────────────────────
+- `docs/to_check_live/README.md`: checklist completa pre/durante/post go-live.
+- `docs/to_do_checkout_payments.md`: Stripe webhook, dominio production e ordine test live.
+- `docs/to_do_security_ops.md`: Resend e notifiche form contatti.
+- `docs/to_do_inventory_catalog.md`: decisione finale sul prodotto test.
+- `docs/to_do_routing_seo_data.md`: duplicazioni di copy e regole commerciali.
+- `docs/to_do_pages.md`: archivio completato per landing SEO olio.
 
-[✅ RISOLTO] Creare route Vercel per /privacy-policy/
-    (Nota: servita dinamicamente tramite alias next-intl su cartella /privacy)
+## Comandi utili
 
-[✅ RISOLTO] Verificare che /privacy-policy/ risponda 200
+Da usare quando serve una verifica locale, non per chiudere i task production:
 
-[✅ RISOLTO] Verificare che /privacy-policy/ abbia contenuto reale e aggiornato
-    (Nota: aggiornata con contenuto reale essenziale e dati aziendali gia presenti nel sito)
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/privacy-policy/
-
-[✅ RISOLTO] Verificare che /privacy-policy/ sia presente in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /cookie-policy/
-    (Nota: servita dinamicamente tramite alias next-intl su cartella /cookie)
-
-[✅ RISOLTO] Verificare che /cookie-policy/ risponda 200
-
-[✅ RISOLTO] Verificare che /cookie-policy/ abbia contenuto reale e aggiornato
-    (Nota: aggiornata con cookie e identificativi tecnici realmente usati dal sito)
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/cookie-policy/
-
-[✅ RISOLTO] Verificare che /cookie-policy/ sia presente in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /condizioni-generali-di-vendita/
-    (Nota: servita dinamicamente tramite alias next-intl su cartella /termini)
-
-[✅ RISOLTO] Verificare che /condizioni-generali-di-vendita/ risponda 200
-
-[✅ RISOLTO] Verificare che contenga condizioni vendita, spedizione, pagamenti, resi, diritto di recesso e dati aziendali
-    (Nota: aggiornata con contenuto reale essenziale, spedizioni e resi collegati)
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/condizioni-generali-di-vendita/
-
-[✅ RISOLTO] Verificare che /condizioni-generali-di-vendita/ sia presente in sitemap.xml
-
-────────────────────────────────────
-3. PAGINE ECOMMERCE UTILITY — NOINDEX
-────────────────────────────────────
-
-[✅ RISOLTO] Creare route Vercel per /carrello/
-    (Nota: servita dinamicamente tramite alias next-intl su cartella /cart)
-
-[✅ RISOLTO] Verificare che /carrello/ risponda 200
-
-[✅ RISOLTO] Impostare noindex su /carrello/
-
-[✅ RISOLTO] Verificare che /carrello/ NON sia in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /checkout/
-
-[✅ RISOLTO] Verificare che /checkout/ risponda 200
-
-[✅ RISOLTO] Impostare noindex su /checkout/
-
-[✅ RISOLTO] Verificare che /checkout/ NON sia in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /my-account/
-
-[✅ RISOLTO] Verificare che /my-account/ risponda 200
-
-[✅ RISOLTO] Impostare noindex su /my-account/
-
-[✅ RISOLTO] Verificare che /my-account/ NON sia in sitemap.xml
-
-────────────────────────────────────
-4. ROUTING INGLESE PRINCIPALE
-────────────────────────────────────
-
-[✅ RISOLTO] Creare route Vercel per /en/
-
-[✅ RISOLTO] Verificare che /en/ risponda 200
-
-[✅ RISOLTO] Verificare che /en/ sia davvero in inglese
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/en/
-
-[✅ RISOLTO] Verificare che /en/ sia presente in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /en/shop/
-
-[✅ RISOLTO] Verificare che /en/shop/ risponda 200
-
-[✅ RISOLTO] Verificare che /en/shop/ sia davvero in inglese
-
-[✅ RISOLTO] Verificare che /en/shop/ non contenga testi italiani
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/en/shop/
-
-[✅ RISOLTO] Verificare che /en/shop/ sia presente in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /en/il-nostro-olio/
-
-[✅ RISOLTO] Verificare che /en/il-nostro-olio/ risponda 200
-
-[✅ RISOLTO] Verificare che /en/il-nostro-olio/ sia davvero in inglese
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/en/il-nostro-olio/
-
-[✅ RISOLTO] Verificare che /en/il-nostro-olio/ sia presente in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /en/produzione/
-
-[✅ RISOLTO] Verificare che /en/produzione/ risponda 200
-
-[✅ RISOLTO] Verificare che /en/produzione/ sia davvero in inglese
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/en/produzione/
-
-[✅ RISOLTO] Verificare che /en/produzione/ sia presente in sitemap.xml
-
-[✅ RISOLTO] Creare route Vercel per /en/contatti/
-
-[✅ RISOLTO] Verificare che /en/contatti/ risponda 200
-
-[✅ RISOLTO] Verificare che /en/contatti/ sia davvero in inglese
-
-[✅ RISOLTO] Verificare canonical:
-https://delpasqua.com/en/contatti/
-
-[✅ RISOLTO] Verificare che /en/contatti/ sia presente in sitemap.xml
-
-────────────────────────────────────
-5. GESTIONE /it
-────────────────────────────────────
-
-[✅ RISOLTO] Verificare se nel progetto esistono route /it/...
-
-[✅ RISOLTO] Decidere che /it non è la struttura italiana principale finale
-
-[✅ RISOLTO] Verificare che /it non sia presente nella sitemap finale
-
-[✅ RISOLTO] Verificare che /it/shop non sia presente nella sitemap finale
-
-[✅ RISOLTO] Verificare che /it/produzione non sia presente nella sitemap finale
-
-[✅ RISOLTO] Verificare che /it/il-nostro-olio non sia presente nella sitemap finale
-
-[✅ RISOLTO] Verificare che /it/contatti non sia presente nella sitemap finale
-
-[✅ RISOLTO] Verificare che /it/degustazioni non sia presente nella sitemap finale
-
-[✅ RISOLTO] Se /it resta accessibile, impostare redirect o canonical verso le root italiane
-
-[✅ RISOLTO] /it -> /
-
-[✅ RISOLTO] /it/shop -> /shop/
-
-[✅ RISOLTO] /it/produzione -> /produzione/
-
-[✅ RISOLTO] /it/il-nostro-olio -> /il-nostro-olio/
-
-[✅ RISOLTO] /it/contatti -> /contatti/
-
-[✅ RISOLTO] /it/degustazioni -> /degustazioni/
-
-────────────────────────────────────
-6. SITEMAP FINALE
-────────────────────────────────────
-
-[✅ RISOLTO] Creare sitemap.xml finale
-
-[✅ RISOLTO] Inserire in sitemap.xml solo le pagine index
-
-[✅ RISOLTO] Inserire /
-
-[✅ RISOLTO] Inserire /storia/
-
-[✅ RISOLTO] Inserire /produzione/
-
-[✅ RISOLTO] Inserire /il-nostro-olio/
-
-[✅ RISOLTO] Inserire /shop/
-
-[✅ RISOLTO] Inserire /acquista/ solo se autonoma e non duplicata
-
-[✅ RISOLTO] Inserire /contatti/
-
-[✅ RISOLTO] Inserire /privacy-policy/
-
-[✅ RISOLTO] Inserire /cookie-policy/
-
-[✅ RISOLTO] Inserire /condizioni-generali-di-vendita/
-
-[✅ RISOLTO] Inserire /en/
-
-[✅ RISOLTO] Inserire /en/shop/
-
-[✅ RISOLTO] Inserire /en/il-nostro-olio/
-
-[✅ RISOLTO] Inserire /en/produzione/
-
-[✅ RISOLTO] Inserire /en/contatti/
-
-[✅ RISOLTO] Non inserire /carrello/
-
-[✅ RISOLTO] Non inserire /checkout/
-
-[✅ RISOLTO] Non inserire /my-account/
-
-[✅ RISOLTO] Non inserire /it/...
-
-[✅ RISOLTO] Non inserire /blog/
-
-[✅ RISOLTO] Non inserire /blog/*
-
-[✅ RISOLTO] Non inserire /category/*
-
-[✅ RISOLTO] Non inserire /tag/*
-
-[✅ RISOLTO] Non inserire /author/*
-
-[✅ RISOLTO] Non inserire URL con parametri
-
-[✅ RISOLTO] Non inserire filtri shop
-
-[✅ RISOLTO] Non inserire pagine vuote
-
-[✅ RISOLTO] Non inserire pagine placeholder
-
-────────────────────────────────────
-7. CONFRONTO AUTOMATICO WORDPRESS -> VERCEL
-────────────────────────────────────
-
-Vecchie URL WordPress core da verificare una per una:
-
-[✅ RISOLTO] / deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /storia/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /produzione/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /il-nostro-olio/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /shop/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /acquista/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /contatti/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /privacy-policy/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /cookie-policy/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /condizioni-generali-di-vendita/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /en/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /en/shop/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /en/il-nostro-olio/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /en/produzione/ deve esistere su Vercel finale e rispondere 200
-
-[✅ RISOLTO] /en/contatti/ deve esistere su Vercel finale e rispondere 200
-
-Utility da verificare:
-
-[✅ RISOLTO] /carrello/ deve esistere se serve alla UX
-
-[✅ RISOLTO] /carrello/ deve avere noindex
-
-[✅ RISOLTO] /carrello/ non deve essere in sitemap
-
-[✅ RISOLTO] /checkout/ deve esistere se serve alla UX
-
-[✅ RISOLTO] /checkout/ deve avere noindex
-
-[✅ RISOLTO] /checkout/ non deve essere in sitemap
-
-[✅ RISOLTO] /my-account/ deve esistere se serve alla UX
-
-[✅ RISOLTO] /my-account/ deve avere noindex
-
-[✅ RISOLTO] /my-account/ non deve essere in sitemap
-
-────────────────────────────────────
-8. CANONICAL
-────────────────────────────────────
-
-[✅ RISOLTO] / canonical corretto verso https://delpasqua.com/
-
-[✅ RISOLTO] /storia/ canonical corretto verso https://delpasqua.com/storia/
-
-[✅ RISOLTO] /produzione/ canonical corretto verso https://delpasqua.com/produzione/
-
-[✅ RISOLTO] /il-nostro-olio/ canonical corretto verso https://delpasqua.com/il-nostro-olio/
-
-[✅ RISOLTO] /shop/ canonical corretto verso https://delpasqua.com/shop/
-
-[✅ RISOLTO] /contatti/ canonical corretto verso https://delpasqua.com/contatti/
-
-[✅ RISOLTO] /privacy-policy/ canonical corretto verso https://delpasqua.com/privacy-policy/
-
-[✅ RISOLTO] /cookie-policy/ canonical corretto verso https://delpasqua.com/cookie-policy/
-
-[✅ RISOLTO] /condizioni-generali-di-vendita/ canonical corretto verso https://delpasqua.com/condizioni-generali-di-vendita/
-
-[✅ RISOLTO] /en/ canonical corretto verso https://delpasqua.com/en/
-
-[✅ RISOLTO] /en/shop/ canonical corretto verso https://delpasqua.com/en/shop/
-
-[✅ RISOLTO] /en/il-nostro-olio/ canonical corretto verso https://delpasqua.com/en/il-nostro-olio/
-
-[✅ RISOLTO] /en/produzione/ canonical corretto verso https://delpasqua.com/en/produzione/
-
-[✅ RISOLTO] /en/contatti/ canonical corretto verso https://delpasqua.com/en/contatti/
-
-[✅ RISOLTO] Nessuna pagina italiana principale deve avere canonical verso /it/...
-
-[✅ RISOLTO] Nessuna pagina inglese deve avere canonical verso pagine italiane
-
-────────────────────────────────────
-9. HREFLANG
-────────────────────────────────────
-
-[✅ RISOLTO] Aggiungere hreflang tra / e /en/ se entrambe complete
-
-[✅ RISOLTO] Aggiungere hreflang tra /shop/ e /en/shop/ se entrambe complete
-
-[✅ RISOLTO] Aggiungere hreflang tra /produzione/ e /en/produzione/ se entrambe complete
-
-[✅ RISOLTO] Aggiungere hreflang tra /il-nostro-olio/ e /en/il-nostro-olio/ se entrambe complete
-
-[✅ RISOLTO] Aggiungere hreflang tra /contatti/ e /en/contatti/ se entrambe complete
-
-[✅ RISOLTO] Non aggiungere hreflang a pagine inglesi incomplete
-
-[✅ RISOLTO] Non aggiungere hreflang a pagine con lingua mista
-
-[✅ RISOLTO] Verificare che ogni hreflang sia reciproco
-
-[✅ RISOLTO] Inserire hreflang x-default dove sensato
-
-────────────────────────────────────
-10. ROBOTS.TXT
-────────────────────────────────────
-
-[✅ RISOLTO] Creare o aggiornare robots.txt
-
-[✅ RISOLTO] Verificare che robots.txt non blocchi le pagine principali
-
-[✅ RISOLTO] Verificare che robots.txt punti alla sitemap:
-https://delpasqua.com/sitemap.xml
-
-[✅ RISOLTO] Bloccare o gestire aree inutili se necessario
-
-[✅ RISOLTO] Non bloccare CSS, JS o immagini necessarie al rendering
-
-────────────────────────────────────
-11. DOMINIO VERCEL.APP
-────────────────────────────────────
-
-[✅ RISOLTO] Verificare che delpasqua.vercel.app non venga indicizzato come duplicato
-    (Nota: configurato l'invio dell'header X-Robots-Tag: noindex nel proxy middleware)
-
-[✅ RISOLTO] Impostare canonical verso https://delpasqua.com sulle pagine pubbliche
-
-[✅ RISOLTO] Valutare noindex sul dominio preview
-
-[⏳ TODO] Valutare protezione ambiente preview
-
-[⏳ TODO] Verificare che Google non indicizzi la versione .vercel.app dopo il go-live
-
-────────────────────────────────────
-12. CONTENUTO E PLACEHOLDER
-────────────────────────────────────
-
-[✅ RISOLTO] Rimuovere ogni testo placeholder
-    (Nota 2026-06-07: sostituito il placeholder di /parita-di-genere/ con testo pubblico reale; sostituita l'immagine placeholder di /degustazioni/ e del relativo JSON-LD con /blog/degustazione-olio.avif)
-
-[✅ RISOLTO] Rimuovere “Spazio per raccontare…”
-    (Nota: placeholder rimossi dalle sezioni descrittive di /produzione/)
-
-[✅ RISOLTO] Rimuovere “Spazio per descrivere…”
-
-[✅ RISOLTO] Rimuovere “Powered by Modern Tech”
-    (Nota: rimosso dal Footer)
-
-[✅ RISOLTO] Rimuovere riferimenti pubblici inutili a Next.js
-
-[✅ RISOLTO] Rimuovere riferimenti pubblici inutili a React
-
-[✅ RISOLTO] Rimuovere riferimenti pubblici inutili a TypeScript
-
-[✅ RISOLTO] Rimuovere riferimenti pubblici inutili a Stripe
-    (Nota: rimossi i riferimenti visibili lato utente nel carrello/checkout)
-
-[✅ RISOLTO] Rimuovere riferimenti pubblici inutili a Vercel
-
-[⏳ TODO] Verificare che tutte le recensioni mostrate siano vere
-
-[⏳ TODO] Collegare il box recensioni a Google o sostituirlo con recensioni reali
-    (Nota 2026-06-07: il box HomeTrustAndReviews.tsx resta intenzionalmente in pagina; le recensioni hardcoded sono un placeholder operativo da sostituire/collegare)
-
-────────────────────────────────────
-13. TITLE, META, H1
-────────────────────────────────────
-
-[✅ RISOLTO] / ha title unico
-
-[✅ RISOLTO] / ha meta description unica
-
-[✅ RISOLTO] / ha un solo H1
-
-[✅ RISOLTO] /storia/ ha title unico
-
-[✅ RISOLTO] /storia/ ha meta description unica
-
-[✅ RISOLTO] /storia/ ha un solo H1
-
-[✅ RISOLTO] /produzione/ ha title unico
-
-[✅ RISOLTO] /produzione/ ha meta description unica
-
-[✅ RISOLTO] /produzione/ ha un solo H1
-
-[✅ RISOLTO] /il-nostro-olio/ ha title unico
-
-[✅ RISOLTO] /il-nostro-olio/ ha meta description unica
-
-[✅ RISOLTO] /il-nostro-olio/ ha un solo H1
-
-[✅ RISOLTO] /shop/ ha title unico
-
-[✅ RISOLTO] /shop/ ha meta description unica
-
-[✅ RISOLTO] /shop/ ha un solo H1
-
-[✅ RISOLTO] /acquista/ ha title unico se indicizzabile
-
-[✅ RISOLTO] /acquista/ ha meta description unica se indicizzabile
-
-[✅ RISOLTO] /contatti/ ha title unico
-
-[✅ RISOLTO] /contatti/ ha meta description unica
-
-[✅ RISOLTO] /contatti/ ha un solo H1
-
-────────────────────────────────────
-14. TEST FINALE PRE-GO-LIVE
-────────────────────────────────────
-
-[✅ RISOLTO] Eseguire crawl locale o staging delle route principali
-    (Nota: 24/05/2026 - crawl locale eseguito su 15 route core, tutte 200)
-
-[✅ RISOLTO] Verificare che nessuna route core risponda 404
-
-[✅ RISOLTO] Verificare che nessuna route core risponda 500
-    (Nota: 24/05/2026 - nessun 500 rilevato sul crawl locale)
-
-[✅ RISOLTO] Verificare che nessuna route core abbia noindex per errore
-
-[✅ RISOLTO] Verificare che nessuna route core manchi dalla sitemap
-
-[✅ RISOLTO] Verificare che nessuna utility sia presente in sitemap
-
-[✅ RISOLTO] Verificare che i link del menu puntino alle URL root italiane
-
-[✅ RISOLTO] Verificare che i link italiani non vadano a /en/
-
-[✅ RISOLTO] Verificare che i link inglesi restino sotto /en/
-
-[✅ RISOLTO] Verificare che /shop/ non redirecti a /en/shop/
-
-[✅ RISOLTO] Verificare che /en/shop/ non mostri testi italiani
-
-[✅ RISOLTO] Verificare che tutte le immagini principali abbiano alt
-
-[⏳ TODO] Verificare che il sito sia navigabile da mobile
-
-[⏳ TODO] Verificare che il checkout funzioni
-
-[⏳ TODO] Verificare che il form contatti funzioni
-
-[✅ RISOLTO] Verificare che i pulsanti telefono/email funzionino
-
-────────────────────────────────────
-15. DOPO IL GO-LIVE
-────────────────────────────────────
-
-[⏳ TODO] Collegare dominio delpasqua.com a Vercel
-
-[⏳ TODO] Verificare HTTPS attivo
-
-[⏳ TODO] Verificare redirect www/non-www
-
-[⏳ TODO] Scegliere una versione canonica:
-https://delpasqua.com
-
-[⏳ TODO] Verificare che http redirecti a https
-
-[⏳ TODO] Verificare che www redirecti o canonicalizzi correttamente
-
-[⏳ TODO] Inviare sitemap in Google Search Console
-
-[⏳ TODO] Controllare copertura Search Console
-
-[⏳ TODO] Controllare pagine 404
-
-[⏳ TODO] Controllare pagine escluse
-
-[⏳ TODO] Controllare canonical scelti da Google
-
-[⏳ TODO] Controllare indicizzazione pagine principali
-
-[⏳ TODO] Controllare query perse
-
-[⏳ TODO] Controllare query nuove
-
-[⏳ TODO] Non modificare continuamente le URL nelle prime settimane
-
-────────────────────────────────────
-16. DEFINIZIONE DI COMPLETATO
-────────────────────────────────────
-
-La fase routing principale è completata quando:
-
-[✅ RISOLTO] Tutte le vecchie URL WordPress core rispondono 200 sul nuovo Vercel (Verificato con successo tramite SEO Suite Report)
-
-[✅ RISOLTO] Le URL finali combaciano con quelle WordPress
-    (Nota: URL core allineate a delpasqua.com; title e H1 non sono una copia letterale del WordPress attuale)
-
-[✅ RISOLTO] La sitemap finale contiene solo le pagine core index
-
-[✅ RISOLTO] Le utility ecommerce sono noindex
-
-[✅ RISOLTO] Le pagine /it non competono con le root italiane
-
-[✅ RISOLTO] Le pagine inglesi sono sotto /en
-
-[✅ RISOLTO] Non ci sono testi placeholder
-
-[✅ RISOLTO] Non ci sono link italiani che portano all’inglese
-
-[✅ RISOLTO] Non ci sono canonical sbagliati verso /it
-
-[✅ RISOLTO] Non ci sono 404 sulle pagine principali
-
-[✅ RISOLTO] delpasqua.vercel.app non compete con delpasqua.com
-
-[⏳ TODO] Google Search Console riceve correttamente la nuova sitemap
+```powershell
+npm.cmd run seo:all
+npm.cmd run seo:audit-sitemap
+npm.cmd run seo:audit-hreflang
+npm.cmd run seo:audit-canonical
+npm.cmd run seo:audit-legacy-routes
+npm.cmd run seo:audit-noindex
+```

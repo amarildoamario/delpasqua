@@ -13,7 +13,7 @@ import {
   Filter,
   Warehouse,
   Factory,
-  Sparkles,
+  Droplet,
   CheckCircle2,
   Layers,
   ArrowRight,
@@ -240,7 +240,7 @@ export default function BioMethodSection() {
               {/* Guarantees */}
               <div className="grid grid-cols-3 gap-2 md:gap-4" ref={guaranteeRef}>
                 <GuaranteeCard icon={<Factory className="h-4 w-4 md:h-5 md:w-5" />} title={t("guarantees.non_industrial")} text={t("guarantees.non_industrial_text")} setRef={setGuaranteeRef(0)} />
-                <GuaranteeCard icon={<Sparkles className="h-4 w-4 md:h-5 md:w-5" />} title={t("guarantees.fresh")} text={t("guarantees.fresh_text")} setRef={setGuaranteeRef(1)} />
+                <GuaranteeCard icon={<Droplet className="h-4 w-4 md:h-5 md:w-5" />} title={t("guarantees.fresh")} text={t("guarantees.fresh_text")} setRef={setGuaranteeRef(1)} />
                 <GuaranteeCard icon={<CheckCircle2 className="h-4 w-4 md:h-5 md:w-5" />} title={t("guarantees.control")} text={t("guarantees.control_text")} setRef={setGuaranteeRef(2)} />
               </div>
 

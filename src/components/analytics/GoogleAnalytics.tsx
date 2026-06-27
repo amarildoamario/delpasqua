@@ -1,7 +1,10 @@
 "use client";
 
 import Script from "next/script";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
+const GA4RouteTracker = dynamic(() => import("./GA4RouteTracker"), { ssr: false });
 
 export default function GoogleAnalytics() {
   const GA_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID;
@@ -38,6 +41,9 @@ export default function GoogleAnalytics() {
           gtag('config', '${GA_ID}', { send_page_view: false });
         `}
       </Script>
+      <Suspense fallback={null}>
+        <GA4RouteTracker />
+      </Suspense>
     </>
   );
 }

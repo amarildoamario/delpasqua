@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { ShoppingCart } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/CartDrawer";
 
 type CartButtonProps = {
@@ -20,11 +20,40 @@ export default function CartButton({
   mobileOnly = false,
   badgeColor = "default",
 }: CartButtonProps) {
-  const { count } = useCart();
+  const [count, setCount] = useState(0);
   const [open, setOpen] = useState(false);
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { queueMicrotask(() => setMounted(true)); }, []);
+
+  useEffect(() => {
+    queueMicrotask(() => setMounted(true));
+
+    const updateCount = () => {
+      try {
+        const raw = localStorage.getItem("dp_cart_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const total = Array.isArray(parsed)
+            ? parsed.reduce((sum: number, line: { qty?: number }) => sum + (line?.qty || 0), 0)
+            : 0;
+          setCount(total);
+        } else {
+          setCount(0);
+        }
+      } catch {
+        setCount(0);
+      }
+    };
+
+    updateCount();
+    window.addEventListener("cart-updated", updateCount);
+    window.addEventListener("storage", updateCount);
+
+    return () => {
+      window.removeEventListener("cart-updated", updateCount);
+      window.removeEventListener("storage", updateCount);
+    };
+  }, []);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -88,7 +117,11 @@ export default function CartButton({
           </span>
         </button>
 
-        <CartDrawer open={open} onClose={() => setOpen(false)} />
+        {open && (
+          <CartProvider>
+            <CartDrawer open={open} onClose={() => setOpen(false)} />
+          </CartProvider>
+        )}
       </div>
     </div>
   );

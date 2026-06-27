@@ -1,4 +1,5 @@
 "use client";
+import type { CartStatusTemplates, CartLabels, CountryItem } from "./cartData";
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
@@ -54,145 +55,15 @@ type PromoResult = {
   freeShipping: boolean;
 };
 
-const cartStatusCopy = {
-  it: {
-    lineReduced: (title: string, qty: number) => `${title} aggiornato a ${qty} per disponibilita limitata.`,
-    lineRemoved: (title: string) => `${title} rimosso dal carrello per esaurimento stock.`,
-    lineMigrated: (title: string) => `${title} aggiornato nel carrello dopo una modifica al catalogo.`,
-    invalidRemoved: "Un prodotto non piu disponibile e stato rimosso dal carrello.",
-    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
-      availableQty != null
-        ? `${title}: disponibili solo ${availableQty} pezzi. Aggiunti ${addedQty}.`
-        : `${title}: quantita ridotta per disponibilita limitata.`,
-    addRejected: (title: string) => `${title} non disponibile.`,
-  },
-  en: {
-    lineReduced: (title: string, qty: number) => `${title} updated to ${qty} because of limited stock.`,
-    lineRemoved: (title: string) => `${title} was removed from the cart because it is sold out.`,
-    lineMigrated: (title: string) => `${title} was updated in the cart after a catalog change.`,
-    invalidRemoved: "A product that is no longer available was removed from the cart.",
-    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
-      availableQty != null
-        ? `${title}: only ${availableQty} available. Added ${addedQty}.`
-        : `${title}: quantity reduced because of limited stock.`,
-    addRejected: (title: string) => `${title} is unavailable.`,
-  },
-  de: {
-    lineReduced: (title: string, qty: number) => `${title} wurde wegen begrenztem Bestand auf ${qty} angepasst.`,
-    lineRemoved: (title: string) => `${title} wurde aus dem Warenkorb entfernt, da es ausverkauft ist.`,
-    lineMigrated: (title: string) => `${title} wurde nach einer Katalogaenderung im Warenkorb aktualisiert.`,
-    invalidRemoved: "Ein nicht mehr verfuegbares Produkt wurde aus dem Warenkorb entfernt.",
-    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
-      availableQty != null
-        ? `${title}: nur ${availableQty} verfuegbar. ${addedQty} hinzugefuegt.`
-        : `${title}: Menge wegen begrenztem Bestand reduziert.`,
-    addRejected: (title: string) => `${title} ist nicht verfuegbar.`,
-  },
-  nl: {
-    lineReduced: (title: string, qty: number) => `${title} aangepast naar ${qty} vanwege beperkte voorraad.`,
-    lineRemoved: (title: string) => `${title} is uit de winkelwagen verwijderd omdat het is uitverkocht.`,
-    lineMigrated: (title: string) => `${title} is na een cataloguswijziging bijgewerkt in de winkelwagen.`,
-    invalidRemoved: "Een product dat niet meer beschikbaar is, is uit de winkelwagen verwijderd.",
-    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
-      availableQty != null
-        ? `${title}: nog maar ${availableQty} beschikbaar. ${addedQty} toegevoegd.`
-        : `${title}: aantal verlaagd door beperkte voorraad.`,
-    addRejected: (title: string) => `${title} is niet beschikbaar.`,
-  },
-  da: {
-    lineReduced: (title: string, qty: number) => `${title} blev justeret til ${qty} pga. begraenset lager.`,
-    lineRemoved: (title: string) => `${title} blev fjernet fra kurven, fordi varen er udsolgt.`,
-    lineMigrated: (title: string) => `${title} blev opdateret i kurven efter en katalogaendring.`,
-    invalidRemoved: "Et produkt, der ikke laengere er tilgaengeligt, blev fjernet fra kurven.",
-    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
-      availableQty != null
-        ? `${title}: kun ${availableQty} tilbage. ${addedQty} tilfoejet.`
-        : `${title}: antallet blev reduceret pga. begraenset lager.`,
-    addRejected: (title: string) => `${title} er ikke tilgaengelig.`,
-  },
-  no: {
-    lineReduced: (title: string, qty: number) => `${title} ble justert til ${qty} paa grunn av begrenset lager.`,
-    lineRemoved: (title: string) => `${title} ble fjernet fra handlekurven fordi varen er utsolgt.`,
-    lineMigrated: (title: string) => `${title} ble oppdatert i handlekurven etter en katalogendring.`,
-    invalidRemoved: "Et produkt som ikke lenger er tilgjengelig, ble fjernet fra handlekurven.",
-    addAdjusted: (title: string, addedQty: number, availableQty: number | null) =>
-      availableQty != null
-        ? `${title}: bare ${availableQty} tilgjengelig. ${addedQty} lagt til.`
-        : `${title}: antallet ble redusert paa grunn av begrenset lager.`,
-    addRejected: (title: string) => `${title} er ikke tilgjengelig.`,
-  },
-} as const;
+
 
 function productHref(product: Product | undefined, locale: string) {
   return product ? (getLocalizedProductHref(product, locale) as never) : "/shop";
 }
 
-const labels = {
-  it: {
-    shippingTitle: "Calcolo Spedizione Internazionale",
-    shippingDesc: "Per spedizioni al di fuori dell'Italia, seleziona il paese e inserisci il CAP per calcolare i costi e sbloccare la cassa.",
-    country: "Nazione di Destinazione",
-    zipCode: "CAP / Codice Postale",
-    zipPlaceholder: "Inserisci il CAP...",
-    blockMessage: "Inserisci nazione e CAP per calcolare la spedizione e sbloccare il checkout.",
-    zipError: "Inserisci un CAP valido.",
-  },
-  en: {
-    shippingTitle: "Calculate International Shipping",
-    shippingDesc: "For shipping outside Italy, please select your country and enter your ZIP code.",
-    country: "Destination Country",
-    zipCode: "ZIP / Postal Code",
-    zipPlaceholder: "Enter ZIP code...",
-    blockMessage: "Enter country and ZIP code to calculate shipping and unlock checkout.",
-    zipError: "Please enter a valid ZIP code.",
-  },
-  de: {
-    shippingTitle: "Internationalen Versand berechnen",
-    shippingDesc: "Für den Versand außerhalb Italiens wählen Sie bitte Ihr Land aus und geben Sie Ihre Postleitzahl ein.",
-    country: "Bestimmungsland",
-    zipCode: "PLZ / Postleitzahl",
-    zipPlaceholder: "PLZ eingeben...",
-    blockMessage: "Geben Sie Land und PLZ ein, um den Versand zu berechnen und die Kasse freizugeben.",
-    zipError: "Bitte geben Sie eine gültige PLZ ein.",
-  },
-  nl: {
-    shippingTitle: "Internationale verzending berekenen",
-    shippingDesc: "Selecteer uw land en voer uw postcode in voor verzending buiten Italië.",
-    country: "Land van bestemming",
-    zipCode: "Postcode",
-    zipPlaceholder: "Postcode invoeren...",
-    blockMessage: "Voer land en postcode in om de verzending te berekenen en het afrekenen te ontgrendelen.",
-    zipError: "Voer een geldige postcode in.",
-  },
-  da: {
-    shippingTitle: "Beregn international forsendelse",
-    shippingDesc: "For forsendelse uden for Italien skal du vælge dit land og indtaste dit postnummer.",
-    country: "Modtagerland",
-    zipCode: "Postnummer",
-    zipPlaceholder: "Indtast postnummer...",
-    blockMessage: "Indtast land og postnummer for at beregne forsendelse og låse op for kassen.",
-    zipError: "Indtast venligst et gyldigt postnummer.",
-  },
-  no: {
-    shippingTitle: "Beregn internasjonal frakt",
-    shippingDesc: "For frakt utenfor Italia, velg land og skriv inn postnummer.",
-    country: "Destinasjonsland",
-    zipCode: "Postnummer",
-    zipPlaceholder: "Skriv inn postnummer...",
-    blockMessage: "Skriv inn land og postnummer for å beregne frakt og låse opp kassen.",
-    zipError: "Vennligst skriv inn et gyldig postnummer.",
-  },
-} as const;
 
-const countries = [
-  { code: "DE", flag: "de", name: { it: "Germania", en: "Germany", de: "Deutschland", nl: "Duitsland", da: "Tyskland", no: "Tyskland" } },
-  { code: "NL", flag: "nl", name: { it: "Paesi Bassi", en: "Netherlands", de: "Niederlande", nl: "Nederland", da: "Nederlandene", no: "Nederland" } },
-  { code: "DK", flag: "da", name: { it: "Danimarca", en: "Denmark", de: "Dänemark", nl: "Denemarken", da: "Danmark", no: "Danmark" } },
-  { code: "NO", flag: "no", name: { it: "Norvegia", en: "Norway", de: "Norwegen", nl: "Noorwegen", da: "Norge", no: "Norge" } },
-  { code: "US", flag: "us", name: { it: "Stati Uniti", en: "United States", de: "Vereinigte Staaten", nl: "Verenigde Staten", da: "USA", no: "USA" } },
-  { code: "GB", flag: "en", name: { it: "Regno Unito (Inghilterra)", en: "United Kingdom", de: "Vereinigtes Königreich", nl: "Verenigd Koninkrijk", da: "Storbritannien", no: "Storbritannia" } },
-  { code: "IT", flag: "it", name: { it: "Italia", en: "Italy", de: "Italien", nl: "Italië", da: "Italien", no: "Italia" } },
-];
+
+
 
 function getFlagLocale(country: string): string {
   const c = country.toLowerCase();
@@ -200,12 +71,44 @@ function getFlagLocale(country: string): string {
   return c;
 }
 
-export default function CartPageClient() {
+export default function CartPageClient({
+  statusTemplates,
+  shippingLabels,
+  countryList,
+}: {
+  statusTemplates: CartStatusTemplates;
+  shippingLabels: CartLabels;
+  countryList: CountryItem[];
+}) {
   const t = useTranslations("Cart");
   const locale = useLocale();
+  const statusText = useMemo(() => ({
+    lineReduced: (title: string, qty: number) => statusTemplates.lineReduced.replace("{title}", title).replace("{qty}", String(qty)),
+    lineRemoved: (title: string) => statusTemplates.lineRemoved.replace("{title}", title),
+    lineMigrated: (title: string) => statusTemplates.lineMigrated.replace("{title}", title),
+    invalidRemoved: statusTemplates.invalidRemoved,
+    addRejected: (title: string) => statusTemplates.addRejected.replace("{title}", title),
+    addAdjusted: (title: string, addedQty: number, availableQty: number | null) => {
+      if (availableQty != null) {
+        return statusTemplates.addAdjusted
+          .replace("{title}", title)
+          .replace("{availableQty}", String(availableQty))
+          .replace("{addedQty}", String(addedQty));
+      }
+      const fallbacks: Record<string, string> = {
+        it: `${title}: quantita ridotta per disponibilita limitata.`,
+        en: `${title}: quantity reduced because of limited stock.`,
+        de: `${title}: Menge wegen begrenztem Bestand reduziert.`,
+        nl: `${title}: aantal verlaagd door beperkte voorraad.`,
+        da: `${title}: antallet blev reduceret pga. begraenset lager.`,
+        no: `${title}: antallet ble redusert paa grunn av begrenset lager.`,
+      };
+      return fallbacks[locale] || fallbacks.it;
+    }
+  }), [statusTemplates, locale]);
+
   const cart = useCart();
   const { getAvailableQty, refreshAvailability, catalog, lastAvailabilityNotice, clearAvailabilityNotice } = cart;
-  const statusText = cartStatusCopy[(locale as keyof typeof cartStatusCopy)] ?? cartStatusCopy.it;
 
   const [payError, setPayError] = useState<string | null>(null);
   const [payLoading, setPayLoading] = useState(false);
@@ -697,17 +600,17 @@ export default function CartPageClient() {
                     <div className="rounded-[5px] border border-[#132c1c]/10 bg-[#132c1c]/[0.01] p-5 shadow-[0_4px_12px_rgba(19,44,28,0.02)]">
                       <h2 className="font-serif text-base font-semibold text-zinc-900 flex items-center gap-2">
                         <MapPin className="h-5 w-5 text-[#132c1c]" strokeWidth={1.5} />
-                        {labels[locale as keyof typeof labels]?.shippingTitle || labels.en.shippingTitle}
+                        {shippingLabels.shippingTitle}
                       </h2>
                       <p className="mt-1 text-xs text-zinc-500 max-w-xl">
-                        {labels[locale as keyof typeof labels]?.shippingDesc || labels.en.shippingDesc}
+                        {shippingLabels.shippingDesc}
                       </p>
                     
                     <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end">
                       {/* Custom Flag Dropdown */}
                       <div className="w-full sm:w-64" ref={dropdownRef}>
                         <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-[0.12em] mb-1.5">
-                          {labels[locale as keyof typeof labels]?.country || labels.en.country}
+                          {shippingLabels.country}
                         </label>
                         <div className="relative">
                           <button
@@ -723,8 +626,7 @@ export default function CartPageClient() {
                                 />
                               )}
                               <span>
-                                {countries.find(c => c.code === countryCode)?.name[locale as keyof typeof countries[0]["name"]] || 
-                                 countries.find(c => c.code === countryCode)?.name.en || countryCode}
+                                {countryList.find((c) => c.code === countryCode)?.name || countryCode}
                               </span>
                             </span>
                             <ChevronDown className={cn("h-4 w-4 text-zinc-400 transition-transform", dropdownOpen && "rotate-180")} />
@@ -732,7 +634,7 @@ export default function CartPageClient() {
                           
                           {dropdownOpen && (
                             <div className="absolute left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-[5px] border border-stone-200 bg-white shadow-lg">
-                              {countries.map((c) => (
+                              {countryList.map((c) => (
                                 <button
                                   key={c.code}
                                   type="button"
@@ -748,7 +650,7 @@ export default function CartPageClient() {
                                   )}
                                 >
                                   <FlagIcon locale={c.flag} className="h-2.5 w-4 shrink-0 rounded-[1px] shadow-sm" />
-                                  <span>{c.name[locale as keyof typeof c["name"]] || c.name.en}</span>
+                                  <span>{c.name}</span>
                                 </button>
                               ))}
                             </div>
@@ -760,14 +662,14 @@ export default function CartPageClient() {
                       {countryCode !== "IT" && (
                         <div className="flex-1">
                           <label htmlFor="shipping-zip" className="block text-[10px] font-bold text-zinc-400 uppercase tracking-[0.12em] mb-1.5">
-                            {labels[locale as keyof typeof labels]?.zipCode || labels.en.zipCode}
+                            {shippingLabels.zipCode}
                           </label>
                           <input
                             id="shipping-zip"
                             type="text"
                             value={zipCode}
                             onChange={(e) => setZipCode(e.target.value)}
-                            placeholder={labels[locale as keyof typeof labels]?.zipPlaceholder || labels.en.zipPlaceholder}
+                            placeholder={shippingLabels.zipPlaceholder}
                             className="w-full h-10 rounded-[5px] border border-black/10 bg-white px-3 text-xs font-semibold text-zinc-800 placeholder-zinc-400 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                           />
                         </div>
@@ -777,7 +679,7 @@ export default function CartPageClient() {
                     {isCheckoutBlocked && (
                       <div className="mt-3 text-xs text-amber-700 font-semibold flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse" />
-                        {labels[locale as keyof typeof labels]?.blockMessage || labels.en.blockMessage}
+                        {shippingLabels.blockMessage}
                       </div>
                     )}
                   </div>
@@ -1119,7 +1021,7 @@ export default function CartPageClient() {
                       locale === "it" ? "Acquisti momentaneamente non disponibili nella nazione selezionata." :
                       "Purchases temporarily unavailable in the selected country."
                     ) : (
-                      labels[locale as keyof typeof labels]?.blockMessage || labels.en.blockMessage
+                      shippingLabels.blockMessage
                     )}
                   </p>
                 )}

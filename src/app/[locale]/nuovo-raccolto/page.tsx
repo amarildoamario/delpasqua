@@ -15,7 +15,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Olio Novello Non Filtrato", description: "Conserva le micro-particelle di polpa di oliva per una corposità unica." },
       { icon: "shield", title: "Altissimo in Antiossidanti", description: "Il picco massimo annuale di polifenoli e vitamine per la salute." },
-      { icon: "sparkles", title: "Edizione Limitata", description: "Disponibile solo nei mesi del raccolto autunnale (da ottobre a dicembre)." }
+      { icon: "award", title: "Edizione Limitata", description: "Disponibile solo nei mesi del raccolto autunnale (da ottobre a dicembre)." }
     ],
     ctaTitle: "Ordina o Prenota il Nuovo Raccolto",
     ctaText: "Acquista direttamente dal nostro frantoio l'olio della nuova stagione.",
@@ -44,7 +44,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Unfiltered New Oil", description: "Preserves micro-particles of olive pulp for a unique body." },
       { icon: "shield", title: "High in Antioxidants", description: "The annual peak of polyphenols and vitamins for your health." },
-      { icon: "sparkles", title: "Limited Edition", description: "Available only during the autumn harvest months (October to December)." }
+      { icon: "award", title: "Limited Edition", description: "Available only during the autumn harvest months (October to December)." }
     ],
     ctaTitle: "Order or Pre-order the New Harvest",
     ctaText: "Buy directly from our mill the oil of the new season.",
@@ -73,7 +73,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Ungefiltertes Novello-Öl", description: "Erhält kleinste Fruchtfleischpartikel für einen einzigartigen Körper." },
       { icon: "shield", title: "Sehr Reich an Antioxidantien", description: "Der jährliche Höchstwert an Polyphenolen und Vitaminen für Ihre Gesundheit." },
-      { icon: "sparkles", title: "Limitierte Auflage", description: "Nur während der Erntemonate im Herbst (Oktober bis Dezember) verfügbar." }
+      { icon: "award", title: "Limitierte Auflage", description: "Nur während der Erntemonate im Herbst (Oktober bis Dezember) verfügbar." }
     ],
     ctaTitle: "Bestellen Sie die Frische Ernte",
     ctaText: "Kaufen Sie das Öl der neuen Saison direkt aus unserer Mühle.",
@@ -102,7 +102,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Ongefilterde Nieuwe Olie", description: "Behoudt microdeeltjes olijfvlees voor een unieke textuur." },
       { icon: "shield", title: "Rijk aan Antioxidanten", description: "De jaarlijkse piek van polyfenolen en vitaminen voor uw gezondheid." },
-      { icon: "sparkles", title: "Gelimiteerde Oplage", description: "Alleen verkrijgbaar tijdens de oogstmaanden in het najaar (oktober t/m december)." }
+      { icon: "award", title: "Gelimiteerde Oplage", description: "Alleen verkrijgbaar tijdens de oogstmaanden in het najaar (oktober t/m december)." }
     ],
     ctaTitle: "Bestel de Nieuwe Oogst Olijfolie",
     ctaText: "Koop de olie van het nieuwe seizoen rechtstreeks online.",
@@ -131,7 +131,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Ufiltreret Ny Olie", description: "Bevarer små partikler af olivenkød for en unik fyldighed." },
       { icon: "shield", title: "Meget Høj på Antioxidanter", description: "Årets maksimale niveau af polyphenoler og vitaminer for dit helbred." },
-      { icon: "sparkles", title: "Begrænset Oplag", description: "Kun tilgængelig i efterårets høstmåneder (oktober til december)." }
+      { icon: "award", title: "Begrænset Oplag", description: "Kun tilgængelig i efterårets høstmåneder (oktober til december)." }
     ],
     ctaTitle: "Bestil eller Forudbestil den Nye Høst",
     ctaText: "Køb direkte fra vores mølle olien fra den nye sæson.",
@@ -160,7 +160,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageConten
     features: [
       { icon: "leaf", title: "Ufiltrert Ny Olje", description: "Bevarer små partikler av olivenkjøtt for en unik fyldighet." },
       { icon: "shield", title: "Svært Høy på Antioksidanter", description: "Årets maksimale nivå av polyfenoler og vitaminer for helsen din." },
-      { icon: "sparkles", title: "Begrenset Opplag", description: "Kun tilgjengelig i høstmånedene (oktober til desember)." }
+      { icon: "award", title: "Begrenset Opplag", description: "Kun tilgjengelig i høstmånedene (oktober til desember)." }
     ],
     ctaTitle: "Bestill eller Forhåndsbestill den Nye Høsten",
     ctaText: "Kjøp direkte fra vår mølle oljen fra den nye sesongen.",

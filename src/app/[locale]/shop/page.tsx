@@ -2,8 +2,17 @@ import { readPublicCatalogWithMerch } from "@/lib/server/catalog";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import ShopPageClient from "./ShopPageClient";
+import {
+  shopCopy,
+  shopHeaderCopy,
+  viewModeLabels,
+  categoriesCopy,
+  selectionsHeader,
+  selectionsCards
+} from "./shopData";
 
 export const revalidate = 3600;
+export const dynamic = "force-static";
 
 const SHOP_METADATA: Record<string, { title: string; description: string }> = {
   it: {
@@ -88,13 +97,28 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
     ]
   };
 
+  const copy = shopCopy[locale as keyof typeof shopCopy] ?? shopCopy.it;
+  const hCopy = shopHeaderCopy[locale as keyof typeof shopHeaderCopy] ?? shopHeaderCopy.it;
+  const viewModeLabel = viewModeLabels[locale as keyof typeof viewModeLabels] ?? viewModeLabels.it;
+  const catCopy = categoriesCopy[locale as keyof typeof categoriesCopy] ?? categoriesCopy.it;
+  const selHeader = selectionsHeader[locale as keyof typeof selectionsHeader] ?? selectionsHeader.it;
+  const selCards = selectionsCards[locale as keyof typeof selectionsCards] ?? selectionsCards.it;
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ShopPageClient initialProducts={initialProducts} />
+      <ShopPageClient 
+        initialProducts={initialProducts} 
+        copy={copy}
+        hCopy={hCopy}
+        viewModeLabel={viewModeLabel}
+        categoriesCopy={catCopy}
+        selectionsHeader={selHeader}
+        selectionsCards={selCards}
+      />
     </>
   );
 }

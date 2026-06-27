@@ -152,6 +152,8 @@ export default function TastingsCalendar(props: {
 
   const isMorningShift = selected ? new Date(selected.start).getHours() < 14 : false;
   const activeType = useMemo(() => props.tastingTypes.find((t) => t.id === typeId) || props.tastingTypes[0], [typeId, props.tastingTypes]);
+  const activePrice = splitTastingPrice(activeType?.priceFrom);
+  const fromLabel = getPriceFromLabel(locale);
 
   const suggestedTime = useMemo(() => {
     if (!selectedDay) return "";
@@ -634,8 +636,8 @@ export default function TastingsCalendar(props: {
 
       {/* Modal */}
       {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1917]/60 px-3 pb-24 pt-3 backdrop-blur-sm sm:p-6 sm:pb-12">
-          <div className="flex max-h-[90vh] sm:max-h-[85vh] w-full max-w-lg md:max-w-3xl flex-col overflow-hidden rounded-3xl bg-[#FDFCF8] shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1917]/60 px-3 pb-4 pt-12 backdrop-blur-sm sm:p-6 sm:pb-12">
+          <div className="flex max-h-[calc(100dvh-4rem)] w-full max-w-lg flex-col overflow-hidden rounded-[5px] bg-[#FDFCF8] shadow-2xl sm:max-h-[85vh] md:max-w-4xl lg:max-w-5xl">
           {/* Header */}
           <div className="flex-shrink-0 flex items-center justify-between border-b border-[#E7E5E4] bg-white/80 px-4 py-3.5 backdrop-blur sm:px-6 sm:py-5">
             <div>
@@ -653,19 +655,19 @@ export default function TastingsCalendar(props: {
               variant="outline"
               size="icon-sm"
               onClick={closeModal}
-              className="rounded-[5px] border-[#E7E5E4] bg-white text-[#44403C] shadow-none hover:border-[#3D5A3D]/30 hover:bg-white hover:text-[#1C1917]"
+              className="h-10 w-10 rounded-[5px] border-[#A8A29E] bg-white text-[#1C1917] shadow-sm shadow-[#1C1917]/10 hover:border-[#1C1917] hover:bg-[#F5F5F4] hover:text-[#1C1917] sm:h-11 sm:w-11"
               aria-label="Chiudi"
             >
-              <X className="h-4 w-4 sm:h-5 sm:w-5" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={3} />
             </Button>
           </div>
 
           {/* Content - Scrollable */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 sm:py-6">
+          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-0 pt-4 sm:px-6 sm:py-6">
             {success ? (
               <div className="space-y-4">
-                <div className="rounded-2xl border border-[#3D5A3D]/20 bg-[#3D5A3D]/5 px-5 py-6 text-center">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-[#3D5A3D]/10 flex items-center justify-center mb-3">
+                <div className="rounded-[5px] border border-[#3D5A3D]/20 bg-[#3D5A3D]/5 px-5 py-6 text-center">
+                  <div className="mx-auto w-12 h-12 rounded-[5px] bg-[#3D5A3D]/10 flex items-center justify-center mb-3">
                     <svg
                       className="h-6 w-6 text-[#3D5A3D]"
                       fill="none"
@@ -696,7 +698,7 @@ export default function TastingsCalendar(props: {
 
                 <div
                   className={[
-                    "rounded-xl border px-4 py-3 text-xs text-center",
+                    "rounded-[5px] border px-4 py-3 text-xs text-center",
                     success.mail?.ok && success.mail.status === "sent"
                       ? "border-[#3D5A3D]/20 bg-[#3D5A3D]/5 text-[#3D5A3D]"
                       : success.mail?.ok && success.mail.status === "skipped"
@@ -718,7 +720,7 @@ export default function TastingsCalendar(props: {
                 <Button
                   type="button"
                   onClick={closeModal}
-                  className="h-11 w-full rounded-xl bg-[#3D5A3D] text-sm font-medium text-white hover:bg-[#2D4A2D]"
+                  className="h-11 w-full rounded-[5px] bg-[#3D5A3D] text-sm font-medium text-white hover:bg-[#2D4A2D]"
                 >
                   {t("modal.close")}
                 </Button>
@@ -726,9 +728,9 @@ export default function TastingsCalendar(props: {
             ) : (
               <div className="space-y-4 sm:space-y-5">
                 {selected && selectedDay && (
-                  <Card className="overflow-hidden rounded-[22px] border-[#d8e3d4] bg-[linear-gradient(180deg,rgba(245,249,243,0.96)_0%,rgba(239,246,236,0.94)_100%)] shadow-none">
+                  <Card className="overflow-hidden rounded-[5px] border-[#d8e3d4] bg-[linear-gradient(180deg,rgba(245,249,243,0.96)_0%,rgba(239,246,236,0.94)_100%)] shadow-none">
                     <CardContent className="flex items-center gap-3 p-3.5 sm:p-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#3D5A3D]/10 text-[#3D5A3D]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#3D5A3D]/10 text-[#3D5A3D]">
                         <CalendarCheck className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -739,15 +741,31 @@ export default function TastingsCalendar(props: {
                           {fmtDayFull(selectedDay)} • {fmtTime(selected.start)}
                         </div>
                       </div>
+                      {activePrice ? (
+                        <div className="hidden shrink-0 text-right sm:block">
+                          <div className="text-[9px] font-semibold uppercase leading-none tracking-[0.16em] text-[#9c8f82]">
+                            {activePrice.hasFrom ? fromLabel : "\u00a0"}
+                          </div>
+                          <div className="mt-1 font-sans text-2xl font-extrabold leading-none tracking-tight text-[#1f1a17]">
+                            {activePrice.amount}
+                          </div>
+                          {activePrice.unit ? (
+                            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8a7c6e]">
+                              {activePrice.unit}
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
                     </CardContent>
                   </Card>
                 )}
 
                 <div className="space-y-2.5">
                   <Label>{t("modal.form.type_label")}</Label>
-                  <div role="radiogroup" aria-label={t("modal.form.type_label")} className="grid gap-2">
+                  <div role="radiogroup" aria-label={t("modal.form.type_label")} className="grid gap-2 lg:grid-cols-3">
                     {props.tastingTypes.map((tastingType) => {
                       const accent = tastingType.id === "premium" ? "gold" : tastingType.id === "intermedia" ? "terracotta" : "olive";
+                      const price = splitTastingPrice(tastingType.priceFrom);
                       const accentClass =
                         accent === "olive"
                           ? "border-[#d8e3d4] bg-[#f5f9f3] text-[#3D5A3D]"
@@ -765,46 +783,75 @@ export default function TastingsCalendar(props: {
                           aria-checked={isSelected}
                           onClick={() => setTypeId(tastingType.id)}
                           className={[
-                            "h-auto w-full justify-start rounded-[22px] border px-3.5 py-3 text-left shadow-none sm:px-4",
+                            "h-auto min-h-[185px] w-full items-stretch justify-start rounded-[5px] border px-3.5 py-3 text-left shadow-none sm:px-4",
                             isSelected
                               ? "border-[#3D5A3D]/35 bg-white ring-2 ring-[#3D5A3D]/8"
                               : "border-[#E7E5E4] bg-white hover:border-[#d9d4cc] hover:bg-[#fffdf9]",
                           ].join(" ")}
                         >
-                          <span className="flex min-w-0 flex-1 items-start gap-3">
-                            <span
-                              className={[
-                                "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition",
-                                isSelected ? "border-[#3D5A3D] bg-[#3D5A3D]" : "border-[#d6d3d1] bg-white",
-                              ].join(" ")}
-                              aria-hidden="true"
-                            >
-                              <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                          <span className="flex min-w-0 flex-1 flex-col gap-3">
+                            <span className="flex min-w-0 items-start gap-3">
+                              <span
+                                className={[
+                                  "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition",
+                                  isSelected ? "border-[#3D5A3D] bg-[#3D5A3D]" : "border-[#d6d3d1] bg-white",
+                                ].join(" ")}
+                                aria-hidden="true"
+                              >
+                                <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block font-serif text-[15px] font-light text-[#1C1917] sm:text-base">
+                                  {tastingType.title}
+                                </span>
+                                <span className="mt-1 block whitespace-normal text-[11px] leading-snug text-[#292524] sm:text-xs font-normal">
+                                  {tastingType.subtitle}
+                                </span>
+                              </span>
                             </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="block font-serif text-[15px] font-light text-[#1C1917] sm:text-base">
-                                {tastingType.title}
-                              </span>
-                              <span className="mt-1 block whitespace-normal text-[11px] leading-snug text-[#292524] sm:text-xs font-normal">
-                                {tastingType.subtitle}
-                              </span>
+                            <span className="mt-auto flex items-end justify-between gap-3 border-t border-[#E7E5E4] pt-3">
+                              {price ? (
+                                <span className="min-w-0">
+                                  <span className="block text-[9px] font-semibold uppercase leading-none tracking-[0.16em] text-[#9c8f82]">
+                                    {price.hasFrom ? fromLabel : "\u00a0"}
+                                  </span>
+                                  <span
+                                    className="mt-1 block font-sans text-2xl font-extrabold leading-none tracking-tight text-[#1f1a17]"
+                                    style={{
+                                      color:
+                                        tastingType.id === "premium"
+                                          ? "#B8860B"
+                                          : tastingType.id === "intermedia"
+                                            ? "#8B7355"
+                                            : "#3D5A3D",
+                                    }}
+                                  >
+                                    {price.amount}
+                                  </span>
+                                  {price.unit ? (
+                                    <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8a7c6e]">
+                                      {price.unit}
+                                    </span>
+                                  ) : null}
+                                </span>
+                              ) : null}
+                              <Badge
+                                className={[
+                                  "shrink-0 rounded-[5px] border px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] shadow-none",
+                                  accentClass,
+                                ].join(" ")}
+                              >
+                                {tastingType.durationMinutes} min
+                              </Badge>
                             </span>
                           </span>
-                          <Badge
-                            className={[
-                              "ml-3 shrink-0 rounded-xl border px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] shadow-none",
-                              accentClass,
-                            ].join(" ")}
-                          >
-                            {tastingType.durationMinutes} min
-                          </Badge>
                         </Button>
                       );
                     })}
                   </div>
                 </div>
 
-                <Card className="rounded-[22px] border-[#E7E5E4] bg-[linear-gradient(180deg,#fffdf9_0%,#faf7f2_100%)] shadow-none">
+                <Card className="rounded-[5px] border-[#E7E5E4] bg-[linear-gradient(180deg,#fffdf9_0%,#faf7f2_100%)] shadow-none">
                   <CardContent className="space-y-4 p-3.5 sm:p-4">
                     <div className="space-y-2.5">
                       <Label>{t("modal.form.people_label")}</Label>
@@ -945,12 +992,12 @@ export default function TastingsCalendar(props: {
                 </Card>
 
                 {submitError ? (
-                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-800">
+                  <div className="rounded-[5px] border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-800">
                     {submitError}
                   </div>
                 ) : null}
 
-                <div className="sticky bottom-0 -mx-4 mt-1 flex flex-col-reverse gap-3 border-t border-[#E7E5E4] bg-[#FDFCF8]/95 px-4 pb-1 pt-3 backdrop-blur sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-2 sm:flex-row sm:justify-end">
+                <div className="sticky bottom-0 -mx-4 mt-1 flex flex-col-reverse gap-3 border-t border-[#E7E5E4] bg-[#FDFCF8]/95 px-4 pb-4 pt-3 backdrop-blur sm:static sm:mx-0 sm:mb-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-2 sm:flex-row sm:justify-end">
                   <Button
                     type="button"
                     variant="outline"
@@ -1001,4 +1048,35 @@ export default function TastingsCalendar(props: {
       ) : null}
     </div>
   );
+}
+
+function splitTastingPrice(rawPrice?: string): { hasFrom: boolean; amount: string; unit?: string } | null {
+  const raw = rawPrice?.trim();
+  if (!raw) return null;
+
+  const hasFrom = /^da\s+/i.test(raw);
+  const withoutFrom = raw.replace(/^da\s+/i, "");
+  const [amount, unit] = withoutFrom.split("/");
+
+  return {
+    hasFrom,
+    amount: amount.trim(),
+    unit: unit?.trim(),
+  };
+}
+
+function getPriceFromLabel(locale: string) {
+  const labels: Record<string, string> = {
+    it: "Da",
+    en: "From",
+    us: "From",
+    de: "Ab",
+    nl: "Vanaf",
+    da: "Fra",
+    no: "Fra",
+    es: "Desde",
+    fr: "Dès",
+  };
+
+  return labels[locale] ?? labels.it;
 }

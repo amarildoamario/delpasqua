@@ -17,7 +17,7 @@ import {
   normalizeAvailableQty,
   normalizeCartLines,
 } from "@/lib/cartNormalization";
-import type { AvailabilityMap, CartAvailabilityNotice } from "@/lib/cartNormalization";
+import type { AvailabilityMap, CartAvailabilityNotice, CartVariantLocation } from "@/lib/cartNormalization";
 import type { CartLine, Product } from "@/lib/shopTypes";
 
 export type CartAddResult = {
@@ -63,10 +63,10 @@ function sameLines(a: CartLine[], b: CartLine[]) {
 
 export function CartProvider({
   children,
-  initialCatalog,
+  initialCatalog = [],
 }: {
   children: React.ReactNode;
-  initialCatalog: Product[] | unknown[];
+  initialCatalog?: Product[] | unknown[];
 }) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
@@ -78,6 +78,12 @@ export function CartProvider({
   const availabilityRef = useRef<AvailabilityMap>({});
   const noticeSeqRef = useRef(0);
 
+  const catalogRef = useRef<Product[]>(initialCatalog as Product[]);
+
+  useEffect(() => {
+    catalogRef.current = catalog;
+  }, [catalog]);
+
   useEffect(() => {
     linesRef.current = lines;
   }, [lines]);
@@ -86,39 +92,56 @@ export function CartProvider({
     availabilityRef.current = availabilityBySku;
   }, [availabilityBySku]);
 
-  useEffect(() => {
-    let alive = true;
-    fetch(`/api/products?t=${Date.now()}`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) => {
-        if (alive && Array.isArray(data)) {
+  const fetchCatalog = useCallback(async () => {
+    if (catalogRef.current.length > 0) return catalogRef.current;
+    try {
+      const response = await fetch("/api/products");
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
           setCatalog(data);
+          catalogRef.current = data;
+          return data;
         }
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
+      }
+    } catch {}
+    return catalogRef.current;
   }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+    const isShopOrCartPage =
+      pathname.includes("/shop") ||
+      pathname.includes("/cart") ||
+      pathname.includes("/checkout");
+
+    if (lines.length > 0 || isShopOrCartPage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchCatalog();
+    }
+  }, [hydrated, lines.length, fetchCatalog]);
 
   const variantLocationByKey = useMemo(() => buildVariantLocationByKey(catalog), [catalog]);
 
   const getSku = useCallback(
     (productId: string, variantId: string) => {
+      if (catalog.length === 0) return null;
       return getCartLineSku(productId, variantId, variantLocationByKey);
     },
-    [variantLocationByKey]
+    [catalog.length, variantLocationByKey]
   );
 
   const getCatalogNormalizationNotice = useCallback(
     (candidateLines: CartLine[]) => {
+      if (catalog.length === 0) return null;
       return buildCatalogNormalizationNotice({
         candidateLines,
         variantLocationByKey,
         nextNoticeId: () => ++noticeSeqRef.current,
       });
     },
-    [variantLocationByKey]
+    [catalog.length, variantLocationByKey]
   );
 
   const fetchAvailabilityForSkus = useCallback(async (skus: string[]) => {
@@ -150,15 +173,18 @@ export function CartProvider({
       nextLines: CartLine[];
       line: CartLine;
       availability: AvailabilityMap;
+      variantLocationByKey?: Map<string, CartVariantLocation>;
     }): CartAddResult => {
-      const { prevLines, nextLines, line, availability } = args;
+      const { prevLines, nextLines, line, availability, variantLocationByKey: customKeys } = args;
       const requestedQty = clampCartQty(line.qty);
       const prevQty =
         prevLines.find((item) => item.productId === line.productId && item.variantId === line.variantId)?.qty ?? 0;
       const finalQty =
         nextLines.find((item) => item.productId === line.productId && item.variantId === line.variantId)?.qty ?? 0;
       const addedQty = Math.max(0, finalQty - prevQty);
-      const sku = getSku(line.productId, line.variantId);
+      
+      const keys = customKeys || variantLocationByKey;
+      const sku = getCartLineSku(line.productId, line.variantId, keys);
       const availableQty = sku ? normalizeAvailableQty(availability[sku]) : null;
 
       return {
@@ -171,7 +197,7 @@ export function CartProvider({
         availableQty,
       };
     },
-    [getSku]
+    [variantLocationByKey]
   );
 
   const getLineQty = useCallback((productId: string, variantId: string) => {
@@ -187,25 +213,19 @@ export function CartProvider({
         if (raw) {
           const decoded: unknown = JSON.parse(raw);
           const parsed = Array.isArray(decoded) ? (decoded as CartLine[]) : [];
-          const next = normalizeCartLines({
-            candidateLines: parsed,
-            availability: {},
-            variantLocationByKey,
-          });
-          const notice = getCatalogNormalizationNotice(parsed);
-          linesRef.current = next;
-          setLines(next);
-          if (notice) setLastAvailabilityNotice((current) => current ?? notice);
+          linesRef.current = parsed;
+          setLines(parsed);
         }
       } catch {}
       setHydrated(true);
     });
-  }, [getCatalogNormalizationNotice, variantLocationByKey]);
+  }, []);
 
   useEffect(() => {
     if (!hydrated) return;
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(lines));
+      window.dispatchEvent(new Event("cart-updated"));
     } catch {}
   }, [hydrated, lines]);
 
@@ -240,7 +260,7 @@ export function CartProvider({
   }, [hydrated, refreshAvailability]);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || catalog.length === 0) return;
     queueMicrotask(() => {
       const prev = linesRef.current;
       const next = normalizeCartLines({
@@ -271,10 +291,15 @@ export function CartProvider({
         });
       }
 
+      const catalogNotice = getCatalogNormalizationNotice(prev);
+      if (catalogNotice) {
+        setLastAvailabilityNotice((current) => current ?? catalogNotice);
+      }
+
       linesRef.current = next;
       setLines(next);
     });
-  }, [availabilityBySku, getSku, hydrated, variantLocationByKey]);
+  }, [availabilityBySku, getSku, hydrated, variantLocationByKey, catalog.length, getCatalogNormalizationNotice]);
 
   const getAvailableQty = useCallback(
     (productId: string, variantId: string) => {
@@ -287,7 +312,14 @@ export function CartProvider({
 
   const add = useCallback(
     async (line: CartLine) => {
-      const sku = getSku(line.productId, line.variantId);
+      let currentCatalog = catalogRef.current;
+      let currentVariantLocationByKey = variantLocationByKey;
+      if (currentCatalog.length === 0) {
+        currentCatalog = await fetchCatalog();
+        currentVariantLocationByKey = buildVariantLocationByKey(currentCatalog);
+      }
+
+      const sku = getCartLineSku(line.productId, line.variantId, currentVariantLocationByKey);
       let mergedAvailability = availabilityRef.current;
 
       if (sku && typeof mergedAvailability[sku] !== "number") {
@@ -313,7 +345,7 @@ export function CartProvider({
       const next = normalizeCartLines({
         candidateLines: candidate,
         availability: mergedAvailability,
-        variantLocationByKey,
+        variantLocationByKey: currentVariantLocationByKey,
       });
       linesRef.current = next;
       setLines(next);
@@ -323,9 +355,10 @@ export function CartProvider({
         nextLines: next,
         line,
         availability: mergedAvailability,
+        variantLocationByKey: currentVariantLocationByKey,
       });
     },
-    [buildAddResult, fetchAvailabilityForSkus, getSku, mergeAvailability, variantLocationByKey]
+    [buildAddResult, fetchAvailabilityForSkus, fetchCatalog, mergeAvailability, variantLocationByKey]
   );
 
   const remove = useCallback((productId: string, variantId: string) => {

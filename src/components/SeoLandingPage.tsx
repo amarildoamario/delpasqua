@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { ArrowRight, Leaf, ShieldCheck, ShoppingBag, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Leaf, ShieldCheck, ShoppingBag, Droplet, Award, Sprout, CheckCircle2 } from "lucide-react";
 import Footer from "@/components/Footer";
 
 export type LandingPageContent = {
@@ -14,7 +14,7 @@ export type LandingPageContent = {
   introTitle: string;
   introText: string;
   features: {
-    icon: "leaf" | "shield" | "sparkles" | "bag";
+    icon: "leaf" | "shield" | "droplet" | "sprout" | "award" | "bag";
     title: string;
     description: string;
   }[];
@@ -71,8 +71,12 @@ export default function SeoLandingPage({ locale, content, products, layoutVarian
         return <Leaf className="h-5 w-5 text-emerald-600" />;
       case "shield":
         return <ShieldCheck className="h-5 w-5 text-emerald-600" />;
-      case "sparkles":
-        return <Sparkles className="h-5 w-5 text-emerald-600" />;
+      case "droplet":
+        return <Droplet className="h-5 w-5 text-emerald-600" />;
+      case "sprout":
+        return <Sprout className="h-5 w-5 text-emerald-600" />;
+      case "award":
+        return <Award className="h-5 w-5 text-emerald-600" />;
       case "bag":
         return <ShoppingBag className="h-5 w-5 text-emerald-600" />;
       default:
@@ -354,5 +358,4 @@ export default function SeoLandingPage({ locale, content, products, layoutVarian
     </div>
   );
 }
-
 

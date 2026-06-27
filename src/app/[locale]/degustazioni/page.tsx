@@ -112,6 +112,7 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                 .map((tastingType) => {
                   const isPremium = tastingType.id === "premium";
                   const isIntermedia = tastingType.id === "intermedia";
+                  const price = splitTastingPrice(tastingType.priceFrom);
                   const accentColor = isPremium ? "#B8860B" : isIntermedia ? "#8B7355" : "#3D5A3D";
                   const accentBgLight = isPremium 
                     ? "bg-gradient-to-br from-white to-[#B8860B]/[0.02]" 
@@ -127,7 +128,7 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                   return (
                     <div
                       key={tastingType.id}
-                      className={`group relative overflow-hidden rounded-[5px] border border-[#E7E5E4] p-6 lg:p-8 transition-all duration-500 hover:-translate-y-1.5 ${accentBgLight} ${borderHoverClass}`}
+                      className={`group relative flex h-full flex-col overflow-hidden rounded-[5px] border border-[#E7E5E4] p-6 lg:p-8 transition-all duration-500 hover:-translate-y-1.5 ${accentBgLight} ${borderHoverClass}`}
                     >
                       <div
                         className="absolute left-0 top-0 h-1.5 w-0 transition-all duration-500 group-hover:w-full"
@@ -169,7 +170,7 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                         </div>
                       </div>
 
-                      <ul className="mt-8 space-y-3.5">
+                      <ul className="mt-8 space-y-3.5 pb-8">
                         {tastingType.includes.map((x: string) => (
                           <li key={x} className="flex gap-3 text-sm leading-relaxed text-[#292524]">
                             <svg className="h-5 w-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: accentColor }}>
@@ -180,10 +181,24 @@ export default async function DegustazioniPage({ params }: { params: Promise<{ l
                         ))}
                       </ul>
 
-                      {tastingType.priceFrom ? (
-                        <div className="mt-8 pt-5 border-t border-[#E7E5E4]">
-                          <span className="text-[10px] font-semibold tracking-[0.15em] text-[#8B7355] uppercase block">{t("hero.from")}</span>
-                          <div className="mt-1.5 font-serif text-xl font-light text-[#1C1917]" style={{ color: accentColor }}>{tastingType.priceFrom}</div>
+                      {price ? (
+                        <div className="mt-auto border-t border-[#E7E5E4] bg-white/55 pt-5">
+                          <span className="block text-[9px] font-semibold uppercase leading-none tracking-[0.16em] text-[#9c8f82]">
+                            {price.hasFrom ? t("hero.from") : "\u00a0"}
+                          </span>
+                          <div className="mt-2 flex items-end gap-2">
+                            <span
+                              className="font-sans text-3xl font-extrabold leading-none tracking-tight text-[#1f1a17] lg:text-4xl"
+                              style={{ color: accentColor }}
+                            >
+                              {price.amount}
+                            </span>
+                            {price.unit ? (
+                              <span className="pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a7c6e]">
+                                {price.unit}
+                              </span>
+                            ) : null}
+                          </div>
                         </div>
                       ) : null}
                     </div>
@@ -347,4 +362,19 @@ function IconLeaf({ className }: { className?: string }) {
       <path d="M7 13c2 0 5 0 9-4" />
     </svg>
   );
+}
+
+function splitTastingPrice(rawPrice?: string): { hasFrom: boolean; amount: string; unit?: string } | null {
+  const raw = rawPrice?.trim();
+  if (!raw) return null;
+
+  const hasFrom = /^da\s+/i.test(raw);
+  const withoutFrom = raw.replace(/^da\s+/i, "");
+  const [amount, unit] = withoutFrom.split("/");
+
+  return {
+    hasFrom,
+    amount: amount.trim(),
+    unit: unit?.trim(),
+  };
 }

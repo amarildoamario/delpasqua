@@ -7,10 +7,10 @@ import type { Product } from "@/lib/shopTypes";
 
 export function Providers({
   children,
-  initialCatalog,
+  initialCatalog = [],
 }: {
   children: React.ReactNode;
-  initialCatalog: Product[] | unknown[];
+  initialCatalog?: Product[] | unknown[];
 }) {
   return <CartProvider initialCatalog={initialCatalog}>{children}</CartProvider>;
 }

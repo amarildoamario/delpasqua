@@ -15,7 +15,7 @@ export type OlioToscanoContent = {
   introTitle: string;
   introText: string;
   features: {
-    icon: "leaf" | "shield" | "sparkles" | "bag";
+    icon: "leaf" | "shield" | "sprout" | "bag";
     title: string;
     description: string;
   }[];
@@ -233,7 +233,7 @@ export default function OlioToscanoClient({ locale, content, products }: Props) 
       case "shield":
         // Maps to Droplet for cold extraction
         return <Droplet className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
-      case "sparkles":
+      case "sprout":
         // Maps to Sprout for historic cultivars
         return <Sprout className="h-6 w-6 text-[#10B981] group-hover:scale-110 transition-transform duration-300" />;
       case "bag":

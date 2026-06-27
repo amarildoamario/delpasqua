@@ -15,7 +15,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, OlioToscanoConten
     features: [
       { icon: "leaf", title: "100% Olive Toscane", description: "Olio ottenuto esclusivamente da olive raccolte nel territorio toscano." },
       { icon: "shield", title: "Estrazione a Freddo", description: "Lavorazione sotto i 27°C per mantenere intatti antiossidanti e profumi." },
-      { icon: "sparkles", title: "Cultivar Storiche", description: "Un sapiente blend di Frantoio, Moraiolo e Leccino della Valdichiana." }
+      { icon: "sprout", title: "Cultivar Storiche", description: "Un sapiente blend di Frantoio, Moraiolo e Leccino della Valdichiana." }
     ],
     ctaTitle: "Porta la Toscana a Tavola",
     ctaText: "Scopri le nostre bottiglie ed acquista direttamente dal produttore.",
@@ -62,7 +62,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, OlioToscanoConten
     features: [
       { icon: "leaf", title: "100% Tuscan Olives", description: "Oil obtained exclusively from olives harvested in the Tuscan territory." },
       { icon: "shield", title: "Cold Extracted", description: "Processed below 27°C to keep antioxidants and aromas intact." },
-      { icon: "sparkles", title: "Historic Cultivars", description: "A wise blend of Frantoio, Moraiolo, and Leccino from Valdichiana." }
+      { icon: "sprout", title: "Historic Cultivars", description: "A wise blend of Frantoio, Moraiolo, and Leccino from Valdichiana." }
     ],
     ctaTitle: "Bring Tuscany to Your Table",
     ctaText: "Discover our bottles and buy directly from the producer.",
@@ -109,7 +109,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, OlioToscanoConten
     features: [
       { icon: "leaf", title: "100% Toskanische Oliven", description: "Ausschließlich aus im toskanischen Territorium geernteten Oliven gewonnen." },
       { icon: "shield", title: "Kaltextrahiert", description: "Verarbeitung unter 27 °C, um Antioxidantien und Aromen vollständig zu erhalten." },
-      { icon: "sparkles", title: "Historische Sorten", description: "Eine feine Mischung aus Frantoio, Moraiolo und Leccino aus dem Valdichiana." }
+      { icon: "sprout", title: "Historische Sorten", description: "Eine feine Mischung aus Frantoio, Moraiolo und Leccino aus dem Valdichiana." }
     ],
     ctaTitle: "Bringen Sie die Toskana auf Ihren Tisch",
     ctaText: "Entdecken Sie unsere Flaschen und kaufen Sie direkt beim Hersteller.",
@@ -156,7 +156,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, OlioToscanoConten
     features: [
       { icon: "leaf", title: "100% Toscaanse Olijven", description: "Olijfolie die uitsluitend is verkregen uit in Toscane geoogste olijven." },
       { icon: "shield", title: "Koude Extractie", description: "Verwerkt onder 27°C om antioxidanten en aroma's optimaal te behouden." },
-      { icon: "sparkles", title: "Historische Cultivars", description: "Een uitgebalanceerde blend van Frantoio, Moraiolo en Leccino uit de Valdichiana." }
+      { icon: "sprout", title: "Historische Cultivars", description: "Een uitgebalanceerde blend van Frantoio, Moraiolo en Leccino uit de Valdichiana." }
     ],
     ctaTitle: "Breng Toscane naar uw Tafel",
     ctaText: "Ontdek onze flessen en koop rechtstreeks bij de producent.",
@@ -203,7 +203,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, OlioToscanoConten
     features: [
       { icon: "leaf", title: "100% Toscanske Oliven", description: "Olie fremstillet udelukkende af oliven høstet i det toscanske område." },
       { icon: "shield", title: "Koldpresset", description: "Forarbejdet under 27°C for at holde antioxidanter og aromaer intakte." },
-      { icon: "sparkles", title: "Historiske Sorter", description: "En fin blanding af Frantoio, Moraiolo og Leccino fra Valdichiana." }
+      { icon: "sprout", title: "Historiske Sorter", description: "En fin blanding af Frantoio, Moraiolo og Leccino fra Valdichiana." }
     ],
     ctaTitle: "Bring Toscana til dit Bord",
     ctaText: "Oplev vores flasker og køb direkte fra producenten.",
@@ -250,7 +250,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, OlioToscanoConten
     features: [
       { icon: "leaf", title: "100% Toskanske Oliven", description: "Olje utvunnet utelukkende fra oliven høstet i det toscanske området." },
       { icon: "shield", title: "Kaldpresset", description: "Forarbeidet under 27°C for å holde antioksidanter og aromaer intakte." },
-      { icon: "sparkles", title: "Historiske Sorter", description: "En fin blanding av Frantoio, Moraiolo og Leccino fra Valdichiana." }
+      { icon: "sprout", title: "Historiske Sorter", description: "En fin blanding av Frantoio, Moraiolo og Leccino fra Valdichiana." }
     ],
     ctaTitle: "Bring Toscana til ditt Bord",
     ctaText: "Oppdag våre flasker og kjøp direkte fra produsenten.",

@@ -15,7 +15,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent>
     features: [
       { icon: "leaf", title: "Certificazione Bio", description: "Olio da olive coltivate seguendo i rigidi standard europei per il biologico." },
       { icon: "shield", title: "Nessun Additivo Chimico", description: "Escluso l'uso di pesticidi, diserbanti o concimi chimici di sintesi." },
-      { icon: "sparkles", title: "Sapore Puro", description: "Un extravergine dal gusto pulito ed equilibrato, ricco di aromi naturali." }
+      { icon: "droplet", title: "Sapore Puro", description: "Un extravergine dal gusto pulito ed equilibrato, ricco di aromi naturali." }
     ],
     ctaTitle: "Scegli il Biologico di Frantoio",
     ctaText: "Acquista direttamente online le nostre migliori selezioni biologiche ed artigianali.",
@@ -94,7 +94,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent>
     features: [
       { icon: "leaf", title: "Certified Organic", description: "Oil from olives grown following strict European organic standards." },
       { icon: "shield", title: "No Chemical Additives", description: "Excluded use of pesticides, herbicides, or synthetic fertilizers." },
-      { icon: "sparkles", title: "Pure Flavor", description: "An extra virgin oil with a clean and balanced taste, rich in natural aromas." }
+      { icon: "droplet", title: "Pure Flavor", description: "An extra virgin oil with a clean and balanced taste, rich in natural aromas." }
     ],
     ctaTitle: "Choose Mill Organic Oil",
     ctaText: "Buy directly online our best organic and artisanal selections.",
@@ -173,7 +173,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent>
     features: [
       { icon: "leaf", title: "Bio-Zertifiziert", description: "Olivenöl aus Anbau nach strengen europäischen Bio-Richtlinien." },
       { icon: "shield", title: "Ohne Chemie", description: "Kein Einsatz von chemischen Pestiziden oder Kunstdüngern." },
-      { icon: "sparkles", title: "Reiner Geschmack", description: "Ein natives Olivenöl extra mit sauberem, ausgewogenem Aroma." }
+      { icon: "droplet", title: "Reiner Geschmack", description: "Ein natives Olivenöl extra mit sauberem, ausgewogenem Aroma." }
     ],
     ctaTitle: "Wählen Sie Bio-Öl ab Mühle",
     ctaText: "Kaufen Sie unsere besten biologischen und handwerklichen Auswahlen direkt online.",
@@ -252,7 +252,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent>
     features: [
       { icon: "leaf", title: "Biologisch Gecertificeerd", description: "Olijfolie van olijven geteeld volgens de strenge Europese biologische normen." },
       { icon: "shield", title: "Geen Chemische Toevoegingen", description: "Uitgesloten gebruik van chemische bestrijdingsmiddelen of kunstmest." },
-      { icon: "sparkles", title: "Pure Smaak", description: "Een extra vierge olijfolie met uniek aroma." }
+      { icon: "droplet", title: "Pure Smaak", description: "Een extra vierge olijfolie met uniek aroma." }
     ],
     ctaTitle: "Kies voor Biologische Olijfolie",
     ctaText: "Koop onze beste biologische en ambachtelijke selecties rechtstreeks online.",
@@ -331,7 +331,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent>
     features: [
       { icon: "leaf", title: "Certificeret Økologisk", description: "Olie fra oliven dyrket efter strenge økologiske standarder." },
       { icon: "shield", title: "Ingen Kemiske Tilsætningsstoffer", description: "Udelukket brug av pesticider eller syntetisk gødning." },
-      { icon: "sparkles", title: "Ren Smag", description: "En ekstra jomfruolie med en ren og afbalanceret smag." }
+      { icon: "droplet", title: "Ren Smag", description: "En ekstra jomfruolie med en ren og afbalanceret smag." }
     ],
     ctaTitle: "Vælg Økologisk Mølleolie",
     ctaText: "Køb vores bedste økologiske udvalg direkte online.",
@@ -410,7 +410,7 @@ const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, BiologicoContent>
     features: [
       { icon: "leaf", title: "Sertifisert Olje", description: "Olje fra oliven dyrket etter strenge økologiske standarder." },
       { icon: "shield", title: "Ingen Kjemikalier", description: "Utelukket bruk av sprøytemidler eller syntetisk gjødsel." },
-      { icon: "sparkles", title: "Ren Smag", description: "En ekstra virgin olje med en ren og balansert smak." }
+      { icon: "droplet", title: "Ren Smag", description: "En ekstra virgin olje med en ren og balansert smak." }
     ],
     ctaTitle: "Velg Økologisk Mølleolje",
     ctaText: "Kjøp våre beste økologiske utvalg direkte online.",

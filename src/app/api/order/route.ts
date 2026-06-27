@@ -4,6 +4,7 @@ export const runtime = "nodejs";
 import { randomUUID } from "crypto";
 import Stripe from "stripe";
 import { prisma } from "@/lib/server/prisma";
+import { checkoutLocalePrefix } from "@/lib/checkoutLocale";
 import { CreateOrderSchema } from "@/lib/server/schemas";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
@@ -388,8 +389,8 @@ export async function POST(req: Request) {
             },
           },
         ],
-        success_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${appUrl}${parsed.data.locale === "en" ? "/en" : ""}/checkout/cancel/?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${appUrl}${checkoutLocalePrefix(parsed.data.locale)}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}${checkoutLocalePrefix(parsed.data.locale)}/checkout/cancel/?session_id={CHECKOUT_SESSION_ID}`,
         client_reference_id: order.id,
         metadata: {
           orderId: order.id,

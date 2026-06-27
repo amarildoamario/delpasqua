@@ -2,12 +2,13 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { readPublicCatalog, readPublicCatalogWithMerch } from "@/lib/server/catalog";
-import { findProductBySlug, getLocalizedProductSlug, translateVariantTitle } from "@/lib/productSlugs";
+import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
 import { makeInventorySku } from "@/lib/inventorySku";
 import { prisma } from "@/lib/server/prisma";
 import { SHIPPING_RULES } from "@/lib/shippingConfig";
 import Footer from "@/components/Footer";
 import ProductDetailsClient from "./ProductDetailsClient";
+import { copy, detailCopy, getProductSpecs, type ProductSpecData } from "./productDetailsData";
 import {
   getProductAlternateUrls,
   getSeoLocale,
@@ -18,6 +19,9 @@ import {
 } from "@/lib/seo";
 import type { Metadata } from "next";
 import { locales } from "@/i18n/pathnames";
+
+export const revalidate = 3600;
+export const dynamic = "force-static";
 
 type Specs = Record<string, string>;
 
@@ -231,13 +235,10 @@ function parseMeasurement(label: string, id: string) {
 
 export default async function ProductPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string; prodotto: string }>;
-  searchParams?: Promise<{ v?: string }>;
 }) {
   const { locale, prodotto } = await params;
-  const sp = searchParams ? await searchParams : undefined;
   const tp = await getTranslations({ locale, namespace: "Products" });
 
   const list = (await readPublicCatalogWithMerch()) as unknown as Product[];
@@ -468,6 +469,13 @@ export default async function ProductPage({
       }
     ]
   };
+  const labels = copy[locale as keyof typeof copy] ?? copy.en;
+  const detailLabels = detailCopy[locale as keyof typeof detailCopy] ?? detailCopy.en;
+  const specsMap: Record<string, ProductSpecData> = {};
+  const allProductIds = ["evo", "fruttato-leggero", "fruttato-medio", "fruttato-intenso", "tartufo", "peperoncino", "vino"];
+  for (const pid of allProductIds) {
+    specsMap[pid] = getProductSpecs(pid, locale);
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F2]">
@@ -483,8 +491,10 @@ export default async function ProductPage({
         {/* Griglia client */}
         <ProductDetailsClient 
           product={translatedProduct} 
-          initialVariantId={sp?.v} 
           relatedProducts={relatedProducts} 
+          labels={labels}
+          detailLabels={detailLabels}
+          specsMap={specsMap}
         />
       </div>
 

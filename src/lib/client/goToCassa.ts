@@ -2,6 +2,7 @@
 
 import { track } from "@/lib/analytics/track";
 import { getOrCreateCartId } from "@/lib/analytics/cartId";
+import { checkoutLocaleFromPathname } from "@/lib/checkoutLocale";
 
 export type CartLine = { productId: string; variantId: string; qty: number };
 
@@ -49,7 +50,7 @@ export async function goToCassa(
     track({ type: "checkout_click", cartId, data: { itemsCount: lines.length } });
 
     const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-    const locale = pathname.startsWith("/en/") ? "en" : "it";
+    const locale = checkoutLocaleFromPathname(pathname);
 
     const body: Record<string, unknown> = { items: lines, cartId, locale };
     if (options?.promotionCode) {
