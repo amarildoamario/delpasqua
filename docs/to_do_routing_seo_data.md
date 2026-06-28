@@ -114,7 +114,10 @@ Fix richiesto:
 - Passare locale nel payload ordine e generare URL localizzato.
 - Oppure usare route non localizzate intenzionali e tradurre in base a sessione/ordine.
 
-## [TODO] P2 - Copy e business rules duplicati
+## [RISOLTO] P2 - Copy e business rules duplicati
+
+Stato:
+- Risolto il 2026-06-28. Abbiamo centralizzato le tariffe e soglie di spedizione in `src/lib/constants.ts` (69 € per spedizione gratuita e 9.90 € per spedizione standard flat). Abbiamo allineato `shippingConfig.ts` e il seed del database. I messaggi multilingua (`messages/*.json`) sono stati modificati per accettare un parametro dinamico `{amount}`. I componenti `ShopPageClient.tsx` e `CartPageClient.tsx` ora visualizzano e usano queste regole dinamicamente. La pagina `/spedizioni` sostituisce dinamicamente la soglia di spedizione nei testi. Il calcolo nel backend (`pricing.ts`) ora rispetta le impostazioni del database con fallback coerente alle costanti.
 
 Problema:
 - Soglie spedizione, testi reso/spedizione e metodi pagamento sono duplicati in componenti, JSON prodotti e messaggi.

@@ -1,18 +1,23 @@
+import { setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 import fs from "fs";
 import path from "path";
-import BlogHighlights from "@/components/BlogHighlights";
-import DiscoverSection from "@/components/DiscoverSection";
+import dynamic from "next/dynamic";
+
+const BlogHighlights = dynamic(() => import("@/components/BlogHighlights"));
+const DiscoverSection = dynamic(() => import("@/components/DiscoverSection"));
 import Footer from "@/components/Footer";
 import HeroCarousel from "@/components/HeroCarousel";
-import HomeAboutFamily from "@/components/HomeAboutFamily";
-import HomeAboutTerritory from "@/components/HomeAboutTerritory";
-import HomeGallery from "@/components/HomeGallery";
-import HomeMillFeature from "@/components/HomeMillFeature";
-import HomeProductShowcase from "@/components/HomeProductShowcase";
-import HomeTastingsFeature from "@/components/HomeTastingsFeature";
-import HomeTrustAndReviews from "@/components/HomeTrustAndReviews";
-import HomeUniqueness from "@/components/HomeUniqueness";
-import ShopHighlights from "@/components/ShopHighlights";
+const HomeAboutFamily = dynamic(() => import("@/components/HomeAboutFamily"));
+const HomeAboutTerritory = dynamic(() => import("@/components/HomeAboutTerritory"));
+const HomeGallery = dynamic(() => import("@/components/HomeGallery"));
+const HomeMillFeature = dynamic(() => import("@/components/HomeMillFeature"));
+const HomeProductShowcase = dynamic(() => import("@/components/HomeProductShowcase"));
+const HomeTastingsFeature = dynamic(() => import("@/components/HomeTastingsFeature"));
+const HomeTrustAndReviews = dynamic(() => import("@/components/HomeTrustAndReviews"));
+const HomeUniqueness = dynamic(() => import("@/components/HomeUniqueness"));
+const ShopHighlights = dynamic(() => import("@/components/ShopHighlights"));
 import { pageMetadata, SITE_URL } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
 import { readPublicCatalogWithMerch } from "@/lib/server/catalog";
@@ -21,6 +26,7 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   return pageMetadata({
     title: locale === "en" ? "Frantoio Del Pasqua" : "Frantoio Del Pasqua",
@@ -33,8 +39,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const products = await readPublicCatalogWithMerch();
 
   // Read gallery images dynamically from public/home_gallery at build/request time
@@ -99,5 +106,25 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <BlogHighlights />
       <Footer />
     </div>
+  );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function HomeWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  const messages = await getMessages();
+  const pageMessages = {
+    Common: messages.Common,
+    Cart: messages.Cart,
+    HomePage: messages.HomePage,
+    Products: messages.Products,
+    StoriaPage: messages.StoriaPage,
+  };
+  return (
+    <NextIntlClientProvider messages={pageMessages}>
+      <Home {...props} />
+    </NextIntlClientProvider>
   );
 }

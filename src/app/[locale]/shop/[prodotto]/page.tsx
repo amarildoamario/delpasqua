@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 // src/app/shop/[prodotto]/page.tsx
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -160,6 +161,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; prodotto: string }>;
 }): Promise<Metadata> {
   const { locale, prodotto } = await params;
+  setRequestLocale(locale);
   const list = (await readPublicCatalogWithMerch()) as unknown as Product[];
   const product = findProductBySlug(list, prodotto);
 
@@ -233,12 +235,13 @@ function parseMeasurement(label: string, id: string) {
   return null;
 }
 
-export default async function ProductPage({
+async function ProductPage({
   params,
 }: {
   params: Promise<{ locale: string; prodotto: string }>;
 }) {
   const { locale, prodotto } = await params;
+  setRequestLocale(locale);
   const tp = await getTranslations({ locale, namespace: "Products" });
 
   const list = (await readPublicCatalogWithMerch()) as unknown as Product[];
@@ -319,12 +322,20 @@ export default async function ProductPage({
 
   // Fetch real availability for each variant SKU from the database
   const skus = variants.map(v => makeInventorySku(product.id, v.id, v.sku));
-  const inventoryItems = await prisma.inventoryItem.findMany({
-    where: { sku: { in: skus } },
-    select: { sku: true, stock: true, reserved: true }
-  });
+  let inventoryItems: { sku: string; stock: number; reserved: number }[] = [];
+  try {
+    inventoryItems = await prisma.inventoryItem.findMany({
+      where: { sku: { in: skus } },
+      select: { sku: true, stock: true, reserved: true }
+    });
+  } catch (err) {
+    console.warn("⚠️ Fallback: Database unreachable in product page. Using default availability.", err);
+  }
   const availabilityMap = new Map(
-    inventoryItems.map(item => [item.sku, Math.max(0, item.stock - item.reserved)])
+    skus.map(sku => {
+      const item = inventoryItems.find(i => i.sku === sku);
+      return [sku, item ? Math.max(0, item.stock - item.reserved) : 99];
+    })
   );
 
   const returnUrl = absoluteUrl(localizedPath("/resi", locale));
@@ -501,4 +512,12 @@ export default async function ProductPage({
       <Footer />
     </div>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function ProductPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <ProductPage {...props} />;
 }

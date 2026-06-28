@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
@@ -13,6 +14,7 @@ const STORIA_IMAGES = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   return pageMetadata({
     title: locale === "en" ? "Our Story" : "Storia",
@@ -26,8 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
+async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "StoriaPage" });
 
   const breadcrumbJsonLd = {
@@ -291,4 +294,12 @@ function ImageBox({
       </div>
     </div>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function StoriaPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <StoriaPage {...props} />;
 }

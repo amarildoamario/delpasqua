@@ -1,8 +1,10 @@
+import { setRequestLocale } from 'next-intl/server';
 import { Link } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const isEn = locale === "en";
 
   return pageMetadata({
@@ -15,8 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function MyAccountPage({ params }: { params: Promise<{ locale: string }> }) {
+async function MyAccountPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const isEn = locale === "en";
 
   return (
@@ -50,4 +53,12 @@ export default async function MyAccountPage({ params }: { params: Promise<{ loca
       </div>
     </main>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function MyAccountPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <MyAccountPage {...props} />;
 }

@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import BlogPage, { generateMetadata as generateBlogMetadata } from "../../page";
 import { locales } from "@/i18n/pathnames";
 import { getBlogPosts } from "@/lib/blog-data";
@@ -27,13 +28,22 @@ export async function generateMetadata({
   params: Promise<{ locale: string; category: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   return generateBlogMetadata({ params: Promise.resolve({ locale }) });
 }
 
-export default function BlogCategoryPage({
+function BlogCategoryPage({
   params,
 }: {
   params: Promise<{ locale: string; category: string }>;
 }) {
   return BlogPage({ params });
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function BlogCategoryPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <BlogCategoryPage {...props} />;
 }

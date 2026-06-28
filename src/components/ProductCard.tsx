@@ -405,6 +405,7 @@ export default function ProductCard({
         ) : (
           <Link
             href={href}
+            prefetch={false}
             data-slug={product.slug}
             data-testid="product-card"
             onClick={onClick}

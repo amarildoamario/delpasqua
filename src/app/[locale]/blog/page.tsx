@@ -258,7 +258,7 @@ export default async function BlogPage({
                                         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
                                             {/* Thumbnail */}
                                             <div className="relative w-full sm:w-52 lg:w-64 h-48 sm:h-40 lg:h-44 shrink-0 rounded-2xl overflow-hidden bg-stone-100">
-                                                <Link href={getLocalizedBlogHref(post, locale)} className="absolute inset-0 z-10" aria-label={post.title} />
+                                                <Link href={getLocalizedBlogHref(post, locale)} prefetch={false} className="absolute inset-0 z-10" aria-label={post.title} />
                                                 <Image
                                                     src={post.imageUrl}
                                                     alt={post.title}
@@ -274,6 +274,7 @@ export default async function BlogPage({
                                                 <div className="flex flex-wrap items-center gap-3 mb-3">
                                                     <Link
                                                         href={getBlogCategoryHref(post.category)}
+                                                        prefetch={false}
                                                         className="text-[11px] font-bold uppercase tracking-widest text-[#3D5A3D] hover:underline underline-offset-4"
                                                     >
                                                         {post.category}
@@ -284,7 +285,7 @@ export default async function BlogPage({
                                                     </span>
                                                 </div>
                                                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 group-hover:text-[#3D5A3D] transition-colors duration-200 leading-snug mb-3 line-clamp-2">
-                                                    <Link href={getLocalizedBlogHref(post, locale)}>
+                                                    <Link href={getLocalizedBlogHref(post, locale)} prefetch={false}>
                                                         {post.title}
                                                     </Link>
                                                 </h2>
@@ -297,6 +298,7 @@ export default async function BlogPage({
                                                     </div>
                                                     <Link
                                                         href={getLocalizedBlogHref(post, locale)}
+                                                        prefetch={false}
                                                         className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#3D5A3D] opacity-0 group-hover:opacity-100 transition-opacity"
                                                     >
                                                         {ui.readMore} <ArrowRight className="w-3.5 h-3.5" />
@@ -345,6 +347,7 @@ export default async function BlogPage({
                                             <li key={cat}>
                                                 <Link
                                                     href={getBlogCategoryHref(cat)}
+                                                    prefetch={false}
                                                     className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isSelected
                                                         ? 'bg-[#3D5A3D] text-white'
                                                         : 'text-stone-600 hover:bg-stone-100 hover:text-zinc-900'
@@ -373,6 +376,7 @@ export default async function BlogPage({
                                 </p>
                                 <Link
                                     href="/degustazioni"
+                                    prefetch={false}
                                     className="inline-flex items-center gap-2 relative z-10 bg-white text-zinc-900 text-[11px] font-bold uppercase tracking-widest px-5 py-3 rounded-full hover:bg-stone-100 transition-colors"
                                 >
                                     {ui.promoBtn} <ArrowRight className="w-3.5 h-3.5" />

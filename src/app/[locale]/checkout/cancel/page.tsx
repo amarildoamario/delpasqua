@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Stripe from "stripe";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
@@ -42,7 +43,7 @@ function euro(cents: number, locale: string) {
   }).format(cents / 100);
 }
 
-export default async function CancelPage({
+async function CancelPage({
   params,
   searchParams,
 }: {
@@ -52,6 +53,7 @@ export default async function CancelPage({
   | Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Cart.cancel" });
   const sp = await Promise.resolve(searchParams);
   const sessionId = getOne(sp.session_id) ?? null;
@@ -341,4 +343,12 @@ function LockIcon({ className }: { className?: string }) {
       <path d="M6 11h12v10H6z" />
     </svg>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function CancelPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <CancelPage {...props} />;
 }

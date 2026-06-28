@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from "@/i18n/pathnames";
 import { pageMetadata } from "@/lib/seo";
 
@@ -84,6 +85,7 @@ const translations = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -97,8 +99,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function ParitaDiGenerePage({ params }: { params: Promise<{ locale: string }> }) {
+async function ParitaDiGenerePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -129,4 +132,12 @@ export default async function ParitaDiGenerePage({ params }: { params: Promise<{
       </p>
     </main>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function ParitaDiGenerePageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <ParitaDiGenerePage {...props} />;
 }

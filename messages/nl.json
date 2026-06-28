@@ -357,7 +357,7 @@
             "reset": "Toon alle producten"
         },
         "info": {
-            "shipping": "Gratis verzending bij bestellingen boven €50",
+            "shipping": "Gratis verzending bij bestellingen vanaf {amount}",
             "notes": "Prijzen zijn indicatief en inclusief BTW. Neem contact met ons op voor maatwerkbestellingen."
         },
         "filters": {
@@ -1025,7 +1025,7 @@
             "empty_desc": "Je hebt nog geen producten aan je winkelwagen toegevoegd. Ontdek onze speciale selectie van fijne oliën.",
             "bestsellers_title": "Aanbevolen Bestsellers",
             "bestsellers_desc": "Onze beste producten rechtstreeks uit de Ölmühle geselecteerd.",
-            "free_shipping_notice": "🚚 Gratis verzending vanaf €69",
+            "free_shipping_notice": "🚚 Gratis verzending vanaf {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Koop nu +",
             "free_shipping_progress": "Nog {amount} tot gratis verzending",

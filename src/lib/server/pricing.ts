@@ -262,9 +262,11 @@ export async function computeOrderPricing(args: {
   if (!orderFreeShipping) {
     const isItaly = countryCode.toUpperCase() === "IT";
     if (isItaly) {
-      shippingCents = subtotalCents > shippingRule.freeShippingThresholdCents
+      const threshold = settings.freeShippingThresholdCents > 0 ? settings.freeShippingThresholdCents : shippingRule.freeShippingThresholdCents;
+      const flatFee = settings.shippingFlatCents > 0 ? settings.shippingFlatCents : shippingRule.shippingFlatCents;
+      shippingCents = subtotalCents > threshold
         ? 0
-        : shippingRule.shippingFlatCents;
+        : flatFee;
     } else {
       // International order
       if (subtotalCents > 50000) {

@@ -438,6 +438,7 @@ export default function NuovoRaccoltoClient({ locale, content, products }: Props
                     <div className="mt-6">
                       <Link
                         href={{ pathname: `/shop/${product.slug}` }}
+                        prefetch={false}
                         className="w-full py-3 bg-[#3D5A3D] hover:bg-[#2C412C] text-[#F5F5F4] rounded-[5px] flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm border border-[#2D3E30]/35"
                       >
                         <span>{locale === "it" ? "Acquista ora" : "Buy now"}</span>

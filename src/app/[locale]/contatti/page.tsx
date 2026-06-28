@@ -1,3 +1,6 @@
+import { setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 import Footer from "@/components/Footer";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
@@ -12,6 +15,7 @@ const CONTACT_LNG = companyInfo.geo.longitude;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   return pageMetadata({
     title: locale === "en" ? "Contact" : "Contatti",
@@ -24,8 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function ContattiPage({ params }: { params: Promise<{ locale: string }> }) {
+async function ContattiPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "ContactPage" });
   const tFooter = await getTranslations({ locale, namespace: "Common.footer.bottom" });
 
@@ -362,5 +367,23 @@ function FacebookIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3V2z" />
     </svg>
+  );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function ContattiPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  const messages = await getMessages();
+  const pageMessages = {
+    Common: messages.Common,
+    Cart: messages.Cart,
+    ContactPage: messages.ContactPage,
+  };
+  return (
+    <NextIntlClientProvider messages={pageMessages}>
+      <ContattiPage {...props} />
+    </NextIntlClientProvider>
   );
 }

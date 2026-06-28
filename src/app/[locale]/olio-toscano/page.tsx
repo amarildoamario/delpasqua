@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from "@/i18n/pathnames";
 import { readPublicCatalog } from "@/lib/server/catalog";
 import OlioToscanoClient, { type OlioToscanoContent } from "./OlioToscanoClient";
@@ -293,8 +294,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export default async function OlioToscanoPage({ params }: { params: Promise<{ locale: string }> }) {
+async function OlioToscanoPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const content = pageContent[displayLocale];
@@ -333,6 +335,7 @@ export default async function OlioToscanoPage({ params }: { params: Promise<{ lo
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const content = pageContent[displayLocale];
@@ -344,4 +347,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     hreflang: true,
   });
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function OlioToscanoPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <OlioToscanoPage {...props} />;
 }

@@ -375,7 +375,7 @@
             "reset": "Mostra tutti i prodotti"
         },
         "info": {
-            "shipping": "Spedizione gratuita per ordini superiori a €50",
+            "shipping": "Spedizione gratuita per ordini superiori a {amount}",
             "notes": "I prezzi sono indicativi e comprensivi di IVA. Contattaci per ordini personalizzati."
         },
         "filters": {
@@ -1044,7 +1044,7 @@
             "empty_desc": "Non hai ancora aggiunto prodotti al carrello. Scopri la nostra selezione speciale di oli pregiati.",
             "bestsellers_title": "Bestseller consigliati",
             "bestsellers_desc": "I nostri migliori prodotti selezionati direttamente dal Frantoio.",
-            "free_shipping_notice": "🚚 Consegna gratis da 69€",
+            "free_shipping_notice": "🚚 Consegna gratis da {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Acquista +",
             "free_shipping_progress": "Mancano {amount} alla spedizione gratuita",

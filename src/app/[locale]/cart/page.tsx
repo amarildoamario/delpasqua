@@ -1,9 +1,11 @@
+import { setRequestLocale } from 'next-intl/server';
 import { pageMetadata } from "@/lib/seo";
 import CartPageClient from "./CartPageClient";
 import { cartStatusTemplates, labels, countries } from "./cartData";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   return pageMetadata({
     title: locale === "en" ? "Cart" : "Carrello",
@@ -15,8 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function CartPage({ params }: { params: Promise<{ locale: string }> }) {
+async function CartPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const statusTemplates = cartStatusTemplates[locale as keyof typeof cartStatusTemplates] ?? cartStatusTemplates.it;
   const shippingLabels = labels[locale as keyof typeof labels] ?? labels.it;
   const countryList = countries.map((c) => ({
@@ -32,4 +35,12 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
       countryList={countryList}
     />
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function CartPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <CartPage {...props} />;
 }

@@ -351,7 +351,7 @@
             "reset": "Show all products"
         },
         "info": {
-            "shipping": "Free shipping on orders over €50",
+            "shipping": "Free shipping on orders over {amount}",
             "notes": "Prices are indicative and include VAT. Contact us for custom orders."
         },
         "filters": {
@@ -1020,7 +1020,7 @@
             "empty_desc": "You haven't added any products to your cart yet. Discover our special selection of fine oils.",
             "bestsellers_title": "Recommended Bestsellers",
             "bestsellers_desc": "Our best products selected directly from the Oil Mill.",
-            "free_shipping_notice": "🚚 Free shipping from €69",
+            "free_shipping_notice": "🚚 Free shipping from {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Buy now +",
             "free_shipping_progress": "You are {amount} away from free shipping",

@@ -210,6 +210,7 @@ export default function MobileListCard({
       <div className="relative flex flex-col bg-white border border-[#ede8e0] rounded-[5px] p-3 shadow-[0_1px_4px_rgba(0,0,0,0.05)] text-[#1f1a17] transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
         <Link
           href={href}
+          prefetch={false}
           onClick={onClick}
           aria-label={product.title}
           className="absolute inset-0 z-10 block opacity-0"

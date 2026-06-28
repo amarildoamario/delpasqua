@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import Stripe from "stripe";
@@ -148,7 +149,7 @@ function formatPaymentMethodLabelFromStripe(paymentIntent: Stripe.PaymentIntent 
 
 /** ------------------------------------------------------------------- **/
 
-export default async function CheckoutSuccessPage({
+async function CheckoutSuccessPage({
   params,
   searchParams,
 }: {
@@ -158,6 +159,7 @@ export default async function CheckoutSuccessPage({
   | Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Cart" });
   const sp = await Promise.resolve(searchParams);
   let orderId = getOne(sp.orderId);
@@ -561,4 +563,12 @@ function ClockIcon({ className }: { className?: string }) {
       <path d="M12 7v6l4 2" />
     </svg>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function CheckoutSuccessPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <CheckoutSuccessPage {...props} />;
 }

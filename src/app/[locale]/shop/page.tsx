@@ -1,3 +1,6 @@
+import { setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 import { readPublicCatalogWithMerch } from "@/lib/server/catalog";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
@@ -43,6 +46,7 @@ const SHOP_METADATA: Record<string, { title: string; description: string }> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const metadata = SHOP_METADATA[locale] ?? SHOP_METADATA.it;
 
   return pageMetadata({
@@ -53,8 +57,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function ShopPage({ params }: { params: Promise<{ locale: string }> }) {
+async function ShopPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const products = await readPublicCatalogWithMerch();
   const initialProducts = products.map((product) => ({
     id: product.id,
@@ -120,5 +125,24 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
         selectionsCards={selCards}
       />
     </>
+  );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function ShopPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  const messages = await getMessages();
+  const pageMessages = {
+    Common: messages.Common,
+    Cart: messages.Cart,
+    ShopPage: messages.ShopPage,
+    Products: messages.Products,
+  };
+  return (
+    <NextIntlClientProvider messages={pageMessages}>
+      <ShopPage {...props} />
+    </NextIntlClientProvider>
   );
 }

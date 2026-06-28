@@ -10,14 +10,28 @@ export interface StoreSettings {
   orderNotificationEmail: string;
 }
 
+let cachedSettings: StoreSettings | null = null;
+let cacheExpiresAt = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minuti
+
+export function clearStoreSettingsCache(): void {
+  cachedSettings = null;
+  cacheExpiresAt = 0;
+}
+
 export async function getStoreSettings(): Promise<StoreSettings> {
+  const now = Date.now();
+  if (cachedSettings && now < cacheExpiresAt) {
+    return cachedSettings;
+  }
+
   try {
     const rows = await prisma.setting.findMany();
     const map: Record<string, string> = {};
     for (const r of rows) {
       map[r.key] = r.value;
     }
-    return {
+    const settings: StoreSettings = {
       storeName: map.storeName ?? "Del Pasqua",
       supportEmail: map.supportEmail ?? "info@delpasqua.com",
       shippingFlatCents: Number(map.shippingFlatCents ?? String(SHIPPING_FLAT_CENTS)),
@@ -25,6 +39,10 @@ export async function getStoreSettings(): Promise<StoreSettings> {
       vatRatePercent: Number(map.vatRatePercent ?? "4"),
       orderNotificationEmail: map.orderNotificationEmail ?? "",
     };
+
+    cachedSettings = settings;
+    cacheExpiresAt = now + CACHE_TTL_MS;
+    return settings;
   } catch (e) {
     console.error("[SETTINGS] failed to load settings, using defaults", e);
     return {

@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Link from "next/link";
 import {
   buildTransactionalEmailPreview,
@@ -17,6 +18,7 @@ function getOne(v: string | string[] | undefined) {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
   return pageMetadata({
     title: "Developer Email Template Preview",
@@ -28,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function DeveloperEmailTemplatePage({
+async function DeveloperEmailTemplatePage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -151,4 +153,12 @@ export default async function DeveloperEmailTemplatePage({
       </div>
     </div>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function DeveloperEmailTemplatePageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <DeveloperEmailTemplatePage {...props} />;
 }

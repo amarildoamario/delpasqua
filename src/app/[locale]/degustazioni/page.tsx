@@ -1,17 +1,25 @@
+import { setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 import { getTastingTypes } from "@/lib/tasting/slots";
-import TastingsCalendar from "./TastingCalendar";
+import dynamic from "next/dynamic";
+
+const TastingsCalendar = dynamic(() => import("./TastingCalendar"), {
+  loading: () => <div className="h-96 w-full animate-pulse rounded-2xl bg-stone-100/50" />,
+});
 import Footer from "@/components/Footer";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { companyInfo } from "@/lib/companyInfo";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { Link } from "@/i18n/routing";
-import TastingsSeoSection from "./TastingsSeoSection";
+const TastingsSeoSection = dynamic(() => import("./TastingsSeoSection"));
 
 const TASTING_IMAGE_PATH = "/blog/degustazione-olio.avif";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "TastingsPage.metadata" });
 
   return pageMetadata({
@@ -23,8 +31,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-export default async function DegustazioniPage({ params }: { params: Promise<{ locale: string }> }) {
+async function DegustazioniPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "TastingsPage" });
 
   const labelMap: Record<string, string> = {
@@ -377,4 +386,23 @@ function splitTastingPrice(rawPrice?: string): { hasFrom: boolean; amount: strin
     amount: amount.trim(),
     unit: unit?.trim(),
   };
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function DegustazioniPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  const messages = await getMessages();
+  const pageMessages = {
+    Common: messages.Common,
+    Cart: messages.Cart,
+    TastingsPage: messages.TastingsPage,
+    TastingsCalendar: messages.TastingsCalendar,
+  };
+  return (
+    <NextIntlClientProvider messages={pageMessages}>
+      <DegustazioniPage {...props} />
+    </NextIntlClientProvider>
+  );
 }

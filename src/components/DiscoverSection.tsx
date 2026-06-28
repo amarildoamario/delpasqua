@@ -227,6 +227,7 @@ export default function DiscoverSection() {
             <Link
               key={c.title}
               href={c.href}
+              prefetch={false}
               aria-label={c.title}
               ref={(el) => {
                 cardRefs.current[i] = el;

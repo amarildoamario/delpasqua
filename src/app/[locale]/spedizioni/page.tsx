@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import { pageMetadata } from "@/lib/seo";
 import { locales, type Locale } from "@/i18n/pathnames";
+import { SHIPPING_RULES } from "@/lib/shippingConfig";
 
 const lastUpdated = "24/05/2026";
 
@@ -224,6 +225,9 @@ export default async function SpedizioniPage({ params }: { params: Promise<{ loc
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
 
+  const thresholdText = `${SHIPPING_RULES.IT.freeShippingThresholdCents / 100} EUR`;
+  const displayCostsDesc = t.costs.desc.replace("50 EUR", thresholdText);
+
   return (
     <div className="min-h-screen bg-white text-zinc-900">
       <main className="mx-auto max-w-5xl px-4 py-10 md:py-14">
@@ -248,7 +252,7 @@ export default async function SpedizioniPage({ params }: { params: Promise<{ loc
             <h2 className="text-base font-semibold">{t.costs.title}</h2>
             <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">
               <p>
-                {t.costs.desc}
+                {displayCostsDesc}
               </p>
             </div>
           </div>

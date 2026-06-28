@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Footer from "@/components/Footer";
 import { pageMetadata } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
@@ -783,6 +784,7 @@ const translations = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -819,8 +821,9 @@ function Section({
   );
 }
 
-export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
+async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -918,4 +921,12 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
       <Footer />
     </div>
   );
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function PrivacyPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <PrivacyPage {...props} />;
 }

@@ -351,7 +351,7 @@
             "reset": "Afficher tous les produits"
         },
         "info": {
-            "shipping": "Livraison gratuite pour les commandes de plus de 50 €",
+            "shipping": "Livraison gratuite pour les commandes supérieures à {amount}",
             "notes": "Les prix sont indicatifs et incluent la TVA. Contactez-nous pour des commandes personnalisées."
         },
         "filters": {
@@ -1020,7 +1020,7 @@
             "empty_desc": "Vous n'avez pas encore ajouté de produits à votre panier. Découvrez notre sélection spéciale d'huiles d'exception.",
             "bestsellers_title": "Bestsellers recommandés",
             "bestsellers_desc": "Nos meilleurs produits sélectionnés directement au Moulin.",
-            "free_shipping_notice": "🚚 Livraison gratuite dès 69 €",
+            "free_shipping_notice": "🚚 Livraison gratuite dès {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Acheter +",
             "free_shipping_progress": "Plus que {amount} pour bénéficier de la livraison gratuite",

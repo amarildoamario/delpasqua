@@ -97,6 +97,7 @@ export default async function AcquistaPage({ params }: { params: Promise<{ local
               <Link
                 key={product.id}
                 href={getLocalizedProductHref(product, locale) as never}
+                prefetch={false}
                 className="group overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative aspect-square bg-white">

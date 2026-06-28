@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Footer from "@/components/Footer";
 import { Link } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
@@ -804,8 +805,9 @@ function Section({
   );
 }
 
-export default async function TerminiPage({ params }: { params: Promise<{ locale: string }> }) {
+async function TerminiPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -912,6 +914,7 @@ export default async function TerminiPage({ params }: { params: Promise<{ locale
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -923,4 +926,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     hreflang: true,
   });
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function TerminiPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <TerminiPage {...props} />;
 }

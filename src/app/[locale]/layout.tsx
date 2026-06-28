@@ -49,6 +49,10 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const layoutMessages = {
+    Common: messages.Common,
+    Cart: messages.Cart,
+  };
   const initialCatalog = await readPublicCatalog();
   return (
     <html lang={getSeoLocale(locale)} className={uiSans.variable}>
@@ -59,7 +63,7 @@ export default async function RootLayout({
       </head>
 
       <body className={`${uiSans.className} bg-white text-zinc-900 antialiased font-sans`}>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={layoutMessages}>
           <Providers initialCatalog={initialCatalog}>
             <GoogleAnalytics />
             <Navbar initialCatalog={initialCatalog.map((product) => ({ id: product.id, slug: product.slug }))} />

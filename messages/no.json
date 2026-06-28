@@ -350,7 +350,7 @@
             "reset": "Vis alle produkter"
         },
         "info": {
-            "shipping": "Gratis frakt på bestillinger over 50 €",
+            "shipping": "Gratis frakt på bestillinger over {amount}",
             "notes": "Prisene er veiledende og inkl. mva. Kontakt oss for spesialbestillinger."
         },
         "filters": {
@@ -1021,7 +1021,7 @@
             "empty_desc": "Du har ikke lagt til noen produkter i handlekurven ennå. Oppdag vårt spesielle utvalg av fine oljer.",
             "bestsellers_title": "Anbefalte Bestsellere",
             "bestsellers_desc": "Våre beste produkter valgt direkte fra Olivenmøllen.",
-            "free_shipping_notice": "🚚 Gratis frakt fra 69€",
+            "free_shipping_notice": "🚚 Gratis frakt fra {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Kjøp nå +",
             "free_shipping_progress": "Du mangler {amount} for å få gratis frakt",

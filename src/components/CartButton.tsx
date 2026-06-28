@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { ShoppingCart } from "lucide-react";
 import { CartProvider } from "@/context/CartContext";
-import CartDrawer from "@/components/CartDrawer";
+
+const CartDrawer = dynamic(() => import("@/components/CartDrawer"), { ssr: false });
 
 type CartButtonProps = {
   icon?: React.ReactNode;

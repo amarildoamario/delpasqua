@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import Footer from "@/components/Footer";
 import { pageMetadata } from "@/lib/seo";
 import { locales, type Locale } from "@/i18n/pathnames";
@@ -332,8 +333,9 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-export default async function CookiePage({ params }: { params: Promise<{ locale: string }> }) {
+async function CookiePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -407,6 +409,7 @@ export default async function CookiePage({ params }: { params: Promise<{ locale:
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const t = translations[displayLocale];
@@ -418,4 +421,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     hreflang: true,
   });
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function CookiePageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <CookiePage {...props} />;
 }

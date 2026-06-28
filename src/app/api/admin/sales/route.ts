@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/server/prisma";
 import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth";
 import { rateLimit } from "@/lib/server/rateLimit";
@@ -40,6 +41,8 @@ export async function PATCH(req: Request) {
       create: { productKey: d.productKey, ...data },
       update: data,
     });
+
+    revalidateTag("catalog", "max");
 
     return guard.attach(NextResponse.json({ ok: true, merch }, { status: 200 }));
   } catch (e: unknown) {

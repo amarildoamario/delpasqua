@@ -351,7 +351,7 @@
             "reset": "Mostrar todos los productos"
         },
         "info": {
-            "shipping": "Envío gratis en pedidos superiores a 50 €",
+            "shipping": "Envío gratis en pedidos superiores a {amount}",
             "notes": "Los precios son orientativos e incluyen IVA. Contáctenos para pedidos personalizados."
         },
         "filters": {
@@ -1020,7 +1020,7 @@
             "empty_desc": "Aún no ha añadido ningún producto a su carrito. Descubra nuestra selección especial de aceites finos.",
             "bestsellers_title": "Bestsellers recomendados",
             "bestsellers_desc": "Nuestros mejores productos seleccionados directamente de la Almazara.",
-            "free_shipping_notice": "🚚 Envío gratis desde 69 €",
+            "free_shipping_notice": "🚚 Envío gratis desde {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Comprar ahora +",
             "free_shipping_progress": "Está a {amount} del envío gratis",

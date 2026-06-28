@@ -357,7 +357,7 @@
             "reset": "Alle Produkte anzeigen"
         },
         "info": {
-            "shipping": "Kostenloser Versand ab einem Bestellwert von 50 €",
+            "shipping": "Kostenloser Versand ab einem Bestellwert von {amount}",
             "notes": "Die Preise sind Richtwerte und verstehen sich inklusive Mehrwertsteuer. Kontaktieren Sie uns für individuelle Bestellungen."
         },
         "filters": {
@@ -1025,7 +1025,7 @@
             "empty_desc": "Sie haben noch keine Produkte in Ihren Warenkorb gelegt. Entdecken Sie unsere besondere Auswahl an feinen Ölen.",
             "bestsellers_title": "Empfohlene Bestseller",
             "bestsellers_desc": "Unsere besten Produkte direkt aus der Ölmühle ausgewählt.",
-            "free_shipping_notice": "🚚 Kostenloser Versand ab 69 €",
+            "free_shipping_notice": "🚚 Kostenloser Versand ab {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Jetzt kaufen +",
             "free_shipping_progress": "Noch {amount} bis zum kostenlosen Versand",

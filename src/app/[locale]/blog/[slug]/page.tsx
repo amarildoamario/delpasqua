@@ -672,6 +672,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                             <li key={cat}>
                                                 <Link
                                                     href={getBlogCategoryHref(cat)}
+                                                    prefetch={false}
                                                     className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
                                                         ? 'bg-[#3D5A3D] text-white'
                                                         : 'text-stone-600 hover:bg-stone-100 hover:text-zinc-900'
@@ -698,7 +699,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                             <div key={p.id} className="group flex gap-3 items-start">
                                                 <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-stone-100 border border-stone-100">
                                                     <Image src={p.imageUrl} alt={p.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="56px" />
-                                                    <Link href={getLocalizedBlogHref(p, locale)} className="absolute inset-0 z-10" />
+                                                    <Link href={getLocalizedBlogHref(p, locale)} prefetch={false} className="absolute inset-0 z-10" />
                                                 </div>
                                                 <div className="relative flex-1 min-w-0">
                                                     <h4 className="text-sm font-semibold text-zinc-900 group-hover:text-[#3D5A3D] line-clamp-2 mb-1 transition-colors leading-snug">
@@ -707,7 +708,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                                     <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wide flex items-center gap-1">
                                                         <Clock className="w-3 h-3" /> {p.readingTime}
                                                     </span>
-                                                    <Link href={getLocalizedBlogHref(p, locale)} className="absolute inset-0 z-10" />
+                                                    <Link href={getLocalizedBlogHref(p, locale)} prefetch={false} className="absolute inset-0 z-10" />
                                                 </div>
                                             </div>
                                         ))}
@@ -721,7 +722,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 <p className="text-sm text-zinc-400 mb-5 relative z-10 leading-relaxed">
                                     {ui.promoText}
                                 </p>
-                                <Link href="/degustazioni" className="inline-flex items-center gap-2 relative z-10 bg-white text-zinc-900 text-[11px] font-bold uppercase tracking-widest px-5 py-3 rounded-full hover:bg-stone-100 transition-colors">
+                                <Link href="/degustazioni" prefetch={false} className="inline-flex items-center gap-2 relative z-10 bg-white text-zinc-900 text-[11px] font-bold uppercase tracking-widest px-5 py-3 rounded-full hover:bg-stone-100 transition-colors">
                                     {ui.promoBtn} <ArrowRight className="w-3.5 h-3.5" />
                                 </Link>
                             </div>

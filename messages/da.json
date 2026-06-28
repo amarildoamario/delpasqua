@@ -357,7 +357,7 @@
             "reset": "Vis alle produkter"
         },
         "info": {
-            "shipping": "Gratis fragt ved køb over 50 €",
+            "shipping": "Gratis fragt ved køb over {amount}",
             "notes": "Priserne er vejledende og inkl. moms. Kontakt os for specialønsker."
         },
         "filters": {
@@ -1028,7 +1028,7 @@
             "empty_desc": "Du har ikke tilføjet nogen produkter til din kurv endnu. Oplev vores særlige udvalg af fine olier.",
             "bestsellers_title": "Anbefalede Bestsellere",
             "bestsellers_desc": "Vores bedste produkter valgt direkte fra Olivenmøllen.",
-            "free_shipping_notice": "🚚 Fri fragt fra 69€",
+            "free_shipping_notice": "🚚 Fri fragt fra {amount}",
             "bestseller_badge": "Bestseller",
             "buy_now": "Køb nu +",
             "free_shipping_progress": "Du mangler {amount} for at få fri fragt",

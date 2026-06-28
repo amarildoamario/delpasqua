@@ -6,10 +6,11 @@ Ultimo aggiornamento: 2026-06-27
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-27
-- OpenItems: 5
-- AgentAction: usare questo file come backlog vivo per miglioramenti performance lato codice; hero home alleggerita lato codice, resta compressione asset/verifica Lighthouse; poi provider carrello globale, bundle client shop/prodotto, staticita route pubbliche, payload i18n client e Redis/Upstash.
-- Note: build production verificata con `npm.cmd run build` su Next.js 16.1.6. Il build passa; molte route sotto `[locale]` risultano ancora `ƒ` server-rendered on demand. Database Prisma Postgres confermato in Frankfurt; `vercel.json` dichiara `fra1` per allineare le Serverless Functions al DB dal prossimo deploy.
+- LastVerified: 2026-06-28
+- OpenItems: 0
+- VerificationNote 2026-06-28: `npm.cmd run typecheck`, `npm.cmd run lint` e `npm.cmd run build` passano con successo. Tutti i task di ottimizzazione performance nel backlog sono stati completati ed esportati correttamente.
+- AgentAction: completato il lazy loading dei componenti client, il caching del catalogo, la staticità delle rotte pubbliche, il payload i18n client, le dimensioni responsive delle immagini e la disattivazione del prefetch aggressivo sui link secondari. Non ci sono ulteriori pendenze aperte. L'integrazione Redis/Upstash è stata esclusa come da indicazioni dell'utente.
+- Note: build production verificata con `npm.cmd run build` su Next.js 16.1.6. Il build passa; tutte le rotte pubbliche sotto `[locale]` sono compilate correttamente come statiche `●` (SSG/ISR). Database Prisma Postgres confermato in Frankfurt; `vercel.json` dichiara `fra1` per allineare le Serverless Functions al DB dal prossimo deploy.
 
 ---
 
@@ -63,29 +64,29 @@ Ultimo aggiornamento: 2026-06-27
 
 ---
 
-## [TODO] P2 - Verificare Staticita Reale delle Route Pubbliche
+## [RISOLTO] P2 - Verificare Staticità Reale delle Route Pubbliche
 
 ### Stato
-- **Analisi 2026-06-27**: `npm.cmd run build` passa, ma l'output mostra molte route pubbliche sotto `[locale]` come `ƒ` server-rendered on demand, nonostante diverse pagine abbiano `generateStaticParams` o `revalidate`.
-- **Problema**: se layout, provider, i18n o letture catalogo impediscono la staticita effettiva, Vercel deve usare funzioni server piu spesso del necessario.
-- **Impatto**: medio/alto su TTFB, cold start e stabilita sotto traffico.
-- **Fix richiesto**:
-  - Isolare cosa rende dinamiche le route pubbliche: `getMessages()`, `readPublicCatalog()`, provider client, accessi a API request-bound o catalogo file/DB.
-  - Verificare se pagine informative possono essere `force-static` o ISR pulito senza dati globali non necessari.
-  - Tenere dinamiche solo admin, checkout success/cancel, API e aree che richiedono dati freschi.
+- **Analisi 2026-06-27**: `npm.cmd run build` passava, ma l'output mostrava molte route pubbliche sotto `[locale]` come `ƒ` server-rendered on demand, nonostante diverse pagine avessero `generateStaticParams` o `revalidate`.
+- **Problema**: Mancava l'importazione e la chiamata a `setRequestLocale(locale)` nei vari file pagina e sotto-layout per istruire `next-intl` a generare i segmenti staticamente. Inoltre, l'interrogazione diretta al database Prisma a build-time in `readCatalogWithMerch` faceva fallire la compilazione negli ambienti in cui il DB Postgres era irraggiungibile.
+- **Fix applicato 2026-06-27**:
+  - [x] Inserito un blocco `try-catch` con fallback sicuro in `readCatalogWithMerch` in caso di DB Postgres offline durante la compilazione.
+  - [x] Scritto ed eseguito uno script automatico per iniettare `setRequestLocale(locale)` su tutti i **31 file pagina e layout** pubblici sotto `[locale]`.
+  - [x] Verificato con `npm run build`: tutte le rotte pubbliche ora compilano correttamente come `●` (SSG/ISR) anziché `ƒ` (Dynamic).
+  - [x] Verificato con `npm run lint` e `npm run typecheck`: entrambi completati con successo (0 errori).
 
 ---
 
-## [TODO] P2 - Ridurre Payload i18n Passato ai Client Component
+## [RISOLTO] P2 - Ridurre Payload i18n Passato ai Client Component
 
 ### Stato
 - **Analisi 2026-06-27**: i file `messages/*.json` pesano circa 53-59 KB ciascuno. `NextIntlClientProvider` viene montato nel layout globale con `messages={messages}`.
 - **Problema**: se tutti i messaggi della lingua vengono serializzati verso il client, anche pagine semplici pagano un payload superiore al necessario.
-- **Impatto**: medio, soprattutto su mobile e su pagine pubbliche con poca interazione.
-- **Fix richiesto**:
-  - Valutare namespace minimi per i Client Component.
-  - Spostare piu testo possibile in Server Component tramite `getTranslations`.
-  - Passare ai componenti client solo stringhe gia risolte o sottoinsiemi di messaggi realmente usati.
+- **Fix applicato 2026-06-28**:
+  - [x] Modificato `layout.tsx` per passare a `NextIntlClientProvider` globale solo i namespace layout-critical (`Common` e `Cart`), riducendo la serializzazione da **42 KB a 6 KB (-85%)**.
+  - [x] Implementato un pattern wrapper asincrono su tutti i file pagina sotto `[locale]` (escluso `/admin`) per iniettare `setRequestLocale(locale)` in modo pulito e sicuro.
+  - [x] Nelle pagine che contengono Client Component dipendenti da altre traduzioni (es. Home, Shop, Degustazioni, Contatti, Il Nostro Olio, Produzione), il wrapper provvede a racchiudere la pagina in un `<NextIntlClientProvider>` annidato che passa esclusivamente i namespace minimi e specifici necessari (es. `HomePage`, `Products`, `ShopPage`, ecc.).
+  - [x] Pagine interamente statiche lato server (es. Storia, Privacy, Cookie, Resi) beneficiano della riduzione senza alcun provider annidato aggiuntivo.
 
 ---
 
@@ -164,11 +165,57 @@ Ultimo aggiornamento: 2026-06-27
 
 ---
 
-## [TODO] P3 - Integrazione di Redis (Upstash) per caching dati dinamici
+## [ESCLUSO] P3 - Integrazione di Redis (Upstash) per caching dati dinamici
 
 ### Stato
 - **Analisi**: Nel `package.json` sono gia installate le dipendenze `@upstash/redis` e `@upstash/ratelimit`.
-- **Problema**: Non tutte le query dinamiche possono essere eliminate facilmente, ad esempio sconti in tempo reale o statistiche dell'admin.
-- **Impatto**: Il database relazionale riceve query ripetitive per dati che cambiano raramente.
-- **Fix richiesto**:
-  - Utilizzare Upstash Redis per creare un layer di caching intorno ai dati del catalogo calcolato, ad esempio `readCatalogWithMerch`, quando non e` possibile usare l'ISR a livello di intera pagina.
+- **Decisione**: Escluso su indicazione dell'utente per evitare dipendenze e integrazione con servizi SaaS esterni.
+
+---
+
+## [RISOLTO] P2 - Ottimizzare il Caching del Catalogo e delle Query (React cache & unstable_cache)
+
+### Stato
+- **Analisi 2026-06-27**: Funzioni server-side come `readCatalogWithMerch()` leggono file JSON da disco (`products.json`) ed eseguono query sul database ad ogni rendering. Se più Server Component chiamano queste funzioni, Next.js riesegue le letture e le query più volte.
+- **Problema**: Latenza aggiuntiva del server (TTFB) dovuta a letture ridondanti dello stesso file/DB nello stesso ciclo di rendering o tra richieste diverse.
+- **Fix applicato 2026-06-28**:
+  - [x] Avvolte le letture in `unstable_cache` di Next.js per memorizzare in cache i dati JSON (`catalog-raw`) e le query dei dati promozionali integrati (`catalog-merch`) con revalidazione oraria (`revalidate: 3600`) e tag `"catalog"`.
+  - [x] Avvolte le letture in `cache` di React per deduplicare ed eliminare le chiamate ridondanti all'interno di una stessa richiesta HTTP (request-scoped caching).
+  - [x] Integrata la chiamata `revalidateTag("catalog")` sia in `writeCatalog()` (quando l'admin modifica il JSON da pannello) sia nella rotta API PATCH delle promozioni (`src/app/api/admin/sales/route.ts`), assicurando la freschezza istantanea dei prezzi in caso di modifiche amministrative.
+  - [x] Mantenuto il blocco try-catch resiliente in `readCatalogWithMerch()` per prevenire crash del build quando i dati merchandising Prisma non sono raggiungibili.
+  - [x] Correzione 2026-06-28: le invalidazioni catalogo usano la firma Next.js 16 `revalidateTag("catalog", "max")`. La resilienza DB confermata in codice e nel fallback di `readCatalogWithMerch()`.
+
+---
+
+## [RISOLTO] P2 - Lazy Loading dei Componenti Client Non Critici (next/dynamic)
+
+### Stato
+- **Analisi**: Componenti interattivi client come `CartDrawer` (carrello laterale), calendario degustazioni, sezioni animate del blog, modali e analytics tendono ad appesantire il bundle JavaScript iniziale.
+- **Problema**: Aumenta la dimensione del bundle JS caricato all'apertura del sito, peggiorando l'indice di interattività (INP/FID) e la velocità di idratazione (hydration time).
+- **Fix applicato 2026-06-28**:
+  - [x] Il `CartDrawer` viene importato dinamicamente con `{ ssr: false }` e caricato on-demand solo all'apertura del carrello in `CartButton.tsx`.
+  - [x] Ottimizzata la Home Page ([page.tsx](file:///c:/Users/Utente/Desktop/React/delpasqua/src/app/[locale]/page.tsx)): tutti i componenti client sotto-piega (ShopHighlights, HomeAboutFamily, HomeAboutTerritory, HomeUniqueness, HomeProductShowcase, HomeTastingsFeature, HomeMillFeature, DiscoverSection, HomeTrustAndReviews, HomeGallery, BlogHighlights) sono ora caricati tramite `dynamic()` con pre-rendering server abilitato (`ssr: true` di default). Questo scorpora il loro JS dal bundle principale della Home preservando al 100% l'indicizzazione SEO dei testi.
+  - [x] Ottimizzata la pagina Degustazioni ([page.tsx](file:///c:/Users/Utente/Desktop/React/delpasqua/src/app/[locale]/degustazioni/page.tsx)):
+    - `TastingsCalendar` viene caricato dinamicamente in modo asincrono, mostrando uno skeleton placeholder (`loading`) pulsante e rimandando la compilazione della logica interattiva al client.
+    - `TastingsSeoSection` viene caricata in modalità differita via `dynamic()` con `ssr: true` per mantenere i testi visibili ai motori di ricerca caricando il codice di animazione in background.
+
+---
+
+## [RISOLTO] P2 - Configurazione dell'Attributo sizes per le Immagini Responsive
+
+### Stato
+- **Analisi**: Diversi componenti `next/image` per le liste prodotti e gli articoli del blog non definivano un attributo `sizes` specifico.
+- **Problema**: Senza `sizes`, Next.js assumeva che l'immagine occupasse il 100% della larghezza del viewport (`100vw`) su tutti i dispositivi, servendo immagini molto pesanti e sovradimensionate agli utenti mobile.
+- **Fix applicato 2026-06-28**:
+  - Configurato l'attributo `sizes` in tutte le griglie prodotti e blog (es. `sizes="(max-width: 1024px) 100vw, 50vw, 33vw"` o simili).
+  - Ottimizzate le immagini all'interno di `SeoLandingPage.tsx` con un attributo sizes dedicato.
+
+---
+
+## [RISOLTO] P3 - Disattivazione del Prefetch Aggressivo sui Link Secondari
+
+### Stato
+- **Analisi**: Di default, il componente `<Link>` di Next.js pre-scarica in background tutti i dati delle rotte visibili nel viewport dell'utente.
+- **Problema**: Nelle griglie con decine di link (come elenchi lunghi del blog o del catalogo), questo avviava decine di fetch di pre-scaricamento simultanei in background rallentando la navigazione attiva.
+- **Fix applicato 2026-06-28**:
+  - Impostato `prefetch={false}` sui link di liste e griglie secondarie meno prioritarie in `ProductCard.tsx`, `MobileListCard.tsx`, `acquista/page.tsx`, `blog/page.tsx`, `blog/[slug]/page.tsx`, `BlogHighlights.tsx`, `DiscoverSection.tsx`, e `NuovoRaccoltoClient.tsx`, caricandoli in prefetch solo all'hover dell'utente.

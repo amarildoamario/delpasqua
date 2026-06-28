@@ -1,7 +1,37 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { cache } from "react";
+import { unstable_cache, revalidateTag } from "next/cache";
 import { makeInventorySku, makeLegacyInventorySku, normalizeSku } from "@/lib/inventorySku";
 import { prisma } from "@/lib/server/prisma";
+import type { ProductMerch } from "@/generated/prisma";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function safeUnstableCache<T extends (...args: any[]) => any>(
+  cb: T,
+  keys: string[],
+  options?: {
+    revalidate?: number | false;
+    tags?: string[];
+  }
+): T {
+  try {
+    const cachedFn = unstable_cache(cb, keys, options);
+    return (async (...args: any[]) => {
+      try {
+        return await cachedFn(...args);
+      } catch (err: unknown) {
+        if (err instanceof Error && err.message.includes("incrementalCache")) {
+          return await cb(...args);
+        }
+        throw err;
+      }
+    }) as unknown as T;
+  } catch {
+    return cb;
+  }
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 // IMPORTANT:
 // Do NOT `import products from "@/db/products.json"` in runtime code.
@@ -53,13 +83,18 @@ export function getCatalogPath() {
   return path.join(process.cwd(), "src", "db", "products.json");
 }
 
-export async function readCatalog(): Promise<CatalogProduct[]> {
-  const filePath = getCatalogPath();
-  const raw = await fs.readFile(filePath, "utf8");
-  const json: unknown = JSON.parse(raw);
-
-  return Array.isArray(json) ? (json as CatalogProduct[]) : [];
-}
+export const readCatalog = cache(
+  safeUnstableCache(
+    async (): Promise<CatalogProduct[]> => {
+      const filePath = getCatalogPath();
+      const raw = await fs.readFile(filePath, "utf8");
+      const json: unknown = JSON.parse(raw);
+      return Array.isArray(json) ? (json as CatalogProduct[]) : [];
+    },
+    ["catalog-raw"],
+    { tags: ["catalog"], revalidate: 3600 }
+  )
+);
 
 export function isPublishedCatalogProduct(product: CatalogProduct | null | undefined) {
   if (!product) return false;
@@ -177,6 +212,7 @@ export async function writeCatalog(nextCatalog: CatalogProduct[]) {
   }
 
   await fs.writeFile(filePath, JSON.stringify(nextCatalog, null, 2) + "\n", "utf8");
+  revalidateTag("catalog", "max");
   return { backupName };
 }
 
@@ -321,10 +357,15 @@ export async function syncInventoryForCatalog(catalog: CatalogInventoryProductLi
   );
 }
 
-export async function readCatalogWithMerch(): Promise<CatalogProduct[]> {
+async function readCatalogWithMerchImpl(): Promise<CatalogProduct[]> {
   const products = await readCatalog();
-  const merch = await prisma.productMerch.findMany();
-  const merchMap = new Map(merch.map((m) => [m.productKey, m]));
+  let merch: ProductMerch[] = [];
+  try {
+    merch = await prisma.productMerch.findMany();
+  } catch (err) {
+    console.warn("⚠️ Fallback: Database unreachable in readCatalogWithMerch. Using empty promo data.", err);
+  }
+  const merchMap = new Map<string, ProductMerch>(merch.map((m) => [m.productKey, m]));
 
   const now = new Date();
 
@@ -366,6 +407,14 @@ export async function readCatalogWithMerch(): Promise<CatalogProduct[]> {
     };
   });
 }
+
+export const readCatalogWithMerch = cache(
+  safeUnstableCache(
+    readCatalogWithMerchImpl,
+    ["catalog-merch"],
+    { tags: ["catalog"], revalidate: 3600 }
+  )
+);
 
 export async function readPublicCatalogWithMerch(): Promise<CatalogProduct[]> {
   return filterPublicCatalog(await readCatalogWithMerch());

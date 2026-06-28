@@ -463,7 +463,7 @@ export default function CartPageClient({
                     </p>
                   </div>
                   <div className="mt-2 sm:mt-0 flex items-center gap-1.5 rounded-full border border-black/5 bg-zinc-50 px-2.5 py-1 text-[10px] text-zinc-600">
-                    <span>{t("page.free_shipping_notice")}</span>
+                    <span>{t("page.free_shipping_notice", { amount: formatEUR(shippingRule.freeShippingThresholdCents) })}</span>
                   </div>
                 </div>
 

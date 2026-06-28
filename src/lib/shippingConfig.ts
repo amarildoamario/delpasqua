@@ -1,4 +1,4 @@
-// src/lib/shippingConfig.ts
+import { FREE_SHIPPING_THRESHOLD_CENTS, SHIPPING_FLAT_CENTS } from "./constants";
 
 export interface ShippingRule {
   countryCode: string;              // ISO country code, e.g. "IT", "DE"
@@ -22,8 +22,8 @@ export const SHIPPING_RULES: Record<string, ShippingRule> = {
     countryCode: "IT",
     nameIt: "Italia",
     nameEn: "Italy",
-    shippingFlatCents: 590, // 5.90 EUR
-    freeShippingThresholdCents: 12000, // 120.00 EUR
+    shippingFlatCents: SHIPPING_FLAT_CENTS,
+    freeShippingThresholdCents: FREE_SHIPPING_THRESHOLD_CENTS,
     returnShippingFeeCents: 0, // Free returns in Italy
     deliveryDaysMin: 2,
     deliveryDaysMax: 3,

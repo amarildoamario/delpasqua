@@ -170,6 +170,7 @@ export default async function BlogHighlights() {
 
           <Link
             href="/blog"
+            prefetch={false}
             className="mt-3 inline-flex border-b border-[#A99E91] pb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#6E655B] transition-colors duration-300 hover:text-[#314030]"
           >
             {t("cta")}
@@ -189,6 +190,7 @@ export default async function BlogHighlights() {
 
             <Link
               href={getLocalizedBlogHref(featuredPost, locale)}
+              prefetch={false}
               className="absolute inset-0 z-20"
               aria-label={featuredPost.title}
             />
@@ -211,7 +213,7 @@ export default async function BlogHighlights() {
           <div className="flex flex-col gap-5 lg:gap-6">
             {secondaryPosts.map((post) => (
               <article key={post.id} className="group">
-                <Link href={getLocalizedBlogHref(post, locale)} className="block">
+                <Link href={getLocalizedBlogHref(post, locale)} prefetch={false} className="block">
                   <div className="relative aspect-[2.08/1] overflow-hidden rounded-[5px] bg-[#E5DED2]">
                     <Image
                       src={post.imageUrl}

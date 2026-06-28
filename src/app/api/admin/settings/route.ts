@@ -6,6 +6,7 @@ import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth"
 import { rateLimit } from "@/lib/server/rateLimit";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { AdminSettingsUpdateSchema } from "@/lib/server/schemas";
+import { clearStoreSettingsCache } from "@/lib/server/settings";
 
 export async function GET(req: Request) {
   const guard = await requireAdminApi(req, { csrf: false });
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
     );
 
     await prisma.$transaction(ops);
+    clearStoreSettingsCache();
     return guard.attach(NextResponse.json({ ok: true }, { status: 200 }));
   } catch (e: unknown) {
     const err = e as Error & { status?: number };

@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from "@/i18n/pathnames";
 import { readPublicCatalog } from "@/lib/server/catalog";
 import Olio5LitriClient, { type LandingPageContent } from "./Olio5LitriClient";
@@ -210,8 +211,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export default async function Olio5LitriPage({ params }: { params: Promise<{ locale: string }> }) {
+async function Olio5LitriPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const content = pageContent[displayLocale];
@@ -256,6 +258,7 @@ export default async function Olio5LitriPage({ params }: { params: Promise<{ loc
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
   const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
   const content = pageContent[displayLocale];
@@ -267,4 +270,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     locale,
     hreflang: true,
   });
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function Olio5LitriPageWrapper(props: any) {
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+  return <Olio5LitriPage {...props} />;
 }
