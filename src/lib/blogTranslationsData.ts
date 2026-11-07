@@ -2612,3 +2612,9 @@ export const BLOG_POST_TRANSLATIONS: Record<string, Partial<Record<Locale, BlogT
     },
   },
 };
+
+for (const entry of Object.values(BLOG_POST_TRANSLATIONS)) {
+  if (!entry.us && entry.en) {
+    entry.us = { ...entry.en };
+  }
+}

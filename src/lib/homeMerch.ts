@@ -1,4 +1,4 @@
-export const HOME_MERCH_FALLBACK_SLUGS = ["fruttato-medio", "fruttato-intenso", "evo", "tartufo"] as const;
+export const HOME_MERCH_FALLBACK_SLUGS = ["evo", "fruttato-intenso", "olio-evo-latta", "fruttato-medio"] as const;
 
 type HomeMerchItem = {
   slug?: string | null;

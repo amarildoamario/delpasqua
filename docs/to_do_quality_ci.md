@@ -5,16 +5,16 @@ Data audit: 2026-05-29
 ## Agent Status
 
 - FileStatus: COMPLETED
-- LastVerified: 2026-06-08
+- LastVerified: 2026-08-18
 - OpenItems: 0
 - AgentAction: trattare questo file come archivio completato; riaprirlo solo se una regressione futura riapre test server, servizi condivisi o invarianti ordine.
-- Note: `typecheck`, `lint` e `test:server` sono stati rieseguiti anche il 2026-06-08 con esito positivo. La copertura critica server, l'estrazione dei servizi residui e gli invarianti ordine minimi sono ora chiusi.
+- Note: `typecheck`, `lint` e `test:server` sono stati rieseguiti il 2026-08-18 con esito positivo; la suite conta 35 test verdi e include l'isolamento degli ordini test da numerazioni fiscali e promozioni e il blocco dei carrelli misti test/commerciali.
 
 ## Stato verifiche
 
 - `npm run typecheck`: passa con 0 errori.
 - `npm run lint`: passa con successo con 0 errori e 0 warning (con il flag severo `--max-warnings=0`).
-- `npm run test:server`: passa con 31 test verdi distribuiti sulle suite server critiche.
+- `npm run test:server`: passa con 35 test verdi distribuiti sulle suite server critiche.
 
 ## [RISOLTO] P0 - Test mancanti sui flussi critici
 

@@ -14,6 +14,7 @@ import { evaluatePromotionEligibility, lockPromotionRow } from "@/lib/server/pro
 import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { computeRiskScore } from "@/lib/server/antiFraud";
 import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
+import { hasMixedTestAndCommercialItems, isTestOrderItems } from "@/lib/server/testOrders";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 type StripeAllowedCountry = NonNullable<
@@ -154,6 +155,13 @@ export async function POST(req: Request) {
       promotionCode: parsed.data.promotionCode,
       countryCode: selectedCountry,
     });
+    if (hasMixedTestAndCommercialItems(pricing.items)) {
+      return Response.json(
+        { error: "Il prodotto di test deve essere acquistato da solo." },
+        { status: 400 }
+      );
+    }
+    const isTest = isTestOrderItems(pricing.items);
 
     // meta
     const orderPublicToken = randomUUID().replace(/-/g, "");
@@ -211,6 +219,7 @@ export async function POST(req: Request) {
           // P0.10
           riskScore: risk.score,
           isFlagged: risk.isFlagged,
+          isTest,
 
           // Se già hai email dal form, ok. Se no, verrà salvata dal webhook Stripe su PAID.
           fullName: customer?.fullName ?? "",
@@ -392,9 +401,16 @@ export async function POST(req: Request) {
         success_url: `${appUrl}${checkoutLocalePrefix(parsed.data.locale)}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}${checkoutLocalePrefix(parsed.data.locale)}/checkout/cancel/?session_id={CHECKOUT_SESSION_ID}`,
         client_reference_id: order.id,
+        payment_intent_data: {
+          metadata: {
+            orderId: order.id,
+            orderType: isTest ? "test" : "commercial",
+          },
+        },
         metadata: {
           orderId: order.id,
           traceId,
+          orderType: isTest ? "test" : "commercial",
           promotionCode: parsed.data.promotionCode?.trim().toUpperCase() ?? "",
         },
       });

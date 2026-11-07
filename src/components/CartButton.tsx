@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { ShoppingCart } from "lucide-react";
-import { CartProvider } from "@/context/CartContext";
+import { useCart } from "@/context/CartContext";
 
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"), { ssr: false });
 
@@ -22,40 +22,8 @@ export default function CartButton({
   mobileOnly = false,
   badgeColor = "default",
 }: CartButtonProps) {
-  const [count, setCount] = useState(0);
+  const { count } = useCart();
   const [open, setOpen] = useState(false);
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    queueMicrotask(() => setMounted(true));
-
-    const updateCount = () => {
-      try {
-        const raw = localStorage.getItem("dp_cart_v1");
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          const total = Array.isArray(parsed)
-            ? parsed.reduce((sum: number, line: { qty?: number }) => sum + (line?.qty || 0), 0)
-            : 0;
-          setCount(total);
-        } else {
-          setCount(0);
-        }
-      } catch {
-        setCount(0);
-      }
-    };
-
-    updateCount();
-    window.addEventListener("cart-updated", updateCount);
-    window.addEventListener("storage", updateCount);
-
-    return () => {
-      window.removeEventListener("cart-updated", updateCount);
-      window.removeEventListener("storage", updateCount);
-    };
-  }, []);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -101,6 +69,7 @@ export default function CartButton({
             shouldApplyDefaultSize ? "h-10 w-10" : className,
           ].join(" ")}
           aria-label={ariaLabel}
+          aria-expanded={open}
         >
           {icon ? icon : <ShoppingCart className="h-5 w-5 text-zinc-700" strokeWidth={1.5} />}
 
@@ -109,20 +78,18 @@ export default function CartButton({
             className={[
               "absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1 text-[11px] font-medium",
               badgeClasses,
-              mounted && count > 0
+              count > 0
                 ? "opacity-100 scale-100"
                 : "opacity-0 scale-75 pointer-events-none",
               "transition-all duration-200",
             ].join(" ")}
           >
-            {mounted ? (count > 99 ? "99+" : count) : 0}
+            {count > 99 ? "99+" : count}
           </span>
         </button>
 
         {open && (
-          <CartProvider>
-            <CartDrawer open={open} onClose={() => setOpen(false)} />
-          </CartProvider>
+          <CartDrawer open={open} onClose={() => setOpen(false)} />
         )}
       </div>
     </div>

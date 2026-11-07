@@ -56,6 +56,7 @@ type OrderRow = {
   paymentMethod: string | null;
   items: OrderItemRow[];
   promotionCode: string | null;
+  isTest: boolean;
   notes: string | null;
 };
 
@@ -534,6 +535,7 @@ function baseOrder(id: string): OrderRow {
     paymentMethod: null,
     items: [{ sku: "sku-1", qty: 2 }],
     promotionCode: null,
+    isTest: false,
     notes: null,
   };
 }
@@ -765,6 +767,46 @@ test("applyPaidOrderInvariantsTx atomically increments promotion usedCount when 
 
   assert.equal(updated.status, "PAGATO");
   assert.equal(store.promotions.get("PROMO50")?.usedCount, 1);
+});
+
+test("test orders use a technical number and do not consume invoice or promotion sequences", async () => {
+  const { store, tx } = buildFakeTx({
+    inventory: [{ sku: "sku-1", stock: 5, reserved: 1 }],
+    reservations: [{ orderId: "order-test-123456", sku: "sku-1", qty: 1 }],
+    orders: [{
+      ...baseOrder("order-test-123456"),
+      isTest: true,
+      items: [{ sku: "sku-1", qty: 1 }],
+      promotionCode: "PROMO50",
+    }],
+    promotions: [{
+      id: "promo-1",
+      code: "PROMO50",
+      description: "Test discount",
+      type: "percent",
+      percent: 50,
+      amountCents: null,
+      freeShipping: false,
+      minOrderCents: null,
+      usageLimit: 1,
+      usedCount: 0,
+      startsAt: null,
+      endsAt: null,
+      isActive: true,
+    }],
+  });
+
+  const updated = await applyPaidOrderInvariantsTx(tx, {
+    orderId: "order-test-123456",
+    source: "stripe_webhook",
+    paymentIntentId: "pi_test_live",
+  });
+
+  assert.equal(updated.status, "PAGATO");
+  assert.match(updated.orderNumber ?? "", /^TEST-/);
+  assert.equal(store.promotions.get("PROMO50")?.usedCount, 0);
+  assert.equal(store.orderEvents.some((event) => event.type === "INVOICE_ASSIGNED"), false);
+  assert.equal(store.outbox.length, 1);
 });
 
 test("order count logic successfully returns PENDING orders for a given coupon", async () => {
@@ -1056,6 +1098,8 @@ test("evaluatePromotionEligibility rejects a promo when usageLimit is saturated 
 
 test("order invariant helpers define allowed transitions and flag inconsistent Stripe orders", () => {
   assert.equal(canTransitionOrderStatus("IN_PREPARAZIONE", "SPEDITO"), true);
+  assert.equal(canTransitionOrderStatus("IN_PREPARAZIONE", "PAGATO"), true);
+  assert.equal(canTransitionOrderStatus("CONSEGNATO", "SPEDITO"), true);
   assert.equal(canTransitionOrderStatus("PAGATO", "SPEDITO"), false);
 
   const paidViolations = getOrderInvariantViolations({

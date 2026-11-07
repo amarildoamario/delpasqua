@@ -13,24 +13,24 @@ type PrintableOrder = Prisma.Prisma.OrderGetPayload<{ include: { items: true } }
 };
 
 const DB_STATUS_LABEL: Record<string, string> = {
-  IN_ATTESA: "IN_ATTESA",
+  IN_ATTESA: "IN ATTESA",
   PAGATO: "PAGATO",
-  IN_PREPARAZIONE: "IN_PREPARAZIONE",
+  IN_PREPARAZIONE: "IN PREPARAZIONE",
   SPEDITO: "SPEDITO",
   CONSEGNATO: "CONSEGNATO",
   ANNULLATO: "ANNULLATO",
   RIMBORSATO: "RIMBORSATO",
-  PARZIALMENTE_RIMBORSATO: "PARZIALMENTE_RIMBORSATO",
+  PARZIALMENTE_RIMBORSATO: "PARZ. RIMBORSATO",
   SCADUTO: "SCADUTO",
   FALLITO: "FALLITO",
-  PENDING: "IN_ATTESA",
+  PENDING: "IN ATTESA",
   PAID: "PAGATO",
-  PREPARING: "IN_PREPARAZIONE",
+  PREPARING: "IN PREPARAZIONE",
   SHIPPED: "SPEDITO",
   DELIVERED: "CONSEGNATO",
   CANCELED: "ANNULLATO",
   REFUNDED: "RIMBORSATO",
-  PARTIALLY_REFUNDED: "PARZIALMENTE_RIMBORSATO",
+  PARTIALLY_REFUNDED: "PARZ. RIMBORSATO",
   EXPIRED: "SCADUTO",
   FAILED: "FALLITO",
 };
@@ -63,7 +63,13 @@ function escapeHtml(value: string | number | null | undefined) {
 
 function formatDate(value: Date | null | undefined) {
   if (!value) return "-";
-  return new Date(value).toLocaleString("it-IT");
+  return new Date(value).toLocaleString("it-IT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function getOne(searchParams: URLSearchParams, key: string) {
@@ -99,7 +105,7 @@ function formatCityLine(order: {
   const city = order.city.trim();
   const province = order.province.trim();
   const base = [postalCode, city].filter(Boolean).join(" ");
-  return province ? `${base} (${province})` : base || "Localita non disponibile";
+  return province ? `${base} (${province})` : base || "Località non disponibile";
 }
 
 function formatPaymentMethod(order: {
@@ -118,45 +124,59 @@ export async function GET(req: Request) {
   const now = new Date();
   const url = new URL(req.url);
   const id = getOne(url.searchParams, "id");
+  const ids = getOne(url.searchParams, "ids");
   const statusParam = getOne(url.searchParams, "status");
   const shipped = getOne(url.searchParams, "shipped");
   const q = getOne(url.searchParams, "q");
   const startParam = getOne(url.searchParams, "start");
   const endParam = getOne(url.searchParams, "end");
 
-  const today = new Date();
-  const defaultStart = new Date(today);
-  defaultStart.setDate(today.getDate() - 30);
-  const start = parseDateOnly(startParam) ?? defaultStart;
-  const end = parseDateOnly(endParam) ?? today;
-  const endExclusive = new Date(end);
-  endExclusive.setDate(end.getDate() + 1);
+  let where: Prisma.Prisma.OrderWhereInput;
 
-  const where: Prisma.Prisma.OrderWhereInput = id
-    ? { id }
-    : {
-        createdAt: { gte: start, lt: endExclusive },
-        orderNumber: { not: null },
-      };
+  if (id) {
+    where = { id, isTest: false };
+  } else if (ids) {
+    const idList = ids.split(",").map((s) => s.trim()).filter(Boolean);
+    where = { id: { in: idList }, isTest: false };
+  } else if (statusParam || shipped || startParam || endParam || q) {
+    const today = new Date();
+    const defaultStart = new Date(today);
+    defaultStart.setDate(today.getDate() - 30);
+    const start = parseDateOnly(startParam) ?? defaultStart;
+    const end = parseDateOnly(endParam) ?? today;
+    const endExclusive = new Date(end);
+    endExclusive.setDate(end.getDate() + 1);
 
-  if (!id && statusParam && isOrderStatus(statusParam)) where.status = statusParam;
-  if (!id && shipped === "yes") where.shippedAt = { not: null };
-  if (!id && shipped === "no") where.shippedAt = null;
-  if (!id && q) {
-    where.OR = [
-      { id: { contains: q } },
-      { email: { contains: q } },
-      { fullName: { contains: q } },
-      { orderNumber: { contains: q } },
-      { stripeCheckoutSessionId: { contains: q } },
-    ];
+    where = {
+      createdAt: { gte: start, lt: endExclusive },
+      isTest: false,
+    };
+    if (statusParam && isOrderStatus(statusParam)) where.status = statusParam;
+    if (shipped === "yes") where.shippedAt = { not: null };
+    if (shipped === "no") where.shippedAt = null;
+    if (q) {
+      where.OR = [
+        { id: { contains: q } },
+        { email: { contains: q } },
+        { fullName: { contains: q } },
+        { orderNumber: { contains: q } },
+        { stripeCheckoutSessionId: { contains: q } },
+      ];
+    }
+  } else {
+    // ✅ Default Operatività: ordini pronti da fare (PAGATO o IN_PREPARAZIONE, non ancora spediti)
+    where = {
+      status: { in: ["PAGATO", "IN_PREPARAZIONE"] },
+      shippedAt: null,
+      isTest: false,
+    };
   }
 
   const orders = await prisma.$transaction(async (tx) => {
     const candidates = await tx.order.findMany({
       where,
       include: { items: { orderBy: [{ title: "asc" }] } },
-      orderBy: { createdAt: "asc" },
+      orderBy: [{ status: "asc" }, { createdAt: "asc" }],
       take: id ? 1 : 200,
     });
 
@@ -193,7 +213,7 @@ export async function GET(req: Request) {
           type: "ORDER_PRINTED",
           message:
             previousPrintCount > 0
-              ? `Ordine ristampato per la spedizione (#${printNumber})`
+              ? `Ordine ristampato (#${printNumber})`
               : "Ordine stampato per la spedizione",
           metaJson: JSON.stringify({
             printedAt: now.toISOString(),
@@ -217,21 +237,22 @@ export async function GET(req: Request) {
       `<!DOCTYPE html>
       <html>
       <head>
-        <title>Stampa ordini</title>
+        <title>Stampa Ordini - Nessun Ordine</title>
         <meta charset="utf-8">
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 40px; text-align: center; color: #404040; }
-          .card { max-width: 520px; margin: 0 auto; background: #f9f9f9; padding: 30px; border-radius: 12px; border: 1px solid #e5e5e5; }
-          h1 { font-size: 20px; margin-bottom: 10px; color: #171717; }
-          p { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.5; }
-          button { background: #171717; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; text-align: center; color: #171717; background: #fafafa; }
+          .card { max-width: 480px; margin: 60px auto; background: #fff; padding: 36px; border-radius: 16px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+          h1 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #171717; }
+          p { font-size: 13px; color: #737373; margin-bottom: 24px; line-height: 1.5; }
+          button { background: #171717; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+          button:hover { opacity: 0.9; }
         </style>
       </head>
       <body>
         <div class="card">
           <h1>Nessun ordine da stampare</h1>
-          <p>Non ci sono ordini corrispondenti alla selezione corrente.</p>
-          <button onclick="window.close()">Chiudi finestra</button>
+          <p>Non ci sono ordini in attesa di evasione (PAGATO o IN PREPARAZIONE) corrispondenti ai filtri.</p>
+          <button onclick="window.close()">Chiudi Finestra</button>
         </div>
       </body>
       </html>`,
@@ -250,22 +271,30 @@ export async function GET(req: Request) {
     .map((order, idx) => {
       const itemsHtml = order.items
         .map((item) => {
-          const variantLabel = item.variantLabel ? `<br><small style="color: #666;">${escapeHtml(item.variantLabel)}</small>` : "";
+          const variantLabel = item.variantLabel
+            ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">${escapeHtml(item.variantLabel)}</div>`
+            : "";
           const lineVatNote =
             item.lineVatCents > 0
-              ? `<div style="font-size: 11px; color: #6b7280; margin-top: 2px;">IVA 4% inclusa: ${euro(item.lineVatCents)}</div>`
+              ? `<div style="font-size: 10px; color: #888; margin-top: 1px;">IVA incl.: ${euro(item.lineVatCents)}</div>`
               : "";
 
           return `
             <tr>
-              <td style="padding: 8px; border-bottom: 1px solid #eee;">${escapeHtml(item.sku)}</td>
-              <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                <strong>${escapeHtml(item.title)}</strong>
+              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; font-family: monospace; font-size: 11px; color: #555;">
+                ${escapeHtml(item.sku)}
+              </td>
+              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5;">
+                <strong style="color: #111; font-size: 12px;">${escapeHtml(item.title)}</strong>
                 ${variantLabel}
               </td>
-              <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.qty}</td>
-              <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${euro(item.unitPriceCents)}</td>
-              <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">
+              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: center; font-weight: 700; font-size: 13px;">
+                ${item.qty}
+              </td>
+              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: right; font-size: 12px; color: #444;">
+                ${euro(item.unitPriceCents)}
+              </td>
+              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: right; font-size: 12px; font-weight: 600;">
                 <div>${euro(item.lineTotalCents)}</div>
                 ${lineVatNote}
               </td>
@@ -277,71 +306,97 @@ export async function GET(req: Request) {
       const printWarning =
         order.previousPrintCount > 0
           ? `
-            <div style="margin: 0 0 18px 0; padding: 10px 12px; border-radius: 8px; border: 1px solid #f59e0b; background: #fffbeb; color: #92400e; font-size: 12px;">
-              <strong>Attenzione:</strong> questo ordine era gia stato stampato ${order.previousPrintCount} ${
+            <div class="no-print" style="margin: 0 0 12px 0; padding: 6px 10px; color: #737373; font-size: 11px;">
+              <strong>Ristampa:</strong> già stampato ${order.previousPrintCount} ${
                 order.previousPrintCount === 1 ? "volta" : "volte"
-              }.
-              <br>
-              <strong>Ultima stampa registrata:</strong> ${escapeHtml(formatDate(order.lastPrintedAt))}
+              } (ultimo: ${escapeHtml(formatDate(order.lastPrintedAt))}).
             </div>
           `
           : "";
 
       return `
-        ${printWarning ? `<div class="no-print" style="max-width: 800px; margin: 0 auto 10px auto;">${printWarning}</div>` : ""}
-        <div class="order-sheet" style="page-break-after: always; padding: 20px; max-width: 800px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 40px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          <div style="display: flex; justify-content: space-between; gap: 20px; border-bottom: 2px solid #1f2937; padding-bottom: 16px; margin-bottom: 22px;">
-            <div style="display: flex; gap: 14px; align-items: flex-start; min-width: 0;">
-              <img src="/logo.png" alt="Frantoio Del Pasqua" style="width: 62px; height: 62px; object-fit: contain;">
+        ${printWarning}
+        <div class="order-sheet">
+          <!-- Clean Header (No Grey Box) -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 2px solid #171717; padding-bottom: 12px; margin-bottom: 18px;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <img src="/logo.png" alt="Logo" style="width: 48px; height: 48px; object-fit: contain;" onerror="this.style.display='none'">
               <div>
-                <h2 style="margin: 0 0 5px 0; font-size: 22px; letter-spacing: .02em; color: #111827;">${escapeHtml(companyInfo.brandName)}</h2>
-                <div style="font-size: 11px; line-height: 1.45; color: #4b5563;">
-                  <strong>${escapeHtml(companyInfo.companyName)}</strong><br>
-                  ${escapeHtml(companyInfo.addressSingleLine)}<br>
+                <h2 style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; color: #171717;">
+                  ${escapeHtml(companyInfo.brandName)}
+                </h2>
+                <div style="font-size: 10px; line-height: 1.35; color: #555; margin-top: 2px;">
+                  ${escapeHtml(companyInfo.companyName)} · ${escapeHtml(companyInfo.addressSingleLine)}<br>
                   Tel. ${escapeHtml(companyInfo.phone)} · ${escapeHtml(companyInfo.email)}
                 </div>
               </div>
             </div>
-            <div style="text-align: right; min-width: 190px; font-size: 12px; color: #374151;">
-              <div style="display: inline-block; border: 1px solid #d1d5db; border-radius: 12px; padding: 10px 12px; background: #f9fafb;">
-                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #6b7280; font-weight: 700;">Ordine ${idx + 1} di ${orders.length}</div>
-                <div style="margin-top: 4px; font-size: 18px; font-weight: 800; color: #111827;">${escapeHtml(order.orderNumber ?? order.id.slice(0, 8))}</div>
-                <div style="margin-top: 5px;"><strong>Stato:</strong> ${escapeHtml(DB_STATUS_LABEL[order.status] ?? order.status)}</div>
-                <div><strong>Data:</strong> ${escapeHtml(formatDate(order.createdAt))}</div>
+
+            <div style="text-align: right; min-width: 160px;">
+              <div style="font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #737373; font-weight: 700;">
+                Ordine ${idx + 1} di ${orders.length}
+              </div>
+              <div style="font-size: 16px; font-weight: 800; color: #171717; margin-top: 1px;">
+                ${escapeHtml(order.orderNumber ?? order.id.slice(0, 8))}
+              </div>
+              <div style="font-size: 10.5px; color: #333; margin-top: 2px;">
+                <strong>Stato:</strong> ${escapeHtml(DB_STATUS_LABEL[order.status] ?? order.status)}
+              </div>
+              <div style="font-size: 9.5px; color: #666;">
+                ${escapeHtml(formatDate(order.createdAt))}
               </div>
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; font-size: 13px;">
+          <!-- Clean Info Columns (No Grey Boxes) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 18px; font-size: 12px;">
             <div>
-              <h4 style="margin: 0 0 8px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; text-transform: uppercase; color: #555;">Destinatario</h4>
-              <strong>${escapeHtml(order.fullName || "Nominativo non disponibile")}</strong><br>
-              ${escapeHtml(formatAddressLine(order))}<br>
-              ${escapeHtml(formatCityLine(order))}<br>
-              ${escapeHtml(order.countryCode || "IT")}<br>
-              <strong>Tel:</strong> ${escapeHtml(order.phone || "-")}<br>
-              <strong>Email:</strong> ${escapeHtml(order.email || "-")}
-            </div>
-            <div>
-              <h4 style="margin: 0 0 8px 0; border-bottom: 1px solid #ddd; padding-bottom: 4px; text-transform: uppercase; color: #555;">Dettagli spedizione</h4>
-              <strong>Data ordine:</strong> ${escapeHtml(formatDate(order.createdAt))}<br>
-              <strong>Data pagamento:</strong> ${escapeHtml(formatDate(order.paidAt))}<br>
-              <strong>Metodo pagamento:</strong> ${escapeHtml(formatPaymentMethod(order))}<br>
-              <strong>Note di spedizione:</strong><br>
-              <div style="background: #f5f5f5; padding: 6px; border-radius: 4px; margin-top: 4px; font-style: italic; min-height: 40px;">
-                ${escapeHtml(order.shippingNotes || "Nessuna nota fornita.")}
+              <div style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: #737373; margin-bottom: 4px; letter-spacing: 0.04em;">
+                Destinatario Spedizione
               </div>
+              <div style="font-size: 13px; font-weight: 700; color: #111;">
+                ${escapeHtml(order.fullName || "Nominativo non specificato")}
+              </div>
+              <div style="color: #333; margin-top: 2px; line-height: 1.35;">
+                ${escapeHtml(formatAddressLine(order))}<br>
+                ${escapeHtml(formatCityLine(order))}<br>
+                ${escapeHtml(order.countryCode || "IT")}
+              </div>
+              <div style="margin-top: 4px; font-size: 11px; color: #555;">
+                <strong>Tel:</strong> ${escapeHtml(order.phone || "-")} · <strong>Email:</strong> ${escapeHtml(order.email || "-")}
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: #737373; margin-bottom: 4px; letter-spacing: 0.04em;">
+                Dettagli Spedizione & Pagamento
+              </div>
+              <div style="font-size: 11px; color: #444; line-height: 1.4;">
+                <strong>Data Ordine:</strong> ${escapeHtml(formatDate(order.createdAt))}<br>
+                <strong>Pagamento:</strong> ${escapeHtml(formatPaymentMethod(order))}<br>
+                <strong>Data Pagamento:</strong> ${escapeHtml(formatDate(order.paidAt))}
+              </div>
+              ${
+                order.shippingNotes
+                  ? `
+                <div style="margin-top: 6px; font-size: 11px; color: #111; line-height: 1.35;">
+                  <strong>Note Consegna:</strong> ${escapeHtml(order.shippingNotes)}
+                </div>
+              `
+                  : ""
+              }
             </div>
           </div>
 
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 25px;">
+          <!-- Items Table (The only element with clean table structure) -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
             <thead>
-              <tr style="background: #f3f4f6; text-align: left; font-weight: bold;">
-                <th style="padding: 8px; border-bottom: 2px solid #ccc;">SKU</th>
-                <th style="padding: 8px; border-bottom: 2px solid #ccc;">Prodotto</th>
-                <th style="padding: 8px; border-bottom: 2px solid #ccc; text-align: center;">Qta</th>
-                <th style="padding: 8px; border-bottom: 2px solid #ccc; text-align: right;">Prezzo unit.</th>
-                <th style="padding: 8px; border-bottom: 2px solid #ccc; text-align: right;">Tot. riga</th>
+              <tr style="background: #f5f5f5; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555;">
+                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc;">SKU</th>
+                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc;">Prodotto / Referenza</th>
+                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: center;">Qtà</th>
+                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: right;">Prezzo unit.</th>
+                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: right;">Totale</th>
               </tr>
             </thead>
             <tbody>
@@ -349,33 +404,34 @@ export async function GET(req: Request) {
             </tbody>
           </table>
 
-          <div style="display: flex; justify-content: flex-end; font-size: 13px;">
-            <table style="width: 270px; border-collapse: collapse;">
+          <!-- Totals Breakdown -->
+          <div style="display: flex; justify-content: flex-end; font-size: 11.5px; margin-top: 6px;">
+            <table style="width: 250px; border-collapse: collapse;">
               <tr>
-                <td style="padding: 4px 0;">Totale prodotti (IVA incl.):</td>
-                <td style="text-align: right; padding: 4px 0;">${euro(order.subtotalCents)}</td>
+                <td style="padding: 2px 0; color: #555;">Subtotale prodotti:</td>
+                <td style="text-align: right; padding: 2px 0; font-weight: 500;">${euro(order.subtotalCents)}</td>
               </tr>
               <tr>
-                <td style="padding: 4px 0; color: #4b5563;">di cui IVA 4% inclusa:</td>
-                <td style="text-align: right; padding: 4px 0; color: #4b5563;">${euro(order.vatCents)}</td>
+                <td style="padding: 2px 0; color: #777;">di cui IVA 4% incl.:</td>
+                <td style="text-align: right; padding: 2px 0; color: #777;">${euro(order.vatCents)}</td>
               </tr>
               ${
                 order.discountCents > 0
                   ? `
                 <tr>
-                  <td style="padding: 4px 0; color: #dc2626;">Sconto applicato:</td>
-                  <td style="text-align: right; padding: 4px 0; color: #dc2626;">-&euro; ${(order.discountCents / 100).toFixed(2)}</td>
+                  <td style="padding: 2px 0; color: #b91c1c;">Sconto:</td>
+                  <td style="text-align: right; padding: 2px 0; color: #b91c1c;">-&euro; ${(order.discountCents / 100).toFixed(2)}</td>
                 </tr>
               `
                   : ""
               }
               <tr>
-                <td style="padding: 4px 0;">Spedizione:</td>
-                <td style="text-align: right; padding: 4px 0;">${euro(order.shippingCents)}</td>
+                <td style="padding: 2px 0; color: #555;">Spedizione:</td>
+                <td style="text-align: right; padding: 2px 0; font-weight: 500;">${euro(order.shippingCents)}</td>
               </tr>
-              <tr style="font-weight: bold; border-top: 1.5px solid #333; font-size: 15px;">
-                <td style="padding: 8px 0 0 0;">Totale ordine:</td>
-                <td style="text-align: right; padding: 8px 0 0 0; color: #111827;">${euro(order.totalCents)}</td>
+              <tr style="font-weight: 800; border-top: 1.5px solid #171717; font-size: 13.5px;">
+                <td style="padding: 6px 0 0 0; color: #171717;">Totale Ordine:</td>
+                <td style="text-align: right; padding: 6px 0 0 0; color: #171717;">${euro(order.totalCents)}</td>
               </tr>
             </table>
           </div>
@@ -386,56 +442,94 @@ export async function GET(req: Request) {
 
   const pageHtml = `
     <!DOCTYPE html>
-    <html>
+    <html lang="it">
     <head>
-      <title>Stampa ordini</title>
+      <title>Stampa Ordini Evasione - Frantoio Del Pasqua</title>
       <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
+        * {
+          box-sizing: border-box;
+        }
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          background: #f3f4f6;
+          background: #f4f4f5;
           margin: 0;
-          padding: 20px;
-          color: #111827;
+          padding: 24px;
+          color: #18181b;
+          -webkit-font-smoothing: antialiased;
         }
+        .order-sheet {
+          background: #ffffff;
+          max-width: 800px;
+          margin: 0 auto 28px auto;
+          padding: 24px 28px;
+          border-radius: 8px;
+          border: 1px solid #e4e4e7;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+
+        @page {
+          size: A4 portrait;
+          margin: 12mm 15mm;
+        }
+
         @media print {
-          body {
-            background: white;
-            padding: 0;
-          }
-          .order-sheet {
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            margin-bottom: 0 !important;
+          html, body {
+            background: #ffffff !important;
             padding: 0 !important;
+            margin: 0 !important;
+            color: #000000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
           .no-print {
             display: none !important;
+          }
+          .order-sheet {
+            box-shadow: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            page-break-after: always !important;
+            break-after: page !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+          .order-sheet:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
           }
         }
       </style>
     </head>
     <body>
-      <div class="no-print" style="background: white; padding: 12px 20px; border-radius: 12px; border: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 800px; margin: 0 auto 20px auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div class="no-print" style="background: #ffffff; padding: 12px 20px; border-radius: 10px; border: 1px solid #e4e4e7; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 800px; margin: 0 auto 20px auto; box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
         <div>
-          <span style="font-size: 14px; font-weight: bold;">Trovati ${orders.length} ordini nella selezione</span>
-          <br><small style="color: #666;">Prime stampe: ${firstPrintCount} - Gia stampati almeno una volta: ${reprintedCount}</small>
-          <br><small style="color: #666;">La lista resta ristampabile: ogni apertura registra un nuovo evento di stampa.</small>
+          <span style="font-size: 13.5px; font-weight: 700; color: #18181b;">${orders.length} ${orders.length === 1 ? "ordine pronto" : "ordini pronti per la stampa"}</span>
+          <div style="font-size: 11px; color: #71717a; margin-top: 1px;">
+            ${firstPrintCount} prime stampe · ${reprintedCount} ristampe
+          </div>
         </div>
-        <div style="white-space: nowrap;">
-          <button onclick="window.print()" style="background: #111827; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-right: 8px;">Stampa</button>
-          <button onclick="window.close()" style="background: white; color: #374151; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">Chiudi</button>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="window.print()" style="background: #18181b; color: #ffffff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+            🖨️ Stampa Adesso
+          </button>
+          <button onclick="window.close()" style="background: #ffffff; color: #3f3f46; border: 1px solid #d4d4d8; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+            Chiudi
+          </button>
         </div>
       </div>
 
       ${htmlItems}
 
       <script>
-        window.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("load", () => {
           setTimeout(() => {
             window.print();
-          }, 500);
+          }, 350);
         });
       </script>
     </body>

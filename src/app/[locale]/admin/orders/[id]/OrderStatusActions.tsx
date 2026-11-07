@@ -34,6 +34,7 @@ type Props = {
   notes?: string | null;
   isFlagged?: boolean | null;
   riskScore?: number | null;
+  passedStatuses?: OrderStatus[];
 };
 
 const STEPS: { id: OrderStatus; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
@@ -50,6 +51,7 @@ export default function OrderStatusActions({
   totalCents,
   refundCents,
   stripePaymentIntentId,
+  passedStatuses = [],
 }: Omit<Props, "notes" | "isFlagged" | "riskScore">) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -76,7 +78,7 @@ export default function OrderStatusActions({
     const allowed: Record<OrderStatus, OrderStatus[]> = {
       IN_ATTESA: ["PAGATO", "ANNULLATO", "SCADUTO", "FALLITO"],
       PAGATO: ["IN_PREPARAZIONE", "ANNULLATO", "FALLITO"],
-      IN_PREPARAZIONE: ["SPEDITO", "ANNULLATO"],
+      IN_PREPARAZIONE: ["PAGATO", "SPEDITO", "ANNULLATO"],
       SPEDITO: ["CONSEGNATO"],
       CONSEGNATO: [],
       ANNULLATO: [],
@@ -114,6 +116,29 @@ export default function OrderStatusActions({
     }
   }
 
+  async function setShipped(shipped: boolean) {
+    setLoading(true);
+    const prev = localStatus;
+    const optimisticNextStatus: OrderStatus = shipped ? "SPEDITO" : "IN_PREPARAZIONE";
+    setLocalStatus(optimisticNextStatus);
+
+    try {
+      const response = await adminFetch(`/api/admin/orders/${orderId}/ship`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ shipped }),
+      });
+      if (!response.ok) {
+        setLocalStatus(prev);
+        return;
+      }
+      setMsg("");
+      router.refresh();
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function refundWithStripe() {
     setLoading(true);
     try {
@@ -143,8 +168,34 @@ export default function OrderStatusActions({
   }
 
   // Visual Stepper calculations
+  const recordedStepIndexes = STEPS.flatMap((step, index) =>
+    passedStatuses.includes(step.id) ? [index] : []
+  );
   const activeStepIndex = STEPS.findIndex((s) => s.id === localStatus);
   const isAltState = activeStepIndex === -1;
+  const progressStepIndex = isAltState
+    ? Math.max(0, ...recordedStepIndexes)
+    : activeStepIndex;
+
+  const previousAction =
+    localStatus === "IN_PREPARAZIONE"
+      ? { label: "Torna a Pagato", run: () => patch({ status: "PAGATO", message: eventMessage }, "PAGATO") }
+      : localStatus === "SPEDITO"
+        ? { label: "Torna a Preparazione", run: () => setShipped(false) }
+        : localStatus === "CONSEGNATO"
+          ? { label: "Torna a Spedito", run: () => patch({ status: "SPEDITO", message: eventMessage }, "SPEDITO") }
+          : null;
+
+  const nextAction =
+    localStatus === "IN_ATTESA"
+      ? { label: "Passa a Pagato", run: () => patch({ status: "PAGATO", message: eventMessage }, "PAGATO") }
+      : localStatus === "PAGATO"
+        ? { label: "Passa a Preparazione", run: () => patch({ status: "IN_PREPARAZIONE", message: eventMessage }, "IN_PREPARAZIONE") }
+        : localStatus === "IN_PREPARAZIONE"
+          ? { label: "Passa a Spedito", run: () => setShipped(true) }
+          : localStatus === "SPEDITO"
+            ? { label: "Passa a Consegnato", run: () => patch({ status: "CONSEGNATO", message: eventMessage }, "CONSEGNATO") }
+            : null;
 
   return (
     <div className="space-y-6">
@@ -181,35 +232,34 @@ export default function OrderStatusActions({
         </div>
 
         {/* Stepper Steps UI */}
-        {!isAltState ? (
-          <div className="relative my-6 px-2">
+        <div className="relative my-6 px-2">
             {/* Connecting progress lines */}
             <div className="absolute top-4 left-0 right-0 h-0.5 bg-neutral-100 -z-10" />
             <div
-              className="absolute top-4 left-0 h-0.5 bg-neutral-900 transition-all duration-500 -z-10"
+              className="absolute top-4 left-0 h-0.5 bg-emerald-300 transition-all duration-500 -z-10"
               style={{
-                width: `${(activeStepIndex / (STEPS.length - 1)) * 100}%`,
+                width: `${(progressStepIndex / (STEPS.length - 1)) * 100}%`,
               }}
             />
 
             <div className="flex items-center justify-between">
               {STEPS.map((step, idx) => {
                 const Icon = step.icon;
-                const isCompleted = idx < activeStepIndex;
-                const isActive = idx === activeStepIndex;
+                const isCompleted = isAltState ? passedStatuses.includes(step.id) : idx < activeStepIndex;
+                const isActive = !isAltState && idx === activeStepIndex;
                 return (
                   <div key={step.id} className="flex flex-col items-center group relative">
                     <div
                       className={[
                         "flex h-9.5 w-9.5 items-center justify-center rounded-full border-2 transition-all duration-300 bg-white",
                         isCompleted
-                          ? "border-neutral-900 bg-neutral-900 text-white"
+                          ? "border-emerald-300 bg-emerald-100 text-emerald-700 shadow-sm shadow-emerald-100"
                           : isActive
                             ? "border-neutral-950 text-neutral-950 ring-4 ring-neutral-950/10 scale-105"
                             : "border-neutral-200 text-neutral-400 group-hover:border-neutral-300",
                       ].join(" ")}
                     >
-                      {isCompleted ? <Check className="h-4.5 w-4.5 stroke-[3]" /> : <Icon className="h-4 w-4" />}
+                      <Icon className="h-4 w-4" />
                     </div>
                     <span
                       className={[
@@ -223,8 +273,9 @@ export default function OrderStatusActions({
                 );
               })}
             </div>
-          </div>
-        ) : (
+        </div>
+
+        {isAltState ? (
           <div
             className={[
               "my-4 flex items-start gap-3 rounded-xl border p-3 text-xs leading-relaxed",
@@ -242,7 +293,7 @@ export default function OrderStatusActions({
                 {localStatus === "ANNULLATO" && " L'ordine può essere ripristinato tramite il pulsante apposito."}
               </div>
           </div>
-        )}
+        ) : null}
 
         {/* Message and Controls */}
         <div className="mt-4 border-t border-neutral-100 pt-4 space-y-4">
@@ -260,34 +311,24 @@ export default function OrderStatusActions({
           </div>
 
           <div className="flex flex-col gap-2.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-              Passa allo stato successivo
-            </span>
-            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              <ActionButton
-                label="Segna PAGATO"
-                disabled={!can("PAGATO") || loading}
-                onClick={() => patch({ status: "PAGATO", message: eventMessage }, "PAGATO")}
-                activeColor="hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
-              />
-              <ActionButton
-                label="Avvia PREPARAZIONE"
-                disabled={!can("IN_PREPARAZIONE") || loading}
-                onClick={() => patch({ status: "IN_PREPARAZIONE", message: eventMessage }, "IN_PREPARAZIONE")}
-                activeColor="hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800"
-              />
-              <ActionButton
-                label="Segna CONSEGNATO"
-                disabled={!can("CONSEGNATO") || loading}
-                onClick={() => patch({ status: "CONSEGNATO", message: eventMessage }, "CONSEGNATO")}
-                activeColor="hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
-              />
-              <ActionButton
-                label="Rimborsa con Stripe"
-                disabled={!canRefundWithStripe || loading}
-                onClick={() => setConfirmRefundOpen(true)}
-                activeColor="hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800"
-              />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Avanzamento</span>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {previousAction ? (
+                <ActionButton
+                  label={previousAction.label}
+                  disabled={loading}
+                  onClick={previousAction.run}
+                  activeColor="hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800"
+                />
+              ) : null}
+              {nextAction ? (
+                <ActionButton
+                  label={nextAction.label}
+                  disabled={loading}
+                  onClick={nextAction.run}
+                  activeColor="hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
+                />
+              ) : null}
             </div>
           </div>
         </div>
@@ -299,6 +340,16 @@ export default function OrderStatusActions({
           </div>
 
           <div className="flex items-center gap-2">
+            {canRefundWithStripe ? (
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => setConfirmRefundOpen(true)}
+                className="flex items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition disabled:opacity-60"
+              >
+                Rimborsa con Stripe
+              </button>
+            ) : null}
             {localStatus === "ANNULLATO" ? (
               <button
                 type="button"

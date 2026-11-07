@@ -69,6 +69,8 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
     const notes = typeof parsed.data.notes === "string" ? parsed.data.notes : undefined;
     const isFlagged = typeof parsed.data.isFlagged === "boolean" ? parsed.data.isFlagged : undefined;
+    const attentionAcknowledged =
+      typeof parsed.data.attentionAcknowledged === "boolean" ? parsed.data.attentionAcknowledged : undefined;
     const riskScore = typeof parsed.data.riskScore === "number" ? parsed.data.riskScore : undefined;
 
     const order = await prisma.order.findUnique({
@@ -123,7 +125,19 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
       updated = await prisma.order.update({ where: { id }, data: { notes: String(notes ?? "") } });
     }
     if (typeof isFlagged !== "undefined") {
-      updated = await prisma.order.update({ where: { id }, data: { isFlagged: Boolean(isFlagged) } });
+      updated = await prisma.order.update({
+        where: { id },
+        data: {
+          isFlagged: Boolean(isFlagged),
+          ...(isFlagged ? { attentionDismissedAt: null } : {}),
+        },
+      });
+    }
+    if (typeof attentionAcknowledged !== "undefined") {
+      updated = await prisma.order.update({
+        where: { id },
+        data: { attentionDismissedAt: attentionAcknowledged ? now() : null },
+      });
     }
     if (typeof riskScore !== "undefined") {
       const rs = Math.max(0, Math.min(100, Math.trunc(riskScore)));
@@ -171,7 +185,9 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         return new Response(`Invalid transition ${current} -> ${nextStatus}`, { status: 400 });
       }
 
-      if (nextStatus === "PAGATO") {
+      await prisma.order.update({ where: { id }, data: { attentionDismissedAt: null } });
+
+      if (nextStatus === "PAGATO" && current === "IN_ATTESA") {
         updated = await prisma.$transaction((tx) =>
           applyPaidOrderInvariantsTx(tx, {
             orderId: id,
@@ -181,9 +197,11 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         );
       } else {
         const patch: Prisma.Prisma.OrderUpdateInput = { status: nextStatus };
+        if (nextStatus === "PAGATO" && current === "IN_PREPARAZIONE") patch.preparingAt = null;
         if (nextStatus === "IN_PREPARAZIONE") patch.preparingAt = now();
         if (nextStatus === "SPEDITO") patch.shippedAt = now();
         if (nextStatus === "CONSEGNATO") patch.deliveredAt = now();
+        if (nextStatus === "SPEDITO" && current === "CONSEGNATO") patch.deliveredAt = null;
 
         updated = await prisma.$transaction(async (tx) => {
           if (current === "IN_ATTESA" && (nextStatus === "SCADUTO" || nextStatus === "FALLITO")) {
@@ -212,19 +230,24 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
       });
 
       // RIMBORSATO is handled exclusively via the /refund endpoint (see early-return guard above)
-      if (nextStatus === "PAGATO") {
+      if (nextStatus === "PAGATO" && current === "IN_ATTESA") {
         processOutboxBatch({ limit: 10 }).catch((e) => {
           console.error("outbox auto-process failed (PAGATO manual):", e);
         });
       }
     } else {
-      if (typeof notes !== "undefined" || typeof isFlagged !== "undefined" || typeof riskScore !== "undefined") {
+      if (
+        typeof notes !== "undefined" ||
+        typeof isFlagged !== "undefined" ||
+        typeof attentionAcknowledged !== "undefined" ||
+        typeof riskScore !== "undefined"
+      ) {
         await createOrderEvent({
           orderId: id,
           actor,
           type: "ORDER_METADATA_UPDATED",
           message: "Aggiornati note/flag/risk",
-          meta: { notes, isFlagged, riskScore },
+          meta: { notes, isFlagged, attentionAcknowledged, riskScore },
         });
       }
     }

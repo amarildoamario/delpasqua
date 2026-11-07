@@ -1,5 +1,5 @@
 {
-  "TastingsPage": {
+    "TastingsPage": {
         "metadata": {
             "title": "Dégustation d'huile d'olive extra vierge en Toscane | Frantoio del Pasqua Arezzo",
             "description": "Découvrez les vraies saveurs de l'huile d'olive extra vierge toscane. Réservez une dégustation d'huile d'olive extra vierge au Frantoio del Pasqua à Monte San Savino, Arezzo.",
@@ -84,7 +84,7 @@
             "a4": "Tout à fait. Vous pouvez acheter notre huile d'olive extra vierge pressée à froid directement dans notre boutique à la ferme. Un souvenir parfait et exclusif de l'excellence d'Arezzo."
         }
     },
-  "TastingsCalendar": {
+    "TastingsCalendar": {
         "loading": "Chargement...",
         "today": "AUJOURD'HUI",
         "no_slots": "Aucun créneau",
@@ -136,7 +136,7 @@
             "evening": "Soir"
         }
     },
-  "Common": {
+    "Common": {
         "navbar": {
             "home": "Accueil",
             "about_us": "À propos de nous",
@@ -192,7 +192,7 @@
             }
         }
     },
-  "Products": {
+    "Products": {
         "evo": {
             "title": "Extra Vierge - EVO",
             "subtitle": "Huile d'olive extra vierge",
@@ -206,19 +206,23 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Extra Vierge - Fruité Léger",
+            "title": "La Dama - Fruité Léger",
             "subtitle": "Huile d'olive extra vierge",
             "description": "Le Fruité Léger est délicat, doux et immédiat : il rehausse les plats sans les masquer, idéal pour les poissons, les légumes, les salades et les recettes raffinées.",
             "badge": "CLASSIQUE",
             "variants": {
-                "500ml": "Bouteille de 500 ml"
+                "500ml": "Bouteille de 500 ml",
+                "750ml": "Bouteille de 750 ml",
+                "1lt": "Bouteille de 1 L"
             },
             "variantDescriptions": {
-                "500ml": "La bouteille de Fruité Léger de 500 ml apporte à table une huile d'olive douce et aromatique, parfaite pour un assaisonnement élégant et subtil."
+                "500ml": "La bouteille de Fruité Léger de 500 ml apporte à table une huile d'olive douce et aromatique, parfaite pour un assaisonnement élégant et subtil.",
+                "750ml": "La bouteille Fruité Léger de 750 ml allie élégance et générosité : idéale à table sur les poissons, légumes et plats raffinés.",
+                "1lt": "La bouteille Fruité Léger de 1 L est le format familial idéal au quotidien : doux, parfumé et tout en finesse."
             }
         },
         "fruttato-medio": {
-            "title": "Extra Vierge - Fruité Moyen",
+            "title": "Il Musico - Fruité Moyen",
             "subtitle": "Huile d'olive extra vierge",
             "description": "Le Fruité Moyen est l'équilibre le plus polyvalent : des arômes d'herbe coupée, un goût plein et une finale harmonieuse, convenant aussi bien cru qu'en cuisson.",
             "badge": "CLASSIQUE",
@@ -234,7 +238,7 @@
             }
         },
         "fruttato-intenso": {
-            "title": "Extra Vierge - Fruité Intense",
+            "title": "Il Cavaliere - Fruité Intense",
             "subtitle": "Huile d'olive extra vierge",
             "description": "Le Fruité Intense a un caractère affirmé, des notes vertes et une finale plus marquée : idéal pour ceux qui veulent une huile d'olive qui se distingue.",
             "badge": "CLASSIQUE",
@@ -280,59 +284,67 @@
             "badge": "BIDON",
             "variants": {
                 "750ml": "Bidon de 750 ml",
+                "1lt": "Bidon de 1 L",
                 "3lt": "Bidon de 3 L",
                 "5lt": "Bidon de 5 L"
             },
             "variantDescriptions": {
                 "750ml": "Le bidon EVO de 750 ml est compact et distinctif : un format original pour un stockage pratique, une meilleure protection et un usage quotidien.",
+                "1lt": "Le bidon EVO de 1 L allie praticité quotidienne et protection optimale contre la lumière en cuisine.",
                 "3lt": "Le bidon EVO de 3 L est fait pour les utilisateurs quotidiens d'huile d'olive qui souhaitent un format de garde-manger pratique protégé de la lumière.",
                 "5lt": "Le bidon EVO de 5 L est le format familial pour toujours avoir à disposition une huile d'olive extra vierge équilibrée, aromatique et polyvalente."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Extra Vierge - Bidon Fruité Léger",
+            "title": "La Dama - Fruité Léger Bidon",
             "subtitle": "Huile d'olive extra vierge fruité léger en bidon",
             "description": "Le Fruité Léger en bidon conserve son profil délicat dans un format quotidien pratique, protégé et pratique.",
             "badge": "BIDON",
             "variants": {
+                "1lt": "Bidon de 1 L",
                 "3lt": "Bidon de 3 L",
                 "5lt": "Bidon de 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Le bidon Fruité Léger de 1 L protège toute la délicatesse de l'huile de la lumière dans un format maniable au quotidien.",
                 "3lt": "Le bidon de Fruité Léger de 3 L est idéal pour tous ceux qui veulent un approvisionnement quotidien en huile d'olive délicate pour les poissons, les légumes et les plats frais.",
                 "5lt": "Le bidon de Fruité Léger de 5 L donne plus d'autonomie en cuisine tout en conservant un profil doux, équilibré et facile à associer."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Extra Vierge - Bidon Fruité Moyen",
+            "title": "Il Musico - Fruité Moyen Bidon",
             "subtitle": "Huile d'olive extra vierge fruité moyen en bidon",
             "description": "Le Fruité Moyen en bidon est le choix pratique pour un usage fréquent, avec un goût équilibré et une meilleure protection contre la lumière.",
             "badge": "BIDON",
             "variants": {
+                "1lt": "Bidon de 1 L",
                 "3lt": "Bidon de 3 L",
                 "5lt": "Bidon de 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Le bidon Fruité Moyen de 1 L offre le juste équilibre entre maniabilité et protection, idéal cru comme en cuisson.",
                 "3lt": "Le bidon de Fruité Moyen de 3 L est fait pour les cuisines actives : polyvalent, équilibré et pratique pour assaisonner, cuisiner et finaliser les plats.",
                 "5lt": "Le bidon de Fruité Moyen de 5 L est le format de garde-manger pour ceux qui ne veulent jamais manquer d'une huile d'olive extra vierge fiable et aromatique."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Extra Vierge - Bidon Fruité Intense",
+            "title": "Il Cavaliere - Fruité Intense Bidon",
             "subtitle": "Huile d'olive extra vierge fruité intense en bidon",
             "description": "Le Fruité Intense en bidon préserve la force et les arômes dans un format pratique pour un usage fréquent.",
             "badge": "BIDON",
             "variants": {
+                "1lt": "Bidon de 1 L",
                 "3lt": "Bidon de 3 L",
                 "5lt": "Bidon de 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Le bidon Fruité Intense de 1 L préserve à l'abri de la lumière toute l'intensité et les notes vertes de notre huile la plus affirmée.",
                 "3lt": "Le bidon de Fruité Intense de 3 L est un approvisionnement judicieux pour ceux qui recherchent une huile d'olive riche, verte et persistante pour les plats structurés.",
                 "5lt": "Le bidon de Fruité Intense de 5 L est le format généreux pour les cuisines qui veulent toujours avoir sous la main une huile d'olive extra vierge puissante et reconnaissable."
             }
         }
     },
-  "ShopPage": {
+    "ShopPage": {
         "header": {
             "label": "Boutique",
             "title_part1": "Tous les ",
@@ -358,7 +370,7 @@
             "from": "À partir de "
         }
     },
-  "HomePage": {
+    "HomePage": {
         "HeroCarousel": {
             "sr_title": "Moulin à huile et production : histoire, produits et tradition moderne",
             "slides": {
@@ -571,7 +583,7 @@
             "cta": "Découvrir tous les articles"
         }
     },
-  "StoriaPage": {
+    "StoriaPage": {
         "header": {
             "subtitle": "Histoire",
             "title_part1": "Notre ",
@@ -612,7 +624,7 @@
             }
         }
     },
-  "ProduzionePage": {
+    "ProduzionePage": {
         "nav": {
             "section": "Section",
             "sections": {
@@ -825,7 +837,7 @@
             "machine": "Machine"
         }
     },
-  "OlioPage": {
+    "OlioPage": {
         "header": {
             "label": "Notre huile",
             "title_part1": "Notre",
@@ -848,7 +860,7 @@
                     "Idéal cru sur des plats légers, poissons, légumes et salades."
                 ],
                 "formats": [
-                    "Bouteille : 250/500/750",
+                    "Bouteille : 500/750ml/1L",
                     "Bidon : 1/3/5L"
                 ],
                 "placeholder": "IMAGE — FRUITÉ LÉGER"
@@ -861,7 +873,7 @@
                     "Les olives sont récoltées avant leur pleine maturité."
                 ],
                 "formats": [
-                    "Bouteille : 250/500/750",
+                    "Bouteille : 500/750ml/1L",
                     "Bidon : 1/3/5L"
                 ],
                 "placeholder": "IMAGE — FRUITÉ INTENSE"
@@ -874,7 +886,7 @@
                     "Couleur verte aux reflets jaunes."
                 ],
                 "formats": [
-                    "Bouteille : 250/500/750/1000ml",
+                    "Bouteille : 500/750ml/1L",
                     "Bidon : 1/3/5L"
                 ],
                 "placeholder": "IMAGE — FRUITÉ MOYEN"
@@ -887,7 +899,7 @@
                 ],
                 "formats": [
                     "Bouteille : 500ml",
-                    "Bidon : 3/5L"
+                    "Bidon : 750ml/1/3/5L"
                 ],
                 "placeholder": "IMAGE — EVO"
             },
@@ -914,7 +926,7 @@
             "badge": "SÉLECTION EXTRACTION À FROID"
         }
     },
-  "ContactPage": {
+    "ContactPage": {
         "hero": {
             "label": "Contact",
             "title_part1": "Nous sommes",
@@ -960,7 +972,7 @@
             "button": "Ouvrir dans Maps"
         }
     },
-  "Cart": {
+    "Cart": {
         "common": {
             "product_fallback": "Produit",
             "discount_code_placeholder": "Code promo",

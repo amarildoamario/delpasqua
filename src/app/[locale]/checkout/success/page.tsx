@@ -10,6 +10,7 @@ import type * as Prisma from "@/generated/prisma/client";
 import SuccessTrackPurchase from "./SuccessTrackPurchase";
 import ClearCartOnSuccess from "./ClearCartOnSuccess";
 import Footer from "@/components/Footer";
+import { isUniformProductImage } from "@/lib/productImageFit";
 
 // ✅ aggiunti per fallback immagini
 import { readCatalog } from "@/lib/server/catalog";
@@ -311,6 +312,7 @@ async function CheckoutSuccessPage({
           <SuccessTrackPurchase
             orderId={order.id}
             isPaid={isPaid}
+            isTest={order.isTest}
             totalCents={order.totalCents}
             currency={order.currency}
             items={order.items.map((it) => ({
@@ -482,7 +484,7 @@ async function CheckoutSuccessPage({
                           alt={it.title}
                           fill
                           sizes="64px"
-                          className="object-cover"
+                          className={isUniformProductImage(img) ? "object-contain" : "object-cover"}
                         />
                       ) : (
                         <div className="h-full w-full bg-neutral-100" />

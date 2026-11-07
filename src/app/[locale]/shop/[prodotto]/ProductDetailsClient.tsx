@@ -1,5 +1,7 @@
 "use client";
 
+import { isUniformProductImage, shouldContainProductImage } from "@/lib/productImageFit";
+
 import Image from "next/image";
 import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -110,13 +112,19 @@ const FORMAT_NAV_GROUPS: Record<string, FormatNavGroups> = {
     bottle: [{ productId: "evo", variantId: "500ml", label: "500 ml" }],
     can: [
       { productId: "evo-latta", variantId: "750ml", label: "750 ml" },
+      { productId: "evo-latta", variantId: "1lt", label: "1 L" },
       { productId: "evo-latta", variantId: "3lt", label: "3 L" },
       { productId: "evo-latta", variantId: "5lt", label: "5 L" },
     ],
   },
   "fruttato-leggero": {
-    bottle: [{ productId: "fruttato-leggero", variantId: "500ml", label: "500 ml" }],
+    bottle: [
+      { productId: "fruttato-leggero", variantId: "500ml", label: "500 ml" },
+      { productId: "fruttato-leggero", variantId: "750ml", label: "750 ml" },
+      { productId: "fruttato-leggero", variantId: "1lt", label: "1 L" },
+    ],
     can: [
+      { productId: "fruttato-leggero-latta", variantId: "1lt", label: "1 L" },
       { productId: "fruttato-leggero-latta", variantId: "3lt", label: "3 L" },
       { productId: "fruttato-leggero-latta", variantId: "5lt", label: "5 L" },
     ],
@@ -128,6 +136,7 @@ const FORMAT_NAV_GROUPS: Record<string, FormatNavGroups> = {
       { productId: "fruttato-medio", variantId: "1lt", label: "1 L" },
     ],
     can: [
+      { productId: "fruttato-medio-latta", variantId: "1lt", label: "1 L" },
       { productId: "fruttato-medio-latta", variantId: "3lt", label: "3 L" },
       { productId: "fruttato-medio-latta", variantId: "5lt", label: "5 L" },
     ],
@@ -139,6 +148,7 @@ const FORMAT_NAV_GROUPS: Record<string, FormatNavGroups> = {
       { productId: "fruttato-intenso", variantId: "1lt", label: "1 L" },
     ],
     can: [
+      { productId: "fruttato-intenso-latta", variantId: "1lt", label: "1 L" },
       { productId: "fruttato-intenso-latta", variantId: "3lt", label: "3 L" },
       { productId: "fruttato-intenso-latta", variantId: "5lt", label: "5 L" },
     ],
@@ -181,8 +191,14 @@ export default function ProductDetailsClient({
   const detailText = detailLabels;
   const { add, lines, count: cartCount, catalog } = useCart();
 
+  const allTranslatedProducts = useMemo(() => [product, ...relatedProducts], [product, relatedProducts]);
+
+  const findAvailableProduct = (prodId: string): Product | undefined =>
+    (catalog as Product[]).find((p) => p.id === prodId) ??
+    allTranslatedProducts.find((p) => p.id === prodId);
+
   const getFormatNavItemPrice = (prodId: string, varId: string): number | null => {
-    const prod = (catalog as Product[]).find((p) => p.id === prodId);
+    const prod = findAvailableProduct(prodId);
     if (!prod) return null;
     const v = prod.variants?.find((varItem) => String(varItem.id) === String(varId));
     return v ? v.priceCents : null;
@@ -216,8 +232,13 @@ export default function ProductDetailsClient({
 
   const formatNavGroups = useMemo(() => getFormatNavGroups(currentProduct.id), [currentProduct.id]);
 
+  function isFormatItemSelectable(item: FormatNavItem): boolean {
+    const targetProduct = allTranslatedProducts.find((p) => p.id === item.productId);
+    if (!targetProduct) return false;
+    return Boolean(targetProduct.variants?.some((v) => String(v.id) === String(item.variantId)));
+  }
+
   function handleFormatSelect(item: FormatNavItem) {
-    const allTranslatedProducts = [product, ...relatedProducts];
     const targetProduct = allTranslatedProducts.find((p) => p.id === item.productId);
 
     if (targetProduct) {
@@ -353,7 +374,19 @@ export default function ProductDetailsClient({
       setAvailMap({});
       return;
     }
-    const skus = variants.map((v) => makeInventorySku(currentProduct.id, v.id, v.sku));
+    const skuSet = new Set<string>(
+      variants.map((v) => makeInventorySku(currentProduct.id, v.id, v.sku))
+    );
+    if (formatNavGroups) {
+      for (const navItem of [...formatNavGroups.bottle, ...formatNavGroups.can]) {
+        const famProd = allTranslatedProducts.find((p) => p.id === navItem.productId);
+        const famVar = famProd?.variants?.find((v) => String(v.id) === String(navItem.variantId));
+        if (famProd && famVar) {
+          skuSet.add(makeInventorySku(famProd.id, famVar.id, famVar.sku));
+        }
+      }
+    }
+    const skus = Array.from(skuSet);
     setLoadingAvail(true);
 
     fetch(`/api/inventory/availability?skus=${encodeURIComponent(skus.join(","))}`, {
@@ -379,7 +412,7 @@ export default function ProductDetailsClient({
     return () => {
       alive = false;
     };
-  }, [currentProduct.id, variants]);
+  }, [currentProduct.id, variants, formatNavGroups, allTranslatedProducts]);
 
   const selectedSku = selectedVariant
     ? makeInventorySku(currentProduct.id, selectedVariant.id, selectedVariant.sku)
@@ -775,7 +808,7 @@ export default function ProductDetailsClient({
       {/* SEZIONE SUPERIORE: FOTO & ACQUISTO */}
       <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-16">
         
-        {/* COLONNA SINISTRA: GALLERIA IMMAGINI PREMIUM (Foto riempie tutto - object-cover) */}
+        {/* COLONNA SINISTRA: GALLERIA IMMAGINI PREMIUM */}
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -845,7 +878,7 @@ export default function ProductDetailsClient({
                     src={activeImage}
                     alt={currentProduct.imageAlt || currentProduct.title}
                     fill
-                    className="object-cover cursor-zoom-in transition-transform duration-500 group-hover:scale-[1.02]"
+                    className={`${isUniformProductImage(activeImage) || shouldContainProductImage(activeImage) ? "object-contain" : "object-cover"} ${shouldContainProductImage(activeImage) ? "p-6 sm:p-8" : ""} cursor-zoom-in transition-transform duration-500 group-hover:scale-[1.02]`}
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     priority
                     onClick={() => openLightbox(galleryImages.indexOf(activeImage))}
@@ -861,7 +894,7 @@ export default function ProductDetailsClient({
             </AnimatePresence>
           </div>
 
-          {/* Miniature (Thumbnails - object-cover) */}
+          {/* Miniature */}
           {galleryItems.length > 1 && (
             <div className="flex flex-wrap gap-2.5 mt-4">
               {galleryItems.map((item, idx) => {
@@ -886,7 +919,7 @@ export default function ProductDetailsClient({
                         src={item.src}
                         alt={item.alt || `Miniatura ${idx + 1}`}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover/thumb:scale-105"
+                        className={`${isUniformProductImage(item.src) || shouldContainProductImage(item.src) ? "object-contain" : "object-cover"} ${shouldContainProductImage(item.src) ? "p-1.5" : ""} transition-transform duration-300 group-hover/thumb:scale-105`}
                         sizes="72px"
                       />
                     </div>
@@ -1002,18 +1035,25 @@ export default function ProductDetailsClient({
                     </label>
                     <div className="flex flex-wrap gap-2.5">
                       {items.map((item) => {
+                        const isSelectable = isFormatItemSelectable(item);
                         const isSelected =
-                          item.productId === currentProduct.id && String(item.variantId) === String(selectedVariantId);
+                          isSelectable && item.productId === currentProduct.id && String(item.variantId) === String(selectedVariantId);
 
                         return (
                           <button
                             key={`${item.productId}:${item.variantId}`}
                             type="button"
-                            onClick={() => handleFormatSelect(item)}
-                            className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-[5px] border px-4 py-2.5 text-sm font-semibold tracking-wide transition-all cursor-pointer ${
-                              isSelected
-                                ? "bg-[#121212] border-[#B5945B] text-white shadow-[0_4px_16px_rgba(0,0,0,0.18)]"
-                                : "bg-white border-neutral-200 text-neutral-800 hover:border-[#121212] hover:text-[#121212] hover:bg-neutral-50/50"
+                            disabled={!isSelectable}
+                            aria-disabled={!isSelectable}
+                            onClick={() => {
+                              if (isSelectable) handleFormatSelect(item);
+                            }}
+                            className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-[5px] border px-4 py-2.5 text-sm font-semibold tracking-wide transition-all ${
+                              !isSelectable
+                                ? "bg-neutral-100/80 border-neutral-200/70 text-neutral-400 opacity-50 cursor-not-allowed select-none"
+                                : isSelected
+                                  ? "bg-[#121212] border-[#B5945B] text-white shadow-[0_4px_16px_rgba(0,0,0,0.18)] cursor-pointer"
+                                  : "bg-white border-neutral-200 text-neutral-800 hover:border-[#121212] hover:text-[#121212] hover:bg-neutral-50/50 cursor-pointer"
                             }`}
                           >
                             {item.label}
@@ -1040,30 +1080,36 @@ export default function ProductDetailsClient({
                     </div>
                     <div className="space-y-2">
                       {items.map((item) => {
+                        const isSelectable = isFormatItemSelectable(item);
                         const isSelected =
-                          item.productId === currentProduct.id && String(item.variantId) === String(selectedVariantId);
+                          isSelectable && item.productId === currentProduct.id && String(item.variantId) === String(selectedVariantId);
 
-                        const priceCents = getFormatNavItemPrice(item.productId, item.variantId);
-                        const formattedPrice = priceCents ? formatEUR(priceCents, locale) : "";
+                        const priceCents = isSelectable ? getFormatNavItemPrice(item.productId, item.variantId) : null;
+                        const formattedPrice = priceCents ? formatEUR(priceCents, locale) : "—";
 
-                        const prod = (catalog as Product[]).find((p) => p.id === item.productId);
+                        const prod = findAvailableProduct(item.productId);
                         const variant = prod?.variants?.find((v) => String(v.id) === String(item.variantId));
-                        const isVarOut = availMap && variant
-                          ? (availMap[makeInventorySku(item.productId, variant.id, variant.sku)] ?? 0) <= 0
+                        const itemSku = variant ? makeInventorySku(item.productId, variant.id, variant.sku) : '';
+                        const isVarOut = isSelectable && availMap && itemSku && itemSku in availMap
+                          ? availMap[itemSku] <= 0
                           : false;
+                        const isDisabled = !isSelectable || isVarOut;
 
                         return (
                           <button
                             key={`${item.productId}:${item.variantId}`}
                             type="button"
-                            disabled={isVarOut}
-                            onClick={() => handleFormatSelect(item)}
-                            className={`w-full flex items-center justify-between p-3.5 border rounded-[5px] text-left transition-all relative overflow-hidden cursor-pointer ${
-                              isVarOut
-                                ? "opacity-45 cursor-not-allowed border-neutral-100 bg-neutral-50/50"
+                            disabled={isDisabled}
+                            aria-disabled={isDisabled}
+                            onClick={() => {
+                              if (!isDisabled) handleFormatSelect(item);
+                            }}
+                            className={`w-full flex items-center justify-between p-3.5 border rounded-[5px] text-left transition-all relative overflow-hidden ${
+                              isDisabled
+                                ? "opacity-45 cursor-not-allowed border-neutral-200/70 bg-neutral-100/60 select-none"
                                 : isSelected
-                                ? "border-[#B5945B] bg-[#121212]/[0.02] shadow-sm"
-                                : "border-neutral-200 bg-white hover:border-neutral-300"
+                                ? "border-[#B5945B] bg-[#121212]/[0.02] shadow-sm cursor-pointer"
+                                : "border-neutral-200 bg-white hover:border-neutral-300 cursor-pointer"
                             }`}
                           >
                             {isSelected && (
@@ -1078,7 +1124,7 @@ export default function ProductDetailsClient({
                                 )}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-sm font-semibold tracking-wide text-[#121212]">
+                                <span className={`text-sm font-semibold tracking-wide ${!isSelectable ? "text-neutral-400" : "text-[#121212]"}`}>
                                   {item.label}
                                 </span>
                                 {isVarOut ? (
@@ -1093,7 +1139,7 @@ export default function ProductDetailsClient({
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className={`text-sm font-bold ${isSelected ? "text-[#B5945B]" : "text-neutral-900"}`}>
+                              <span className={`text-sm font-bold ${!isSelectable ? "text-neutral-400" : isSelected ? "text-[#B5945B]" : "text-neutral-900"}`}>
                                 {formattedPrice}
                               </span>
                             </div>

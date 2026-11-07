@@ -209,9 +209,13 @@ function getMissingFields(translation: BlogTranslation | undefined, postId: stri
 
   let hasContent = isFilled(translation.content);
   if (!hasContent) {
+    const mdLocale = locale === "us" ? "en" : locale;
     const mdPath = path.join(process.cwd(), "content", "blog", postSlug, `${locale}.md`);
-    if (fs.existsSync(mdPath)) {
-      const fileContent = fs.readFileSync(mdPath, "utf8");
+    const resolvedMdPath = fs.existsSync(mdPath)
+      ? mdPath
+      : path.join(process.cwd(), "content", "blog", postSlug, `${mdLocale}.md`);
+    if (fs.existsSync(resolvedMdPath)) {
+      const fileContent = fs.readFileSync(resolvedMdPath, "utf8");
       if (fileContent.trim().length > 0) {
         hasContent = true;
       }
@@ -235,9 +239,13 @@ function inspectPostLocale(post: BlogPost, locale: CheckLocale): PostLocaleStatu
   
   let contentTranslated = isFilled(translation?.content);
   if (!contentTranslated) {
+    const mdLocale = locale === "us" ? "en" : locale;
     const mdPath = path.join(process.cwd(), "content", "blog", post.slug, `${locale}.md`);
-    if (fs.existsSync(mdPath)) {
-      const fileContent = fs.readFileSync(mdPath, "utf8");
+    const resolvedMdPath = fs.existsSync(mdPath)
+      ? mdPath
+      : path.join(process.cwd(), "content", "blog", post.slug, `${mdLocale}.md`);
+    if (fs.existsSync(resolvedMdPath)) {
+      const fileContent = fs.readFileSync(resolvedMdPath, "utf8");
       if (fileContent.trim().length > 0) {
         contentTranslated = true;
       }

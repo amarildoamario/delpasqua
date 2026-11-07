@@ -61,6 +61,15 @@ function getEnv() {
 function isInternalClient() {
   if (typeof window === "undefined") return true;
   const host = window.location.hostname.toLowerCase();
+  const testMode = new URLSearchParams(window.location.search).get("test_mode");
+  if (testMode === "1") {
+    setCookie("internal", "1", 24 * 60 * 60);
+    return true;
+  }
+  if (testMode === "0") {
+    setCookie("internal", "0", 0);
+    return false;
+  }
   const internalCookie = getCookie("internal");
   // Se vuoi escluderti in modo facile: document.cookie = "internal=1; Path=/; Max-Age=31536000"
   return internalCookie === "1" || host === "localhost" || host === "127.0.0.1" || host.endsWith(".local");

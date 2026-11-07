@@ -269,3 +269,12 @@ html {
 .admin-panel [class*="rounded-"]:not([class*="rounded-full"]) {
   border-radius: 5px !important;
 }
+
+/* WhatsApp button direct utilities */
+.btn-whatsapp {
+  background-color: #25D366 !important;
+  color: #ffffff !important;
+}
+.btn-whatsapp:hover {
+  background-color: #20ba59 !important;
+}

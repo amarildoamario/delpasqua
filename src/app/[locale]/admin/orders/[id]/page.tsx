@@ -113,6 +113,15 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             totalCents={order.totalCents}
             refundCents={order.refundCents}
             stripePaymentIntentId={order.stripePaymentIntentId}
+            passedStatuses={Array.from(
+              new Set([
+                ...order.events.flatMap((event) => event.toStatus ? [event.toStatus] : []),
+                ...(order.paidAt ? (["PAGATO"] as const) : []),
+                ...(preparedAt ? (["IN_PREPARAZIONE"] as const) : []),
+                ...(order.shippedAt ? (["SPEDITO"] as const) : []),
+                ...(order.deliveredAt ? (["CONSEGNATO"] as const) : []),
+              ])
+            )}
           />
 
           {/* Purchased Items Table */}

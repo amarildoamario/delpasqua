@@ -34,7 +34,7 @@ export async function GET(req: Request) {
   const to = new Date(Date.UTC(y, m, 1));
 
   const rows = await prisma.order.findMany({
-    where: { createdAt: { gte: from, lt: to } },
+    where: { createdAt: { gte: from, lt: to }, isTest: false },
     include: { items: true },
     orderBy: { createdAt: "asc" },
   });

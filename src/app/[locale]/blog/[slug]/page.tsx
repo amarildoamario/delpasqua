@@ -11,7 +11,7 @@ import {
     normalizeBlogSlug,
 } from "@/lib/blogSlugs";
 import { Metadata } from 'next';
-import { getBlogAlternateUrls, SITE_URL, absoluteUrl, localizedPath } from "@/lib/seo";
+import { getBlogAlternateUrls, getSeoLocale, getOpenGraphLocale, SITE_URL, absoluteUrl, localizedPath } from "@/lib/seo";
 import { locales } from "@/i18n/pathnames";
 
 export async function generateStaticParams() {
@@ -39,7 +39,7 @@ export async function generateMetadata(
     if (!post) return { title: "Post non trovato" };
 
     const languages = getBlogAlternateUrls(post);
-    const postUrl = languages[locale];
+    const postUrl = languages[getSeoLocale(locale)] ?? languages[locale];
     const baseUrl = SITE_URL;
     const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${baseUrl}${post.imageUrl}`;
 
@@ -65,7 +65,7 @@ export async function generateMetadata(
                     alt: post.title,
                 }
             ],
-            locale: locale === 'it' ? 'it_IT' : (locale === 'en' ? 'en_US' : 'de_DE'),
+            locale: getOpenGraphLocale(locale),
             type: "article",
             publishedTime: post.date,
             modifiedTime: post.updateDate,
@@ -425,7 +425,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     };
 
     const baseUrl = SITE_URL;
-    const postUrl = getBlogAlternateUrls(post)[locale];
+    const postAlternates = getBlogAlternateUrls(post);
+    const postUrl = postAlternates[getSeoLocale(locale)] ?? postAlternates[locale];
     const imageUrl = post.imageUrl.startsWith("http") ? post.imageUrl : `${baseUrl}${post.imageUrl}`;
 
     const jsonLd = {
@@ -529,12 +530,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                             <div className="flex items-center gap-1.5 text-sm text-stone-500">
                                 <CalendarDays className="w-3.5 h-3.5 text-stone-400" />
                                 <span>
-                                    {new Date(post.date).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
+                                    {new Date(post.date).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "long", year: "numeric" })}
                                 </span>
                             </div>
                             <div className="flex items-center gap-1.5 text-sm text-stone-400">
                                 <RefreshCcw className="w-3.5 h-3.5" />
-                                <span>{ui.updated} {new Date(post.updateDate).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}</span>
+                                <span>{ui.updated} {new Date(post.updateDate).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "short", year: "numeric" })}</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-sm font-semibold text-[#3D5A3D] bg-[#3D5A3D]/8 px-3 py-1 rounded-full">
                                 <Clock className="w-3.5 h-3.5" />

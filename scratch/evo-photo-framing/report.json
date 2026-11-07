@@ -1,0 +1,177 @@
+{
+  "report": [
+    {
+      "device": "desktop",
+      "route": "/shop/evo/",
+      "detail": {
+        "objectFit": "contain",
+        "padding": 32,
+        "photoWidth": 454,
+        "photoHeight": 681,
+        "frameWidth": 662,
+        "frameHeight": 828
+      }
+    },
+    {
+      "device": "desktop",
+      "route": "/olio-toscano/",
+      "frames": [
+        {
+          "alt": "Olio EVO 500 ml",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Musico - Fruttato Medio",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Cavaliere - Fruttato Intenso",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/olio-biologico/",
+      "frames": [
+        {
+          "alt": "Olio EVO 500 ml",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "La Dama - Fruttato Leggero",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "/nuovo-raccolto/",
+      "frames": [
+        {
+          "alt": "Olio EVO 500 ml",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Musico - Fruttato Medio",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Cavaliere - Fruttato Intenso",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/shop/evo/",
+      "detail": {
+        "objectFit": "contain",
+        "padding": 24,
+        "photoWidth": 251.66666666666669,
+        "photoHeight": 377.5,
+        "frameWidth": 340,
+        "frameHeight": 426
+      }
+    },
+    {
+      "device": "mobile",
+      "route": "/olio-toscano/",
+      "frames": [
+        {
+          "alt": "Olio EVO 500 ml",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Musico - Fruttato Medio",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Cavaliere - Fruttato Intenso",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/olio-biologico/",
+      "frames": [
+        {
+          "alt": "Olio EVO 500 ml",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "La Dama - Fruttato Leggero",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "/nuovo-raccolto/",
+      "frames": [
+        {
+          "alt": "Olio EVO 500 ml",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Musico - Fruttato Medio",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        },
+        {
+          "alt": "Il Cavaliere - Fruttato Intenso",
+          "objectFit": "contain",
+          "background": "rgb(255, 255, 255)",
+          "productHeightPercent": 80,
+          "complete": true
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

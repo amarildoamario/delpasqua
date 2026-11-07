@@ -17,7 +17,7 @@ function testProduct(overrides = {}) {
     name: "Prodotto di Test Gestionale",
     slug: "prodotto-test-gestionale",
     variants: [
-      { id: "v1", name: "Variante A", priceCents: 1000 },
+      { id: "v1", sku: "__test__gestionale-sku-v1", name: "Variante A", priceCents: 1000 },
     ],
     ...overrides,
   };

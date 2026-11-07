@@ -198,11 +198,13 @@ export const AdminOrderStatusPatchSchema = z.object({
 
   notes: z.string().max(5000).optional(),
   isFlagged: z.boolean().optional(),
+  attentionAcknowledged: z.boolean().optional(),
   riskScore: z.coerce.number().min(0).max(100).optional(),
 });
 
 export const AdminOrderShipSchema = z.object({
   shipped: z.boolean(),
+  trackingCode: z.string().trim().max(120).optional().nullable(),
   actor: z.string().trim().min(1).max(120).optional().nullable(),
 });
 

@@ -61,7 +61,7 @@ async function Home({ params }: { params: Promise<{ locale: string }> }) {
     "@context": "https://schema.org",
     "@type": "Store",
     "name": companyInfo.brandName,
-    "image": `${SITE_URL}/products/EVO-750-ml-gpt.png`,
+    "image": `${SITE_URL}/products/EVO-500ml-transparent.png`,
     "@id": `${SITE_URL}/${locale === "it" ? "" : locale + "/"}#store`,
     "url": `${SITE_URL}/${locale === "it" ? "" : locale + "/"}`,
     "telephone": companyInfo.phone,

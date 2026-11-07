@@ -3,9 +3,9 @@ import type { OrderStatus } from "@/generated/prisma/client";
 export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   IN_ATTESA: ["PAGATO", "ANNULLATO", "SCADUTO", "FALLITO"],
   PAGATO: ["IN_PREPARAZIONE", "ANNULLATO", "FALLITO"],
-  IN_PREPARAZIONE: ["SPEDITO", "ANNULLATO"],
+  IN_PREPARAZIONE: ["PAGATO", "SPEDITO", "ANNULLATO"],
   SPEDITO: ["CONSEGNATO"],
-  CONSEGNATO: [],
+  CONSEGNATO: ["SPEDITO"],
   ANNULLATO: [],
   RIMBORSATO: [],
   PARZIALMENTE_RIMBORSATO: [],

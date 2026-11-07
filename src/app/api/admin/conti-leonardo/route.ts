@@ -116,6 +116,7 @@ export async function GET(req: Request) {
     // 3) Carica tutti gli ordini pagati/in corso
     const orders = await prisma.order.findMany({
       where: {
+        isTest: false,
         status: {
           in: [...PAID_LIKE_STATUSES],
         },

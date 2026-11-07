@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "afterReAdd": [
+    {
+      "productId": "evo",
+      "variantId": "500ml",
+      "qty": 1
+    },
+    {
+      "productId": "fruttato-medio",
+      "variantId": "500ml",
+      "qty": 1
+    }
+  ],
+  "afterEmptyCart": [
+    {
+      "productId": "fruttato-medio",
+      "variantId": "500ml",
+      "qty": 1
+    }
+  ]
+}

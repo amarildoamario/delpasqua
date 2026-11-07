@@ -7,6 +7,7 @@ import type * as Prisma from "@/generated/prisma/client";
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
 import { getFlagEmoji } from "@/lib/utils";
 import OrderStatusBadge from "@/app/[locale]/admin/orders/OrderStatusBadge";
+import OrderAttentionControl from "@/app/[locale]/admin/orders/OrderAttentionControl";
 
 export const dynamic = "force-dynamic";
 
@@ -64,13 +65,16 @@ export default async function AdminOrdersPage({
   const statusParam = getOne(sp.status);
   const shipped = getOne(sp.shipped);
   const q = getOne(sp.q);
+  const testParam = getOne(sp.test);
+  const testOnly = testParam === "1";
 
   const startParam = getOne(sp.start);
   const endParam = getOne(sp.end);
 
   const today = new Date();
+  const defaultDays = statusParam === "IN_ATTESA" ? 180 : 30;
   const defaultStart = new Date(today);
-  defaultStart.setDate(today.getDate() - 30);
+  defaultStart.setDate(today.getDate() - defaultDays);
 
   const start = parseDateOnly(startParam) ?? defaultStart;
   const end = parseDateOnly(endParam) ?? today;
@@ -83,11 +87,13 @@ export default async function AdminOrdersPage({
 
   const where: Prisma.Prisma.OrderWhereInput = {
     createdAt: { gte: start, lt: endExclusive },
-    orderNumber: { not: null },
+    isTest: testOnly,
   };
 
   if (statusParam && isOrderStatus(statusParam)) {
     where.status = statusParam;
+  } else if (!q) {
+    where.orderNumber = { not: null };
   }
 
   if (shipped === "yes") where.shippedAt = { not: null };
@@ -113,11 +119,14 @@ export default async function AdminOrdersPage({
       createdAt: true,
       orderNumber: true,
       paidAt: true,
+      preparingAt: true,
       fullName: true,
       email: true,
       status: true,
       isFlagged: true,
+      attentionDismissedAt: true,
       riskScore: true,
+      isTest: true,
       paymentMethod: true,
       shippedAt: true,
       totalCents: true,
@@ -172,9 +181,19 @@ export default async function AdminOrdersPage({
 
       <RangePicker startISO={startISO} endISO={endISO} />
 
+      <div>
+        <Link
+          href={testOnly ? `/admin/orders?start=${startISO}&end=${endISO}` : `/admin/orders?start=${startISO}&end=${endISO}&test=1`}
+          className="inline-flex rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+        >
+          {testOnly ? "Torna agli ordini commerciali" : "Visualizza ordini di test"}
+        </Link>
+      </div>
+
       <form className="flex flex-wrap items-end gap-2" action="/admin/orders" method="get">
         <input type="hidden" name="start" value={startISO} />
         <input type="hidden" name="end" value={endISO} />
+        {testOnly ? <input type="hidden" name="test" value="1" /> : null}
 
         <input
           name="q"
@@ -219,7 +238,8 @@ export default async function AdminOrdersPage({
               <th className="w-56 px-4 py-3">Ordine</th>
               <th className="w-56 px-4 py-3">Cliente</th>
               <th className="w-28 px-4 py-3 text-center">Stato</th>
-              <th className="w-24 px-4 py-3">Rischio</th>
+              <th className="w-28 px-4 py-3 text-center">Controllo</th>
+              <th className="w-20 px-4 py-3">Rischio</th>
               <th className="w-28 px-4 py-3">Pagamento</th>
               <th className="w-24 px-4 py-3">Spedito</th>
               <th className="w-28 px-4 py-3 text-left">Totale</th>
@@ -231,6 +251,14 @@ export default async function AdminOrdersPage({
               const exp = o.events?.[0] ?? null;
               const meta = exp ? safeParseMeta(exp.metaJson) : {};
               const inv = meta?.invoiceNumber ? ` (${meta.invoiceNumber})` : "";
+              const cutoff48h = new Date(today.getTime() - 48 * 60 * 60 * 1000);
+              const isDelicate =
+                (o.status === "IN_ATTESA" && o.createdAt < cutoff48h) ||
+                  o.status === "FALLITO" ||
+                  o.status === "SCADUTO" ||
+                  o.isFlagged ||
+                  (o.status === "PAGATO" && !o.paidAt) ||
+                  (o.status === "IN_PREPARAZIONE" && !o.preparingAt);
 
               return (
                 <tr
@@ -265,6 +293,12 @@ export default async function AdminOrdersPage({
                       </div>
                     ) : null}
 
+                    {o.isTest ? (
+                      <div className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
+                        ORDINE TEST
+                      </div>
+                    ) : null}
+
                     {/* ✅ Riga rossa: marker export fattura */}
                     {exp ? (
                       <div className="mt-1 truncate text-xs font-semibold text-red-700">
@@ -290,10 +324,21 @@ export default async function AdminOrdersPage({
                     <OrderStatusBadge status={o.status} />
                   </td>
 
+                  <td className="px-4 py-3 text-center">
+                    {isDelicate ? (
+                      <OrderAttentionControl
+                        orderId={o.id}
+                        acknowledged={Boolean(o.attentionDismissedAt)}
+                      />
+                    ) : (
+                      <span title="Ordine regolare" aria-label="Ordine regolare" className="text-xl">✅</span>
+                    )}
+                  </td>
+
                   <td className="px-4 py-3">
                     {o.isFlagged ? (
                       <span className="inline-flex rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
-                        FLAG {o.riskScore}
+                        {o.riskScore}
                       </span>
                     ) : (
                       <span className="inline-flex rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-700">

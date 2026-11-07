@@ -11,7 +11,7 @@ function euro(cents: number) {
 export default async function AdminCustomersPage() {
   const grouped = await prisma.order.groupBy({
     by: ["email"],
-    where: { paidAt: { not: null } },
+    where: { paidAt: { not: null }, isTest: false },
     _count: { _all: true },
     _sum: { totalCents: true },
     _max: { createdAt: true },
@@ -22,7 +22,7 @@ export default async function AdminCustomersPage() {
   const emails = grouped.map((g) => g.email).filter(Boolean);
 
   const lastOrders = await prisma.order.findMany({
-    where: { email: { in: emails }, paidAt: { not: null } },
+    where: { email: { in: emails }, paidAt: { not: null }, isTest: false },
     orderBy: { createdAt: "desc" },
     distinct: ["email"],
     select: { email: true, fullName: true },

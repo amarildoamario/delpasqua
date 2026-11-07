@@ -23,7 +23,8 @@ export async function GET(req: Request) {
   const rows = await prisma.order.findMany({
     where: {
       createdAt: { gte: from, lt: to },
-      orderNumber: { not: null }
+      orderNumber: { not: null },
+      isTest: false,
     },
     orderBy: { createdAt: "asc" },
     include: { items: true },

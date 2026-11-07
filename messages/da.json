@@ -212,19 +212,23 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Ekstra Jomfru - Let Frugtig",
+            "title": "La Dama - Let Frugtig",
             "subtitle": "Ekstra jomfru olivenolie",
             "description": "Let Frugtig er delikat, mild og umiddelbar: den l?fter retter uden at overd?ve dem, ideel til fisk, gr?ntsager og salater.",
             "badge": "KLASSIKER",
             "variants": {
-                "500ml": "Flaske 500 ml"
+                "500ml": "Flaske 500 ml",
+                "750ml": "Flaske 750 ml",
+                "1lt": "Flaske 1 L"
             },
             "variantDescriptions": {
-                "500ml": "Flasken Let Frugtig p? 500 ml giver en mild og aromatisk olie p? bordet, perfekt til elegante og diskrete krydringer."
+                "500ml": "Flasken Let Frugtig p? 500 ml giver en mild og aromatisk olie p? bordet, perfekt til elegante og diskrete krydringer.",
+                "750ml": "Flasken Let Frugtig på 750 ml forener elegance og rummelighed: ideel på bordet til fisk, grøntsager og fine retter.",
+                "1lt": "Flasken Let Frugtig på 1 L er det ideelle familieformat til hverdagsbrug: blød, aromatisk og afbalanceret."
             }
         },
         "fruttato-medio": {
-            "title": "Ekstra Jomfru - Medium Frugtig",
+            "title": "Il Musico - Medium Frugtig",
             "subtitle": "Ekstra jomfru olivenolie",
             "description": "Medium Frugtig er den mest alsidige balance: urteagtig duft, fyldig smag og en harmonisk afslutning.",
             "badge": "KLASSIKER",
@@ -240,7 +244,7 @@
             }
         },
         "fruttato-intenso": {
-            "title": "Ekstra Jomfru - Intens Frugtig",
+            "title": "Il Cavaliere - Intens Frugtig",
             "subtitle": "Ekstra jomfru olivenolie",
             "description": "Intens Frugtig har tydelig karakter, gr?nne noter og en mere markant afslutning: ideel til retter med kraftig smag.",
             "badge": "KLASSIKER",
@@ -286,53 +290,61 @@
             "badge": "DUNK",
             "variants": {
                 "750ml": "Dunk 750 ml",
+                "1lt": "Dunk 1 L",
                 "3lt": "Dunk 3 L",
                 "5lt": "Dunk 5 L"
             },
             "variantDescriptions": {
                 "750ml": "EVO-dunken p? 750 ml er kompakt og s?rpr?get: et originalt format til praktisk brug, god beskyttelse og hverdagsmad.",
+                "1lt": "EVO-dunken på 1 L kombinerer praktisk hverdagsbrug med optimal beskyttelse mod lys i køkkenet.",
                 "3lt": "EVO-dunken p? 3 L er til dig, der bruger olivenolie hver dag og vil have en praktisk beholdning beskyttet mod lys.",
                 "5lt": "EVO-dunken p? 5 L er familieformatet til altid at have en balanceret, aromatisk og alsidig ekstra jomfruolivenolie i k?kkenet."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Ekstra Jomfru - Let Frugtig Dunk",
+            "title": "La Dama - Let Frugtig Dunk",
             "subtitle": "Let frugtig ekstra jomfruolivenolie i dunk",
             "description": "Let Frugtig i dunk bevarer sin fine profil i et praktisk, beskyttet og ?konomisk hverdagsformat.",
             "badge": "DUNK",
             "variants": {
+                "1lt": "Dunk 1 L",
                 "3lt": "Dunk 3 L",
                 "5lt": "Dunk 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Dunken Let Frugtig på 1 L beskytter oliens milde aroma mod lys i et praktisk hverdagsformat.",
                 "3lt": "Dunken Let Frugtig p? 3 L er ideel til en daglig beholdning af mild olie til fisk, gr?ntsager og friske retter.",
                 "5lt": "Dunken Let Frugtig p? 5 L giver mere frihed i k?kkenet med en bl?d, balanceret olie, der er nem at kombinere."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Ekstra Jomfru - Medium Frugtig Dunk",
+            "title": "Il Musico - Medium Frugtig Dunk",
             "subtitle": "Medium frugtig ekstra jomfruolivenolie i dunk",
             "description": "Medium Frugtig i dunk er det praktiske valg til hyppig brug, med balanceret smag og bedre beskyttelse mod lys.",
             "badge": "DUNK",
             "variants": {
+                "1lt": "Dunk 1 L",
                 "3lt": "Dunk 3 L",
                 "5lt": "Dunk 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Dunken Medium Frugtig på 1 L giver den rette balance mellem brugervenlighed og lysbeskyttelse i køkkenet.",
                 "3lt": "Dunken Medium Frugtig p? 3 L er lavet til aktive k?kkener: alsidig, balanceret og praktisk til madlavning og finish.",
                 "5lt": "Dunken Medium Frugtig p? 5 L er lagerformatet til dig, der altid vil have en p?lidelig og aromatisk olivenolie klar."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Ekstra Jomfru - Intens Frugtig Dunk",
+            "title": "Il Cavaliere - Intens Frugtig Dunk",
             "subtitle": "Intens frugtig ekstra jomfruolivenolie i dunk",
             "description": "Intens Frugtig i dunk bevarer styrke og aroma i et praktisk format til hyppig brug.",
             "badge": "DUNK",
             "variants": {
+                "1lt": "Dunk 1 L",
                 "3lt": "Dunk 3 L",
                 "5lt": "Dunk 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Dunken Intens Frugtig på 1 L bevarer al kraften og de grønne noter i vores mest karakterfulde olivenolie beskyttet mod lys.",
                 "3lt": "Dunken Intens Frugtig p? 3 L er en smart beholdning til dig, der s?ger en fyldig, gr?n og vedvarende olie.",
                 "5lt": "Dunken Intens Frugtig p? 5 L er det store format til k?kkener, der altid vil have en kraftig og genkendelig olivenolie ved h?nden."
             }
@@ -855,8 +867,8 @@
                     "Ideel til at ledsage fiskeretter, hvidt kød og friske salater uden at overdøve smagen af råvarerne."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml, 750ml, 1L",
+                    "Dunk: 1L, 3L, 5L"
                 ],
                 "placeholder": "BILLEDE — LET FRUGTIG"
             },
@@ -868,8 +880,8 @@
                     "Perfekt til supper, grøntsager og rødt kød. En alsidig olie til enhver lejlighed."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml, 750ml, 1L",
+                    "Dunk: 1L, 3L, 5L"
                 ],
                 "placeholder": "BILLEDE — MEDIUM FRUGTIG"
             },
@@ -881,8 +893,8 @@
                     "Anbefales til retter med stærk smag, stegt kød og bælgfrugter. En oplevelse for ægte kendere."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml, 750ml, 1L",
+                    "Dunk: 1L, 3L, 5L"
                 ],
                 "placeholder": "BILLEDE — INTENS FRUGTIG"
             },
@@ -895,7 +907,7 @@
                 ],
                 "formats": [
                     "Flaske: 500ml",
-                    "Dunk: 3/5L"
+                    "Dunk: 750ml, 1L, 3L, 5L"
                 ],
                 "placeholder": "BILLEDE — EVO"
             },

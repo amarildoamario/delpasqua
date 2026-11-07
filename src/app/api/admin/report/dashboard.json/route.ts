@@ -98,16 +98,17 @@ export async function GET(req: Request) {
     canceledOrdersByCountry,
     checkoutCanceledByCountry,
   ] = await Promise.all([
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, orderNumber: { not: null } } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, orderNumber: { not: null }, isTest: false } }),
     prisma.order.count({
       where: {
         createdAt: { gte: start, lt: endExclusive },
         status: { in: [...PAID_LIKE] },
+        isTest: false,
       },
     }),
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "IN_ATTESA", orderNumber: { not: null } } }),
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: { not: null } } }),
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: null } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "IN_ATTESA", orderNumber: { not: null }, isTest: false } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: { not: null }, isTest: false } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: null, isTest: false } }),
     // 1. Eventi analitici per calcoli geografici e visite/sessioni/views prodotti
     prisma.analyticsEvent.findMany({
       where: {
@@ -137,6 +138,7 @@ export async function GET(req: Request) {
       FROM "OrderItem" oi
       JOIN "Order" o ON o.id = oi."orderId"
       WHERE o.status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
+        AND o."isTest" = false
         AND o."createdAt" >= ${start.toISOString()}::timestamp AND o."createdAt" < ${endExclusive.toISOString()}::timestamp
       GROUP BY oi.title
       ORDER BY qty DESC
@@ -150,6 +152,7 @@ export async function GET(req: Request) {
       where: {
         createdAt: { gte: start, lt: endExclusive },
         orderNumber: { not: null },
+        isTest: false,
       },
       _count: { id: true },
     }),
@@ -159,6 +162,7 @@ export async function GET(req: Request) {
       where: {
         createdAt: { gte: start, lt: endExclusive },
         status: { in: [...PAID_LIKE] },
+        isTest: false,
       },
       _sum: {
         totalCents: true,
@@ -174,6 +178,7 @@ export async function GET(req: Request) {
         createdAt: { gte: start, lt: endExclusive },
         status: "IN_ATTESA",
         orderNumber: { not: null },
+        isTest: false,
       },
       _count: { id: true },
     }),
@@ -184,6 +189,7 @@ export async function GET(req: Request) {
         createdAt: { gte: start, lt: endExclusive },
         status: "ANNULLATO",
         orderNumber: { not: null },
+        isTest: false,
       },
       _count: { id: true },
     }),
@@ -194,6 +200,7 @@ export async function GET(req: Request) {
         createdAt: { gte: start, lt: endExclusive },
         status: "ANNULLATO",
         orderNumber: null,
+        isTest: false,
       },
       _count: { id: true },
     }),
@@ -295,6 +302,7 @@ export async function GET(req: Request) {
     FROM "OrderItem" oi
     JOIN "Order" o ON o.id = oi."orderId"
     WHERE o.status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
+      AND o."isTest" = false
       AND o."createdAt" >= ${start.toISOString()}::timestamp AND o."createdAt" < ${endExclusive.toISOString()}::timestamp
       AND oi.title = ${mostPurchasedProductTitle}
     GROUP BY o."countryCode"
@@ -335,6 +343,7 @@ export async function GET(req: Request) {
       where: {
         createdAt: { gte: start, lt: endExclusive },
         status: { in: [...PAID_LIKE] },
+        isTest: false,
       },
       _sum: { totalCents: true, stripeFeeCents: true, refundCents: true },
     }),
@@ -351,6 +360,7 @@ export async function GET(req: Request) {
   const monthlyOrders = await prisma.order.findMany({
     where: {
       status: { in: [...PAID_LIKE] },
+      isTest: false,
       createdAt: { gte: startMonthDate, lt: endMonthDate },
     },
     select: {
@@ -453,6 +463,7 @@ export async function GET(req: Request) {
   const toShipInPeriod = await prisma.order.count({
     where: {
       status: { in: ["PAGATO", "IN_PREPARAZIONE"] },
+      isTest: false,
       shippedAt: null,
       createdAt: { gte: start, lt: endExclusive },
     },
@@ -461,6 +472,7 @@ export async function GET(req: Request) {
   const shippedInPeriod = await prisma.order.findMany({
     where: {
       status: "SPEDITO",
+      isTest: false,
       shippedAt: { not: null },
       paidAt: { not: null },
       createdAt: { gte: start, lt: endExclusive },
@@ -501,6 +513,7 @@ export async function GET(req: Request) {
       FROM "OrderItem" oi
       JOIN "Order" o ON o.id = oi."orderId"
       WHERE o.status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
+        AND o."isTest" = false
         AND o."createdAt" >= ${start.toISOString()}::timestamp
         AND o."createdAt" < ${endExclusive.toISOString()}::timestamp
       GROUP BY oi."productId", oi.title, oi."variantLabel"
@@ -538,6 +551,7 @@ export async function GET(req: Request) {
       )::int AS "paidGrossCents"
     FROM "Order"
     WHERE "createdAt" >= ${start.toISOString()}::timestamp AND "createdAt" < ${endExclusive.toISOString()}::timestamp
+      AND "isTest" = false
     GROUP BY TO_CHAR("createdAt", 'YYYY-MM-DD')
     ORDER BY day ASC
   `) ?? [];

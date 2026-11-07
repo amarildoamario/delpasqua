@@ -1,181 +1,261 @@
-import Link from "next/link";
-import { prisma } from "@/lib/server/prisma";
 import PageHeader from "../_components/PageHeader";
-
+import { prisma } from "@/lib/server/prisma";
+import { readCatalog } from "@/lib/server/catalog";
+import { makeInventorySku } from "@/lib/inventorySku";
+import OperationsCockpit, {
+  type SerializedOrder,
+  type LowStockItem,
+  type SerializedMessage,
+  type SerializedTasting,
+} from "./OperationsCockpit";
 
 export const dynamic = "force-dynamic";
+
+type CatalogProduct = {
+  id: string;
+  title?: string;
+  category?: string;
+  variants: {
+    id: string;
+    label?: string;
+    priceCents?: number;
+    sku?: string;
+  }[];
+};
 
 export default async function AdminOpsPage() {
   const now = new Date();
 
-  // backlog “vecchio” > 48h
+  // Cutoff 48h per backlog vecchio
   const cutoff48h = new Date(now);
   cutoff48h.setHours(now.getHours() - 48);
 
-  const [toShip, toShipOld, pendingOld] = await Promise.all([
-    // backlog totale
-    prisma.order.count({ where: { status: "PAGATO", shippedAt: null } }),
+  // Inizio giornata odierna
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
 
-    // backlog “vecchio”
-    prisma.order.count({
+  // Yesterday for upcoming tastings
+  const yesterday = new Date(now.getTime() - 24 * 3600 * 1000);
+
+  // Parallel DB queries
+  const [
+    activeOrdersDb,
+    pendingOldCount,
+    attentionOrdersCount,
+    shippedTodayCount,
+    unreadMessagesDb,
+    tastingsDb,
+    catalogRaw,
+  ] = await Promise.all([
+    // 1. Ordini attivi da preparare o spedire
+    prisma.order.findMany({
       where: {
-        status: "PAGATO",
-        shippedAt: null,
-        paidAt: { not: null, lt: cutoff48h },
+        status: { in: ["PAGATO", "IN_PREPARAZIONE"] },
+        isTest: false,
       },
+      include: {
+        items: {
+          select: {
+            id: true,
+            sku: true,
+            title: true,
+            variantLabel: true,
+            qty: true,
+            unitPriceCents: true,
+            lineTotalCents: true,
+            imageUrl: true,
+          },
+          orderBy: { title: "asc" },
+        },
+      },
+      orderBy: [{ status: "asc" }, { createdAt: "asc" }],
+      take: 100,
     }),
 
-    // IN_ATTESA vecchi
+    // 2. Ordini IN_ATTESA bloccati > 48h
     prisma.order.count({
       where: {
         status: "IN_ATTESA",
         createdAt: { lt: cutoff48h },
+        attentionDismissedAt: null,
+        isTest: false,
       },
     }),
+
+    // 3. Ordini che richiedono un controllo umano (oltre alle attese vecchie)
+    prisma.order.count({
+      where: {
+        attentionDismissedAt: null,
+        OR: [
+          { status: { in: ["FALLITO", "SCADUTO"] } },
+          { isFlagged: true },
+          { status: "PAGATO", paidAt: null },
+          { status: "IN_PREPARAZIONE", preparingAt: null },
+        ],
+        isTest: false,
+      },
+    }),
+
+    // 4. Ordini spediti oggi
+    prisma.order.count({
+      where: {
+        shippedAt: { gte: startOfToday },
+        isTest: false,
+      },
+    }),
+
+    // 4. Messaggi di contatto non letti
+    prisma.contactMessage.findMany({
+      where: { status: "UNREAD" },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+
+    // 5. Degustazioni da gestire / imminenti
+    prisma.tastingBooking.findMany({
+      where: {
+        status: { in: ["PENDING", "CONFIRMED"] },
+        slotStart: { gte: yesterday },
+      },
+      orderBy: { slotStart: "asc" },
+      take: 20,
+    }),
+
+    // 6. Catalogo per incrocio scorte
+    readCatalog(),
   ]);
 
-  return (
+  // Serializzazione Ordini
+  const serializedOrders: SerializedOrder[] = activeOrdersDb.map((o) => ({
+    id: o.id,
+    orderNumber: o.orderNumber,
+    status: o.status,
+    fullName: o.fullName,
+    email: o.email,
+    phone: o.phone,
+    address: o.addressLine1 || o.address,
+    city: o.city,
+    zip: o.postalCode || o.zip,
+    province: o.province,
+    countryCode: o.countryCode,
+    shippingNotes: o.shippingNotes,
+    totalCents: o.totalCents,
+    subtotalCents: o.subtotalCents,
+    paidAt: o.paidAt ? o.paidAt.toISOString() : null,
+    createdAt: o.createdAt.toISOString(),
+    items: o.items.map((it) => ({
+      id: it.id,
+      sku: it.sku,
+      title: it.title,
+      variantLabel: it.variantLabel,
+      qty: it.qty,
+      unitPriceCents: it.unitPriceCents,
+      lineTotalCents: it.lineTotalCents,
+      imageUrl: it.imageUrl,
+    })),
+  }));
 
-    <div className="space-y-4">
+  // Calcolo Scorte Critiche
+  const catalog = (catalogRaw || []) as CatalogProduct[];
+  const skuMetaMap = new Map<string, { productTitle: string; variantLabel: string; category?: string }>();
+  const skus: string[] = [];
+
+  for (const p of catalog) {
+    for (const v of p.variants || []) {
+      if (!p?.id || !v?.id) continue;
+      const sku = makeInventorySku(p.id, v.id, v.sku);
+      skus.push(sku);
+      skuMetaMap.set(sku, {
+        productTitle: p.title || p.id,
+        variantLabel: v.label || v.id,
+        category: p.category,
+      });
+    }
+  }
+
+  const inventoryRows = await prisma.inventoryItem.findMany({
+    where: { sku: { in: skus } },
+    select: { sku: true, stock: true, updatedAt: true },
+  });
+
+  const inventoryMap = new Map<string, { stock: number; updatedAt: Date }>();
+  for (const row of inventoryRows) {
+    inventoryMap.set(row.sku, { stock: row.stock, updatedAt: row.updatedAt });
+  }
+
+  const lowStockItems: LowStockItem[] = [];
+  for (const sku of skus) {
+    const inv = inventoryMap.get(sku);
+    const stock = inv ? inv.stock : 0; // se non esiste riga, stock = 0
+    if (stock <= 5) {
+      const meta = skuMetaMap.get(sku);
+      lowStockItems.push({
+        sku,
+        productTitle: meta?.productTitle || sku,
+        variantLabel: meta?.variantLabel || "Standard",
+        category: meta?.category,
+        stock,
+        updatedAt: inv ? inv.updatedAt.toISOString() : now.toISOString(),
+      });
+    }
+  }
+
+  // Ordina le scorte: prima quelle a 0, poi per stock crescente
+  lowStockItems.sort((a, b) => a.stock - b.stock);
+
+  // Serializzazione Messaggi
+  const serializedMessages: SerializedMessage[] = unreadMessagesDb.map((m) => ({
+    id: m.id,
+    name: m.name,
+    email: m.email,
+    subject: m.subject,
+    message: m.message,
+    createdAt: m.createdAt.toISOString(),
+  }));
+
+  // Serializzazione Degustazioni
+  const serializedTastings: SerializedTasting[] = tastingsDb.map((t) => ({
+    id: t.id,
+    status: t.status as "PENDING" | "CONFIRMED" | "CANCELED",
+    slotStart: t.slotStart.toISOString(),
+    slotEnd: t.slotEnd.toISOString(),
+    tastingType: t.tastingType,
+    people: t.people,
+    children: t.children,
+    fullName: t.fullName,
+    email: t.email,
+    phone: t.phone,
+    notes: t.notes,
+  }));
+
+  return (
+    <div className="space-y-6">
       <PageHeader
-        title="Operatività"
-        subtitle="Tre numeri chiave per capire cosa fare adesso: spedire, recuperare ritardi e chiudere gli ordini IN ATTESA vecchi."
+        title="Centro Operativo & Evasione"
+        subtitle="Cockpit quotidiano delle priorità: ordini da preparare e spedire, scorte a rischio, messaggi clienti e visite."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <a
               href="/api/admin/print-todo"
               target="_blank"
               rel="noreferrer"
-              className="rounded-2xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm hover:bg-neutral-50"
+              className="rounded-2xl border border-neutral-900 bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-neutral-800 transition flex items-center gap-1.5"
             >
-              Stampa ordini da fare
+              <span>🖨️ Stampa Ordini da Fare</span>
             </a>
-
-
           </div>
         }
       />
 
-      {/* KPI Cards Grid */}
-      <div className="grid gap-3 md:grid-cols-3">
-        <KpiCard
-          title="Da spedire"
-          value={String(toShip)}
-          hint="Ordini PAGATI non spediti"
-          href="/admin/orders?status=PAGATO&shipped=no"
-          cta="Apri backlog"
-        />
-
-        <KpiCard
-          title="Da spedire > 48h"
-          value={String(toShipOld)}
-          hint="Pagati da oltre 48h"
-          href="/admin/orders?status=PAGATO&shipped=no"
-          cta="Vedi ritardi"
-        />
-
-        <KpiCard
-          title="IN ATTESA > 48h"
-          value={String(pendingOld)}
-          hint="Checkout in sospeso da troppo"
-          href="/admin/orders?status=IN_ATTESA"
-          cta="Vedi IN ATTESA"
-        />
-      </div>
-
-      {/* Quick links (solo cose utili quotidianamente) */}
-      <div className="grid gap-3 lg:grid-cols-3">
-        <QuickLink title="Ordini" desc="Lista completa e filtri" href="/admin/orders" />
-
-        <QuickLink title="Clienti" desc="Storico e recapiti" href="/admin/customers" />
-      </div>
+      <OperationsCockpit
+        initialOrders={serializedOrders}
+        initialLowStock={lowStockItems}
+        initialMessages={serializedMessages}
+        initialTastings={serializedTastings}
+        shippedTodayCount={shippedTodayCount}
+        pendingOldCount={pendingOldCount}
+        attentionOrdersCount={attentionOrdersCount}
+      />
     </div>
-  );
-}
-
-function KpiCard({
-  title,
-  value,
-  hint,
-  href,
-  cta,
-}: {
-  title: string;
-  value: string;
-  hint: string;
-  href: string;
-  cta: string;
-}) {
-  return (
-    <div className="group relative overflow-hidden rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
-        <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-neutral-200/40 blur-2xl" />
-      </div>
-
-      <div className="relative">
-        <div className="text-xs font-bold uppercase tracking-wide text-neutral-500">
-          {title}
-        </div>
-
-        <div className="mt-2 text-3xl font-extrabold tracking-tight text-neutral-900">
-          {value}
-        </div>
-
-        <div className="mt-1 text-sm text-neutral-600">
-          {hint}
-        </div>
-
-        <div className="mt-4">
-          <Link
-            href={href}
-            className="inline-flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm hover:bg-neutral-50"
-          >
-            {cta}
-            <span
-              aria-hidden
-              className="text-neutral-400 group-hover:text-neutral-600"
-            >
-              →
-            </span>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QuickLink({
-  title,
-  desc,
-  href,
-}: {
-  title: string;
-  desc: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-base font-extrabold text-neutral-900">
-            {title}
-          </div>
-          <div className="mt-1 text-sm text-neutral-600">
-            {desc}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm font-bold text-neutral-700 group-hover:bg-neutral-50">
-          Apri
-        </div>
-      </div>
-
-      <div className="mt-4 text-sm font-semibold text-neutral-400 group-hover:text-neutral-600">
-        Vai →
-      </div>
-    </Link>
   );
 }

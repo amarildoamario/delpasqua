@@ -98,12 +98,12 @@ export async function computeRiskScore(args: Args) {
 
     const count10m = cacheValid ? cached.count10m : await (async () => {
       const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000);
-      return args.prisma.order.count({ where: { ipAddress: ip, createdAt: { gte: tenMinAgo } } });
+      return args.prisma.order.count({ where: { ipAddress: ip, createdAt: { gte: tenMinAgo }, isTest: false } });
     })();
 
     const count1h = cacheValid ? cached.count1h : await (async () => {
       const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      return args.prisma.order.count({ where: { ipAddress: ip, createdAt: { gte: hourAgo } } });
+      return args.prisma.order.count({ where: { ipAddress: ip, createdAt: { gte: hourAgo }, isTest: false } });
     })();
 
     if (!cacheValid) {

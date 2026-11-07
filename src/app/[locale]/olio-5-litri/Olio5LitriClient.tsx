@@ -248,7 +248,7 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
               >
                 <div className="relative w-full h-full min-h-[300px] sm:min-h-[350px] lg:min-h-[450px] overflow-hidden rounded-[5px]">
                   <Image
-                    src="/products/EVO-latta-5lt.png"
+                    src="/products/EVO-latta-5lt-v2.webp"
                     alt="Latta Olio Extravergine Del Pasqua"
                     fill
                     sizes="(max-width: 1024px) 100vw, 40vw"

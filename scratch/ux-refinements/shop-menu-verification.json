@@ -1,0 +1,90 @@
+{
+  "homeTitles": [
+    "Olio EVO 500 ml",
+    "Il Cavaliere · Fruttato Intenso",
+    "Olio EVO Latta 750 ml",
+    "Il Musico · Fruttato Medio"
+  ],
+  "shopTitles": [
+    "Olio EVO 500 ml",
+    "Olio EVO Latta",
+    "La Dama · Fruttato Leggero",
+    "La Dama · Fruttato Leggero Latta",
+    "Il Musico · Fruttato Medio",
+    "Il Musico · Fruttato Medio Latta",
+    "Il Cavaliere · Fruttato Intenso",
+    "Il Cavaliere · Fruttato Intenso Latta",
+    "Olio Aromatizzato al Tartufo 500 ml",
+    "Olio Aromatizzato al Peperoncino 500 ml",
+    "Vino Vittoria 100% Sangiovese",
+    "Prodotto di Test",
+    "Olio Extravergine Toscano",
+    "Olio EVO Biologico",
+    "Nuovo Raccolto (Novello)",
+    "Latta 5 Litri"
+  ],
+  "hover": {
+    "translate": "0px -2px",
+    "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(31, 26, 23, 0.28) 0px 5px 14px 0px"
+  },
+  "animation": [
+    {
+      "text": "Home",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.08s",
+      "during": -6.64288,
+      "final": 0
+    },
+    {
+      "text": "Chi siamo",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.135s",
+      "during": -6.64288,
+      "final": 0
+    },
+    {
+      "text": "Shop",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.19s",
+      "during": -6.64288,
+      "final": 0
+    },
+    {
+      "text": "Frantoio",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.245s",
+      "during": -6.64288,
+      "final": 0
+    },
+    {
+      "text": "Degustazioni",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.3s",
+      "during": -6.64288,
+      "final": 0
+    },
+    {
+      "text": "Blog",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.355s",
+      "during": -6.64288,
+      "final": 0
+    },
+    {
+      "text": "Contatti",
+      "name": "mobile-menu-enter",
+      "duration": "0.62s",
+      "delay": "0.41s",
+      "during": -6.64288,
+      "final": 0
+    }
+  ],
+  "reducedMotion": true,
+  "errors": []
+}

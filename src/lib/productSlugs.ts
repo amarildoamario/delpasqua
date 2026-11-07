@@ -196,6 +196,32 @@ export function getCleanSize(variantId: string, locale: string) {
 
 export function translateVariantLabel(id: string, fallback: string, locale: string) {
   const targetLocale = locale === "us" ? "en" : locale;
+  const isCan = /latta|can|kanister|blik|dunk|kanne|lata|bidon/i.test(fallback);
+  const canLabels: Record<string, Record<string, string>> = {
+    "750ml": {
+      it: "Latta 750 ml",
+      en: "Can 750 ml",
+      de: "Kanister 750 ml",
+      nl: "Blik 750 ml",
+      da: "Dunk 750 ml",
+      no: "Kanne 750 ml",
+      es: "Lata 750 ml",
+      fr: "Bidon 750 ml",
+    },
+    "1lt": {
+      it: "Latta 1 L",
+      en: "Can 1 L",
+      de: "Kanister 1 L",
+      nl: "Blik 1 L",
+      da: "Dunk 1 L",
+      no: "Kanne 1 L",
+      es: "Lata 1 L",
+      fr: "Bidon 1 L",
+    },
+  };
+  if (isCan && canLabels[id]) {
+    return canLabels[id][targetLocale] ?? canLabels[id][locale] ?? fallback;
+  }
   const labels: Record<string, Record<string, string>> = {
     "500ml": {
       it: "Bottiglia 500 ml",

@@ -45,7 +45,9 @@ export async function applyPaidOrderInvariantsTx(
 
   let currentOrderNumber = order.orderNumber;
   if (!currentOrderNumber) {
-    currentOrderNumber = await allocateOrderNumberTx(tx);
+    currentOrderNumber = order.isTest
+      ? `TEST-${order.id.slice(-12).toUpperCase()}`
+      : await allocateOrderNumberTx(tx);
   }
 
   await commitReservedToSoldOrThrow(tx, {
@@ -85,7 +87,7 @@ export async function applyPaidOrderInvariantsTx(
     include: { items: true },
   });
 
-  if (order.promotionCode) {
+  if (order.promotionCode && !order.isTest) {
     await tx.promotion.update({
       where: { code: order.promotionCode },
       data: {
@@ -101,7 +103,7 @@ export async function applyPaidOrderInvariantsTx(
     select: { id: true },
   });
 
-  if (!alreadyAssigned) {
+  if (!alreadyAssigned && !order.isTest) {
     const invoiceNumber = await allocateInvoiceNumberTx(tx);
 
     await tx.orderEvent.create({

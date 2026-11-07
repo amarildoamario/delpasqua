@@ -15,6 +15,7 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 async function createTestOrder(prisma, orderId, stripeSessionId) {
   const ikey = `test-stripe-ord-${randomToken(16)}`;
+  const publicToken = `pub_${randomToken(16)}`;
   const now = new Date();
 
   // Insert mock order that corresponds to the stripe session
@@ -23,13 +24,13 @@ async function createTestOrder(prisma, orderId, stripeSessionId) {
       id, "idempotencyKey", status, currency,
       "subtotalCents", "vatCents", "shippingCents", "totalCents",
       "fullName", email, address, city, zip, "updatedAt",
-      "stripeSessionId"
+      "stripeSessionId", "orderPublicToken", "isTest"
     ) VALUES (
       ${orderId}, ${ikey}, 'PENDING', 'EUR',
       1800, 200, 0, 2000,
       'Stripe Webhook Buyer', 'stripe-bot@gestionale.local',
       'Stripe Street 42', 'StripeCity', '12345', ${now},
-      ${stripeSessionId}
+      ${stripeSessionId}, ${publicToken}, true
     )
   `;
 }

@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { readPublicCatalog, readPublicCatalogWithMerch } from "@/lib/server/catalog";
-import { findProductBySlug, getLocalizedProductSlug } from "@/lib/productSlugs";
+import { findProductBySlug, getLocalizedProductSlug, translateVariantLabel, translateVariantTitle } from "@/lib/productSlugs";
 import { makeInventorySku } from "@/lib/inventorySku";
 import { prisma } from "@/lib/server/prisma";
 import { SHIPPING_RULES } from "@/lib/shippingConfig";
@@ -58,61 +58,6 @@ type Product = {
 
 function hasTranslation(t: { has?: (key: string) => boolean }, key: string) {
   return typeof t.has === "function" && t.has(key);
-}
-
-function translateVariantLabel(id: string, fallback: string, locale: string) {
-  const labels: Record<string, Record<string, string>> = {
-    "500ml": {
-      it: "Bottiglia 500 ml",
-      en: "Bottle 500 ml",
-      de: "Flasche 500 ml",
-      nl: "Fles 500 ml",
-      da: "Flaske 500 ml",
-      no: "Flaske 500 ml",
-    },
-    "750ml": {
-      it: "Bottiglia 750 ml",
-      en: "Bottle 750 ml",
-      de: "Flasche 750 ml",
-      nl: "Fles 750 ml",
-      da: "Flaske 750 ml",
-      no: "Flaske 750 ml",
-    },
-    "1lt": {
-      it: "Bottiglia 1 L",
-      en: "Bottle 1 L",
-      de: "Flasche 1 L",
-      nl: "Fles 1 L",
-      da: "Flaske 1 L",
-      no: "Flaske 1 L",
-    },
-    "3lt": {
-      it: "Latta 3 L",
-      en: "Can 3 L",
-      de: "Kanister 3 L",
-      nl: "Blik 3 L",
-      da: "Dunk 3 L",
-      no: "Kanne 3 L",
-    },
-    "5lt": {
-      it: "Latta 5 L",
-      en: "Can 5 L",
-      de: "Kanister 5 L",
-      nl: "Blik 5 L",
-      da: "Dunk 5 L",
-      no: "Kanne 5 L",
-    },
-    bottiglia: {
-      it: "Bottiglia",
-      en: "Bottle",
-      de: "Flasche",
-      nl: "Fles",
-      da: "Flaske",
-      no: "Flaske",
-    },
-  };
-
-  return labels[id]?.[locale] ?? fallback;
 }
 
 function translateCategory(value: string | undefined, locale: string) {
@@ -259,6 +204,7 @@ async function ProductPage({
     description: locale === "it" ? product.description : (hasTranslation(tp, `${product.id}.description`) ? tp(`${product.id}.description`) : product.description),
     variants: product.variants.map((variant) => ({
       ...variant,
+      title: variant.title ? translateVariantTitle(variant.id, variant.title, hasTranslation(tp, `${product.id}.title`) ? tp(`${product.id}.title`) : product.title, locale) : undefined,
       label: locale === "it" ? variant.label : (hasTranslation(tp, `${product.id}.variants.${variant.id}`) ? tp(`${product.id}.variants.${variant.id}`) : translateVariantLabel(variant.id, variant.label, locale)),
       description: locale === "it" ? variant.description : (hasTranslation(tp, `${product.id}.variantDescriptions.${variant.id}`) ? tp(`${product.id}.variantDescriptions.${variant.id}`) : variant.description),
     })),
@@ -280,6 +226,7 @@ async function ProductPage({
         : p.description ?? "",
       variants: p.variants.map((variant) => ({
         ...variant,
+        title: variant.title ? translateVariantTitle(variant.id, variant.title, hasTranslation(tp, `${p.id}.title`) ? tp(`${p.id}.title`) : p.title, locale) : undefined,
         label: hasTranslation(tp, `${p.id}.variants.${variant.id}`)
           ? tp(`${p.id}.variants.${variant.id}`)
           : translateVariantLabel(variant.id, variant.label, locale),

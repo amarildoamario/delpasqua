@@ -205,19 +205,23 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Ekstra Jomfru - Lett Fruktig",
+            "title": "La Dama - Lett Fruktig",
             "subtitle": "Ekstra jomfru olivenolje",
             "description": "Lett Fruktig er delikat, mild og lett ? bruke: den l?fter rettene uten ? dominere dem, ideell til fisk, gr?nnsaker og salater.",
             "badge": "KLASSIKER",
             "variants": {
-                "500ml": "Flaske 500 ml"
+                "500ml": "Flaske 500 ml",
+                "750ml": "Flaske 750 ml",
+                "1lt": "Flaske 1 L"
             },
             "variantDescriptions": {
-                "500ml": "Flasken Lett Fruktig p? 500 ml gir en mild og aromatisk olje p? bordet, perfekt for elegante og diskrete smakstillegg."
+                "500ml": "Flasken Lett Fruktig p? 500 ml gir en mild og aromatisk olje p? bordet, perfekt for elegante og diskrete smakstillegg.",
+                "750ml": "Flasken Lett Fruktig på 750 ml forener eleganse og kapasitet: ideell på bordet til fisk, grønnsaker og milde retter.",
+                "1lt": "Flasken Lett Fruktig på 1 L er det ideelle familieformatet til hverdagsbruk: myk, aromatisk og balansert."
             }
         },
         "fruttato-medio": {
-            "title": "Ekstra Jomfru - Medium Fruktig",
+            "title": "Il Musico - Medium Fruktig",
             "subtitle": "Ekstra jomfru olivenolje",
             "description": "Middels Fruktig er den mest allsidige balansen: urteaktig duft, fyldig smak og en harmonisk avslutning.",
             "badge": "KLASSIKER",
@@ -233,7 +237,7 @@
             }
         },
         "fruttato-intenso": {
-            "title": "Ekstra Jomfru - Intens Fruktig",
+            "title": "Il Cavaliere - Intens Fruktig",
             "subtitle": "Ekstra jomfru olivenolje",
             "description": "Intens Fruktig har tydelig karakter, gr?nne toner og en mer markant avslutning: ideell for retter med kraftig smak.",
             "badge": "KLASSIKER",
@@ -279,53 +283,61 @@
             "badge": "KANNE",
             "variants": {
                 "750ml": "Kanne 750 ml",
+                "1lt": "Kanne 1 L",
                 "3lt": "Kanne 3 L",
                 "5lt": "Kanne 5 L"
             },
             "variantDescriptions": {
                 "750ml": "EVO-kannen p? 750 ml er kompakt og s?rpreget: et originalt format for praktisk bruk, god beskyttelse og hverdagsmat.",
+                "1lt": "EVO-kannen på 1 L kombinerer praktisk hverdagsbruk med optimal beskyttelse mot lys på kjøkkenet.",
                 "3lt": "EVO-kannen p? 3 L er laget for deg som bruker olivenolje hver dag og vil ha en praktisk beholdning beskyttet mot lys.",
                 "5lt": "EVO-kannen p? 5 L er familieformatet for alltid ? ha en balansert, aromatisk og allsidig extra virgin olivenolje tilgjengelig."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Extra Virgin - Lett Fruktig Kanne",
+            "title": "La Dama - Lett Fruktig Kanne",
             "subtitle": "Lett fruktig extra virgin olivenolje i kanne",
             "description": "Lett Fruktig i kanne bevarer sin delikate profil i et praktisk, beskyttet og ?konomisk hverdagsformat.",
             "badge": "KANNE",
             "variants": {
+                "1lt": "Kanne 1 L",
                 "3lt": "Kanne 3 L",
                 "5lt": "Kanne 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Kannen Lett Fruktig på 1 L beskytter oljens milde aroma mot lys i et hendig hverdagsformat.",
                 "3lt": "Kannen Lett Fruktig p? 3 L er ideell for en daglig beholdning av mild olje til fisk, gr?nnsaker og friske retter.",
                 "5lt": "Kannen Lett Fruktig p? 5 L gir mer frihet p? kj?kkenet med en myk, balansert olje som er lett ? kombinere."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Extra Virgin - Middels Fruktig Kanne",
+            "title": "Il Musico - Medium Fruktig Kanne",
             "subtitle": "Middels fruktig extra virgin olivenolje i kanne",
             "description": "Middels Fruktig i kanne er et praktisk valg for hyppig bruk, med balansert smak og bedre beskyttelse mot lys.",
             "badge": "KANNE",
             "variants": {
+                "1lt": "Kanne 1 L",
                 "3lt": "Kanne 3 L",
                 "5lt": "Kanne 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Kannen Middels Fruktig på 1 L gir den rette balansen mellom brukervennlighet og lysbeskyttelse på kjøkkenet.",
                 "3lt": "Kannen Middels Fruktig p? 3 L er laget for aktive kj?kken: allsidig, balansert og praktisk til matlaging og finish.",
                 "5lt": "Kannen Middels Fruktig p? 5 L er lagerformatet for deg som alltid vil ha en p?litelig og aromatisk olivenolje klar."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Extra Virgin - Intens Fruktig Kanne",
+            "title": "Il Cavaliere - Intens Fruktig Kanne",
             "subtitle": "Intens fruktig extra virgin olivenolje i kanne",
             "description": "Intens Fruktig i kanne bevarer styrke og aroma i et praktisk format for hyppig bruk.",
             "badge": "KANNE",
             "variants": {
+                "1lt": "Kanne 1 L",
                 "3lt": "Kanne 3 L",
                 "5lt": "Kanne 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Kannen Intens Fruktig på 1 L bevarer all kraften og de grønne tonene i vår mest karakterfulle olivenolje beskyttet mot lys.",
                 "3lt": "Kannen Intens Fruktig p? 3 L er en smart beholdning for deg som s?ker en fyldig, gr?nn og vedvarende olje.",
                 "5lt": "Kannen Intens Fruktig p? 5 L er det store formatet for kj?kken som alltid vil ha en kraftig og gjenkjennelig olivenolje tilgjengelig."
             }
@@ -848,8 +860,8 @@
                     "Ideell til fiskeretter, hvitt kjøtt og friske salater uten å overvelde smaken av råvarene."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml, 750ml, 1L",
+                    "Kanne: 1L, 3L, 5L"
                 ],
                 "placeholder": "BILDE — LETT FRUKTIG"
             },
@@ -861,8 +873,8 @@
                     "Perfekt for supper, grønnsaker og rødt kjøtt. En allsidig olje for enhver anledning."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml, 750ml, 1L",
+                    "Kanne: 1L, 3L, 5L"
                 ],
                 "placeholder": "BILDE — MEDIUM FRUKTIG"
             },
@@ -874,8 +886,8 @@
                     "Anbefales til retter med sterk smak, stekt kjøtt og belgfrukter. En opplevelse for ekte kjennere."
                 ],
                 "formats": [
-                    "Flaske: 250ml, 500ml, 750ml",
-                    "Dunk: 3L, 5L"
+                    "Flaske: 500ml, 750ml, 1L",
+                    "Kanne: 1L, 3L, 5L"
                 ],
                 "placeholder": "BILDE — INTENS FRUKTIG"
             },
@@ -888,7 +900,7 @@
                 ],
                 "formats": [
                     "Flaske: 500ml",
-                    "Dunk: 3/5L"
+                    "Kanne: 750ml, 1L, 3L, 5L"
                 ],
                 "placeholder": "BILDE — EVO"
             },

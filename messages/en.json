@@ -206,19 +206,23 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Extra Virgin - Light Fruity",
+            "title": "La Dama - Light Fruity",
             "subtitle": "Extra virgin olive oil",
             "description": "Light Fruity is delicate, soft and immediate: it enhances dishes without covering them, ideal for fish, vegetables, salads and refined recipes.",
             "badge": "CLASSIC",
             "variants": {
-                "500ml": "500 ml bottle"
+                "500ml": "500 ml bottle",
+                "750ml": "750 ml bottle",
+                "1lt": "1 L bottle"
             },
             "variantDescriptions": {
-                "500ml": "The 500 ml Light Fruity bottle brings a gentle, aromatic olive oil to the table, perfect for elegant and subtle seasoning."
+                "500ml": "The 500 ml Light Fruity bottle brings a gentle, aromatic olive oil to the table, perfect for elegant and subtle seasoning.",
+                "750ml": "The 750 ml Light Fruity bottle combines elegance and capacity: the ideal Tuscan extra virgin olive oil for fish, vegetables and refined recipes.",
+                "1lt": "The 1 L Light Fruity bottle is the ideal everyday family format: a soft, gentle extra virgin olive oil for light, fragrant seasoning."
             }
         },
         "fruttato-medio": {
-            "title": "Extra Virgin - Medium Fruity",
+            "title": "Il Musico - Medium Fruity",
             "subtitle": "Extra virgin olive oil",
             "description": "Medium Fruity is the most versatile balance: grassy aromas, full taste and a harmonious finish, suitable both raw and in cooking.",
             "badge": "CLASSIC",
@@ -234,7 +238,7 @@
             }
         },
         "fruttato-intenso": {
-            "title": "Extra Virgin - Intense Fruity",
+            "title": "Il Cavaliere - Intense Fruity",
             "subtitle": "Extra virgin olive oil",
             "description": "Intense Fruity has a bold character, green notes and a more marked finish: ideal for those who want an olive oil that stands out.",
             "badge": "CLASSIC",
@@ -280,53 +284,61 @@
             "badge": "CAN",
             "variants": {
                 "750ml": "750 ml can",
+                "1lt": "1 L can",
                 "3lt": "3 L can",
                 "5lt": "5 L can"
             },
             "variantDescriptions": {
                 "750ml": "The 750 ml EVO can is compact and distinctive: an original format for practical storage, better protection and everyday use.",
+                "1lt": "The 1 L EVO can combines everyday practicality with full protection from light: the ideal size to keep at hand in the kitchen.",
                 "3lt": "The 3 L EVO can is made for daily olive oil users who want a practical pantry size protected from light.",
                 "5lt": "The 5 L EVO can is the family format for keeping a balanced, aromatic and versatile extra virgin olive oil always available."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Extra Virgin - Light Fruity Can",
+            "title": "La Dama - Light Fruity Can",
             "subtitle": "Light fruity extra virgin olive oil in can",
             "description": "Light Fruity in can keeps its delicate profile in a practical, protected and convenient everyday format.",
             "badge": "CAN",
             "variants": {
+                "1lt": "1 L can",
                 "3lt": "3 L can",
                 "5lt": "5 L can"
             },
             "variantDescriptions": {
+                "1lt": "The 1 L Light Fruity can protects the delicate aromas of the oil from light in an agile, convenient everyday kitchen format.",
                 "3lt": "The 3 L Light Fruity can is ideal for anyone who wants a daily supply of delicate olive oil for fish, vegetables and fresh dishes.",
                 "5lt": "The 5 L Light Fruity can gives more autonomy in the kitchen while keeping a soft, balanced and easy-to-pair profile."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Extra Virgin - Medium Fruity Can",
+            "title": "Il Musico - Medium Fruity Can",
             "subtitle": "Medium fruity extra virgin olive oil in can",
             "description": "Medium Fruity in can is the practical choice for frequent use, with balanced flavor and better protection from light.",
             "badge": "CAN",
             "variants": {
+                "1lt": "1 L can",
                 "3lt": "3 L can",
                 "5lt": "5 L can"
             },
             "variantDescriptions": {
+                "1lt": "The 1 L Medium Fruity can offers the right daily balance between convenience and light protection, ideal both raw and in cooking.",
                 "3lt": "The 3 L Medium Fruity can is made for active kitchens: versatile, balanced and convenient for dressing, cooking and finishing dishes.",
                 "5lt": "The 5 L Medium Fruity can is the pantry format for those who never want to run out of a reliable, aromatic extra virgin olive oil."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Extra Virgin - Intense Fruity Can",
+            "title": "Il Cavaliere - Intense Fruity Can",
             "subtitle": "Intense fruity extra virgin olive oil in can",
             "description": "Intense Fruity in can preserves strength and aromas in a practical format for frequent use.",
             "badge": "CAN",
             "variants": {
+                "1lt": "1 L can",
                 "3lt": "3 L can",
                 "5lt": "5 L can"
             },
             "variantDescriptions": {
+                "1lt": "The 1 L Intense Fruity can preserves all the energy and green notes of our boldest extra virgin olive oil away from light.",
                 "3lt": "The 3 L Intense Fruity can is a smart supply for those seeking a full, green and persistent olive oil for structured dishes.",
                 "5lt": "The 5 L Intense Fruity can is the generous format for kitchens that always want a powerful, recognizable extra virgin olive oil at hand."
             }
@@ -848,7 +860,7 @@
                     "Ideal raw on light dishes, fish, vegetables, and salads."
                 ],
                 "formats": [
-                    "Bottle: 250/500/750",
+                    "Bottle: 500/750ml/1L",
                     "Can: 1/3/5L"
                 ],
                 "placeholder": "IMAGE — LIGHT FRUITY"
@@ -861,7 +873,7 @@
                     "The olives are harvested before they reach full ripeness."
                 ],
                 "formats": [
-                    "Bottle: 250/500/750",
+                    "Bottle: 500/750ml/1L",
                     "Can: 1/3/5L"
                 ],
                 "placeholder": "IMAGE — INTENSE FRUITY"
@@ -874,7 +886,7 @@
                     "Green color with yellow veins."
                 ],
                 "formats": [
-                    "Bottle: 250/500/750/1000ml",
+                    "Bottle: 500/750ml/1L",
                     "Can: 1/3/5L"
                 ],
                 "placeholder": "IMAGE — MEDIUM FRUITY"
@@ -887,7 +899,7 @@
                 ],
                 "formats": [
                     "Bottle: 500ml",
-                    "Can: 3/5L"
+                    "Can: 750ml/1/3/5L"
                 ],
                 "placeholder": "IMAGE — EVO"
             },

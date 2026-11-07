@@ -4,13 +4,20 @@ Data audit: 2026-05-29
 
 ## Agent Status
 
-- FileStatus: PARTIAL
-- LastVerified: 2026-06-20
+- FileStatus: ACTIVE
+- LastVerified: 2026-08-05
 - OpenItems: 1
-- AgentAction: Aggiunto controllo go-live bloccante per endpoint Stripe live, dominio finale e signing secret produzione.
-- Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02; resta da verificare la configurazione reale Stripe/Vercel al go-live.
+- AgentAction: attendere lo spostamento di `delpasqua.com` dal sito WordPress al deployment production della nuova app; solo dopo configurare e collaudare il webhook Stripe live.
+- Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02. Il task go-live e` aperto ma intenzionalmente bloccato dal dominio, che il 2026-08-05 punta ancora al sito WordPress. I nuovi ordini composti esclusivamente da `prodotto-test` sono marcati `isTest`, separati dagli ordini commerciali ed esclusi da metriche, clienti, report, conti ed export operativi. Checkout Session e PaymentIntent ricevono `orderType=test`. Non viene eseguito alcun backfill o tentativo di riconciliazione dei vecchi pagamenti presenti soltanto in Stripe.
 
 ## [⏳ TODO] P0 Go-live - Riallineare Stripe webhook e dominio production
+
+Stato verificato il 2026-08-05:
+- `https://delpasqua.com/` risponde dal sito WordPress corrente (`nginx` e header WordPress), non dalla nuova app.
+- `https://delpasqua.com/api/webhooks/stripe` restituisce HTTP 404 perche` il dominio non e` ancora collegato al deployment della nuova app.
+- `https://delpasqua.vercel.app/api/webhooks/stripe` restituisce HTTP 405 su richiesta GET: la route e` presente nel deployment e accetta correttamente solo POST.
+- Non configurare il webhook Stripe live sul dominio finale e non eseguire pagamenti live finche` lo spostamento del dominio non e` stato completato.
+- Questa attesa e` operativa, non richiede al momento modifiche al codice Stripe.
 
 Problema:
 - Stripe live ha segnalato errori sull'endpoint `https://delpasqua.com/api/webhooks/stripe`.

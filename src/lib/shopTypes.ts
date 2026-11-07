@@ -29,6 +29,8 @@ export type Product = {
   excludeFromSeo?: boolean;
   isPublished?: boolean;
   isPurchasable?: boolean;
+  isTestProduct?: boolean;
+  homeVariantId?: string;
 };
 
 export type CartLine = {

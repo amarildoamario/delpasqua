@@ -15,12 +15,14 @@ type PurchaseItem = {
 export default function SuccessTrackPurchase({
   orderId,
   isPaid,
+  isTest,
   totalCents,
   currency,
   items,
 }: {
   orderId: string;
   isPaid: boolean;
+  isTest: boolean;
   totalCents: number;
   currency: string; // "eur"
   items: PurchaseItem[];
@@ -28,7 +30,7 @@ export default function SuccessTrackPurchase({
   const fired = useRef(false);
 
   useEffect(() => {
-    if (!isPaid) return;
+    if (!isPaid || isTest) return;
     if (fired.current) return;
     fired.current = true;
 
@@ -50,7 +52,7 @@ export default function SuccessTrackPurchase({
         })),
       },
     });
-  }, [orderId, isPaid, totalCents, currency, items]);
+  }, [orderId, isPaid, isTest, totalCents, currency, items]);
 
   return null;
 }

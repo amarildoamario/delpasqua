@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { ArrowRight, Leaf, ShieldCheck, ShoppingBag, Droplet, Award, Sprout, CheckCircle2 } from "lucide-react";
 import Footer from "@/components/Footer";
+import { isUniformProductImage } from "@/lib/productImageFit";
 
 export type LandingPageContent = {
   kicker: string;
@@ -301,7 +302,7 @@ export default function SeoLandingPage({ locale, content, products, layoutVarian
                         alt={product.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        className={`${isUniformProductImage(product.imageSrc) ? "object-contain" : "object-cover"} transition-transform duration-500 group-hover:scale-[1.03]`}
                       />
                     </div>
                     <div className="p-5 flex-1 flex flex-col justify-between">

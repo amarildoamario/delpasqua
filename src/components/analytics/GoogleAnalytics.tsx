@@ -24,9 +24,17 @@ export default function GoogleAnalytics() {
           function gtag(){dataLayer.push(arguments);}
           window.gtag = gtag;
 
+          // I collaudi controllati possono impostare il cookie internal=1.
+          // In quel caso GA4 viene disabilitato completamente per questo browser.
+          var testMode = new URLSearchParams(window.location.search).get('test_mode');
+          if (testMode === '1') document.cookie = 'internal=1; Max-Age=86400; Path=/; SameSite=Lax; Secure';
+          if (testMode === '0') document.cookie = 'internal=; Max-Age=0; Path=/; SameSite=Lax; Secure';
+          var internalTraffic = testMode === '1' || (testMode !== '0' && /(?:^|;\\s*)internal=1(?:;|$)/.test(document.cookie));
+          if (internalTraffic) window['ga-disable-${GA_ID}'] = true;
+
           // Consent Mode (GDPR friendly)
           // Default: denied. Se trovi cookie analytics_consent=1 => granted.
-          var consentGranted = /(?:^|;\\s*)analytics_consent=1(?:;|$)/.test(document.cookie);
+          var consentGranted = !internalTraffic && /(?:^|;\\s*)analytics_consent=1(?:;|$)/.test(document.cookie);
           gtag('consent', 'default', {
             ad_storage: 'denied',
             analytics_storage: consentGranted ? 'granted' : 'denied',

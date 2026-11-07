@@ -4,11 +4,12 @@ Data audit: 2026-05-29
 
 ## Agent Status
 
-- FileStatus: ACTIVE
-- LastVerified: 2026-06-05
-- OpenItems: 1
-- AgentAction: questo file ha un solo task vivo; il filtro pubblico prodotti e` stato chiuso, resta soprattutto il tema di copy/regole duplicate.
-- Note: gli open item qui sono piu` di modellazione dati/catalogo e copy commerciale che di routing puro. Le verifiche SEO manuali di go-live stanno in `docs/to_check_live/README.md` e nel file `docs/to_do_migration_SEO.md`.
+- FileStatus: COMPLETED
+- LastVerified: 2026-07-10
+- OpenItems: 0
+- ArchiveNote: tutti i task di questo file sono `RISOLTO`; file archiviato. Le verifiche production restano nelle checklist dedicate.
+- AgentAction: nessuna azione aperta; filtro prodotti pubblici, routing checkout localizzato e centralizzazione delle regole commerciali risultano risolti.
+- Note: le verifiche SEO manuali di go-live stanno in `docs/to_check_live/README.md` e nel file `docs/to_do_migration_SEO.md`.
 
 ## [RISOLTO] P1 - Search Console conferma scansione di URL legacy/di transizione
 

@@ -83,18 +83,26 @@ export function getCatalogPath() {
   return path.join(process.cwd(), "src", "db", "products.json");
 }
 
-export const readCatalog = cache(
-  safeUnstableCache(
+// Include the file revision in both caches: direct catalog edits and deployments
+// must not reuse the previous images for an hour until tag revalidation happens.
+const readCatalogRevision = cache(async () => {
+  const stat = await fs.stat(getCatalogPath());
+  return `${stat.mtimeMs}:${stat.ctimeMs}:${stat.size}`;
+});
+
+export const readCatalog = cache(async () => {
+  const revision = await readCatalogRevision();
+  return safeUnstableCache(
     async (): Promise<CatalogProduct[]> => {
       const filePath = getCatalogPath();
       const raw = await fs.readFile(filePath, "utf8");
       const json: unknown = JSON.parse(raw);
       return Array.isArray(json) ? (json as CatalogProduct[]) : [];
     },
-    ["catalog-raw"],
+    ["catalog-raw", revision],
     { tags: ["catalog"], revalidate: 3600 }
-  )
-);
+  )();
+});
 
 export function isPublishedCatalogProduct(product: CatalogProduct | null | undefined) {
   if (!product) return false;
@@ -408,13 +416,14 @@ async function readCatalogWithMerchImpl(): Promise<CatalogProduct[]> {
   });
 }
 
-export const readCatalogWithMerch = cache(
-  safeUnstableCache(
+export const readCatalogWithMerch = cache(async () => {
+  const revision = await readCatalogRevision();
+  return safeUnstableCache(
     readCatalogWithMerchImpl,
-    ["catalog-merch"],
+    ["catalog-merch", revision],
     { tags: ["catalog"], revalidate: 3600 }
-  )
-);
+  )();
+});
 
 export async function readPublicCatalogWithMerch(): Promise<CatalogProduct[]> {
   return filterPublicCatalog(await readCatalogWithMerch());

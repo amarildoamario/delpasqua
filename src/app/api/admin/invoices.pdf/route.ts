@@ -155,7 +155,7 @@ export async function GET(req: Request) {
   endExclusive.setDate(end.getDate() + 1);
 
 type OrderWhereInput = NonNullable<Parameters<typeof prisma.order.findMany>[0]>["where"];
-const where: NonNullable<OrderWhereInput> = {};
+const where: NonNullable<OrderWhereInput> = { isTest: false };
 
 if (mode === "shipping") {
   // ✅ stesso set della pagina Spedizioni (da fare)
@@ -218,4 +218,3 @@ if (mode === "shipping") {
     },
   }));
 }
-

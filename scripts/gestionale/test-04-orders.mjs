@@ -15,6 +15,8 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 async function createTestOrder(prisma, randomToken) {
   const id = crypto.randomUUID();
   const ikey = `test-order-${randomToken(16)}`;
+  const publicToken = `pub_${randomToken(16)}`;
+  const stripeSessionId = `cs_test_${randomToken(16)}`;
   const now = new Date();
 
   // Use raw SQL to bypass the `promotionCode` column in schema.prisma
@@ -23,12 +25,14 @@ async function createTestOrder(prisma, randomToken) {
     INSERT INTO "Order" (
       id, "idempotencyKey", status, currency,
       "subtotalCents", "vatCents", "shippingCents", "totalCents",
-      "fullName", email, address, city, zip, "updatedAt"
+      "fullName", email, address, city, zip, "updatedAt",
+      "orderPublicToken", "stripeSessionId"
     ) VALUES (
       ${id}, ${ikey}, 'PENDING', 'EUR',
       900, 100, 0, 1000,
       'Test Orders', 'test-orders@gestionale.local',
-      'Via Test 1', 'TestCity', '00100', ${now}
+      'Via Test 1', 'TestCity', '00100', ${now},
+      ${publicToken}, ${stripeSessionId}
     )
   `;
 
@@ -39,18 +43,22 @@ async function createTestPaidOrder(prisma, randomToken) {
   const id = crypto.randomUUID();
   const ikey = `test-order-${randomToken(16)}`;
   const orderNumber = `DP-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+  const publicToken = `pub_${randomToken(16)}`;
+  const stripeSessionId = `cs_test_${randomToken(16)}`;
   const now = new Date();
 
   await prisma.$executeRaw`
     INSERT INTO "Order" (
       id, "idempotencyKey", status, currency,
       "subtotalCents", "vatCents", "shippingCents", "totalCents",
-      "fullName", email, address, city, zip, "updatedAt", "orderNumber"
+      "fullName", email, address, city, zip, "updatedAt", "orderNumber",
+      "orderPublicToken", "stripeSessionId", "paidAt"
     ) VALUES (
       ${id}, ${ikey}, 'PAID', 'EUR',
       900, 100, 0, 1000,
       'Test Progress Flow', 'test-progress@gestionale.local',
-      'Via Test 2', 'TestCity2', '00200', ${now}, ${orderNumber}
+      'Via Test 2', 'TestCity2', '00200', ${now}, ${orderNumber},
+      ${publicToken}, ${stripeSessionId}, ${now}
     )
   `;
 

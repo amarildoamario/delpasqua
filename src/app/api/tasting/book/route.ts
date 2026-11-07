@@ -6,7 +6,6 @@ import { getTastingTypes } from "@/lib/tasting/slots";
 import { sendTastingBookingAdminEmail } from "@/lib/server/tastingEmail";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
-import { TASTING_CHECKOUT_PAYMENT_METHOD_TYPES } from "@/lib/paymentMethods";
 
 export const dynamic = "force-dynamic";
 
@@ -187,7 +186,6 @@ export async function POST(req: Request) {
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        payment_method_types: [...TASTING_CHECKOUT_PAYMENT_METHOD_TYPES],
         customer_email: data.email.trim().toLowerCase(),
         line_items: lineItems,
         success_url: `${appUrl}/degustazioni?success=true&booking_id=${booking.id}`,

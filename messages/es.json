@@ -1,5 +1,5 @@
 {
-  "TastingsPage": {
+    "TastingsPage": {
         "metadata": {
             "title": "Cata de aceite de oliva virgen extra en Toscana | Frantoio del Pasqua Arezzo",
             "description": "Descubra los verdaderos sabores del aceite de oliva virgen extra toscano. Reserve una cata de aceite de oliva virgen extra en el Frantoio del Pasqua en Monte San Savino, Arezzo.",
@@ -84,7 +84,7 @@
             "a4": "Por supuesto. Puede comprar nuestro aceite AOVE prensado en frío directamente en nuestra tienda de la granja. Un recuerdo perfecto y exclusivo de la excelencia de Arezzo."
         }
     },
-  "TastingsCalendar": {
+    "TastingsCalendar": {
         "loading": "Cargando...",
         "today": "HOY",
         "no_slots": "Sin horarios",
@@ -136,7 +136,7 @@
             "evening": "Tarde"
         }
     },
-  "Common": {
+    "Common": {
         "navbar": {
             "home": "Inicio",
             "about_us": "Sobre nosotros",
@@ -192,7 +192,7 @@
             }
         }
     },
-  "Products": {
+    "Products": {
         "evo": {
             "title": "Virgen Extra - AOVE",
             "subtitle": "Aceite de oliva virgen extra",
@@ -206,19 +206,23 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Virgen Extra - Frutado Ligero",
+            "title": "La Dama - Frutado Ligero",
             "subtitle": "Aceite de oliva virgen extra",
             "description": "El Frutado Ligero es delicado, suave e inmediato: realza los platos sin cubrirlos, ideal para pescados, verduras, ensaladas y recetas refinadas.",
             "badge": "CLÁSICO",
             "variants": {
-                "500ml": "Botella de 500 ml"
+                "500ml": "Botella de 500 ml",
+                "750ml": "Botella de 750 ml",
+                "1lt": "Botella de 1 L"
             },
             "variantDescriptions": {
-                "500ml": "La botella de Frutado Ligero de 500 ml aporta a la mesa un aceite de oliva suave y aromático, perfecto para un aderezo elegante y sutil."
+                "500ml": "La botella de Frutado Ligero de 500 ml aporta a la mesa un aceite de oliva suave y aromático, perfecto para un aderezo elegante y sutil.",
+                "750ml": "La botella Frutado Ligero de 750 ml une elegancia y capacidad: ideal en mesa para pescados, verduras y platos delicados.",
+                "1lt": "La botella Frutado Ligero de 1 L es el formato familiar ideal para el uso diario: suave, aromático y equilibrado."
             }
         },
         "fruttato-medio": {
-            "title": "Virgen Extra - Frutado Medio",
+            "title": "Il Musico - Frutado Medio",
             "subtitle": "Aceite de oliva virgen extra",
             "description": "El Frutado Medio es el equilibrio más versátil: aromas herbáceos, sabor pleno y un final armonioso, adecuado tanto en crudo como para cocinar.",
             "badge": "CLÁSICO",
@@ -234,7 +238,7 @@
             }
         },
         "fruttato-intenso": {
-            "title": "Virgen Extra - Frutado Intenso",
+            "title": "Il Cavaliere - Frutado Intenso",
             "subtitle": "Aceite de oliva virgen extra",
             "description": "El Frutado Intenso tiene un carácter audaz, notas verdes y un final más marcado: ideal para quienes buscan un aceite de oliva que destaque.",
             "badge": "CLÁSICO",
@@ -280,59 +284,67 @@
             "badge": "LATA",
             "variants": {
                 "750ml": "Lata de 750 ml",
+                "1lt": "Lata de 1 L",
                 "3lt": "Lata de 3 L",
                 "5lt": "Lata de 5 L"
             },
             "variantDescriptions": {
                 "750ml": "La lata de AOVE de 750 ml es compacta y distintiva: un formato original para un almacenamiento práctico, mejor protección y uso diario.",
+                "1lt": "La lata EVO de 1 L combina practicidad diaria y protección total frente a la luz en la cocina.",
                 "3lt": "La lata de AOVE de 3 L está pensada para usuarios diarios de aceite de oliva que desean un tamaño de despensa práctico y protegido de la luz.",
                 "5lt": "La lata de AOVE de 5 L es el formato familiar para tener siempre disponible un aceite de oliva virgen extra equilibrado, aromático y versátil."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Virgen Extra - Lata Frutado Ligero",
+            "title": "La Dama - Frutado Ligero Lata",
             "subtitle": "Aceite de oliva virgen extra frutado ligero en lata",
             "description": "El Frutado Ligero en lata mantiene su perfil delicado en un formato cotidiano práctico, protegido y conveniente.",
             "badge": "LATA",
             "variants": {
+                "1lt": "Lata de 1 L",
                 "3lt": "Lata de 3 L",
                 "5lt": "Lata de 5 L"
             },
             "variantDescriptions": {
+                "1lt": "La lata Frutado Ligero de 1 L protege toda la delicadeza del aceite frente a la luz en un formato ágil y cómodo.",
                 "3lt": "La lata de Frutado Ligero de 3 L es ideal para quienes desean un suministro diario de aceite de oliva delicado para pescados, verduras y platos frescos.",
                 "5lt": "La lata de Frutado Ligero de 5 L proporciona mayor autonomía en la cocina manteniendo un perfil suave, equilibrado y fácil de maridar."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Virgen Extra - Lata Frutado Medio",
+            "title": "Il Musico - Frutado Medio Lata",
             "subtitle": "Aceite de oliva virgen extra frutado medio en lata",
             "description": "El Frutado Medio en lata es la elección práctica para un uso frecuente, con un sabor equilibrado y una mejor protección frente a la luz.",
             "badge": "LATA",
             "variants": {
+                "1lt": "Lata de 1 L",
                 "3lt": "Lata de 3 L",
                 "5lt": "Lata de 5 L"
             },
             "variantDescriptions": {
+                "1lt": "La lata Frutado Medio de 1 L ofrece el equilibrio diario ideal entre comodidad y protección, tanto en crudo como en cocina.",
                 "3lt": "La lata de Frutado Medio de 3 L está diseñada para cocinas activas: versátil, equilibrada y conveniente para aderezar, cocinar y terminar platos.",
                 "5lt": "La lata de Frutado Medio de 5 L es el formato de despensa para quienes nunca quieren quedarse sin un aceite de oliva virgen extra de confianza y aromático."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Virgen Extra - Lata Frutado Intenso",
+            "title": "Il Cavaliere - Frutado Intenso Lata",
             "subtitle": "Aceite de oliva virgen extra frutado intenso en lata",
             "description": "El Frutado Intenso en lata conserva su fuerza y aromas en un formato práctico para uso frecuente.",
             "badge": "LATA",
             "variants": {
+                "1lt": "Lata de 1 L",
                 "3lt": "Lata de 3 L",
                 "5lt": "Lata de 5 L"
             },
             "variantDescriptions": {
+                "1lt": "La lata Frutado Intenso de 1 L conserva al abrigo de la luz toda la fuerza y las notas verdes de nuestro virgen extra más intenso.",
                 "3lt": "La lata de Frutado Intenso de 3 L es un suministro inteligente para quienes buscan un aceite de oliva robusto, herbáceo y persistente para platos estructurados.",
                 "5lt": "La lata de Frutado Intenso de 5 L es el formato generoso para cocinas que siempre desean tener a mano un aceite de oliva virgen extra potente y reconocible."
             }
         }
     },
-  "ShopPage": {
+    "ShopPage": {
         "header": {
             "label": "Tienda",
             "title_part1": "Todos los ",
@@ -358,7 +370,7 @@
             "from": "Desde "
         }
     },
-  "HomePage": {
+    "HomePage": {
         "HeroCarousel": {
             "sr_title": "Almazara y producción: historia, productos y tradición moderna",
             "slides": {
@@ -571,7 +583,7 @@
             "cta": "Explorar todos los artículos"
         }
     },
-  "StoriaPage": {
+    "StoriaPage": {
         "header": {
             "subtitle": "Historia",
             "title_part1": "Nuestra ",
@@ -612,7 +624,7 @@
             }
         }
     },
-  "ProduzionePage": {
+    "ProduzionePage": {
         "nav": {
             "section": "Sección",
             "sections": {
@@ -825,7 +837,7 @@
             "machine": "Máquina"
         }
     },
-  "OlioPage": {
+    "OlioPage": {
         "header": {
             "label": "Nuestro aceite",
             "title_part1": "Nuestro",
@@ -848,7 +860,7 @@
                     "Ideal en crudo sobre platos ligeros, pescados, verduras y ensaladas."
                 ],
                 "formats": [
-                    "Botella: 250/500/750",
+                    "Botella: 500/750ml/1L",
                     "Lata: 1/3/5L"
                 ],
                 "placeholder": "IMAGEN — FRUTADO LIGERO"
@@ -861,7 +873,7 @@
                     "Las aceitunas se cosechan antes de alcanzar su madurez completa."
                 ],
                 "formats": [
-                    "Botella: 250/500/750",
+                    "Botella: 500/750ml/1L",
                     "Lata: 1/3/5L"
                 ],
                 "placeholder": "IMAGEN — FRUTADO INTENSO"
@@ -874,7 +886,7 @@
                     "Color verde con vetas amarillas."
                 ],
                 "formats": [
-                    "Botella: 250/500/750/1000ml",
+                    "Botella: 500/750ml/1L",
                     "Lata: 1/3/5L"
                 ],
                 "placeholder": "IMAGEN — FRUTADO MEDIO"
@@ -887,7 +899,7 @@
                 ],
                 "formats": [
                     "Botella: 500ml",
-                    "Lata: 3/5L"
+                    "Lata: 750ml/1/3/5L"
                 ],
                 "placeholder": "IMAGEN — AOVE"
             },
@@ -914,7 +926,7 @@
             "badge": "SELECCIÓN EXTRACCIÓN EN FRÍO"
         }
     },
-  "ContactPage": {
+    "ContactPage": {
         "hero": {
             "label": "Contacto",
             "title_part1": "Estamos",
@@ -960,7 +972,7 @@
             "button": "Abrir en Maps"
         }
     },
-  "Cart": {
+    "Cart": {
         "common": {
             "product_fallback": "Producto",
             "discount_code_placeholder": "Código de descuento",

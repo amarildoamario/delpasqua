@@ -114,7 +114,7 @@ export default async function AdminMetricsPage({
   const [pageViews, pageLeaves, ordersCount] = await Promise.all([
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER } }),
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "page_leave", ...SITE_ONLY, ...QUALITY_FILTER } }),
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive } } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, isTest: false } }),
   ]);
 
   const [sessions, visitors] = await Promise.all([

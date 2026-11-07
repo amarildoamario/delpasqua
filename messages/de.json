@@ -212,19 +212,23 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Natives Olivenöl Extra - Leichtfruchtig",
+            "title": "La Dama - Leichtfruchtig",
             "subtitle": "Natives Olivenöl Extra",
             "description": "Leicht Fruchtig ist fein, mild und angenehm: es verfeinert Gerichte, ohne sie zu ueberdecken, ideal fuer Fisch, Gemuese und Salate.",
             "badge": "KLASSIKER",
             "variants": {
-                "500ml": "Flasche 500 ml"
+                "500ml": "Flasche 500 ml",
+                "750ml": "Flasche 750 ml",
+                "1lt": "Flasche 1 L"
             },
             "variantDescriptions": {
-                "500ml": "Die 500-ml-Flasche Leicht Fruchtig bringt ein sanftes, duftendes Oel auf den Tisch, perfekt fuer elegante und dezente Wuerze."
+                "500ml": "Die 500-ml-Flasche Leicht Fruchtig bringt ein sanftes, duftendes Oel auf den Tisch, perfekt fuer elegante und dezente Wuerze.",
+                "750ml": "Die 750-ml-Flasche Leicht Fruchtig verbindet Eleganz und Größe: ideal am Tisch zu Fisch, Gemüse und feinen Gerichten.",
+                "1lt": "Die 1-L-Flasche Leicht Fruchtig ist das ideale Familienformat für jeden Tag: mild, duftig und niemals aufdringlich."
             }
         },
         "fruttato-medio": {
-            "title": "Natives Olivenöl Extra - Mittelfruchtig",
+            "title": "Il Musico - Mittelfruchtig",
             "subtitle": "Natives Olivenöl Extra",
             "description": "Mittel Fruchtig ist der vielseitige Ausgleich: kraeuterige Aromen, voller Geschmack und harmonischer Abschluss.",
             "badge": "KLASSIKER",
@@ -240,7 +244,7 @@
             }
         },
         "fruttato-intenso": {
-            "title": "Natives Olivenöl Extra - Intensivfruchtig",
+            "title": "Il Cavaliere - Intensivfruchtig",
             "subtitle": "Natives Olivenöl Extra",
             "description": "Intens Fruchtig hat deutlichen Charakter, gruene Noten und einen markanteren Abschluss: ideal fuer kraeftige Gerichte.",
             "badge": "KLASSIKER",
@@ -286,53 +290,61 @@
             "badge": "KANISTER",
             "variants": {
                 "750ml": "Kanister 750 ml",
+                "1lt": "Kanister 1 L",
                 "3lt": "Kanister 3 L",
                 "5lt": "Kanister 5 L"
             },
             "variantDescriptions": {
                 "750ml": "Der 750-ml-EVO-Kanister ist kompakt und besonders: ein originelles Format fuer praktische Nutzung und besseren Schutz.",
+                "1lt": "Der 1-L-EVO-Kanister verbindet Alltagstauglichkeit mit optimalem Lichtschutz für die tägliche Küche.",
                 "3lt": "Der 3-L-EVO-Kanister ist fuer den taeglichen Gebrauch gedacht: praktisch, lichtgeschuetzt und einfach in der Kueche zu handhaben.",
                 "5lt": "Der 5-L-EVO-Kanister ist das Familienformat fuer ein ausgewogenes, aromatisches und vielseitiges Olivenoel."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Natives Olivenoel Extra - Leicht Fruchtig Kanister",
+            "title": "La Dama - Leichtfruchtig Kanister",
             "subtitle": "Leicht fruchtiges natives Olivenoel extra im Kanister",
             "description": "Leicht Fruchtig im Kanister bewahrt seine Feinheit in einem praktischen und geschuetzten Alltagsformat.",
             "badge": "KANISTER",
             "variants": {
+                "1lt": "Kanister 1 L",
                 "3lt": "Kanister 3 L",
                 "5lt": "Kanister 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Der 1-L-Kanister Leicht Fruchtig schützt das milde Olivenöl optimal vor Licht in einem handlichen Küchenformat.",
                 "3lt": "Der 3-L-Kanister Leicht Fruchtig ist ideal fuer eine taegliche Reserve eines milden Oels fuer Fisch, Gemuese und frische Gerichte.",
                 "5lt": "Der 5-L-Kanister Leicht Fruchtig bietet mehr Vorrat und bleibt weich, ausgewogen und leicht kombinierbar."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Natives Olivenoel Extra - Mittel Fruchtig Kanister",
+            "title": "Il Musico - Mittelfruchtig Kanister",
             "subtitle": "Mittel fruchtiges natives Olivenoel extra im Kanister",
             "description": "Mittel Fruchtig im Kanister ist praktisch fuer haeufige Nutzung und schuetzt das ausgewogene Oel vor Licht.",
             "badge": "KANISTER",
             "variants": {
+                "1lt": "Kanister 1 L",
                 "3lt": "Kanister 3 L",
                 "5lt": "Kanister 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Der 1-L-Kanister Mittel Fruchtig bietet die perfekte Balance aus Handlichkeit und Lichtschutz – roh und zum Kochen.",
                 "3lt": "Der 3-L-Kanister Mittel Fruchtig ist fuer aktive Kuechen gemacht: vielseitig, ausgewogen und bequem.",
                 "5lt": "Der 5-L-Kanister Mittel Fruchtig ist das Vorratsformat fuer ein verlaessliches und aromatisches Olivenoel."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Natives Olivenoel Extra - Intens Fruchtig Kanister",
+            "title": "Il Cavaliere - Intensivfruchtig Kanister",
             "subtitle": "Intens fruchtiges natives Olivenoel extra im Kanister",
             "description": "Intens Fruchtig im Kanister bewahrt Kraft und Duft in einem praktischen Format fuer haeufige Nutzung.",
             "badge": "KANISTER",
             "variants": {
+                "1lt": "Kanister 1 L",
                 "3lt": "Kanister 3 L",
                 "5lt": "Kanister 5 L"
             },
             "variantDescriptions": {
+                "1lt": "Der 1-L-Kanister Intensiv Fruchtig bewahrt die kräftigen grünen Noten unseres charakterstarken Olivenöls lichtgeschützt.",
                 "3lt": "Der 3-L-Kanister Intens Fruchtig ist ein kluger Vorrat fuer ein volles, gruenes und anhaltendes Oel.",
                 "5lt": "Der 5-L-Kanister Intens Fruchtig ist das grosszuegige Format fuer Kuechen, die ein kraeftiges Oel griffbereit wollen."
             }
@@ -853,7 +865,7 @@
                     "Ideal roh zu leichten Gerichten, Fisch, Gemüse und Salaten."
                 ],
                 "formats": [
-                    "Flasche: 250/500/750ml",
+                    "Flasche: 500/750ml/1L",
                     "Kanister: 1/3/5L"
                 ],
                 "placeholder": "BILD — LEICHT FRUCHTIG"
@@ -866,7 +878,7 @@
                     "Die Ernte erfolgt vor der vollständigen Reifung."
                 ],
                 "formats": [
-                    "Flasche: 250/500/750ml",
+                    "Flasche: 500/750ml/1L",
                     "Kanister: 1/3/5L"
                 ],
                 "placeholder": "BILD — INTENSIV FRUCHTIG"
@@ -879,7 +891,7 @@
                     "Grüne Farbe mit gelben Adern."
                 ],
                 "formats": [
-                    "Flasche: 250/500/750/1000ml",
+                    "Flasche: 500/750ml/1L",
                     "Kanister: 1/3/5L"
                 ],
                 "placeholder": "BILD — MITTEL FRUCHTIG"
@@ -892,7 +904,7 @@
                 ],
                 "formats": [
                     "Flasche: 500ml",
-                    "Kanister: 3/5L"
+                    "Kanister: 750ml/1/3/5L"
                 ],
                 "placeholder": "BILD — EVO"
             },

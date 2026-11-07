@@ -206,9 +206,9 @@
             }
         },
         "fruttato-leggero": {
-            "title": "Extravergine - Fruttato Leggero",
+            "title": "La Dama - Fruttato Leggero",
             "subtitle": "Olio extravergine di oliva",
-            "description": "Il Fruttato Leggero e delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
+            "description": "La Dama - è un olio delicato, morbido e immediato: valorizza i piatti senza coprirli, ideale per pesce, verdure, insalate e ricette dal gusto fine.",
             "badge": "CLASSICO",
             "variants": {
                 "500ml": "Bottiglia 500 ml",
@@ -216,15 +216,15 @@
                 "1lt": "Bottiglia 1 L"
             },
             "variantDescriptions": {
-                "500ml": "La bottiglia Fruttato Leggero da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti e mai invadenti.",
-                "750ml": "La bottiglia Fruttato Leggero da 750 ml unisce eleganza e capienza: l'extravergine toscano ideale da servire a tavola per arricchire con estrema delicatezza piatti di pesce, verdure e ricette dal gusto fine.",
-                "1lt": "La bottiglia Fruttato Leggero da 1 litro è il formato famiglia ideale per l'uso quotidiano: un olio extravergine dal gusto morbido e gentile, perfetto per chi ama condimenti profumati, leggeri e mai coprenti."
+                "500ml": "La Dama - in bottiglia da 500 ml porta in tavola un olio gentile e profumato, perfetto per chi ama condimenti eleganti.",
+                "750ml": "La Dama - in bottiglia da 750 ml unisce eleganza e capienza: l'extravergine toscano ideale da servire a tavola per arricchire con estrema delicatezza piatti di pesce, verdure e ricette dal gusto fine.",
+                "1lt": "La Dama - in bottiglia da 1 litro è il formato famiglia ideale per l'uso quotidiano: un olio extravergine dal gusto morbido e gentile, perfetto per chi ama condimenti profumati, leggeri e mai coprenti."
             }
         },
         "fruttato-medio": {
-            "title": "Extravergine - Fruttato Medio",
+            "title": "Il Musico - Fruttato Medio",
             "subtitle": "Olio Extravergine di oliva",
-            "description": "Il Fruttato Medio e l'equilibrio piu versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
+            "description": "Il Musico - è l'equilibrio più versatile: profumo erbaceo, gusto pieno e finale armonico, adatto sia a crudo sia in cottura.",
             "badge": "CLASSICO",
             "variants": {
                 "500ml": "Bottiglia 500 ml",
@@ -232,15 +232,15 @@
                 "1lt": "Bottiglia 1 L"
             },
             "variantDescriptions": {
-                "500ml": "La bottiglia Fruttato Medio da 500 ml e perfetta per assaggiare o regalare un olio equilibrato, capace di valorizzare bruschette, verdure e primi piatti.",
-                "750ml": "La bottiglia Fruttato Medio da 750 ml e il formato quotidiano per chi vuole un extravergine versatile, intenso quanto basta e sempre elegante a tavola.",
-                "1lt": "La bottiglia Fruttato Medio da 1 L offre piu continuita in cucina: un olio bilanciato, pratico e adatto a molti usi mediterranei."
+                "500ml": "Il Musico - in bottiglia da 500 ml è perfetto per assaggiare o regalare un olio equilibrato, capace di valorizzare bruschette, verdure e primi piatti.",
+                "750ml": "Il Musico - in bottiglia da 750 ml è il formato quotidiano per chi vuole un extravergine versatile, intenso quanto basta e sempre elegante a tavola.",
+                "1lt": "Il Musico - in bottiglia da 1 L offre più continuità in cucina: un olio bilanciato, pratico e adatto a molti usi mediterranei."
             }
         },
         "fruttato-intenso": {
-            "title": "Extravergine - Fruttato Intenso",
+            "title": "Il Cavaliere - Fruttato Intenso",
             "subtitle": "Olio Extravergine di oliva",
-            "description": "Il Fruttato Intenso ha carattere deciso, note verdi e un finale piu marcato: ideale per chi cerca un olio capace di farsi sentire.",
+            "description": "Il Cavaliere - ha carattere deciso, note verdi e un finale più marcato: ideale per chi cerca un olio capace di farsi sentire.",
             "badge": "CLASSICO",
             "variants": {
                 "500ml": "Bottiglia 500 ml",
@@ -248,9 +248,9 @@
                 "1lt": "Bottiglia 1 L"
             },
             "variantDescriptions": {
-                "500ml": "La bottiglia Fruttato Intenso da 500 ml concentra personalita e profumo in un formato agile, perfetto su zuppe, legumi, carni e bruschette.",
-                "750ml": "La bottiglia Fruttato Intenso da 750 ml e il formato giusto per chi ama un extravergine energico, persistente e ricco di carattere.",
-                "1lt": "La bottiglia Fruttato Intenso da 1 L e pensata per chi usa spesso un olio deciso, ideale per ricette rustiche e piatti dal sapore importante."
+                "500ml": "Il Cavaliere - in bottiglia da 500 ml concentra personalità e profumo in un formato agile, perfetto su zuppe, legumi, carni e bruschette.",
+                "750ml": "Il Cavaliere - in bottiglia da 750 ml è il formato giusto per chi ama un extravergine energico, persistente e ricco di carattere.",
+                "1lt": "Il Cavaliere - in bottiglia da 1 L è pensato per chi usa spesso un olio deciso, ideale per ricette rustiche e piatti dal sapore importante."
             }
         },
         "tartufo": {
@@ -304,55 +304,63 @@
             "badge": "LATTA",
             "variants": {
                 "750ml": "Latta 750 ml",
+                "1lt": "Latta 1 L",
                 "3lt": "Latta 3 L",
                 "5lt": "Latta 5 L"
             },
             "variantDescriptions": {
                 "750ml": "La latta EVO da 750 ml e compatta e distintiva: un formato originale per chi cerca praticita, protezione e un olio extravergine italiano sempre pronto all'uso.",
+                "1lt": "La latta EVO da 1 L unisce praticità quotidiana e protezione totale dalla luce: il formato ideale da tenere sempre a portata di mano in cucina.",
                 "3lt": "La latta EVO da 3 L e pensata per chi usa olio ogni giorno e vuole una scorta pratica, protetta dalla luce e facile da gestire in cucina.",
                 "5lt": "La latta EVO da 5 L e il formato famiglia per avere sempre a disposizione un extravergine equilibrato, profumato e versatile, ideale per cucina e condimenti a crudo."
             }
         },
         "fruttato-leggero-latta": {
-            "title": "Extravergine - Fruttato Leggero Latta",
+            "title": "La Dama - Fruttato Leggero Latta",
             "subtitle": "Olio extravergine di oliva fruttato leggero in latta",
-            "description": "Il Fruttato Leggero in latta mantiene la sua delicatezza in un formato pratico, protetto e conveniente per l'uso quotidiano.",
+            "description": "La Dama - in latta mantiene la sua delicatezza in un formato pratico, protetto e conveniente per l'uso quotidiano.",
             "badge": "LATTA",
             "variants": {
+                "1lt": "Latta 1 L",
                 "3lt": "Latta 3 L",
                 "5lt": "Latta 5 L"
             },
             "variantDescriptions": {
-                "3lt": "La latta Fruttato Leggero da 3 L e ideale per chi cerca una scorta quotidiana di olio delicato, adatto a pesce, verdure e piatti freschi.",
-                "5lt": "La latta Fruttato Leggero da 5 L offre piu autonomia in cucina mantenendo un profilo morbido, equilibrato e facile da abbinare."
+                "1lt": "La Dama - in latta da 1 L protegge al meglio la delicatezza dell'olio dalla luce in un formato agile e comodissimo per la cucina di ogni giorno.",
+                "3lt": "La Dama - in latta da 3 L è ideale per chi cerca una scorta quotidiana di olio delicato, adatto a pesce, verdure e piatti freschi.",
+                "5lt": "La Dama - in latta da 5 L offre più autonomia in cucina mantenendo un profilo morbido, equilibrato e facile da abbinare."
             }
         },
         "fruttato-medio-latta": {
-            "title": "Extravergine - Fruttato Medio Latta",
+            "title": "Il Musico - Fruttato Medio Latta",
             "subtitle": "Olio extravergine di oliva fruttato medio in latta",
-            "description": "Il Fruttato Medio in latta e la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
+            "description": "Il Musico - in latta è la scelta pratica per chi usa spesso un olio equilibrato e vuole conservarlo al riparo dalla luce.",
             "badge": "LATTA",
             "variants": {
+                "1lt": "Latta 1 L",
                 "3lt": "Latta 3 L",
                 "5lt": "Latta 5 L"
             },
             "variantDescriptions": {
-                "3lt": "La latta Fruttato Medio da 3 L e pensata per una cucina attiva: versatile, bilanciata e comoda per condire, cucinare e rifinire i piatti.",
-                "5lt": "La latta Fruttato Medio da 5 L e il formato scorta per chi non vuole mai restare senza un extravergine affidabile, profumato e adatto a tutto pasto."
+                "1lt": "Il Musico - in latta da 1 L offre il giusto equilibrio quotidiano tra maneggevolezza e protezione dalla luce, ideale sia a crudo sia in cottura.",
+                "3lt": "Il Musico - in latta da 3 L è pensato per una cucina attiva: versatile, bilanciata e comoda per condire, cucinare e rifinire i piatti.",
+                "5lt": "Il Musico - in latta da 5 L è il formato scorta per chi non vuole mai restare senza un extravergine affidabile, profumato e adatto a tutto pasto."
             }
         },
         "fruttato-intenso-latta": {
-            "title": "Extravergine - Fruttato Intenso Latta",
+            "title": "Il Cavaliere - Fruttato Intenso Latta",
             "subtitle": "Olio extravergine di oliva fruttato intenso in latta",
-            "description": "Il Fruttato Intenso in latta conserva forza e profumi in un formato pratico, ideale per chi usa con frequenza un olio dal profilo deciso.",
+            "description": "Il Cavaliere - in latta conserva forza e profumi in un formato pratico, ideale per chi usa con frequenza un olio dal profilo deciso.",
             "badge": "LATTA",
             "variants": {
+                "1lt": "Latta 1 L",
                 "3lt": "Latta 3 L",
                 "5lt": "Latta 5 L"
             },
             "variantDescriptions": {
-                "3lt": "La latta Fruttato Intenso da 3 L e una scorta intelligente per chi cerca un olio pieno, verde e persistente, perfetto su piatti strutturati.",
-                "5lt": "La latta Fruttato Intenso da 5 L e il formato piu generoso per cucine che vogliono sempre a portata di mano un extravergine potente e riconoscibile."
+                "1lt": "Il Cavaliere - in latta da 1 L custodisce al riparo dalla luce tutta l'energia e i profumi verdi del nostro extravergine più deciso, in un formato pratico per tutti i giorni.",
+                "3lt": "Il Cavaliere - in latta da 3 L è una scorta intelligente per chi cerca un olio pieno, verde e persistente, perfetto su piatti strutturati.",
+                "5lt": "Il Cavaliere - in latta da 5 L è il formato più generoso per cucine che vogliono sempre a portata di mano un extravergine potente e riconoscibile."
             }
         }
     },
@@ -872,7 +880,7 @@
                     "Ideale a crudo su piatti leggeri, pesce, verdure e insalate."
                 ],
                 "formats": [
-                    "Bottiglia: 250/500/750",
+                    "Bottiglia: 500/750ml/1L",
                     "Lattina: 1/3/5L"
                 ],
                 "placeholder": "IMMAGINE — FRUTTATO LEGGERO"
@@ -885,7 +893,7 @@
                     "La raccolta avviene in anticipo rispetto alla completa maturazione."
                 ],
                 "formats": [
-                    "Bottiglia: 250/500/750",
+                    "Bottiglia: 500/750ml/1L",
                     "Lattina: 1/3/5L"
                 ],
                 "placeholder": "IMMAGINE — FRUTTATO INTENSO"
@@ -898,7 +906,7 @@
                     "Colore verde con venature gialle."
                 ],
                 "formats": [
-                    "Bottiglia: 250/500/750/1000ml",
+                    "Bottiglia: 500/750ml/1L",
                     "Lattina: 1/3/5L"
                 ],
                 "placeholder": "IMMAGINE — FRUTTATO MEDIO"
@@ -911,7 +919,7 @@
                 ],
                 "formats": [
                     "Bottiglia: 500ml",
-                    "Lattina: 3/5L"
+                    "Lattina: 750ml/1/3/5L"
                 ],
                 "placeholder": "IMMAGINE — EVO"
             },

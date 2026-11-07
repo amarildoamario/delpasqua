@@ -7,7 +7,7 @@ import styles from "./ShopHighlights.module.css";
 import type { Product as DbProduct } from "@/lib/shopTypes";
 import { ArrowRight } from "lucide-react";
 import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
-import { getLocalizedProductSlug } from "@/lib/productSlugs";
+import { getLocalizedProductSlug, translateVariantTitle } from "@/lib/productSlugs";
 import { HOME_MERCH_FALLBACK_SLUGS, pickHomeMerchSlots } from "@/lib/homeMerch";
 
 type HighlightProduct = ProductCardProduct;
@@ -71,7 +71,10 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
     const all = catalog ?? [];
 
     return pickHomeMerchSlots(all, { fallbackSlugs: HOME_MERCH_FALLBACK_SLUGS }).map(({ item: p }) => {
-      const minPriceCents = Math.min(...(p.variants?.map((v) => v.priceCents) ?? [0]));
+      const homeVariant = p.variants?.find((variant) => variant.id === p.homeVariantId);
+      const minPriceCents = homeVariant?.priceCents ?? Math.min(...(p.variants?.map((v) => v.priceCents) ?? [0]));
+      const cardVariant = homeVariant ?? p.variants?.find((variant) => variant.priceCents === minPriceCents);
+      const productTitle = locale === "it" ? p.title : (tp(`${p.id}.title`) || p.title);
       const hasMany = (p.variants?.length ?? 0) > 1;
       const fmt = new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
         style: "currency",
@@ -96,16 +99,18 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
       return {
         id: p.id,
         slug: getLocalizedProductSlug(p, locale),
-        title: tp(`${p.id}.title`) || p.title,
+        title: homeVariant?.title
+          ? translateVariantTitle(homeVariant.id, homeVariant.title, productTitle, locale)
+          : productTitle,
         subtitle: tp(`${p.id}.subtitle`) || p.subtitle || "",
         priceLabel: fmt,
-        priceCaption: hasMany ? copy.from : copy.price,
+        priceCaption: hasMany && !homeVariant ? copy.from : copy.price,
         priceCents: minPriceCents,
-        defaultVariantId: p.variants?.[0]?.id,
+        defaultVariantId: cardVariant?.id,
         badge: tp(`${p.id}.badge`) || p.badge,
         merchBadge: p.merchBadge,
-        imageSrc: p.imageSrc,
-        imageAlt: p.imageAlt,
+        imageSrc: cardVariant?.imageSrc ?? p.imageSrc,
+        imageAlt: cardVariant?.imageAlt ?? p.imageAlt,
         variantsCount: p.variants?.length ?? 1,
         variantImages: variantImages.length > 1 ? variantImages : undefined,
       };

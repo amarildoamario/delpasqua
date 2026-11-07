@@ -402,7 +402,7 @@ export default async function AdminDashboard({
 
   ] = await Promise.all([
 
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, orderNumber: { not: null } } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, orderNumber: { not: null }, isTest: false } }),
 
     prisma.order.count({
 
@@ -411,16 +411,17 @@ export default async function AdminDashboard({
         createdAt: { gte: start, lt: endExclusive },
 
         status: { in: [...PAID_LIKE] },
+        isTest: false,
 
       },
 
     }),
 
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "IN_ATTESA", orderNumber: { not: null } } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "IN_ATTESA", orderNumber: { not: null }, isTest: false } }),
 
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: { not: null } } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: { not: null }, isTest: false } }),
 
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: null } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: null, isTest: false } }),
 
     // 1. Eventi analitici per calcoli geografici e visite/sessioni/views prodotti
 
@@ -479,6 +480,7 @@ export default async function AdminDashboard({
       JOIN "Order" o ON o.id = oi."orderId"
 
       WHERE o.status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
+        AND o."isTest" = false
         AND o."createdAt" >= ${start.toISOString()}::timestamp AND o."createdAt" < ${endExclusive.toISOString()}::timestamp
 
         AND (${purchasedCountryFilter}::text IS NULL OR o."countryCode" = ${purchasedCountryFilter}::text)
@@ -506,6 +508,7 @@ export default async function AdminDashboard({
         createdAt: { gte: start, lt: endExclusive },
 
         orderNumber: { not: null },
+        isTest: false,
 
       },
 
@@ -524,6 +527,7 @@ export default async function AdminDashboard({
         createdAt: { gte: start, lt: endExclusive },
 
         status: { in: [...PAID_LIKE] },
+        isTest: false,
 
       },
 
@@ -554,6 +558,7 @@ export default async function AdminDashboard({
         status: "IN_ATTESA",
 
         orderNumber: { not: null },
+        isTest: false,
 
       },
 
@@ -574,6 +579,7 @@ export default async function AdminDashboard({
         status: "ANNULLATO",
 
         orderNumber: { not: null },
+        isTest: false,
 
       },
 
@@ -594,6 +600,7 @@ export default async function AdminDashboard({
         status: "ANNULLATO",
 
         orderNumber: null,
+        isTest: false,
 
       },
 
@@ -834,6 +841,7 @@ export default async function AdminDashboard({
     JOIN "Order" o ON o.id = oi."orderId"
 
     WHERE o.status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
+      AND o."isTest" = false
       AND o."createdAt" >= ${start.toISOString()}::timestamp AND o."createdAt" < ${endExclusive.toISOString()}::timestamp
 
       AND oi.title = ${mostPurchasedProductTitle}
@@ -1013,6 +1021,7 @@ export default async function AdminDashboard({
         createdAt: { gte: start, lt: endExclusive },
 
         status: { in: [...PAID_LIKE] },
+        isTest: false,
 
       },
 
@@ -1041,6 +1050,7 @@ export default async function AdminDashboard({
     where: {
 
       status: { in: [...PAID_LIKE] },
+      isTest: false,
 
       createdAt: { gte: startMonthDate, lt: endMonthDate },
 
@@ -1259,6 +1269,7 @@ export default async function AdminDashboard({
     where: {
 
       status: { in: ["PAGATO", "IN_PREPARAZIONE"] }, // oppure solo ["PAGATO","IN_PREPARAZIONE"] se preferisci
+      isTest: false,
 
       shippedAt: null,
 
@@ -1277,6 +1288,7 @@ export default async function AdminDashboard({
     where: {
 
       status: "SPEDITO",
+      isTest: false,
 
       shippedAt: { not: null },
 
@@ -1363,6 +1375,7 @@ export default async function AdminDashboard({
     JOIN "Order" o ON o.id = oi."orderId"
 
     WHERE o.status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
+      AND o."isTest" = false
       AND o."createdAt" >= ${start.toISOString()}::timestamp
 
       AND o."createdAt" < ${endExclusive.toISOString()}::timestamp
@@ -1454,6 +1467,7 @@ export default async function AdminDashboard({
   FROM "Order"
 
   WHERE "createdAt" >= ${start.toISOString()}::timestamp AND "createdAt" < ${endExclusive.toISOString()}::timestamp
+    AND "isTest" = false
 
     AND (${marketFilter}::text IS NULL OR "countryCode" = ${marketFilter}::text)
 

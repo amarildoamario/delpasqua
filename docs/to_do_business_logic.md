@@ -17,6 +17,12 @@ Legenda priorita:
 
 ## [✅ RISOLTO] P0 - Quantita carrello non vincolata allo stock
 
+Regressione pannello laterale corretta il 2026-11-07:
+- `CartButton` montava un secondo `CartProvider` al momento dell'apertura: le rimozioni aggiornavano il carrello del pannello e lo storage, mentre le card conservavano la vecchia lista nel provider globale.
+- Riprodotta la sequenza con tre prodotti: rimossi Cavaliere e Musico, aggiungere Musico faceva riapparire Cavaliere e portava Musico a quantità 2.
+- Il pulsante e il drawer usano ora lo stesso provider globale delle card. Il contatore legge direttamente `useCart().count`, eliminando la seconda copia ricostruita da localStorage.
+- Test di regressione browser in `scratch/verify-cart-drawer-regression.cjs`: rimozioni multiple, reinserimento, ricaricamento e reinserimento dopo svuotamento. Nessuna creazione di ordini o mutazione di magazzino.
+
 Problema:
 - La PDP limitava la quantita allo stock, ma il carrello tornava a un limite generico di 99.
 - `CartContext` sommava le quantita senza conoscere sempre la disponibilita reale.

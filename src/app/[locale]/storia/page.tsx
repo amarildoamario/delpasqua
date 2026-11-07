@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
+import CompanyStats from "@/components/CompanyStats";
+import { BadgeCheck, Lightbulb, Sprout } from "lucide-react";
 
 const STORIA_IMAGES = {
   iniziale: "/storia/sezione_iniziale.webp",
@@ -11,6 +13,12 @@ const STORIA_IMAGES = {
   raccolta: "/storia/storia-3.webp",
   territorio: "/storia/storia-4.webp",
 } as const;
+
+const PHILOSOPHY_VALUES = [
+  { key: "tradition", Icon: Sprout, color: "text-[#3D5A3D]" },
+  { key: "innovation", Icon: Lightbulb, color: "text-[#B8860B]" },
+  { key: "quality", Icon: BadgeCheck, color: "text-[#3D5A3D]" },
+] as const;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -79,9 +87,9 @@ async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
           </nav>
 
           {/* Header (Messo Sotto, Fuori dalla Foto) */}
-          <div className="max-w-5xl mb-20">
-            <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
-              <span className="h-px w-6 bg-[#8B7355]" />
+          <div className="relative mb-14 max-w-5xl lg:mb-16">
+            <div aria-hidden="true" className="absolute -left-16 -top-10 -z-10 h-52 w-52 rounded-full bg-[#B8860B]/[0.045] blur-3xl" />
+            <div className="text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
               {t("header.subtitle")}
             </div>
 
@@ -89,14 +97,13 @@ async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
               {t("header.title_part1")}<span className="italic text-[#3D5A3D]">{t("header.title_italic")}</span>
             </h1>
 
-            <div className="mt-6 max-w-4xl space-y-4 text-sm sm:text-base lg:text-lg leading-relaxed text-[#57534E]">
-              <p>{t("header.description_top")}</p>
-              <p>{t("header.description_bottom")}</p>
-            </div>
+            <p className="mt-5 max-w-4xl text-sm leading-relaxed text-[#57534E] sm:text-base lg:text-lg">
+              {t("header.description_top")} {t("header.description_bottom")}
+            </p>
           </div>
 
           {/* Section 1 - Oliveti */}
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div className="relative isolate grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-14">
             <div className="order-2 lg:order-1">
               <div className="text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
                 {t("section1.subtitle")}
@@ -106,52 +113,38 @@ async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
                 {t("section1.title_part1")}<span className="italic text-[#3D5A3D]">{t("section1.title_italic")}</span>
               </h2>
 
-              <div className="mt-6 space-y-4">
-                <p className="text-sm leading-relaxed text-[#57534E] lg:text-base">
-                  {t("section1.p1")}
-                </p>
-                <p className="text-sm leading-relaxed text-[#57534E] lg:text-base">
-                  {t("section1.p2")}
-                </p>
-              </div>
+              <p className="mt-5 text-sm leading-relaxed text-[#57534E] first-letter:float-left first-letter:mr-2 first-letter:font-serif first-letter:text-4xl first-letter:leading-[0.85] first-letter:text-[#3D5A3D] lg:text-base">
+                {t("section1.p1")} {t("section1.p2")}
+              </p>
 
-              <div className="mt-8 flex gap-6">
-                <div className="text-center">
-                  <div className="font-serif text-3xl font-light text-[#3D5A3D]">4</div>
-                  <div className="mt-1 text-xs text-[#8B7355]">{t("section1.stats.hectares")}</div>
-                </div>
-                <div className="h-12 w-px bg-[#E7E5E4]" />
-                <div className="text-center">
-                  <div className="font-serif text-3xl font-light text-[#3D5A3D]">3</div>
-                  <div className="mt-1 text-xs text-[#8B7355]">{t("section1.stats.cultivars")}</div>
-                </div>
-                <div className="h-12 w-px bg-[#E7E5E4]" />
-                <div className="text-center">
-                  <div className="font-serif text-3xl font-light text-[#3D5A3D]">60+</div>
-                  <div className="mt-1 text-xs text-[#8B7355]">{t("section1.stats.years")}</div>
-                </div>
-              </div>
+              <CompanyStats
+                hectaresLabel={t("section1.stats.hectares")}
+                cultivarsLabel={t("section1.stats.cultivars")}
+                yearsLabel={t("section1.stats.years")}
+              />
             </div>
 
-            <div className="order-1 lg:order-2">
+            <div className="relative order-1 lg:order-2">
               <ImageBox
                 src={STORIA_IMAGES.oliveti}
                 alt="Oliveti"
                 variant="light"
                 aspect="portrait"
               />
+              <span aria-hidden="true" className="absolute -bottom-6 right-0 text-[9px] font-semibold tracking-[0.24em] text-[#8B7355] uppercase">{t("section1.subtitle")}</span>
             </div>
           </div>
 
           {/* Section 2 - Raccolta */}
-          <div className="mt-24 grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div>
+          <div className="relative isolate mt-16 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-14">
+            <div className="relative">
               <ImageBox
                 src={STORIA_IMAGES.raccolta}
                 alt="Raccolta"
                 variant="light"
                 aspect="portrait"
               />
+              <span aria-hidden="true" className="absolute -top-6 left-0 text-[9px] font-semibold tracking-[0.24em] text-[#8B7355] uppercase">{t("section2.subtitle")}</span>
             </div>
 
             <div className="lg:pl-8">
@@ -163,69 +156,59 @@ async function StoriaPage({ params }: { params: Promise<{ locale: string }> }) {
                 {t("section2.title_part1")}<span className="italic text-[#B8860B]">{t("section2.title_italic")}</span>
               </h2>
 
-              <div className="mt-6 space-y-4">
-                <p className="text-sm leading-relaxed text-[#57534E] lg:text-base">
-                  {t("section2.p1")}
-                </p>
-                <p className="text-sm leading-relaxed text-[#57534E] lg:text-base">
-                  {t("section2.p2")}
-                </p>
-              </div>
+              <p className="mt-5 text-sm leading-relaxed text-[#57534E] first-letter:float-left first-letter:mr-2 first-letter:font-serif first-letter:text-4xl first-letter:leading-[0.85] first-letter:text-[#B8860B] lg:text-base">
+                {t("section2.p1")} {t("section2.p2")}
+              </p>
 
-              <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#B8860B]/10 px-4 py-2 text-xs font-medium text-[#8B6914]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#B8860B]" />
+              <div className="mt-7 flex max-w-sm items-center gap-3 border-l-2 border-[#B8860B] py-2 pl-4 text-xs font-medium tracking-[0.04em] text-[#8B6914]">
                 {t("section2.badge")}
               </div>
             </div>
           </div>
 
-          {/* Closing statement - Full width card */}
-          <div className="group/card relative mt-24 overflow-hidden rounded-[5px] border border-[#2E2A27] bg-gradient-to-br from-[#262220] via-[#1C1917] to-[#12100F] p-8 lg:p-12 xl:p-16 shadow-xl transition-all duration-500 hover:border-[#8B7355]/40">
-            {/* Subtle background glow */}
-            <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#8B7355]/5 blur-[120px] pointer-events-none transition-all duration-700 group-hover/card:bg-[#8B7355]/10" />
-            <div className="absolute -left-24 -bottom-24 h-96 w-96 rounded-full bg-[#3D5A3D]/5 blur-[120px] pointer-events-none transition-all duration-700 group-hover/card:bg-[#3D5A3D]/10" />
-
-            <div className="relative z-10 grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-              <div>
-                <div className="inline-flex items-center gap-3 text-[10px] font-semibold tracking-[0.25em] text-[#8B7355] uppercase">
-                  <span className="h-px w-8 bg-[#8B7355]/50" />
+          {/* Closing statement */}
+          <div className="relative isolate mt-14 border-t border-[#3D5A3D]/15 py-12 lg:mt-16 lg:py-16">
+            <div aria-hidden="true" className="absolute -bottom-8 -left-[12%] -z-10 h-64 w-64 rounded-full bg-[#3D5A3D]/[0.035] blur-3xl" />
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+              <div className="lg:py-6">
+                <div className="text-[10px] font-semibold tracking-[0.28em] text-[#8B6914] uppercase">
                   {t("philosophy.subtitle")}
                 </div>
 
-                <h2 className="mt-6 font-serif text-3xl font-light leading-[1.15] tracking-tight text-[#FAFAF9] lg:text-4xl xl:text-5xl">
-                  {t("philosophy.title_part1")} <br />
-                  <span className="italic text-[#B8860B]">{t("philosophy.title_italic")}</span>
+                <h2 className="mt-7 max-w-xl font-serif text-4xl font-light leading-[1.08] tracking-tight text-[#2E2A27] lg:text-5xl xl:text-6xl">
+                  {t("philosophy.title_part1")}{" "}
+                  <span className="italic text-[#3D5A3D]">{t("philosophy.title_italic")}</span>
                 </h2>
 
-                <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#D6D3D1] lg:text-base">
+                <p className="mt-7 max-w-lg text-sm leading-relaxed text-[#625C56] lg:text-base">
                   {t("philosophy.description")}
                 </p>
 
-                <div className="mt-8 flex flex-wrap gap-2.5">
-                  <span className="inline-flex rounded-full border border-[#8B7355]/25 bg-[#FAFAF9]/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E7E5E4] transition-all duration-300 hover:border-[#B8860B]/45 hover:bg-[#B8860B]/10 hover:text-white">
-                    {t("philosophy.tags.tradition")}
-                  </span>
-                  <span className="inline-flex rounded-full border border-[#8B7355]/25 bg-[#FAFAF9]/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E7E5E4] transition-all duration-300 hover:border-[#B8860B]/45 hover:bg-[#B8860B]/10 hover:text-white">
-                    {t("philosophy.tags.innovation")}
-                  </span>
-                  <span className="inline-flex rounded-full border border-[#8B7355]/25 bg-[#FAFAF9]/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#E7E5E4] transition-all duration-300 hover:border-[#B8860B]/45 hover:bg-[#B8860B]/10 hover:text-white">
-                    {t("philosophy.tags.quality")}
-                  </span>
+                <div className="mt-10 border-y border-[#3D5A3D]/20">
+                  {PHILOSOPHY_VALUES.map(({ key, Icon, color }, index) => (
+                    <div
+                      key={key}
+                      className={`group flex items-center justify-between py-4 lg:py-5 ${index > 0 ? "border-t border-[#3D5A3D]/20" : ""}`}
+                    >
+                      <span className="font-serif text-2xl text-[#35312D] transition-colors group-hover:text-[#3D5A3D] lg:text-3xl">
+                        {t(`philosophy.tags.${key}`)}
+                      </span>
+                      <Icon aria-hidden="true" strokeWidth={1.35} className={`h-5 w-5 transition-transform duration-300 group-hover:scale-110 lg:h-6 lg:w-6 ${color}`} />
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="lg:pl-8">
-                <div className="group/img relative overflow-hidden rounded-[5px] border border-[#44403C] bg-[#292524] shadow-lg">
-                  <div className="relative w-full aspect-[4/3]">
-                    <Image
-                      src={STORIA_IMAGES.territorio}
-                      alt="Territorio"
-                      fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent transition-opacity duration-500 group-hover/img:opacity-85" />
-                  </div>
+              <div className="relative">
+                <div className="relative aspect-[4/3] w-full overflow-hidden shadow-[0_24px_60px_-32px_rgba(45,55,38,0.45)] lg:aspect-[5/4]">
+                  <Image
+                    src={STORIA_IMAGES.territorio}
+                    alt="Territorio"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                  />
+                  <div className="absolute inset-0 bg-[#3D5A3D]/[0.06]" />
                 </div>
               </div>
             </div>
@@ -281,7 +264,7 @@ function ImageBox({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4]">
+    <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4] shadow-[0_24px_55px_-34px_rgba(41,37,36,0.5)]">
       <div className={`relative w-full ${aspectClass}`}>
         <Image
           src={src}

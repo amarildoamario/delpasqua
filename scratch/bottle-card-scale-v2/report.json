@@ -1,0 +1,22 @@
+[
+  {
+    "device": "desktop",
+    "route": "/shop/",
+    "allProductsInsideFrame": true
+  },
+  {
+    "device": "desktop",
+    "route": "/olio-toscano/",
+    "allProductsInsideFrame": true
+  },
+  {
+    "device": "mobile",
+    "route": "/shop/",
+    "allProductsInsideFrame": true
+  },
+  {
+    "device": "mobile",
+    "route": "/olio-toscano/",
+    "allProductsInsideFrame": true
+  }
+]

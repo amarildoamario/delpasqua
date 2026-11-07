@@ -1,0 +1,70 @@
+{
+  "viewsVerified": [
+    "home-desktop",
+    "home-mobile",
+    "shop-desktop",
+    "shop-mobile"
+  ],
+  "mobileShopGeometry": [
+    {
+      "scale": 80,
+      "top": 13.859375,
+      "bottom": 20.75
+    },
+    {
+      "scale": 74,
+      "top": 24.234375,
+      "bottom": 20.75
+    },
+    {
+      "scale": 80,
+      "top": 13.859375,
+      "bottom": 20.75
+    },
+    {
+      "scale": 62,
+      "top": 45,
+      "bottom": 20.75
+    },
+    {
+      "scale": 80,
+      "top": 13.859375,
+      "bottom": 20.75
+    },
+    {
+      "scale": 62,
+      "top": 45,
+      "bottom": 20.75
+    },
+    {
+      "scale": 80,
+      "top": 13.859375,
+      "bottom": 20.75
+    },
+    {
+      "scale": 62,
+      "top": 45,
+      "bottom": 20.75
+    },
+    {
+      "scale": 76,
+      "top": 20.78125,
+      "bottom": 20.75
+    },
+    {
+      "scale": 76,
+      "top": 20.78125,
+      "bottom": 20.75
+    },
+    {
+      "scale": 80,
+      "top": 13.859375,
+      "bottom": 20.75
+    },
+    {
+      "scale": 76,
+      "top": 20.78125,
+      "bottom": 20.75
+    }
+  ]
+}

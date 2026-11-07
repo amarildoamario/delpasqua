@@ -99,6 +99,37 @@ const nextConfig: any = {
     ];
   },
 
+  async rewrites() {
+    // Keep old image URLs usable in saved carts, order snapshots and external links.
+    return {
+      // Resolve legacy EVO URLs to the current assets, including saved carts and orders.
+      beforeFiles: [
+        ...["750ml", "1lt", "3lt", "5lt"].map((format) => ({
+          source: `/products/EVO-latta-${format}.webp`,
+          destination: `/products/EVO-latta-${format}-v2.webp`,
+        })),
+        ...["3lt", "5lt"].map((format) => ({
+          source: `/products/EVO-latta-${format}.png`,
+          destination: `/products/EVO-latta-${format}-v2.webp`,
+        })),
+      ],
+      afterFiles: [
+        ...["500ml", "750ml", "1lt"].map((format) => ({
+          source: `/products/fruttato-medio-bottiglia-${format}.jpg`,
+          destination: `/products/fruttato-medio-bottiglia-${format}.webp`,
+        })),
+        { source: "/products/fruttato-intenso-bottiglia-500ml.jpg", destination: "/products/fruttato-intenso-bottiglia-500ml.webp" },
+        { source: "/products/fruttato-intenso-bottiglia-750ml.jpg", destination: "/products/fruttato-intenso-bottiglia-750ml.webp" },
+        { source: "/products/fruttato-intenso-bottiglia-1lt.jpg", destination: "/products/fruttato-intenso-bottiglia-1lt.webp" },
+        { source: "/products/fruttato-intenso-bottiglia-1lt-gpt.png", destination: "/products/fruttato-intenso-bottiglia-1lt.webp" },
+        { source: "/products/fruttato-intenso-latta-5lt.png", destination: "/products/fruttato-intenso-latta-5lt.webp" },
+        { source: "/products/fruttato-medio-latta-5lt.png", destination: "/products/fruttato-medio-latta-5lt.webp" },
+        { source: "/products_no_background/magnifico-no-background-v2.png", destination: "/products/fruttato-intenso-bottiglia-1lt.webp" },
+        { source: "/products_no_background/magnifico-no-background.png", destination: "/products/fruttato-intenso-bottiglia-1lt.webp" },
+      ],
+    };
+  },
+
   async redirects() {
     return [
       // INTERVENTO 1: Redirect Categoria Vino (WordPress -> Vercel)

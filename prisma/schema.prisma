@@ -61,6 +61,8 @@ model Order {
   userAgent String?
   riskScore Int     @default(0)
   isFlagged Boolean @default(false)
+  attentionDismissedAt DateTime?
+  isTest    Boolean @default(false)
   notes     String?
 
   items  OrderItem[]
@@ -81,6 +83,7 @@ model Order {
   promotionCode String?
 
   @@index([promotionCode, status])
+  @@index([isTest, createdAt])
 }
 
 enum OrderStatus {

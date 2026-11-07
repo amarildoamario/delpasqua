@@ -1,7 +1,8 @@
 "use client";
 
+import ProductCardImage from "@/components/ProductCardImage";
+
 import { useState } from "react";
-import Image from "next/image";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/context/CartContext";
@@ -220,12 +221,10 @@ export default function MobileListCard({
         <div className="flex items-stretch gap-3">
           {/* Foto Prodotto Ingrandita */}
           <div className="relative w-[145px] min-w-[145px] h-[175px] bg-[#fdfaf7] rounded-[5px] overflow-hidden shrink-0 border border-[#f0eae0]/30 flex items-center justify-center">
-            <Image
+            <ProductCardImage
               src={product.imageSrc}
               alt={product.imageAlt || product.title}
-              fill
               sizes="145px"
-              className="object-cover"
             />
             {product.badge && (
               <span className="absolute top-1.5 left-1.5 bg-[#bda589] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-[3px] uppercase tracking-wider z-20">

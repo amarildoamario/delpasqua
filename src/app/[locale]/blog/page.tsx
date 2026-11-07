@@ -15,13 +15,16 @@ import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
+    const uiLocale = locale === "us" ? "en" : locale;
     const titles = {
         it: "Blog & Notizie | Frantoio del Pasqua",
         en: "Blog & News | Frantoio del Pasqua",
         de: "Blog & Neuigkeiten | Frantoio del Pasqua",
         nl: "Blog & Nieuws | Frantoio del Pasqua",
         da: "Blog & Nyheder | Frantoio del Pasqua",
-        no: "Blogg & Nyheter | Frantoio del Pasqua"
+        no: "Blogg & Nyheter | Frantoio del Pasqua",
+        es: "Blog y noticias | Frantoio del Pasqua",
+        fr: "Blog et actualités | Frantoio del Pasqua",
     };
     const descriptions = {
         it: "Scopri le novità, i consigli di degustazione e i segreti del nostro frantoio. Un blog dedicato all'Olio Extravergine di Oliva.",
@@ -29,12 +32,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         de: "Entdecken Sie die neuesten Nachrichten, Verkostungstipps und Geheimnisse unserer Ölmühle. Ein Blog über natives Olivenöl extra.",
         nl: "Ontdek het laatste nieuws, proeverijtips e geheimen di olijfmolen. A blog gewijd aan extra vierge olijfolie.",
         da: "Oplev de seneste nyheder, smagsprøver og hemmeligheder i vores oliemølle. En blog dedikeret til ekstra jomfruolivenolie.",
-        no: "Oppdag de siste nyhetene, smaksprøver og hemmeligheder i oljemøllen vår. En blogg dedikert til ekstra virgin olivenolje."
+        no: "Oppdag de siste nyhetene, smaksprøver og hemmeligheder i oljemøllen vår. En blogg dedikert til ekstra virgin olivenolje.",
+        es: "Descubre noticias, consejos de cata y secretos de nuestra almazara. Un blog dedicado al aceite de oliva virgen extra.",
+        fr: "Découvrez les actualités, conseils de dégustation et secrets de notre moulin. Un blog dédié à l'huile d'olive vierge extra.",
     };
 
     return pageMetadata({
-        title: titles[locale as keyof typeof titles] || titles.it,
-        description: descriptions[locale as keyof typeof descriptions] || descriptions.it,
+        title: titles[uiLocale as keyof typeof titles] || titles.it,
+        description: descriptions[uiLocale as keyof typeof descriptions] || descriptions.it,
         path: "/blog/",
         locale,
         hreflang: true,
@@ -47,6 +52,7 @@ export default async function BlogPage({
     params: Promise<{ locale: string; category?: string }>;
 }) {
     const { locale, category } = await params;
+    const uiLocale = locale === "us" ? "en" : locale;
     
     const homeUrl = absoluteUrl(localizedPath("/", locale));
     const blogUrl = absoluteUrl(localizedPath("/blog", locale));
@@ -64,7 +70,7 @@ export default async function BlogPage({
             {
                 "@type": "ListItem",
                 "position": 2,
-                "name": locale === "en" ? "Magazine" : "Il Magazine",
+                "name": uiLocale === "en" ? "Magazine" : "Il Magazine",
                 "item": blogUrl
             }
         ]
@@ -104,112 +110,140 @@ export default async function BlogPage({
             de: "Die Kultur des nativen Olivenöls",
             nl: "De Cultuur van Extra Vierge",
             da: "Kulturen af ekstra jomfruolivenolie",
-            no: "Kulturen av ekstra virgin olivenolje"
-        }[locale] || "La cultura dell'Extravergine",
+            no: "Kulturen av ekstra virgin olivenolje",
+            es: "La cultura del Virgen Extra",
+            fr: "La culture de la Vierge Extra",
+        }[uiLocale] || "La cultura dell'Extravergine",
         subtitle: {
             it: "Approfondimenti, scienza e consigli dal nostro Frantoio",
             en: "Insights, science and advice from our Olive Mill",
             de: "Einblicke, Wissenschaft und Ratschläge aus unserer Ölmühle",
             nl: "Inzichten, wetenschap en advies van onze olijfmolen",
             da: "Indsigt, videnskab og råd fra vores oliemølle",
-            no: "Innsikt, vitenskap og råd fra oljemøllen vår"
-        }[locale] || "Approfondimenti, scienza e consigli dal nostro Frantoio",
+            no: "Innsikt, vitenskap og råd fra oljemøllen vår",
+            es: "Análisis, ciencia y consejos de nuestra Almazara",
+            fr: "Analyses, science et conseils de notre Moulin",
+        }[uiLocale] || "Approfondimenti, scienza e consigli dal nostro Frantoio",
         filterLabel: {
             it: "Stai visualizzando gli articoli della categoria: ",
             en: "Viewing articles in the category: ",
             de: "Artikel der Kategorie: ",
             nl: "Artikelen in de categorie: ",
             da: "Viser artikler i kategorien: ",
-            no: "Viser artikler i kategorien: "
-        }[locale] || "Stai visualizzando gli articoli della categoria: ",
+            no: "Viser artikler i kategorien: ",
+            es: "Viendo artículos de la categoría: ",
+            fr: "Articles de la catégorie : ",
+        }[uiLocale] || "Stai visualizzando gli articoli della categoria: ",
         readMore: {
             it: "Leggi",
             en: "Read",
             de: "Lesen",
             nl: "Lezen",
             da: "Læs",
-            no: "Les"
-        }[locale] || "Leggi",
+            no: "Les",
+            es: "Leer",
+            fr: "Lire",
+        }[uiLocale] || "Leggi",
         filterHeading: {
             it: "Filtra per Argomento",
             en: "Filter by Topic",
             de: "Nach Thema filtern",
             nl: "Filteren op onderwerp",
             da: "Filtrer efter emne",
-            no: "Filtrer etter emne"
-        }[locale] || "Filtra per Argomento",
+            no: "Filtrer etter emne",
+            es: "Filtrar por tema",
+            fr: "Filtrer par sujet",
+        }[uiLocale] || "Filtra per Argomento",
         removeFilter: {
             it: "Rimuovi filtro",
             en: "Remove filter",
             de: "Filter entfernen",
             nl: "Filter verwijderen",
             da: "Fjern filter",
-            no: "Fjern filter"
-        }[locale] || "Rimuovi filtro",
+            no: "Fjern filter",
+            es: "Quitar filtro",
+            fr: "Supprimer le filtre",
+        }[uiLocale] || "Rimuovi filtro",
         noArticles: {
             it: "Nessun articolo trovato",
             en: "No articles found",
             de: "Keine Artikel gefunden",
             nl: "Geen artikelen gevonden",
             da: "Ingen artikler fundet",
-            no: "Ingen artikler funnet"
-        }[locale] || "Nessun articolo trovato",
+            no: "Ingen artikler funnet",
+            es: "No se encontraron artículos",
+            fr: "Aucun article trouvé",
+        }[uiLocale] || "Nessun articolo trovato",
         noArticlesSub: {
             it: "Non ci sono articoli per questa categoria al momento.",
             en: "There are no articles for this category at the moment.",
             de: "Momentan gibt es keine Artikel in dieser Kategorie.",
             nl: "Er zijn momenteel geen artikelen in deze categorie.",
             da: "Der er i øjeblikket ingen artikler i denne kategori.",
-            no: "Det er foreløpig ingen artikler i denne kategorien."
-        }[locale] || "Non ci sono articoli per questa categoria al momento.",
+            no: "Det er foreløpig ingen artikler i denne kategorien.",
+            es: "No hay artículos para esta categoría por el momento.",
+            fr: "Il n'y a pas d'articles dans cette catégorie pour le moment.",
+        }[uiLocale] || "Non ci sono articoli per questa categoria al momento.",
         allArticlesBtn: {
             it: "Tutti gli articoli",
             en: "All articles",
             de: "Alle Artikel",
             nl: "Alle artikelen",
             da: "Alle artikler",
-            no: "Alle artikler"
-        }[locale] || "Tutti gli articoli",
+            no: "Alle artikler",
+            es: "Todos los artículos",
+            fr: "Tous les articles",
+        }[uiLocale] || "Tutti gli articoli",
         promoTitle: {
             it: "Assapora l'autenticità",
             en: "Taste the Authenticity",
             de: "Schmecken Sie die Authentizität",
             nl: "Proef de authenticiteit",
             da: "Smag autenticiteten",
-            no: "Smak autentisiteten"
-        }[locale] || "Assapora l'autenticità",
+            no: "Smak autentisiteten",
+            es: "Saborea la autenticidad",
+            fr: "Savourez l'authenticité",
+        }[uiLocale] || "Assapora l'autenticità",
         promoSub: {
             it: "Scopri i nostri oli direttamente nel luogo in cui nascono.",
             en: "Discover our oils directly in the place where they are born.",
             de: "Entdecken Sie unsere Öle direkt an ihrem Ursprungsort.",
             nl: "Ontdek onze oliën direct op de plek waar ze worden geboren.",
             da: "Oplev vores olier direkte på stedet, hvor de bliver produceret.",
-            no: "Oppdag oljene våre direkte på stedet der de blir produsert."
-        }[locale] || "Scopri i nostri oli direttamente nel luogo in cui nascono.",
+            no: "Oppdag oljene våre direkte på stedet der de blir produsert.",
+            es: "Descubre nuestros aceites directamente en el lugar donde nacen.",
+            fr: "Découvrez nos huiles directement là où elles naissent.",
+        }[uiLocale] || "Scopri i nostri oli direttamente nel luogo in cui nascono.",
         promoBtn: {
             it: "Prenota",
             en: "Book Now",
             de: "Jetzt buchen",
             nl: "Nu boeken",
             da: "Book nu",
-            no: "Bestill nå"
-        }[locale] || "Prenota",
+            no: "Bestill nå",
+            es: "Reservar",
+            fr: "Réserver",
+        }[uiLocale] || "Prenota",
         home: {
             it: "Home",
             en: "Home",
             de: "Startseite",
             nl: "Home",
             da: "Hjem",
-            no: "Hjem"
-        }[locale] || "Home",
+            no: "Hjem",
+            es: "Inicio",
+            fr: "Accueil",
+        }[uiLocale] || "Home",
         magazine: {
             it: "Il Magazine",
             en: "Magazine",
             de: "Magazin",
             nl: "Magazine",
             da: "Magasin",
-            no: "Magasin"
-        }[locale] || "Il Magazine"
+            no: "Magasin",
+            es: "El Magazine",
+            fr: "Le Magazine",
+        }[uiLocale] || "Il Magazine"
     };
 
     return (
@@ -294,7 +328,7 @@ export default async function BlogPage({
                                                 </p>
                                                 <div className="flex items-center justify-between mt-auto">
                                                     <div className="text-[11px] text-stone-400 font-medium uppercase tracking-wide">
-                                                        {post.author} · <time dateTime={post.date}>{new Date(post.date).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}</time>
+                                                        {post.author} · <time dateTime={post.date}>{new Date(post.date).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "short", year: "numeric" })}</time>
                                                     </div>
                                                     <Link
                                                         href={getLocalizedBlogHref(post, locale)}

@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import ProductCardImage from "@/components/ProductCardImage"
 import { Heart, ShoppingCart } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import { useCallback, useState } from "react"
@@ -39,7 +39,7 @@ export type ProductCardProduct = {
 }
 
 const shellClassName =
-  "group relative flex h-full w-full overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white text-[#1f1a17] shadow-[0_2px_8px_rgba(31,26,23,0.30)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_10px_28px_rgba(31,26,23,0.40)] transform-gpu will-change-transform backface-hidden"
+  "group relative flex h-full w-full overflow-hidden rounded-[5px] border border-[#ede8e0] bg-white text-[#1f1a17] shadow-[0_2px_8px_rgba(31,26,23,0.30)] transition-[translate,box-shadow] duration-300 hover:-translate-y-[2px] hover:shadow-[0_5px_14px_rgba(31,26,23,0.28)] motion-reduce:translate-y-0 motion-reduce:transition-none transform-gpu backface-hidden"
 
 const cardCopy = {
   it: {
@@ -501,12 +501,10 @@ function CardInner({
       {/* Foto prodotto */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-white transform-gpu backface-hidden">
         {currentImage ? (
-          <Image
+          <ProductCardImage
             src={currentImage}
             alt={currentAlt || cleanTitle}
-            fill
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.04] will-change-transform"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-[#fdfaf7] text-[10px] font-semibold uppercase tracking-wider text-[#8f6d4c]/70">

@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     "src/generated/**",
     "scratch/**",
     "scripts/**",
+    "archivio/immagini-prodotti/**",
   ]),
 ]);
 

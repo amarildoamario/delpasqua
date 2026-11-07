@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-07",
+  "mode": "built-in image_gen",
+  "source": "public/products/EVO-750-ml-gpt.png",
+  "output": "public/products/EVO-500ml-transparent.png",
+  "canvas": [
+    1024,
+    1536
+  ],
+  "prompt": "Use case: background-extraction. Edit target: the provided EVO olive oil bottle photograph. Remove ONLY the entire white background and floor shadow, replacing all pixels outside the bottle with genuine transparent alpha. Keep THIS EXACT bottle photograph unchanged: original bottle silhouette, glass highlights, gold cap, ivory paper label, the precise EVO artwork and every original printed or handwritten word. No redesign, no relighting, no new text, no added objects, no halo. Preserve original 1024x1536 canvas, exact bottle scale and position: cap top about y94, bottle bottom y1397, widest body x223 through x798. Do not crop, resize, move or redraw the bottle. Output just the isolated bottle on actual transparent background."
+}

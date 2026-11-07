@@ -8,9 +8,20 @@ Data audit: 2026-05-29
 - LastVerified: 2026-06-05
 - OpenItems: 1
 - AgentAction: non ripartire da zero; resta aperta solo la decisione operativa sul prodotto test, mantenuto intenzionalmente per test futuri.
-- Note: Rimosso `src/app/lib` (duplicazione legacy). Chiusi bootstrap client, SKU operativo unico, availability real-time no-store e mapping automatico dei carrelli storici sulle rinomine catalogo. Le verifiche finali di esclusione pubblica del `prodotto-test` vivono anche in `docs/to_check_live/README.md`.
+- Note: Rimosso `src/app/lib` (duplicazione legacy). Chiusi bootstrap client, SKU operativo unico, availability real-time no-store e mapping automatico dei carrelli storici sulle rinomine catalogo. Gli ordini composti solo da `prodotto-test` sono isolati tramite `Order.isTest`; le verifiche finali di esclusione pubblica vivono anche in `docs/to_check_live/README.md`.
 
 ## [RISOLTO] P0 - Catalogo runtime importato come JSON statico
+
+Nomi commerciali e home, 2026-11-07:
+- Fruttato leggero → La Dama; medio → Il Musico; intenso → Il Cavaliere. Aggiornati catalogo, titoli dei 18 formati fruttati e otto traduzioni, con identificativi operativi e prezzi conservati.
+- Verificate 28 varianti con SKU presenti nel database e immagini esistenti; rilevata solo una riga tecnica di test extra a stock zero.
+- `ProductMerch` aggiornato con EVO latta al rango 3 e Musico al 4. `homeVariantId` sceglie la latta EVO 750 ml; foto/prezzo/formato delle card home ora corrispondono.
+- Dettagli e backup in `docs/immagini-prodotti.md`.
+
+Aggiornamento immagini EVO, 2026-11-07:
+- Durante la verifica locale `/api/products` restituiva ancora il vecchio abbinamento 750 ml → PNG della 3 L, pur con JSON aggiornato.
+- Le due cache `catalog-raw` e `catalog-merch` includono ora la revisione del file (mtime, ctime, dimensione), così le modifiche dirette non attendono la scadenza di un'ora.
+- Verificati i quattro nuovi WebP del catalogo e le riscritture dei sei URL storici; dettagli in `docs/immagini-prodotti.md` e registro test.
 
 Stato:
 - Risolto per la logica server-side il 2026-05-30: sostituito l'import statico di `products.json` in `src/lib/server/pricing.ts` con la chiamata a `readCatalog()`, garantendo coerenza di prezzo e di magazzino in fase di pricing ed eliminando il rischio di cache obsoleta.

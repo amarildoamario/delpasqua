@@ -41,9 +41,16 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   if (!parsed.success) return new Response("Bad Request", { status: 400 });
 
   const shipped = parsed.data.shipped;
+  const trackingCode = typeof parsed.data.trackingCode === "string" ? parsed.data.trackingCode.trim() : undefined;
   const actor = parsed.data.actor ? String(parsed.data.actor) : null;
 
-  const order = await prisma.order.findUnique({ where: { id } });
+  const [order, alreadyShippedOnce] = await Promise.all([
+    prisma.order.findUnique({ where: { id } }),
+    prisma.orderEvent.findFirst({
+      where: { orderId: id, toStatus: "SPEDITO" },
+      select: { id: true },
+    }),
+  ]);
   if (!order) return new Response("Not found", { status: 404 });
 
   if (shipped && order.status !== "IN_PREPARAZIONE") {
@@ -58,6 +65,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     data: {
       shippedAt: shipped ? new Date() : null,
       status: shipped ? "SPEDITO" : "IN_PREPARAZIONE",
+      ...(trackingCode !== undefined ? { trackingCode: trackingCode || null } : {}),
     },
   });
 
@@ -70,7 +78,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     meta: null,
   });
 
-  if (shipped && order.status !== "SPEDITO") {
+  if (shipped && !alreadyShippedOnce) {
     await enqueueShippedEmail(id, actor);
   }
 

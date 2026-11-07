@@ -9,6 +9,50 @@ import { getTranslations } from "next-intl/server";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
 
+const WHATSAPP_PHONE = "393388110356";
+const WHATSAPP_CONFIG: Record<string, { label: string; sublabel: string; text: string }> = {
+  it: {
+    label: "Scrivici su WhatsApp",
+    sublabel: "Chat diretta • Risposta rapida",
+    text: "Salve, vi contatto dal sito delpasqua.com per richiedere informazioni sui vostri prodotti e servizi.",
+  },
+  en: {
+    label: "Chat on WhatsApp",
+    sublabel: "Direct chat • Fast response",
+    text: "Hello, I am contacting you from delpasqua.com to request information about your products and services.",
+  },
+  de: {
+    label: "Auf WhatsApp schreiben",
+    sublabel: "Direktchat • Schnelle Antwort",
+    text: "Guten Tag, ich kontaktiere Sie über delpasqua.com für Informationen zu Ihren Produkten und Dienstleistungen.",
+  },
+  fr: {
+    label: "Discuter sur WhatsApp",
+    sublabel: "Chat direct • Réponse rapide",
+    text: "Bonjour, je vous contacte depuis le site delpasqua.com pour demander des informations sur vos produits et services.",
+  },
+  es: {
+    label: "Escríbenos por WhatsApp",
+    sublabel: "Chat directo • Respuesta rápida",
+    text: "Hola, les contacto desde el sitio delpasqua.com para solicitar información sobre sus productos y servicios.",
+  },
+  nl: {
+    label: "Chat via WhatsApp",
+    sublabel: "Directe chat • Snelle reactie",
+    text: "Hallo, ik neem contact met u op via delpasqua.com voor informatie over uw producten en diensten.",
+  },
+  da: {
+    label: "Skriv på WhatsApp",
+    sublabel: "Direkte chat • Hurtigt svar",
+    text: "Hej, jeg kontakter jer fra delpasqua.com for at få oplysninger om jeres produkter og tjenester.",
+  },
+  no: {
+    label: "Skriv på WhatsApp",
+    sublabel: "Direkte chat • Raskt svar",
+    text: "Hei, jeg kontakter dere fra delpasqua.com for å be om informasjon om produktene og tjenestene deres.",
+  },
+};
+
 const CONTACT_ADDRESS = companyInfo.addressMap;
 const CONTACT_LAT = companyInfo.geo.latitude;
 const CONTACT_LNG = companyInfo.geo.longitude;
@@ -33,6 +77,9 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "ContactPage" });
   const tFooter = await getTranslations({ locale, namespace: "Common.footer.bottom" });
+
+  const wa = WHATSAPP_CONFIG[locale] || WHATSAPP_CONFIG.it;
+  const waUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(wa.text)}`;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -83,7 +130,49 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                 {t("hero.description")}
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              {/* Box WhatsApp Ufficiale in Cima */}
+              <div className="mt-8 flex justify-center md:justify-start">
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    backgroundColor: "#25D366",
+                    color: "#ffffff",
+                    borderRadius: "5px",
+                    boxShadow: "0 10px 25px -4px rgba(37, 211, 102, 0.45), 0 4px 6px -2px rgba(37, 211, 102, 0.2)",
+                  }}
+                  className="btn-whatsapp group mx-auto inline-flex items-center gap-3.5 rounded-[5px] border border-[#20BA59] px-5 py-3.5 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_14px_30px_-4px_rgba(37,211,102,0.6)] active:scale-[0.98] sm:gap-4 sm:px-6 md:mx-0"
+                >
+                  {/* Badge bianco che fa risaltare al 100% l'icona verde originale di WhatsApp */}
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 group-hover:scale-105">
+                    <WhatsAppIcon className="h-7 w-7 shrink-0" />
+                  </div>
+
+                  <div className="flex flex-col text-left">
+                    <span className="text-[16px] font-bold leading-tight text-white tracking-wide">
+                      {wa.label}
+                    </span>
+                    <span className="mt-0.5 text-xs font-medium text-white/90">
+                      {wa.sublabel}
+                    </span>
+                  </div>
+
+                  <svg
+                    className="ml-2 h-5 w-5 text-white/90 transition-transform duration-300 group-hover:translate-x-1"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3">
                 <Pill>{t("hero.pills.response")}</Pill>
                 <Pill>{t("hero.pills.support")}</Pill>
                 <Pill>{t("hero.pills.b2b")}</Pill>
@@ -139,9 +228,20 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                   </InfoRow>
 
                   <InfoRow label={t("info.mobile_label")}>
-                    <a className="text-[#3D5A3D] hover:underline" href="tel:+393388110356">
-                      +39 338 811 0356
-                    </a>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <a className="text-[#3D5A3D] hover:underline" href="tel:+393388110356">
+                        +39 338 811 0356
+                      </a>
+                      <a
+                        href={waUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#25D366]/10 px-2.5 py-1 text-xs font-medium text-[#1A7737] hover:bg-[#25D366]/20 transition"
+                      >
+                        <WhatsAppIcon className="h-3.5 w-3.5 fill-[#25D366] shrink-0" />
+                        WhatsApp
+                      </a>
+                    </div>
                   </InfoRow>
 
                   <InfoRow label={t("info.email_label")}>
@@ -255,7 +355,7 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#3D5A3D]/10 px-4 py-2 text-xs font-medium text-[#3D5A3D]">
+    <span className="inline-flex min-w-[130px] sm:min-w-[140px] flex-1 sm:flex-initial items-center justify-center text-center gap-1.5 rounded-[5px] bg-[#3D5A3D]/10 px-4 py-2 text-xs font-semibold tracking-wide text-[#3D5A3D]">
       {children}
     </span>
   );
@@ -385,5 +485,23 @@ export default async function ContattiPageWrapper(props: any) {
     <NextIntlClientProvider messages={pageMessages}>
       <ContattiPage {...props} />
     </NextIntlClientProvider>
+  );
+}
+
+
+function WhatsAppIcon({ className = "h-7 w-7" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fill="#25D366"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2z"
+      />
+      <path
+        fill="#FFFFFF"
+        d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.91-2.2-.24-.59-.49-.5-.67-.52-.18 0-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.03 1.01-1.03 2.47 0 1.47 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35z"
+      />
+    </svg>
   );
 }

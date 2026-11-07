@@ -19,6 +19,7 @@ type JsonObject = Record<string, unknown>;
 export type PricingResultItem = {
   productId: string;
   variantId: string;
+  isTestProduct: boolean;
 
   sku: string;
   imageUrl?: string | null;
@@ -186,6 +187,7 @@ export async function computeOrderPricing(args: {
     return {
       productId: p.id,
       variantId: v.id,
+      isTestProduct: p.isTestProduct === true,
       sku,
       imageUrl: variantImageSrc ?? productImageSrc ?? null,
       title: p.title,

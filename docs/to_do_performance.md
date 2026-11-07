@@ -5,9 +5,10 @@ Ultimo aggiornamento: 2026-06-27
 
 ## Agent Status
 
-- FileStatus: ACTIVE
-- LastVerified: 2026-06-28
+- FileStatus: COMPLETED
+- LastVerified: 2026-07-10
 - OpenItems: 0
+- ArchiveNote: backlog performance completato; file archiviato. Le verifiche reali dopo il deploy restano in `docs/to_check_live/README.md`.
 - VerificationNote 2026-06-28: `npm.cmd run typecheck`, `npm.cmd run lint` e `npm.cmd run build` passano con successo. Tutti i task di ottimizzazione performance nel backlog sono stati completati ed esportati correttamente.
 - AgentAction: completato il lazy loading dei componenti client, il caching del catalogo, la staticità delle rotte pubbliche, il payload i18n client, le dimensioni responsive delle immagini e la disattivazione del prefetch aggressivo sui link secondari. Non ci sono ulteriori pendenze aperte. L'integrazione Redis/Upstash è stata esclusa come da indicazioni dell'utente.
 - Note: build production verificata con `npm.cmd run build` su Next.js 16.1.6. Il build passa; tutte le rotte pubbliche sotto `[locale]` sono compilate correttamente come statiche `●` (SSG/ISR). Database Prisma Postgres confermato in Frankfurt; `vercel.json` dichiara `fra1` per allineare le Serverless Functions al DB dal prossimo deploy.

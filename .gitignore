@@ -41,6 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Local product photo originals, working files and replacement backups
+/archivio/immagini-prodotti/
+
 /src/generated/prisma
 
 

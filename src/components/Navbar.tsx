@@ -509,7 +509,7 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
         </div>
       </header>
 
-      <SheetContent side="left" hideClose className="max-w-sm border-r border-stone-200">
+      <SheetContent side="left" hideClose data-menu-open={mobileOpen} className="mobile-menu-panel max-w-sm border-r border-stone-200">
         <div className="flex h-[72px] items-center justify-between border-b border-stone-100 px-6">
           <LocaleLink href="/" onClick={() => setMobileOpen(false)} className="relative h-10 w-32">
             <Image
@@ -539,12 +539,13 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
         <div className="flex flex-1 flex-col overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex-1 px-6 py-8">
             <div className="space-y-1">
-              {mobileLinks.map((link) => (
+              {mobileLinks.map((link, index) => (
                 <LocaleLink
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="group flex items-center justify-between border-b border-stone-100 py-4 transition-colors hover:text-green-700"
+                  className="mobile-menu-item group flex items-center justify-between border-b border-stone-100 py-4 transition-colors hover:text-green-700"
+                  style={{ animationDelay: `${80 + index * 55}ms` }}
                 >
                   <span className="text-2xl font-light text-stone-800 transition-colors group-hover:text-green-700">
                     {link.label}

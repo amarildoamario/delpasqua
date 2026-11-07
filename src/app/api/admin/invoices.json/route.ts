@@ -90,7 +90,7 @@ export async function GET(req: Request) {
   endExclusive.setDate(end.getDate() + 1);
 
   // ✅ WHERE: diverso per shipping vs range
-  const where: Record<string, unknown> = {};
+  const where: Record<string, unknown> = { isTest: false };
 
   if (mode === "shipping") {
     // ✅ Operatività: SOLO PAGATO non spediti + pagati davvero + no cancel/refund
