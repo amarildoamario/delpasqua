@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { z } from "zod";
 import { analyticsPath, isAdminPath } from "@/lib/analytics/events";
 import type { AnalyticsEventSchema } from "@/lib/server/schemas";
+import { normalizeTrafficCountry } from "@/lib/server/trafficGeography";
 
 type IncomingEvent = z.infer<typeof AnalyticsEventSchema>;
 type Writer = { $executeRaw: (sql: TemplateStringsArray, ...values: unknown[]) => Promise<number> };
@@ -34,7 +35,7 @@ export function prepareAnalyticsEvents(events: IncomingEvent[], req: Request, no
   if (device === "bot") return [];
   const host = new URL(req.url).hostname;
   const isProductionHost = host === "delpasqua.com" || host === "www.delpasqua.com";
-  const countryCode = (req.headers.get("x-vercel-ip-country") ?? "IT").slice(0, 2).toUpperCase();
+  const countryCode = normalizeTrafficCountry(req.headers.get("x-vercel-ip-country"));
   const unique = new Map<string, Record<string, unknown>>();
   for (const event of events) {
     const path = analyticsPath(event.path ?? "/");

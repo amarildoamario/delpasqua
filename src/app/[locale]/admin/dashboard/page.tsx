@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { prisma } from "@/lib/server/prisma";
+import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
 
@@ -63,18 +64,6 @@ function deriveVatCents(order: { vatCents: number; subtotalCents: number }, vatR
   return Math.round((order.subtotalCents * vatRateDec) / (1 + vatRateDec));
 
 }
-
-function getAnalyticsCountryCode(data: unknown) {
-  if (!data || typeof data !== "object") return "IT";
-  const meta = (data as { meta?: unknown }).meta;
-  if (!meta || typeof meta !== "object") return "IT";
-  const countryCode = (meta as { countryCode?: unknown }).countryCode;
-  return typeof countryCode === "string" && countryCode.trim()
-    ? countryCode.trim().toUpperCase()
-    : "IT";
-}
-
-
 
 function getCountryFlag(code: string): string {
 
@@ -224,6 +213,8 @@ function CountryBarChart({
 
   valueFormatter = (v) => String(v),
 
+  showAll = false,
+
 }: {
 
   title: string;
@@ -231,6 +222,8 @@ function CountryBarChart({
   data: Array<{ label: string; barLabel?: string; value: number }>;
 
   valueFormatter?: (v: number) => string;
+
+  showAll?: boolean;
 
 }) {
 
@@ -244,15 +237,15 @@ function CountryBarChart({
 
       <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">{title}</div>
 
-      <div className="space-y-2 flex-1 flex flex-col justify-start">
+      <div className="space-y-2 flex-1 min-h-0 overflow-y-auto flex flex-col justify-start">
 
-        {data.slice(0, 5).map((item, idx) => {
+        {(showAll ? data : data.slice(0, 5)).map((item, idx) => {
           const wPct = Math.min(100, Math.max(5, Math.round((item.value / maxValue) * 100)));
           const flag = getCountryFlag(item.label);
           const barBackground = `linear-gradient(to right, rgb(59 130 246 / 0.8) 0 ${wPct}%, rgb(245 245 245) ${wPct}% 100%)`;
           return (
             <div key={`${item.label}:${item.barLabel ?? ""}:${idx}`} className="flex items-center gap-3 text-xs">
-              <div className="w-8 text-sm font-semibold text-neutral-700 truncate">{flag}</div>
+              <div title={item.label === "ND" ? "Nazione non disponibile" : item.label} className="w-8 shrink-0 text-sm font-semibold text-neutral-700 truncate">{flag}</div>
               <div
                 className="flex-1 h-5 rounded-lg overflow-hidden flex items-center justify-between px-2 text-[10px] font-bold text-neutral-900"
                 style={{ background: barBackground }}
@@ -443,6 +436,8 @@ export default async function AdminDashboard({
 
         type: true,
 
+        createdAt: true,
+
         visitorId: true,
 
         sessionId: true,
@@ -612,113 +607,19 @@ export default async function AdminDashboard({
 
 
 
-  // Calcolo visite uniche, sessioni e geografia reali in-memoria
-
-  const sessionsSet = new Set<string>();
-
-  const visitorsSet = new Set<string>();
-
-  const countryVisitorMap = new Map<string, Set<string>>();
-
-  const countrySessionMap = new Map<string, Set<string>>();
+  // Traffic geography includes all countries, independently of sales markets.
+  const { uniqueVisitorsCount, uniqueSessionsCount, visitorCountriesData, sessionCountriesData } =
+    summarizeTrafficGeography(analyticsEvents);
 
   const productViewCounts = new Map<string, number>();
-
-  const productViewCountryMap = new Map<string, Map<string, number>>();
-
-
-
-  for (const ev of analyticsEvents) {
-
-    const country = getAnalyticsCountryCode(ev.data);
-
-
-
-    if (ev.type === "page_view") {
-
-      if (ev.visitorId) visitorsSet.add(ev.visitorId);
-
-      if (ev.sessionId) sessionsSet.add(ev.sessionId);
-
-
-
-      if (ALLOWED_COUNTRIES.includes(country)) {
-
-        if (ev.visitorId) {
-
-          if (!countryVisitorMap.has(country)) {
-
-            countryVisitorMap.set(country, new Set());
-
-          }
-
-          countryVisitorMap.get(country)!.add(ev.visitorId);
-
-        }
-
-        if (ev.sessionId) {
-
-          if (!countrySessionMap.has(country)) {
-
-            countrySessionMap.set(country, new Set());
-
-          }
-
-          countrySessionMap.get(country)!.add(ev.sessionId);
-
-        }
-
-      }
-
-    } else if (ev.type === "product_view" && ev.productKey) {
-
-      productViewCounts.set(ev.productKey, (productViewCounts.get(ev.productKey) || 0) + 1);
-
-      if (!productViewCountryMap.has(ev.productKey)) {
-
-        productViewCountryMap.set(ev.productKey, new Map());
-
-      }
-
-      const countryMap = productViewCountryMap.get(ev.productKey)!;
-
-      countryMap.set(country, (countryMap.get(country) || 0) + 1);
-
+  for (const event of analyticsEvents) {
+    if (event.type === "product_view" && event.productKey) {
+      productViewCounts.set(event.productKey, (productViewCounts.get(event.productKey) ?? 0) + 1);
     }
-
   }
-
-
-
-  const uniqueVisitorsCount = visitorsSet.size;
-
-  const uniqueSessionsCount = sessionsSet.size;
-
-
-
-  const totalGeoVisitors = Array.from(countryVisitorMap.values()).reduce((acc, s) => acc + s.size, 0);
-
-  const visitorCountries = Array.from(countryVisitorMap.entries()).map(([country, visitorSet]) => ({
-
-    country,
-
-    count: visitorSet.size,
-
-  })).sort((a, b) => b.count - a.count).map(c => {
-
-    const pct = totalGeoVisitors > 0 ? Math.round((c.count / totalGeoVisitors) * 100) : 100;
-
-    const flag = getCountryFlag(c.country);
-
-    return `${flag} (${pct}%)`;
-
-  }).slice(0, 5).join("  ") || "🇮🇹 (100%)";
-
-
 
   // Risoluzione prodotto più visto
 
-  void visitorCountries;
 
   const sortedProductViews = Array.from(productViewCounts.entries()).sort((a, b) => b[1] - a[1]);
 
@@ -736,35 +637,15 @@ export default async function AdminDashboard({
 
 
 
-  for (const ev of analyticsEvents) {
-
-    if (ev.type === "product_view" && ev.productKey) {
-
-      const country = getAnalyticsCountryCode(ev.data);
-
-
-
-      if (ALLOWED_COUNTRIES.includes(country)) {
-
-        if (!countryProductViews.has(country)) {
-
-          countryProductViews.set(country, new Map());
-
-        }
-
-        const prodMap = countryProductViews.get(country)!;
-
-        prodMap.set(ev.productKey, (prodMap.get(ev.productKey) || 0) + 1);
-
-      }
-
-    }
-
+  for (const event of analyticsEvents) {
+    if (event.type !== "product_view" || !event.productKey) continue;
+    const country = getAnalyticsCountryCode(event.data);
+    const products = countryProductViews.get(country) ?? new Map<string, number>();
+    products.set(event.productKey, (products.get(event.productKey) ?? 0) + 1);
+    countryProductViews.set(country, products);
   }
 
-
-
-  const topProductViewsPerCountry = ALLOWED_COUNTRIES.map((country) => {
+  const topProductViewsPerCountry = Array.from(countryProductViews.keys()).map((country) => {
 
     const prodMap = countryProductViews.get(country);
 
@@ -859,28 +740,6 @@ export default async function AdminDashboard({
     value: Number(r.qty),
 
   })).filter(r => ALLOWED_COUNTRIES.includes(r.label) && r.value > 0).sort((a, b) => b.value - a.value);
-
-
-
-  // 1. Visitatori e sessioni per nazione
-
-  const visitorCountriesData = Array.from(countryVisitorMap.entries()).map(([country, visitorSet]) => ({
-
-    label: country,
-
-    value: visitorSet.size,
-
-  })).sort((a, b) => b.value - a.value);
-
-
-
-  const sessionCountriesData = Array.from(countrySessionMap.entries()).map(([country, sessionSet]) => ({
-
-    label: country,
-
-    value: sessionSet.size,
-
-  })).sort((a, b) => b.value - a.value);
 
 
 
@@ -1547,9 +1406,9 @@ export default async function AdminDashboard({
 
 
 
-  const filteredVisitorCountriesData = visitorCountriesData.filter(d => ALLOWED_COUNTRIES.includes(d.label) && d.value > 0);
+  const filteredVisitorCountriesData = visitorCountriesData.filter(d => d.value > 0);
 
-  const filteredSessionCountriesData = sessionCountriesData.filter(d => ALLOWED_COUNTRIES.includes(d.label) && d.value > 0);
+  const filteredSessionCountriesData = sessionCountriesData.filter(d => d.value > 0);
 
   const filteredOrdersCountriesData = ordersCountriesData.filter(d => ALLOWED_COUNTRIES.includes(d.label) && d.value > 0);
 
@@ -1671,7 +1530,7 @@ export default async function AdminDashboard({
 
             />
 
-            <CountryBarChart title="Prodotto Più Visto per Nazione" data={topProductViewsPerCountry} />
+            <CountryBarChart title="Prodotto Più Visto per Nazione" data={topProductViewsPerCountry} showAll />
 
           </div>
 
@@ -1767,11 +1626,11 @@ export default async function AdminDashboard({
 
               hint="Visitatori registrati nel periodo"
 
-              tooltip="Rappresenta il numero di persone uniche (dispositivi/browser) che hanno visitato il sito. Se un utente accede 10 volte, conta comunque come 1 visitatore unico."
+              tooltip="Rappresenta il numero di persone uniche (dispositivi/browser) che hanno visitato il sito. Se un utente accede 10 volte, conta comunque come 1 visitatore unico. Ogni visitatore viene attribuito alla prima nazione disponibile nel periodo, anche se non abilitata alla vendita."
 
             />
 
-            <CountryBarChart title="Visite per Nazione" data={filteredVisitorCountriesData} />
+            <CountryBarChart title="Visite per Nazione" data={filteredVisitorCountriesData} showAll />
 
           </div>
 
@@ -1787,13 +1646,13 @@ export default async function AdminDashboard({
 
               value={new Intl.NumberFormat("it-IT").format(uniqueSessionsCount)}
 
-              hint="Interazioni uniche sul sito"
+              hint="Sessioni di navigazione nel periodo"
 
               tooltip="Rappresenta una singola sessione di navigazione sul sito (scade dopo 30 minuti di inattività). Se un utente visita il sito al mattino e poi alla sera, conta come 2 sessioni."
 
             />
 
-            <CountryBarChart title="Sessioni per Nazione" data={filteredSessionCountriesData} />
+            <CountryBarChart title="Sessioni per Nazione" data={filteredSessionCountriesData} showAll />
 
           </div>
 

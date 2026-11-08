@@ -44,6 +44,13 @@ test("ingestion removes query strings and arbitrary data and preserves event tim
   assert.deepEqual(row.data, { qty: 2, meta: { source: "web", trafficType: "real", env: "prod", isInternal: false, device: "desktop", countryCode: "DE" } });
 });
 
+test("missing country headers remain unknown rather than being counted as Italian", () => {
+  const [row] = prepareAnalyticsEvents([event()], new Request("https://delpasqua.com/api/analytics/", {
+    headers: { "user-agent": "Mozilla/5.0 Chrome/130" },
+  }), now);
+  assert.equal((row.data as { meta: { countryCode: string } }).meta.countryCode, "ND");
+});
+
 test("leave and purchase have stable IDs across retry/reload", () => {
   const [a] = prepareAnalyticsEvents([event({ type: "page_leave", pageId: "page-000001" })], request(), now);
   const [b] = prepareAnalyticsEvents([event({ eventId: "another-id", type: "page_leave", pageId: "page-000001" })], request(), now);
