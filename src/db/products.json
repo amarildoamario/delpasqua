@@ -31,7 +31,7 @@
       {
         "id": "750ml",
         "label": "Latta 750 ml",
-        "priceCents": 1800,
+        "priceCents": 2200,
         "sku": "EVO-L-750ML",
         "imageSrc": "/products/EVO-latta-750ml-v2.webp",
         "imageAlt": "Olio EVO Latta 750 ml",
@@ -42,7 +42,7 @@
       {
         "id": "1lt",
         "label": "Latta 1 L",
-        "priceCents": 2000,
+        "priceCents": 2800,
         "sku": "EVO-L-1LT",
         "imageSrc": "/products/EVO-latta-1lt-v2.webp",
         "imageAlt": "Olio EVO Latta 1 lt",
@@ -53,7 +53,7 @@
       {
         "id": "3lt",
         "label": "Latta 3 L",
-        "priceCents": 7200,
+        "priceCents": 8400,
         "sku": "EVO-L-3LT",
         "imageSrc": "/products/EVO-latta-3lt-v2.webp",
         "imageAlt": "Olio EVO Latta 3 lt",
@@ -64,7 +64,7 @@
       {
         "id": "5lt",
         "label": "Latta 5 L",
-        "priceCents": 12000,
+        "priceCents": 14000,
         "sku": "EVO-L-5LT",
         "imageSrc": "/products/EVO-latta-5lt-v2.webp",
         "imageAlt": "Olio EVO Latta 5 lt",
