@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import type { HeroSlide } from "@/components/HeroCarousel";
 
-const SLIDE_FADE_MS = 900;
+const SLIDE_INTERVAL_MS = 5600;
 
 type HeroCarouselClientProps = {
   slides: HeroSlide[];
@@ -19,112 +19,86 @@ type HeroCarouselClientProps = {
 
 export default function HeroCarouselClient({ slides, labels }: HeroCarouselClientProps) {
   const [index, setIndex] = useState(0);
-  const [renderedSlideIndices, setRenderedSlideIndices] = useState<number[]>([]);
   const [isPaused, setIsPaused] = useState(false);
-  const [isEnhanced, setIsEnhanced] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const reducedMotion = usePrefersReducedMotion();
-  const indexRef = useRef(0);
-  const cleanupTimerRef = useRef<number | null>(null);
-  const transitionFrameRef = useRef<number | null>(null);
+  const requestedIndexRef = useRef(0);
+  const readyImagesRef = useRef(new Set<number>());
+
+  const showSlide = useCallback((nextIndex: number) => {
+    setIndex(nextIndex);
+  }, []);
+
+  const goTo = useCallback((nextIndex: number) => {
+    if (slides.length < 2) return;
+    const normalizedIndex = (nextIndex + slides.length) % slides.length;
+    requestedIndexRef.current = normalizedIndex;
+    // Keep the current slide visible until the incoming image is decoded.
+    if (readyImagesRef.current.has(normalizedIndex)) showSlide(normalizedIndex);
+  }, [showSlide, slides.length]);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setIsEnhanced(true);
-    });
-
-    return () => window.cancelAnimationFrame(frame);
+    const onVisibilityChange = () => setIsVisible(!document.hidden);
+    onVisibilityChange();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
   }, []);
 
   useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
-
-  useEffect(() => {
-    return () => {
-      if (cleanupTimerRef.current) {
-        window.clearTimeout(cleanupTimerRef.current);
-      }
-      if (transitionFrameRef.current) {
-        window.cancelAnimationFrame(transitionFrameRef.current);
-      }
-    };
-  }, []);
-
-  const goTo = useCallback(
-    (nextIndex: number) => {
-      const normalizedIndex = (nextIndex + slides.length) % slides.length;
-
-      if (cleanupTimerRef.current) {
-        window.clearTimeout(cleanupTimerRef.current);
-      }
-      if (transitionFrameRef.current) {
-        window.cancelAnimationFrame(transitionFrameRef.current);
-      }
-
-      if (normalizedIndex > 0) {
-        setRenderedSlideIndices((current) =>
-          current.includes(normalizedIndex) ? current : [...current, normalizedIndex]
-        );
-      }
-
-      transitionFrameRef.current = window.requestAnimationFrame(() => {
-        setIndex(normalizedIndex);
-
-        cleanupTimerRef.current = window.setTimeout(() => {
-          setRenderedSlideIndices(normalizedIndex > 0 ? [normalizedIndex] : []);
-          cleanupTimerRef.current = null;
-        }, SLIDE_FADE_MS);
-
-        transitionFrameRef.current = null;
-      });
-    },
-    [slides.length]
-  );
+    if (reducedMotion || isPaused || !isVisible || slides.length < 2) return;
+    // A fresh reading interval after every change, including manual navigation.
+    const timer = window.setTimeout(() => goTo(index + 1), SLIDE_INTERVAL_MS);
+    return () => window.clearTimeout(timer);
+  }, [goTo, index, isPaused, isVisible, reducedMotion, slides.length]);
 
   function next() {
-    goTo(index + 1);
+    goTo(requestedIndexRef.current + 1);
   }
 
   function prev() {
-    goTo(index - 1);
+    goTo(requestedIndexRef.current - 1);
   }
 
-  useEffect(() => {
-    if (!isEnhanced || reducedMotion || isPaused) return;
-
-    const timer = window.setInterval(() => {
-      goTo(indexRef.current + 1);
-    }, 5600);
-
-    return () => window.clearInterval(timer);
-  }, [goTo, isEnhanced, isPaused, reducedMotion]);
-
   return (
-    <div className="absolute inset-0 z-20 pointer-events-none">
-      {renderedSlideIndices.map((slideIndex) => {
-        const slide = slides[slideIndex];
+    <div
+      className="absolute inset-0 z-20"
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
+      }}
+    >
+      {slides.map((slide, slideIndex) => {
         const active = slideIndex === index;
 
         return (
           <figure
             key={slide.id}
             className={[
-              "absolute inset-0 w-full transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "absolute inset-0 w-full transition-opacity duration-[900ms] ease-in-out motion-reduce:transition-none",
               active ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
             ].join(" ")}
             aria-hidden={!active}
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            onFocusCapture={() => setIsPaused(true)}
-            onBlurCapture={() => setIsPaused(false)}
+            inert={!active}
           >
             <Image
               src={slide.imageSrc}
               alt={slide.imageAlt}
               fill
-              quality={78}
+              priority={slideIndex === 0}
+              loading={slideIndex === 0 ? undefined : "eager"}
+              fetchPriority={slideIndex === 0 ? "high" : "low"}
+              quality={75}
+              onLoad={(event) => {
+                const image = event.currentTarget;
+                void image.decode().then(() => {
+                  readyImagesRef.current.add(slideIndex);
+                  if (requestedIndexRef.current === slideIndex) showSlide(slideIndex);
+                }).catch(() => {
+                  // A failed image must not replace the currently readable slide.
+                });
+              }}
               sizes="100vw"
-              className="scale-100 object-cover object-center transition-transform duration-[7000ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="object-cover object-center"
             />
 
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,11,8,0.68)_0%,rgba(18,11,8,0.38)_38%,rgba(18,11,8,0.16)_62%,rgba(18,11,8,0.46)_100%)]" />
@@ -135,8 +109,8 @@ export default function HeroCarouselClient({ slides, labels }: HeroCarouselClien
               <div className="mx-auto flex h-full max-w-6xl items-center justify-center px-6 py-14 text-center sm:px-10">
                 <div
                   className={[
-                    "w-full max-w-4xl text-white transition-all duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-                    active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
+                    "w-full max-w-4xl text-white transition-transform duration-[900ms] ease-in-out motion-reduce:transform-none motion-reduce:transition-none",
+                    active ? "translate-y-0" : "translate-y-3",
                   ].join(" ")}
                 >
                   <div className="flex items-center justify-center gap-4 text-[11px] font-medium uppercase tracking-[0.28em] text-white/70">
@@ -175,8 +149,6 @@ export default function HeroCarouselClient({ slides, labels }: HeroCarouselClien
         variant="outline"
         size="icon-sm"
         onClick={prev}
-        onFocus={() => setIsPaused(true)}
-        onBlur={() => setIsPaused(false)}
         className="pointer-events-auto absolute left-3 top-1/2 z-30 -translate-y-1/2 rounded-full border-white/15 bg-black/20 text-white backdrop-blur-sm hover:bg-black/34 sm:left-6 lg:left-8"
         aria-label={labels.prev}
       >
@@ -188,8 +160,6 @@ export default function HeroCarouselClient({ slides, labels }: HeroCarouselClien
         variant="outline"
         size="icon-sm"
         onClick={next}
-        onFocus={() => setIsPaused(true)}
-        onBlur={() => setIsPaused(false)}
         className="pointer-events-auto absolute right-3 top-1/2 z-30 -translate-y-1/2 rounded-full border-white/15 bg-black/20 text-white backdrop-blur-sm hover:bg-black/34 sm:right-6 lg:right-8"
         aria-label={labels.next}
       >
