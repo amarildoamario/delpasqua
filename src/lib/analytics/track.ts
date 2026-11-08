@@ -1,306 +1,124 @@
 "use client";
 
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
+import { getOrCreateCartId } from "./cartId";
+import { ANALYTICS_TYPES, analyticsPath, isAdminPath, type AnalyticsEvent } from "./events";
+import { AnalyticsQueue, ANALYTICS_BATCH_SIZE, ANALYTICS_FLUSH_MS } from "./queue";
+
+type Track = Partial<Omit<AnalyticsEvent, "type" | "visitorId" | "sessionId">> & { type: string };
+const STORAGE_KEY = "analytics_queue_v2";
+let queue: AnalyticsQueue | undefined;
+let timer: ReturnType<typeof setTimeout> | undefined;
+let inFlight = false;
+let retryMs = ANALYTICS_FLUSH_MS;
+let lastBeaconBody = "";
+let lastBeaconAt = 0;
+
+export function analyticsCookie(name: string) {
+  if (typeof document === "undefined") return null;
+  const value = document.cookie.split("; ").find((part) => part.startsWith(`${name}=`));
+  try { return value ? decodeURIComponent(value.slice(name.length + 1)) : null; }
+  catch { return null; }
+}
+
+function setCookie(name: string, value: string, seconds: number) {
+  document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${seconds}; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+}
+
+export function analyticsAllowed() {
+  if (typeof window === "undefined") return false;
+  const mode = new URLSearchParams(location.search).get("test_mode");
+  if (mode === "1") setCookie("internal", "1", 86400);
+  if (mode === "0") setCookie("internal", "", 0);
+  return mode !== "1" && analyticsCookie("internal") !== "1" &&
+    analyticsCookie("analytics_consent") !== "0" && !isAdminPath(location.pathname);
+}
+
+function persist() {
+  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(queue?.snapshot() ?? [])); } catch { /* Memory fallback. */ }
+}
+
+function schedule() {
+  if (timer || !queue?.snapshot().length) return;
+  timer = setTimeout(() => { timer = undefined; void flushAnalytics(); }, retryMs);
+}
+
+function getQueue() {
+  if (!queue) {
+    let saved: unknown;
+    try { saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? "[]"); } catch { saved = []; }
+    queue = new AnalyticsQueue(saved);
+    window.addEventListener("online", () => { void flushAnalytics(); });
+    const flushOnExit = () => queueMicrotask(() => { void flushAnalytics(true); });
+    window.addEventListener("pagehide", flushOnExit);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flushOnExit();
+      else schedule();
+    });
   }
+  return queue;
 }
 
-type Track = {
-  type: string;
-  path?: string | null;
-  productKey?: string | null;
-  variantKey?: string | null;
-  cartId?: string | null;
-  orderId?: string | null;
-  data?: unknown;
-};
-
-function safeObj(v: unknown): Record<string, unknown> {
-  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
-  return v as Record<string, unknown>;
+export async function flushAnalytics(beacon = false) {
+  if (!queue) return;
+  if (analyticsCookie("analytics_consent") === "0" || analyticsCookie("internal") === "1") {
+    queue.clear(); persist(); return;
+  }
+  const batch = queue.batch();
+  if (!batch.length || !navigator.onLine) return;
+  const body = JSON.stringify(batch);
+  if (beacon && body === lastBeaconBody && Date.now() - lastBeaconAt < 5000) return;
+  if (beacon && navigator.sendBeacon?.("/api/analytics/", new Blob([body], { type: "application/json" }))) {
+    // Beacon has no acknowledgement. Retain IDs for safe replay on next load.
+    lastBeaconBody = body; lastBeaconAt = Date.now();
+    persist(); return;
+  }
+  if (inFlight) return;
+  inFlight = true;
+  try {
+    const response = await fetch("/api/analytics/", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true,
+    });
+    if (response.ok || response.status === 400 || response.status === 413) {
+      queue.acknowledge(batch);
+      retryMs = ANALYTICS_FLUSH_MS;
+      persist();
+    } else retryMs = Math.min(retryMs * 2, 120_000);
+  } catch { retryMs = Math.min(retryMs * 2, 120_000); }
+  finally { inFlight = false; schedule(); }
 }
 
-function centsToNumber(cents: unknown): number | undefined {
-  const n = typeof cents === "number" ? cents : Number(cents);
-  if (!Number.isFinite(n)) return undefined;
-  return Math.round(n) / 100;
+function identity() {
+  let visitorId = analyticsCookie("v_id");
+  if (!visitorId || visitorId.length < 6 || visitorId.length > 128) { visitorId = crypto.randomUUID(); setCookie("v_id", visitorId, 365 * 86400); }
+  let sessionId = analyticsCookie("s_id");
+  if (!sessionId || sessionId.length < 6 || sessionId.length > 128) sessionId = crypto.randomUUID();
+  setCookie("s_id", sessionId, 1800);
+  return { visitorId, sessionId };
 }
 
-function buildItemFromTrack(e: Track) {
-  const d = safeObj(e.data);
-
-  const qty = typeof d.qty === "number" ? d.qty : undefined;
-  const price = centsToNumber(d.unitPriceCents);
-
-  const variantLabel =
-    typeof d.variantLabel === "string" && d.variantLabel.trim() ? d.variantLabel.trim() : undefined;
-
-  const slug = typeof d.slug === "string" ? d.slug : undefined;
-
-  return {
-    item_id: e.productKey ?? undefined,
-    item_variant: variantLabel ?? (e.variantKey ?? undefined),
-    item_name: slug ?? e.productKey ?? undefined,
-    quantity: qty,
-    price,
+export function track(event: Track) {
+  if (!analyticsAllowed() || !ANALYTICS_TYPES.includes(event.type as AnalyticsEvent["type"])) return;
+  if (event.productKey === "prodotto-test") return;
+  const data = event.data && typeof event.data === "object" ? event.data as Record<string, unknown> : {};
+  if (data.isTest === true) return;
+  const numbers: Record<string, number> = {};
+  for (const key of ["qty", "unitPriceCents", "totalCents", "itemsCount", "fromQty", "toQty", "delta", "resultsCount"]) {
+    if (typeof data[key] === "number" && Number.isFinite(data[key])) numbers[key] = data[key];
+  }
+  const env = location.hostname === "delpasqua.com" || location.hostname === "www.delpasqua.com" ? "prod" : "dev";
+  let cartId = event.cartId;
+  try { cartId ||= getOrCreateCartId(); } catch { /* Storage can be disabled. */ }
+  const item: AnalyticsEvent = {
+    ...event, ...identity(), type: event.type as AnalyticsEvent["type"],
+    eventId: event.eventId ?? crypto.randomUUID(), occurredAt: event.occurredAt ?? new Date().toISOString(),
+    path: analyticsPath(event.path ?? location.pathname),
+    referrer: document.referrer ? analyticsPath(document.referrer) : null,
+    cartId, env, isInternal: env !== "prod", data: numbers,
   };
-}
-
-function gtagEvent(name: string, params?: Record<string, unknown>) {
-  if (typeof window === "undefined") return;
-  if (!window.gtag) return;
-  window.gtag("event", name, params ?? {});
-}
-
-export function track(e: Track) {
-  // Se GA non è configurato, non fare nulla
-  if (typeof window === "undefined") return;
-  if (!process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID) return;
-
-  const d = safeObj(e.data);
-
-  switch (e.type) {
-    // =========================
-    // DISCOVERY / SHOP
-    // =========================
-    case "view_item_list": {
-      const listId = typeof d.listId === "string" ? d.listId : "shop";
-      const itemsShown = Array.isArray(d.itemsShown) ? d.itemsShown : [];
-      const items = itemsShown
-        .map((raw, index: number) => {
-          const x = safeObj(raw);
-          const productKey = typeof x.productKey === "string" ? x.productKey : undefined;
-          const slug = typeof x.slug === "string" ? x.slug : undefined;
-
-          return {
-            item_id: productKey,
-            item_name: slug ?? productKey,
-            index,
-          };
-        })
-        .filter((it) => Boolean(it.item_id || it.item_name));
-
-      gtagEvent("view_item_list", {
-        item_list_id: listId,
-        item_list_name: listId,
-        items,
-      });
-      return;
-    }
-
-    case "product_click": {
-      // GA4 recommended: select_item
-      const item = buildItemFromTrack(e);
-      gtagEvent("select_item", {
-        item_list_id: "shop",
-        items: [item].filter(Boolean),
-      });
-      return;
-    }
-
-    case "product_view": {
-      // GA4 recommended: view_item
-      const item = buildItemFromTrack(e);
-      gtagEvent("view_item", {
-        currency: "EUR",
-        items: [item].filter(Boolean),
-      });
-      return;
-    }
-
-    case "filter_apply": {
-      // Custom event + parametri utili
-      gtagEvent("filter_apply", {
-        filter_id: d.filterId ?? undefined,
-        filter_label: d.filterLabel ?? undefined,
-        results_count: d.resultsCount ?? undefined,
-        item_list_id: d.listId ?? "shop",
-      });
-      return;
-    }
-
-    case "promo_view": {
-      // GA4 recommended: view_promotion
-      gtagEvent("view_promotion", {
-        promotion_id: d.promotionId ?? "home_best_sellers",
-        promotion_name: d.promotionName ?? undefined,
-        items: Array.isArray(d.items) ? d.items : undefined,
-      });
-      return;
-    }
-
-    case "promo_click": {
-      // GA4 recommended: select_promotion
-      gtagEvent("select_promotion", {
-        promotion_id: d.promotionId ?? "home_best_sellers",
-        promotion_name: d.promotionName ?? undefined,
-        items: d.item ? [d.item] : undefined,
-      });
-      return;
-    }
-
-    // =========================
-    // CART / CHECKOUT
-    // =========================
-    case "add_to_cart": {
-      // GA4 recommended: add_to_cart
-      const item = buildItemFromTrack(e);
-      gtagEvent("add_to_cart", {
-        currency: "EUR",
-        value:
-          typeof item.price === "number" && typeof item.quantity === "number"
-            ? item.price * item.quantity
-            : undefined,
-        items: [item].filter(Boolean),
-      });
-      return;
-    }
-
-    case "remove_from_cart": {
-      // GA4 recommended: remove_from_cart
-      const item = buildItemFromTrack(e);
-      const qty = typeof d.qty === "number" ? d.qty : item.quantity;
-      gtagEvent("remove_from_cart", {
-        currency: "EUR",
-        value:
-          typeof item.price === "number" && typeof qty === "number" ? item.price * qty : undefined,
-        items: [
-          {
-            ...item,
-            quantity: qty ?? item.quantity,
-          },
-        ].filter(Boolean),
-      });
-      return;
-    }
-
-    case "update_cart_quantity": {
-      // Custom (molto utile per capire frizioni)
-      gtagEvent("update_cart_quantity", {
-        item_id: e.productKey ?? undefined,
-        item_variant: e.variantKey ?? undefined,
-        from_qty: d.fromQty ?? undefined,
-        to_qty: d.toQty ?? undefined,
-        delta: d.delta ?? undefined,
-        unit_price: centsToNumber(d.unitPriceCents),
-      });
-      return;
-    }
-
-    case "clear_cart": {
-      // Custom
-      gtagEvent("clear_cart", {
-        items_count: d.itemsCount ?? undefined,
-        value: centsToNumber(d.totalCents),
-        currency: "EUR",
-      });
-      return;
-    }
-
-    case "view_cart": {
-      gtagEvent("view_cart", {
-        items_count: typeof d.itemsCount === "number" ? d.itemsCount : undefined,
-      });
-      return;
-    }
-
-    case "begin_checkout": {
-      gtagEvent("begin_checkout", {
-        items_count: typeof d.itemsCount === "number" ? d.itemsCount : undefined,
-        value: centsToNumber(d.totalCents),
-        currency: "EUR",
-      });
-      return;
-    }
-
-    case "checkout_canceled": {
-      gtagEvent("checkout_canceled", {
-        order_id: e.orderId ?? undefined,
-        items_count: d.itemsCount ?? undefined,
-        value: centsToNumber(d.totalCents),
-        currency: typeof d.currency === "string" ? d.currency : "EUR",
-      });
-      return;
-    }
-
-    // =========================
-    // PURCHASE
-    // =========================
-    case "purchase": {
-      const transactionId = e.orderId ?? e.cartId ?? undefined;
-
-      const value = centsToNumber(d.totalCents);
-      const currency = typeof d.currency === "string" ? d.currency.toUpperCase() : "EUR";
-
-      const items = Array.isArray(d.items)
-        ? d.items
-            .map((raw) => {
-              const it = safeObj(raw);
-
-              const itemId =
-                typeof it.item_id === "string"
-                  ? it.item_id
-                  : typeof it.sku === "string"
-                  ? it.sku
-                  : undefined;
-
-              const itemName =
-                typeof it.item_name === "string"
-                  ? it.item_name
-                  : typeof it.title === "string"
-                  ? it.title
-                  : undefined;
-
-              const itemVariant =
-                typeof it.item_variant === "string"
-                  ? it.item_variant
-                  : typeof it.variantLabel === "string"
-                  ? it.variantLabel
-                  : undefined;
-
-              const price = centsToNumber(it.priceCents ?? it.unitPriceCents);
-
-              const quantity =
-                typeof it.quantity === "number"
-                  ? it.quantity
-                  : typeof it.qty === "number"
-                  ? it.qty
-                  : undefined;
-
-              return {
-                item_id: itemId,
-                item_name: itemName,
-                item_variant: itemVariant,
-                price,
-                quantity,
-              };
-            })
-            .filter((x) => Boolean(x.item_id || x.item_name))
-        : [];
-
-      gtagEvent("purchase", {
-        transaction_id: transactionId,
-        value,
-        currency,
-        items,
-      });
-      return;
-    }
-
-    // =========================
-    // FALLBACK
-    // =========================
-    default: {
-      gtagEvent(e.type, {
-        path: e.path ?? undefined,
-        product_key: e.productKey ?? undefined,
-        variant_key: e.variantKey ?? undefined,
-        cart_id: e.cartId ?? undefined,
-        order_id: e.orderId ?? undefined,
-        ...d,
-      });
-      return;
-    }
-  }
+  const pending = getQueue();
+  pending.add(item);
+  // The existing report distinguishes checkout clicks from carts starting checkout.
+  if (event.type === "begin_checkout") pending.add({ ...item, type: "checkout_click", eventId: crypto.randomUUID() });
+  persist(); schedule();
+  if (pending.snapshot().length >= ANALYTICS_BATCH_SIZE) void flushAnalytics();
 }

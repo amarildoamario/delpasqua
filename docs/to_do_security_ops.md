@@ -7,8 +7,20 @@ Data audit: 2026-05-29
 - FileStatus: PARTIAL
 - LastVerified: 2026-11-08
 - OpenItems: 2
-- AgentAction: nuovo codice distribuito su Vercel production (dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x, READY). Resend resta aperto in attesa DNS; verificare invii con allegato dopo configurazione Resend e invocazioni cron nei log production.
+- AgentAction: configurazione Resend completata il 2026-11-08; chiave valida e dominio delpasqua.com verificato. Restano recapito ordine/PDF e invocazioni cron nei log production da collaudare.
 - Note: alcuni punti sono gia` risolti solo su singole route; controllare sempre le verifiche aggiunte sotto.
+
+
+### Collaudo ordine test production del 2026-11-08: webhook e recapito
+
+- Causa del mancato invio: endpoint Stripe live configurato senza slash finale; `https://delpasqua.com/api/webhooks/stripe` risponde 308 verso `/api/webhooks/stripe/` per trailingSlash=true. Stripe considera i redirect un fallimento; evento pagamento non ricevuto e nessuna email ancora accodata.
+- Pagamento utente da 50 centesimi verificato in Stripe: sessione complete/paid, mentre ordine production ancora PENDING. Nessun nuovo pagamento creato.
+- Corretto endpoint esistente `we_1TazOSRo8s7gPfsQuEsLzJl9` impostando `https://delpasqua.com/api/webhooks/stripe/`, senza modificare secret o sottoscrizioni.
+- Recuperato evento autentico `evt_1UZYV2Ro8s7gPfsQSCIQ3F98` con Stripe CLI events resend --live verso lo stesso endpoint.
+- Verifica finale: ordine `TEST-08ICD5KB3V63` PAID, webhook processed senza errori, ORDER_PAID sent con message ID `01a1bbeb-714f-7f25-b9b8-419a6e8bd32c`, outbox done con attempts=0; Resend GET /emails/<id> HTTP 200, last_event=delivered. Confermata consegna al server destinatario; inbox/spam non verificati.
+- Ordine marcato isTest=true: nessun allegato PDF commerciale previsto. Restano collaudo PDF ordine commerciale e notifiche contatti; nessun ordine commerciale aggiunto durante questa verifica.
+- Report sanitizzato: `scratch/order-test-email-recovery.json`. Riferimento redirect Stripe: https://support.stripe.com/questions/webhooks-what-to-do-when-the-http-status-code-starts-with-a-three-%283xx%29?locale=en-GB
+
 
 ## [RISOLTO] Password gestionale rinforzata
 
@@ -21,7 +33,14 @@ Data audit: 2026-05-29
 
 ## [⏳ TODO] Go-live - Verificare Resend e notifiche form contatti
 
-Verifica production del 2026-11-08:
+Aggiornamento configurazione del 2026-11-08 su richiesta dell'utente:
+- Sostituita RESEND_API_KEY, ora sensitive; Resend GET /domains risponde 200 e delpasqua.com risulta verified. Nessun invio reale eseguito.
+- EMAIL_FROM impostato a Frantoio Del Pasqua <ordini@delpasqua.com>; EMAIL_REPLY_TO aggiunto in Production con valore info@delpasqua.com. Valori mittente/risposta ricontrollati in memoria senza stampare segreti.
+- RESEND_API_KEY ed EMAIL_FROM erano entry condivise Production/Preview/Development: la CLI ha aggiornato il valore condiviso anche specificando production. EMAIL_REPLY_TO e` limitata a Production. Utente informato.
+- Redeploy production avviato dal deployment esistente dpl_3X5MeCUToHtGMTCzjfEaLoQN5xd9, senza caricare codice locale. Nuovo deployment dpl_EbeDNLkQxppQZN5cB97fyufeZCHY READY, commit 7dc8175412534d019ed3e24617e74a2531d3b47d, runtime fra1 e alias delpasqua.com/www assegnati; nessun error log al controllo immediato.
+- Restano da verificare email ricevuta, allegato PDF per ordine commerciale e stato outbox sul prossimo ordine effettuato dall'utente.
+
+Verifica precedente del 2026-11-08 (superata dalla configurazione sopra):
 - Lettura sicura env Vercel: chiave presente, ma API Resend `GET /domains` restituisce HTTP 400, `validation_error`, `API key is invalid`.
 - `EMAIL_FROM` usa il dominio `gmail.com`: configurare un mittente sul dominio verificato in Resend. `EMAIL_NOTIFY` ha formato email; recapito da collaudare.
 - Nessuna email inviata durante il controllo e nessuna credenziale salvata nel repo.
@@ -32,7 +51,7 @@ Revisione flusso email ordine (2026-11-08, sola lettura):
 - Corretto localmente: `sendViaResend` controlla `error` e `data.id` dell'SDK, passa una chiave di idempotenza per ordine/tipo; `processOutboxBatch` tratta `{ok:false}` come errore riprovabile. Test regressione incluso nella suite server (36/36 PASS). Se il PDF non viene generato, l'email resta fallita/riprovabile e non parte senza allegato.
 - Ordine ricevuto: allegato PDF ricavato dallo stesso renderer di “Stampa Ordine”; nuovo download admin autenticato `/api/admin/orders/[id]/document`, con rate limit. Nessuna mutazione di stampe, numerazioni o fatture. Ordini test esclusi dall'allegato.
 - Invio dopo risposta HTTP tramite `after()` nelle route webhook e admin che accodano email, con durata massima 60 secondi; il cron resta recupero. Da verificare su deployment finale.
-- Richiesta utente: rinviare configurazione/attivazione Resend finche` non sara` disponibile l'accesso ai DNS del dominio. Questo punto resta aperto.
+- La precedente sospensione Resend in attesa DNS e` superata dalla richiesta di configurazione del 2026-11-08; collaudo recapito ancora aperto.
 
 Problema:
 - In sviluppo e` comparso in gestionale l'errore `API key is invalid` sulla notifica e-mail del form contatti.
@@ -225,3 +244,44 @@ Fix richiesto:
 Verifica repo 2026-06-02:
 - `src/lib/server/outbox.ts` continua a fare `findMany` + `updateMany` come lock soft, senza `FOR UPDATE SKIP LOCKED`.
 - La patch Stripe del 2026-06-02 migliora i retry webhook, ma non cambia il problema strutturale dell'outbox concorrente.
+
+
+## [RISOLTO] Metriche gestionale: tracker interno su Prisma
+
+Richiesta utente del 2026-11-08: conservare le metriche gia presenti nel sito, usare Prisma e contenere il numero di operazioni mensili. La diagnosi iniziale aveva trovato AnalyticsEvent vuoto, flag production assente e tracker non montato.
+
+- Ripristinato AnalyticsTracker nel layout al posto di GoogleAnalytics. track.ts conserva chiamate e nomi evento gia usati dal sito e invia soltanto all'API interna; nessuna importazione GA4 o doppia raccolta.
+- Ripristinati product_view, select_variant e add_to_cart nella scheda ProductDetailsClient effettivamente utilizzata; add_to_cart registra la quantita accettata dal carrello. I checkout test sono esclusi dal funnel commerciale.
+- Nessun heartbeat ogni 15 secondi. Piccoli gruppi fino a 30 eventi, invio dopo 30 secondi solo se ci sono dati, invio alla chiusura/background. Nessun polling grafici aggiunto.
+- Coda per scheda in sessionStorage, massimo 200 eventi/24 ore; retry con backoff e ID stabili per reinvio. Timestamp originale mantenuto, path/referrer senza query string. Conservati soltanto campi numerici necessari, device e paese; nessun user agent completo salvato.
+- Un solo SQL parametrizzato per batch su AnalyticsEvent, usando la PK esistente: niente SELECT preliminare per deduplica e nessuna migrazione. Replay non duplica visite o acquisti; durata pagina aggiornata con massimo cumulativo visibile.
+- purchase ammesso solo se l'ordine associato risulta pagato e non test, verificato all'interno dello stesso SQL. Timestamp acquisto ricavato da paidAt. Ordini e incassi continuano a derivare dal database ordini.
+- Bot, admin, internal/test_mode e opt-out esplicito esclusi; traffico dev/preview non compare nelle metriche production. Limiti payload, validazione Zod, controllo origine e rate guard in memoria (nessuna query di rate-limit). Il guard e per istanza, non un limite globale di spesa.
+- ANALYTICS_DB_ENABLED=true configurato in Vercel Production e nei due env locali ignorati; esempio env aggiornato. Disabilitando il flag l'API risponde 503, evitando di confermare eventi scartati.
+- Conferma Prisma docs: operazioni conteggiate per query, non per numero di righe; letture e scritture consumano la quota, anche fuori da analytics. Fonte: https://www.prisma.io/docs/postgres/faq e https://www.prisma.io/blog/operations-based-billing. Nessuna garanzia artificiale di rimanere sotto 1M senza misurare anche il restante sito/gestionale.
+- Verifiche locali: lint e typecheck PASS; suite server 43/43 PASS. SQL PostgreSQL reale provato su tabelle TEMP con ROLLBACK: una istruzione per batch, replay deduplicato, durate aggiornate, acquisti test/non pagati esclusi. Nessun dato permanente modificato.
+- Browser locale: visite, liste, clic, visualizzazioni prodotto, aggiunta carrello e durate raccolti; 2 minuti di pagina inattiva senza richieste extra; test_mode senza richieste; zero richieste Google e zero pageerror. API analytics intercettata, nessun evento QA scritto nel DB.
+- Report: scratch/analytics-sql-verification.json e scratch/analytics-browser-verification.json. Deploy production del codice locale avviato: dpl_G7wcKsee4PgszDkaRNeiGPoNCr9J. Collaudo live completato, vedi esito sotto.
+
+Collaudo production completato il 2026-11-08:
+- dpl_G7wcKsee4PgszDkaRNeiGPoNCr9J READY in fra1, alias delpasqua.com/www assegnati; codice distribuito dal working tree locale sopra HEAD 7dc8175412534d019ed3e24617e74a2531d3b47d, incluse le modifiche non committate.
+- Browser reale su dominio finale: batch di 6 eventi HTTP 204; page_view, view_item_list, product_click, product_view e page_leave persistiti come env=prod e isInternal=false. Due replay dello stesso evento HTTP 204 aggiungono una sola riga.
+- Login admin 200, /admin/metrics/ 200 ed export 200; export conferma almeno due pageview e un visitatore senza includere traffico interno. Nessun Google request o pageerror. Logout eseguito.
+- Rimosse esclusivamente le 7 righe del visitatore QA generato; nessun ordine o pagamento creato, nessuna cancellazione di eventi reali. Report sanitizzato scratch/analytics-production-verification.json con cleanup=complete.
+- I grafici esistenti si ricalcolano a ricaricamento/cambio filtri. Nessun recupero artificiale delle visite precedenti: la raccolta parte dall'attivazione.
+
+
+## [RISOLTO] Conversioni da ordini pagati, indipendenti dal ritorno Stripe
+
+Richiesta utente del 2026-11-08: conversioni calcolate dalle visite in rapporto alle vendite reali anche se il cliente non torna al sito dopo il pagamento.
+
+- Fonte unica delle vendite: Order con isTest=false e paidAt nel periodo. Nessuna dipendenza da eventi purchase, cartId, cookie o caricamento della success page; due ordini dello stesso browser contano due vendite. Ogni ordine conta una volta. Un rimborso successivo non elimina il pagamento storico dal tasso di acquisto (non e una metrica di ricavo netto).
+- Formula complessiva e per dispositivo: ordini pagati / sessioni misurate, nello stesso periodo. Denominatore sessioni, non pageview o visitatori unici. Senza sessioni la conversione e non disponibile (UI trattino, JSON null), non uno 0% inventato; nessun clamp artificiale al 100%.
+- Date condivise fra pagina ed export: giornate complete Europe/Rome, inclusi cambi ora legale; inclusione inizio ed esclusione fine. Vendite selezionate per paidAt, anche per ordini creati prima del periodo.
+- Tempo pagamento ricavato da paidAt - createdAt dell ordine, inclusi pagamenti differiti. Dispositivo ricavato dallo userAgent gia salvato sull ordine; unknown quando non classificabile, senza perdere la vendita dal totale.
+- Funnel: carrelli tracciati separati dalle vendite. Sostituiti i falsi carrelli pagati/abbandoni dedotti dagli eventi browser con vendite confermate e checkout creati attualmente non pagati (non necessariamente abbandonati).
+- Servizio condiviso salesMetrics.ts: una lettura degli ordini per report sostituisce sei letture analytics di acquisti/tempi/dispositivi. Nessuna migrazione, nessuna nuova scrittura nel flusso pagamento o webhook.
+- Rimosso il componente SuccessTrackPurchase dalla pagina di conferma: nessun evento acquisto browser necessario o generato da quella pagina. Export versione metrics-export-v4 con fonte Order.paidAt, denominatore uniqueSessions e campi funnel espliciti.
+- Lint/typecheck PASS; suite server 52/52 PASS. Regressione export reale con DB simulato: 2 vendite, 2 sessioni, 1 visitatore e 4 pageview senza alcun purchase browser => 100%; una sola lettura ordini. Altri test: ordini test/non pagati esclusi, data pagamento e confini periodo, due acquisti stesso browser, device ignoto, pagamenti oltre 2h, assenza visite, DST.
+- Browser locale autenticato + export confrontati con SELECT READ ONLY sul database: PASS, ordini commerciali pagati 0, ordine test pagato escluso 1; sessioni misurate 2, conversione 0%. Logout eseguito; nessun ordine o pagamento creato o modificato. Report scratch/sales-metrics-local-verification.json.
+- Deploy production dpl_EpRTR6dDyMGHHyTnt4n8XLWEi6ub completato, alias delpasqua.com assegnato. Working tree locale sopra HEAD 7dc8175, incluse modifiche non committate. Collaudo autenticato sul dominio finale PASS: pagina metriche 200, export v4 200, valori coerenti con SELECT READ ONLY su Prisma; 0 ordini commerciali pagati, 1 ordine test pagato escluso, 2 sessioni misurate e conversione 0%. Dispositivi coerenti, zero pageerror; logout eseguito e nessun ordine/pagamento creato o modificato. Report scratch/sales-metrics-production-verification.json. Il caso con vendite positive senza purchase browser e coperto dalla regressione export con fixture, senza pagamenti reali aggiuntivi.

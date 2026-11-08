@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ANALYTICS_TYPES } from "@/lib/analytics/events";
 
 /**
  * =========================
@@ -328,7 +329,9 @@ export const CronExpirePendingQuerySchema = z.object({
 const AnalyticsIdSchema = z.string().trim().min(6).max(128);
 
 export const AnalyticsEventSchema = z.object({
-  type: z.string().trim().min(1).max(64),
+  eventId: AnalyticsIdSchema.optional(),
+  occurredAt: z.string().datetime().optional(),
+  type: z.enum(ANALYTICS_TYPES),
   visitorId: AnalyticsIdSchema,
   sessionId: AnalyticsIdSchema,
 

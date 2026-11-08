@@ -1,7 +1,7 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Providers } from "./providers";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 import { Manrope } from "next/font/google";
 
 import { NextIntlClientProvider } from 'next-intl';
@@ -65,7 +65,7 @@ export default async function RootLayout({
       <body className={`${uiSans.className} bg-white text-zinc-900 antialiased font-sans`}>
         <NextIntlClientProvider messages={layoutMessages}>
           <Providers initialCatalog={initialCatalog}>
-            <GoogleAnalytics />
+            <AnalyticsTracker />
             <Navbar initialCatalog={initialCatalog.map((product) => ({ id: product.id, slug: product.slug }))} />
 
             <main>

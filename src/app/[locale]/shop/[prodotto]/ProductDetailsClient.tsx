@@ -3,7 +3,8 @@
 import { isUniformProductImage, shouldContainProductImage } from "@/lib/productImageFit";
 
 import Image from "next/image";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
+import { track } from "@/lib/analytics/track";
 import { motion, AnimatePresence } from "motion/react";
 import { useLocale } from "next-intl";
 import { useCart } from "@/context/CartContext";
@@ -417,6 +418,19 @@ export default function ProductDetailsClient({
   const selectedSku = selectedVariant
     ? makeInventorySku(currentProduct.id, selectedVariant.id, selectedVariant.sku)
     : "";
+  const viewedVariant = useRef<string | null>(null);
+  useEffect(() => {
+    const key = `${currentProduct.id}:${selectedVariant.id}`;
+    if (viewedVariant.current === key) return;
+    if (viewedVariant.current?.startsWith(`${currentProduct.id}:`)) {
+      track({ type: "select_variant", productKey: currentProduct.id, variantKey: selectedVariant.id });
+    }
+    viewedVariant.current = key;
+    track({
+      type: "product_view", productKey: currentProduct.id, variantKey: selectedVariant.id,
+      data: { unitPriceCents: selectedVariant.priceCents },
+    });
+  }, [currentProduct.id, selectedVariant.id, selectedVariant.priceCents]);
   const availableStock = availMap ? availMap[selectedSku] ?? 0 : null;
   const maxQty = availableStock == null ? 99 : Math.max(0, availableStock);
   const isOutOfStock = availableStock != null && availableStock <= 0;
@@ -442,10 +456,15 @@ export default function ProductDetailsClient({
 
     await new Promise((r) => setTimeout(r, 450));
 
-    add({
+    void add({
       productId: currentProduct.id,
       variantId: selectedVariant.id,
       qty: safeQty,
+    }).then((result) => {
+      if (result.addedQty > 0) track({
+        type: "add_to_cart", productKey: currentProduct.id, variantKey: selectedVariant.id,
+        data: { qty: result.addedQty, unitPriceCents: selectedVariant.priceCents },
+      });
     });
     setIsAdding(false);
     setAdded(true);
@@ -468,6 +487,7 @@ export default function ProductDetailsClient({
         track({
           type: "begin_checkout",
           data: {
+            isTest: lines.every((line) => line.productId === "prodotto-test"),
             itemsCount: lines.length,
             totalCents: cartTotalCents,
           },

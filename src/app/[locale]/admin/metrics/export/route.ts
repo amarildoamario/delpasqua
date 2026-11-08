@@ -1,24 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
+import { metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
 
 export const dynamic = "force-dynamic";
 
 function getOne(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
-}
-
-function parseDateOnly(s?: string) {
-  if (!s) return null;
-  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s)) return null;
-  const d = new Date(`${s}T00:00:00`);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function toISODate(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
 }
 
 function normalizeForDuration(path: string) {
@@ -29,8 +16,8 @@ function normalizeForDuration(path: string) {
   return path;
 }
 
-function pct(n: number) {
-  return +(n * 100).toFixed(2);
+function pct(n: number | null) {
+  return n === null ? null : +(n * 100).toFixed(2);
 }
 
 export async function GET(req: Request) {
@@ -42,18 +29,7 @@ export async function GET(req: Request) {
 const includeInternal = internalRaw === "1" || internalRaw === "true" || internalRaw === "yes" || internalRaw === "on";
 
 
-  const today = new Date();
-  const defaultStart = new Date(today);
-  defaultStart.setDate(today.getDate() - 7);
-
-  const start = parseDateOnly(startParam) ?? defaultStart;
-  const end = parseDateOnly(endParam) ?? today;
-
-  const startISO = toISODate(start);
-  const endISO = toISODate(end);
-
-  const endExclusive = new Date(end);
-  endExclusive.setDate(end.getDate() + 1);
+  const { start, endExclusive, startISO, endISO, endExclusiveISO } = metricsPeriod(startParam, endParam);
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
@@ -94,54 +70,18 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
   const uniqueVisitors = visitors.length;
   const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : 0;
 
-  // --- Funnel (analytics-based) ---
-  const [cartsTotal, cartsPaid] = await Promise.all([
+  // Visits come from the tracker; confirmed sales come exclusively from orders.
+  const [cartsTotal, sales] = await Promise.all([
     prisma.analyticsEvent.groupBy({
       by: ["cartId"],
       where: { ...rangeWhere, type: { in: ["add_to_cart", "begin_checkout"] }, ...QUALITY_FILTER, cartId: { not: "" } },
       _count: { cartId: true },
     }),
-    prisma.analyticsEvent.groupBy({
-      by: ["cartId"],
-      where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-      _count: { cartId: true },
-    }),
+    readSalesMetrics(prisma, start, endExclusive),
   ]);
-
   const cartTotalN = cartsTotal.length;
-  const cartPaidN = cartsPaid.length;
-  const cartAbandonedN = Math.max(0, cartTotalN - cartPaidN);
-  const abandonedRate = cartTotalN > 0 ? cartAbandonedN / cartTotalN : 0;
-
-  const conversionAnalytics = uniqueVisitors > 0 ? cartPaidN / uniqueVisitors : 0;
-
-  // --- tempo medio pagamento (overall) ---
-  const [beginByCart, purchaseByCart] = await Promise.all([
-    prisma.analyticsEvent.groupBy({
-      by: ["cartId"],
-      where: { ...rangeWhere, type: "begin_checkout", ...QUALITY_FILTER, cartId: { not: "" } },
-      _min: { createdAt: true },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["cartId"],
-      where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-      _min: { createdAt: true },
-    }),
-  ]);
-
-  const beginMap = new Map<string, Date>();
-  for (const b of beginByCart) if (b.cartId && b._min.createdAt) beginMap.set(b.cartId, b._min.createdAt);
-
-  const payDurations: number[] = [];
-  for (const p of purchaseByCart) {
-    if (!p.cartId || !p._min.createdAt) continue;
-    const t0 = beginMap.get(p.cartId);
-    if (!t0) continue;
-    const ms = p._min.createdAt.getTime() - t0.getTime();
-    if (ms > 0 && ms < 1000 * 60 * 60 * 2) payDurations.push(ms);
-  }
-
-  const avgPaymentMs = payDurations.length ? Math.round(payDurations.reduce((a, b) => a + b, 0) / payDurations.length) : null;
+  const conversionAnalytics = salesConversion(sales.paidOrders, uniqueSessions);
+  const avgPaymentMs = sales.avgPaymentMs;
 
   // --- Top pagine + tempo medio (normalizzato shop) ---
   const [topPages, avgDurations] = await Promise.all([
@@ -247,9 +187,6 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     pageViewsByDevice,
     visitorsByDevicePairs,
     sessionsByDevicePairs,
-    purchasesByDeviceCartPairs,
-    beginByDeviceCart,
-    purchaseByDeviceCart2,
   ] = await Promise.all([
     prisma.analyticsEvent.groupBy({
       by: ["device"],
@@ -266,21 +203,6 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       by: ["device", "sessionId"],
       where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, sessionId: { not: "" } },
       _count: { sessionId: true },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["device", "cartId"],
-      where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-      _count: { cartId: true },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["device", "cartId"],
-      where: { ...rangeWhere, type: "begin_checkout", ...QUALITY_FILTER, cartId: { not: "" } },
-      _min: { createdAt: true },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["device", "cartId"],
-      where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-      _min: { createdAt: true },
     }),
   ]);
 
@@ -299,37 +221,9 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     deviceSessions.set(key, (deviceSessions.get(key) ?? 0) + 1);
   }
 
-  const devicePurchases = new Map<string, number>();
-  for (const row of purchasesByDeviceCartPairs) {
-    const key = row.device ?? "unknown";
-    devicePurchases.set(key, (devicePurchases.get(key) ?? 0) + 1);
-  }
-
-  const beginDCMap = new Map<string, Date>();
-  for (const b of beginByDeviceCart) {
-    const dev = b.device ?? "unknown";
-    const cart = b.cartId ?? "";
-    if (!cart || !b._min.createdAt) continue;
-    beginDCMap.set(`${dev}__${cart}`, b._min.createdAt);
-  }
-
-  const devicePayAgg = new Map<string, { sum: number; n: number }>();
-  for (const p of purchaseByDeviceCart2) {
-    const dev = p.device ?? "unknown";
-    const cart = p.cartId ?? "";
-    if (!cart || !p._min.createdAt) continue;
-    const t0 = beginDCMap.get(`${dev}__${cart}`);
-    if (!t0) continue;
-    const ms = p._min.createdAt.getTime() - t0.getTime();
-    if (ms <= 0 || ms >= 1000 * 60 * 60 * 2) continue;
-    const cur = devicePayAgg.get(dev) ?? { sum: 0, n: 0 };
-    cur.sum += ms;
-    cur.n += 1;
-    devicePayAgg.set(dev, cur);
-  }
-
-  const deviceAvgPayMs = new Map<string, number>();
-  for (const [dev, v] of devicePayAgg.entries()) deviceAvgPayMs.set(dev, Math.round(v.sum / v.n));
+  const devicePurchases = new Map(sales.devices.map((row) => [row.device, row.purchases]));
+  const deviceAvgPayMs = new Map(sales.devices.map((row) => [row.device, row.avgPaymentMs]));
+  const deviceSamples = new Map(sales.devices.map((row) => [row.device, row.paymentSamples]));
 
   const devices = Array.from(new Set([...devicePageviews.keys(), ...deviceVisitors.keys(), ...deviceSessions.keys(), ...devicePurchases.keys()]));
   devices.sort((a, b) => (devicePageviews.get(b) ?? 0) - (devicePageviews.get(a) ?? 0));
@@ -340,7 +234,7 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     const ss = deviceSessions.get(dev) ?? 0;
     const purchases = devicePurchases.get(dev) ?? 0;
     const pagesPerSession = ss > 0 ? +(pv / ss).toFixed(3) : 0;
-    const conv = vs > 0 ? +(purchases / vs).toFixed(6) : 0;
+    const conv = salesConversion(purchases, ss);
     return {
       device: dev,
       pageviews: pv,
@@ -349,16 +243,16 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       pagesPerSession,
       purchases,
       conversion: conv,
-      conversionPct: vs > 0 ? pct(purchases / vs) : 0,
+      conversionPct: pct(conv),
       avgPaymentMs: deviceAvgPayMs.get(dev) ?? null,
-      avgPaymentSamples: devicePayAgg.get(dev)?.n ?? 0,
+      avgPaymentSamples: deviceSamples.get(dev) ?? 0,
     };
   });
 
   const payload = {
     meta: {
       generatedAt: new Date().toISOString(),
-      period: { startISO, endISO, endExclusiveISO: toISODate(endExclusive) },
+      period: { startISO, endISO, endExclusiveISO },
       quality: {
         includeInternal,
         filterApplied: includeInternal ? "none" : "env=prod & isInternal=false",
@@ -367,7 +261,9 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
         siteOnlyExcludedPrefixes: ["/checkout", "/payment", "/payments", "/stripe", "/api", "/_next", "/admin"],
         shopDurationNormalized: "For /shop/* the duration is aggregated ignoring query string (?v=...)",
       },
-      version: "metrics-export-v3",
+      version: "metrics-export-v4",
+      salesSource: "Order.paidAt",
+      conversionDenominator: "uniqueSessions",
     },
 
     kpis: {
@@ -376,6 +272,7 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       pageViews,
       pageLeaves,
       avgPagesPerSession,
+      paidOrders: sales.paidOrders,
       conversionAnalytics,
       conversionAnalyticsPct: pct(conversionAnalytics),
       listViews,
@@ -390,12 +287,13 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
 
     funnel: {
       cartsTotal: cartTotalN,
-      cartsPaid: cartPaidN,
-      cartsAbandoned: cartAbandonedN,
-      abandonedRate,
-      abandonedRatePct: pct(abandonedRate),
+      paidOrders: sales.paidOrders,
+      checkoutsStarted: sales.startedCheckouts,
+      unpaidCheckouts: sales.unpaidCheckouts,
+      unpaidCheckoutRate: sales.unpaidCheckoutRate,
+      unpaidCheckoutRatePct: pct(sales.unpaidCheckoutRate),
       avgPaymentMs,
-      avgPaymentSamples: payDurations.length,
+      avgPaymentSamples: sales.paymentSamples,
     },
 
     devices: { rows: deviceRows },
@@ -438,16 +336,19 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       "kpis.pageViews": "Conteggio totale eventi page_view nel periodo (solo pagine sito; con quality filter).",
       "kpis.pageLeaves": "Conteggio totale eventi page_leave nel periodo (solo pagine sito; con quality filter).",
       "kpis.avgPagesPerSession": "pageViews / uniqueSessions.",
-      "kpis.conversionAnalytics": "cartsPaid / uniqueVisitors (tutto analytics, coerente e robusto).",
+      "kpis.paidOrders": "Ordini commerciali con paidAt nel periodo; ogni ordine conta una volta, indipendentemente da cookie, cartId e pagina di ritorno. I rimborsi successivi non cancellano il pagamento storico.",
+      "kpis.conversionAnalytics": "paidOrders / uniqueSessions, oppure null se mancano visite misurate. Nessun evento purchase browser richiesto.",
       "funnel.cartsTotal": "Numero di carrelli distinti (cartId) che hanno avuto add_to_cart o begin_checkout nel periodo.",
-      "funnel.cartsPaid": "Numero di carrelli distinti (cartId) con evento purchase nel periodo.",
-      "funnel.avgPaymentMs": "Media (purchase.createdAt - begin_checkout.createdAt) per cartId, outlier >2h esclusi.",
+      "funnel.paidOrders": "Ordini commerciali pagati nel periodo, da Order.paidAt.",
+      "funnel.unpaidCheckouts": "Ordini commerciali creati nel periodo e attualmente privi di paidAt; include checkout ancora in corso, non equivale ad abbandoni definitivi.",
+      "funnel.unpaidCheckoutRate": "unpaidCheckouts / checkoutsStarted, oppure null senza checkout. I carrelli tracciati sono separati dagli ordini.",
+      "funnel.avgPaymentMs": "Media (Order.paidAt - Order.createdAt) degli ordini commerciali pagati nel periodo, inclusi pagamenti differiti.",
       "devices.rows[].uniqueVisitors": "Distinct visitorId per device (basato su page_view).",
       "devices.rows[].sessions": "Distinct sessionId per device (basato su page_view).",
       "devices.rows[].pagesPerSession": "pageviews / sessions per device.",
-      "devices.rows[].purchases": "Numero di cartId distinti con purchase per device.",
-      "devices.rows[].conversion": "purchases / uniqueVisitors per device.",
-      "devices.rows[].avgPaymentMs": "Media (purchase - begin_checkout) per (device, cartId).",
+      "devices.rows[].purchases": "Ordini commerciali pagati, classificati tramite userAgent salvato sull ordine; unknown se assente/non classificabile.",
+      "devices.rows[].conversion": "purchases / sessions per device; null se mancano sessioni misurate. Non richiede il ritorno dopo il pagamento.",
+      "devices.rows[].avgPaymentMs": "Media (Order.paidAt - Order.createdAt) per dispositivo dell ordine.",
       "top.pages[].avgDurationMsProductNormalized": "Tempo medio da page_leave.durationMs; per /shop/* aggrega ignorando ?v= (tutte le varianti).",
       "top.productViewsByVariant": "Ranking view prodotto per variante, da evento product_view su (productKey, variantKey).",
       "top.productViewsTotal": "Ranking view prodotto aggregate (somma varianti), da evento product_view su productKey.",

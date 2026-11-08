@@ -7,7 +7,7 @@ Data audit: 2026-05-29
 - FileStatus: ACTIVE
 - LastVerified: 2026-11-08
 - OpenItems: 1
-- AgentAction: non ripartire da zero; resta aperta solo la decisione operativa sul prodotto test, mantenuto intenzionalmente per test futuri.
+- AgentAction: su richiesta utente, prodotto test disattivato nel catalogo locale con isPublished=false e isPurchasable=false; record e storico conservati. Pubblicazione Vercel autorizzata dall utente insieme a tutte le modifiche del lavoro.
 - Note: Rimosso `src/app/lib` (duplicazione legacy). Chiusi bootstrap client, SKU operativo unico, availability real-time no-store e mapping automatico dei carrelli storici sulle rinomine catalogo. Gli ordini composti solo da `prodotto-test` sono isolati tramite `Order.isTest`; le verifiche finali di esclusione pubblica vivono anche in `docs/to_check_live/README.md`.
 
 ## [RISOLTO] P0 - Catalogo runtime importato come JSON statico
@@ -163,7 +163,12 @@ Impatto:
 Fix richiesto:
 - Valutare se mantenere anche un layout aggregato in contesti diversi dalla shop page.
 
-## [TODO] P1 - Prodotto test presente nel catalogo
+## [RISOLTO] P1 - Prodotto test presente nel catalogo
+
+Aggiornamento 2026-11-08 su richiesta esplicita utente:
+- Impostati isPublished=false e isPurchasable=false sul record prodotto-test. Usati i filtri pubblici esistenti, senza cambiare ID, SKU, prezzi, stock o storico ordini. Il record resta disponibile nel gestionale per eventuali collaudi futuri.
+- Verifiche locali: escluso da shop italiano/inglese e API pubbliche products/catalog; pagina diretta /shop/prodotto-test/ restituisce 404. Nessun dato database modificato. Utente ha approvato la prova foto HomeProductShowcase e richiesto il push completo online; i due cambiamenti fanno parte dello stesso rilascio.
+
 
 Problema:
 - `src/db/products.json` contiene `prodotto-test` con prezzo EUR 0,50, `freeShipping: true`, `excludeFromSeo: true`.

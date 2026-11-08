@@ -487,6 +487,8 @@
     "category": "Olio",
     "title": "Prodotto di Test",
     "isTestProduct": true,
+    "isPublished": false,
+    "isPurchasable": false,
     "subtitle": "Spedizione gratuita per test pagamenti",
     "badge": "TEST",
     "imageSrc": "/products/tartufo.jpg",

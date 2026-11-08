@@ -12,9 +12,29 @@ Questo non e` un backlog tecnico: contiene verifiche manuali o semi-manuali da f
 - AgentAction: utente ha aggiornato correttamente i record web Aruba; propagazione in corso con risposte discordanti fra nameserver/resolver. Non ripetere modifiche DNS; ricontrollare allineamento e certificato HTTPS prima di segnare dominio live. Resend resta aperto.
 - Note: il 2026-08-05 `delpasqua.com` punta ancora al sito WordPress e `/api/webhooks/stripe` restituisce 404. La route della nuova app e` invece presente su `delpasqua.vercel.app` (GET restituisce 405, coerente con una route POST-only). Le attivita` Stripe live dipendenti dal dominio restano intenzionalmente non spuntate. Lasciare questo file in `docs` anche quando alcune sezioni saranno chiuse; spostamenti o archiviazioni si decidono dopo il go-live.
 
+
+### Collaudo ordine test production del 2026-11-08: webhook e recapito
+
+- Causa del mancato invio: endpoint Stripe live configurato senza slash finale; `https://delpasqua.com/api/webhooks/stripe` risponde 308 verso `/api/webhooks/stripe/` per trailingSlash=true. Stripe considera i redirect un fallimento; evento pagamento non ricevuto e nessuna email ancora accodata.
+- Pagamento utente da 50 centesimi verificato in Stripe: sessione complete/paid, mentre ordine production ancora PENDING. Nessun nuovo pagamento creato.
+- Corretto endpoint esistente `we_1TazOSRo8s7gPfsQuEsLzJl9` impostando `https://delpasqua.com/api/webhooks/stripe/`, senza modificare secret o sottoscrizioni.
+- Recuperato evento autentico `evt_1UZYV2Ro8s7gPfsQSCIQ3F98` con Stripe CLI events resend --live verso lo stesso endpoint.
+- Verifica finale: ordine `TEST-08ICD5KB3V63` PAID, webhook processed senza errori, ORDER_PAID sent con message ID `01a1bbeb-714f-7f25-b9b8-419a6e8bd32c`, outbox done con attempts=0; Resend GET /emails/<id> HTTP 200, last_event=delivered. Confermata consegna al server destinatario; inbox/spam non verificati.
+- Ordine marcato isTest=true: nessun allegato PDF commerciale previsto. Restano collaudo PDF ordine commerciale e notifiche contatti; nessun ordine commerciale aggiunto durante questa verifica.
+- Report sanitizzato: `scratch/order-test-email-recovery.json`. Riferimento redirect Stripe: https://support.stripe.com/questions/webhooks-what-to-do-when-the-http-status-code-starts-with-a-three-%283xx%29?locale=en-GB
+
+
 ## Regole d'uso
 
 ### Verifiche del 2026-11-08
+
+- Rilascio completo richiesto dall utente: foto reale della vendemmia in HomeProductShowcase con sfumatura desktop per la leggibilita; prodotto-test non pubblicato/non acquistabile tramite i flag esistenti, conservando record e storico. Verifica locale desktop/mobile senza overflow, shop italiano/inglese e home senza link test, API products/catalog filtrate, PDP test 404; lint/typecheck PASS. Codice e verifiche precedenti di tracker/conversioni inclusi nel medesimo push su main. Il controllo di produzione successivo al push viene registrato nel report locale scratch/final-release-verification.json e nello stato deployment Vercel associato al commit.
+
+- Conversioni corrette e collaudate online: vendite commerciali da Order.paidAt / sessioni misurate nello stesso periodo Europe/Rome. Nessuna dipendenza dal ritorno Stripe o da eventi purchase browser; componente success eliminato. Fonte condivisa per pagina, dispositivi, tempo pagamento ed export v4. dpl_EpRTR6dDyMGHHyTnt4n8XLWEi6ub pubblicato su delpasqua.com; 52 test e confronto browser/export/SQL PASS, ordine test escluso e nessuna mutazione ordini/pagamenti. Report scratch/sales-metrics-production-verification.json.
+
+- Metriche sito ripristinate su tracker interno Prisma, mantenendo grafici e nomi evento esistenti. GoogleAnalytics non montato; heartbeat rimosso, batch fino a 30 eventi con un solo SQL e deduplica. ANALYTICS_DB_ENABLED=true in Production. Deploy dpl_G7wcKsee4PgszDkaRNeiGPoNCr9J READY fra1; browser/API/DB/metriche/export collaudati con successo. Eventi QA eliminati selettivamente (7 righe), nessun pagamento/ordine creato. Lint/typecheck e 43 test server PASS. Raccolta valida da attivazione, nessun backfill visite precedenti. Dettagli in docs/to_do_security_ops.md e report scratch/analytics-production-verification.json.
+
+- Aggiornamento Resend: nuova API key valida (GET /domains 200), delpasqua.com verified; EMAIL_FROM ordini@delpasqua.com con nome Frantoio Del Pasqua ed EMAIL_REPLY_TO info@delpasqua.com configurati. Key sensitive; key/mittente su entry Vercel condivise Production/Preview/Development, reply-to solo Production. Redeploy dpl_EbeDNLkQxppQZN5cB97fyufeZCHY READY, alias delpasqua.com/www assegnati e nessun error log al controllo immediato. GET https://delpasqua.com/ risponde 200 con header Vercel dal resolver corrente; questo controllo non certifica tutti i resolver DNS. Nessun invio email/ordine/pagamento eseguito: collaudo recapito ancora aperto, sospensione Resend superata dalla nuova richiesta utente.
 
 - Isolamento ambiente locale: confronto degli env risolti da Next in development con DATABASE_URL Vercel Production conferma stesso host, porta, database, utente e password (confrontati in memoria, non riportati). Le URL grezze differiscono ma le componenti di connessione coincidono. Il sito localhost usa quindi lo stesso Postgres production; carrello browser locale, ordini e annullamenti persistono nel database condiviso. Non considerare i test locali di checkout isolati dai dati production; nessun ordine modificato durante questa verifica.
 

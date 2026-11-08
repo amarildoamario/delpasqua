@@ -10,6 +10,18 @@ Data audit: 2026-05-29
 - AgentAction: attendere lo spostamento di `delpasqua.com` dal sito WordPress al deployment production della nuova app; solo dopo configurare e collaudare il webhook Stripe live.
 - Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02. Il task go-live e` aperto ma intenzionalmente bloccato dal dominio, che il 2026-08-05 punta ancora al sito WordPress. I nuovi ordini composti esclusivamente da `prodotto-test` sono marcati `isTest`, separati dagli ordini commerciali ed esclusi da metriche, clienti, report, conti ed export operativi. Checkout Session e PaymentIntent ricevono `orderType=test`. Non viene eseguito alcun backfill o tentativo di riconciliazione dei vecchi pagamenti presenti soltanto in Stripe.
 
+
+### Collaudo ordine test production del 2026-11-08: webhook e recapito
+
+- Causa del mancato invio: endpoint Stripe live configurato senza slash finale; `https://delpasqua.com/api/webhooks/stripe` risponde 308 verso `/api/webhooks/stripe/` per trailingSlash=true. Stripe considera i redirect un fallimento; evento pagamento non ricevuto e nessuna email ancora accodata.
+- Pagamento utente da 50 centesimi verificato in Stripe: sessione complete/paid, mentre ordine production ancora PENDING. Nessun nuovo pagamento creato.
+- Corretto endpoint esistente `we_1TazOSRo8s7gPfsQuEsLzJl9` impostando `https://delpasqua.com/api/webhooks/stripe/`, senza modificare secret o sottoscrizioni.
+- Recuperato evento autentico `evt_1UZYV2Ro8s7gPfsQSCIQ3F98` con Stripe CLI events resend --live verso lo stesso endpoint.
+- Verifica finale: ordine `TEST-08ICD5KB3V63` PAID, webhook processed senza errori, ORDER_PAID sent con message ID `01a1bbeb-714f-7f25-b9b8-419a6e8bd32c`, outbox done con attempts=0; Resend GET /emails/<id> HTTP 200, last_event=delivered. Confermata consegna al server destinatario; inbox/spam non verificati.
+- Ordine marcato isTest=true: nessun allegato PDF commerciale previsto. Restano collaudo PDF ordine commerciale e notifiche contatti; nessun ordine commerciale aggiunto durante questa verifica.
+- Report sanitizzato: `scratch/order-test-email-recovery.json`. Riferimento redirect Stripe: https://support.stripe.com/questions/webhooks-what-to-do-when-the-http-status-code-starts-with-a-three-%283xx%29?locale=en-GB
+
+
 ## [⏳ TODO] P0 Go-live - Riallineare Stripe webhook e dominio production
 
 Aggiornamento 2026-11-08:
@@ -215,3 +227,8 @@ Stato:
 - La pagina dettaglio ordine mostra il rimborso nei totali e il bottone `Rimborsa con Stripe` apre una conferma prima di creare il refund reale.
 - Il webhook Stripe gestisce `charge.refunded` e `refund.updated`, quindi anche un refund eseguito da Stripe Dashboard aggiorna il gestionale.
 - Aggiunti test server per partial refund, full refund e idempotenza dell'outbox `ORDER_REFUNDED`.
+
+
+## [RISOLTO] Conversioni indipendenti dalla pagina di ritorno
+
+- 2026-11-08: il gestionale e l export calcolano le vendite da Order.paidAt con isTest=false e la conversione come vendite/sessioni nel periodo Europe/Rome. Rimosso SuccessTrackPurchase; nessuna variazione a pagamento, webhook, stock o numerazioni. Servizio condiviso salesMetrics.ts; dettagli e verifiche in docs/to_do_security_ops.md.

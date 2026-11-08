@@ -7,7 +7,6 @@ import { getTranslations } from "next-intl/server";
 import SuccessAutoRefresh from "./SuccessAutoRefresh";
 import { prisma } from "@/lib/server/prisma";
 import type * as Prisma from "@/generated/prisma/client";
-import SuccessTrackPurchase from "./SuccessTrackPurchase";
 import ClearCartOnSuccess from "./ClearCartOnSuccess";
 import Footer from "@/components/Footer";
 import { isUniformProductImage } from "@/lib/productImageFit";
@@ -309,20 +308,6 @@ async function CheckoutSuccessPage({
     <>
       <main className="min-h-[75vh] bg-gradient-to-b from-neutral-50 via-white to-white">
         <div className="mx-auto max-w-4xl px-4 py-10 sm:py-12">
-          <SuccessTrackPurchase
-            orderId={order.id}
-            isPaid={isPaid}
-            isTest={order.isTest}
-            totalCents={order.totalCents}
-            currency={order.currency}
-            items={order.items.map((it) => ({
-              sku: it.sku,
-              title: it.title,
-              variantLabel: it.variantLabel,
-              unitPriceCents: it.unitPriceCents,
-              qty: it.qty,
-            }))}
-          />
           <ClearCartOnSuccess shouldClear={shouldClearCart} />
 
           {!isPaid ? (

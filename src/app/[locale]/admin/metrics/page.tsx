@@ -1,6 +1,7 @@
 import React from "react";
 import RangePicker from "@/app/[locale]/admin/dashboard/RangerPicker";
 import { prisma } from "@/lib/server/prisma";
+import { metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
 import PageHeader from "../_components/PageHeader";
 
 export const dynamic = "force-dynamic";
@@ -15,22 +16,8 @@ function truthy(v?: string) {
   return s === "1" || s === "true" || s === "yes" || s === "on";
 }
 
-function toISODate(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-function parseDateOnly(s?: string) {
-  if (!s) return null;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
-  const d = new Date(`${s}T00:00:00`);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function pct(n: number) {
-  return (n * 100).toFixed(1) + "%";
+function pct(n: number | null) {
+  return n === null ? "—" : (n * 100).toFixed(1) + "%";
 }
 
 function nice(n: number) {
@@ -70,18 +57,7 @@ export default async function AdminMetricsPage({
   // ✅ internal robusto
   const includeInternal = truthy(getOne(sp.internal));
 
-  const today = new Date();
-  const defaultStart = new Date(today);
-  defaultStart.setDate(today.getDate() - 7);
-
-  const start = parseDateOnly(startParam) ?? defaultStart;
-  const end = parseDateOnly(endParam) ?? today;
-
-  const startISO = toISODate(start);
-  const endISO = toISODate(end);
-
-  const endExclusive = new Date(end);
-  endExclusive.setDate(end.getDate() + 1);
+  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam);
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
@@ -133,13 +109,8 @@ export default async function AdminMetricsPage({
   const uniqueSessions = sessions.length;
   const uniqueVisitors = visitors.length;
 
-  const purchasesDistinct = await prisma.analyticsEvent.groupBy({
-    by: ["cartId"],
-    where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-    _count: { cartId: true },
-  });
-  const cartsPaidN = purchasesDistinct.length;
-  const conversionAnalytics = uniqueVisitors > 0 ? cartsPaidN / uniqueVisitors : 0;
+  const sales = await readSalesMetrics(prisma, start, endExclusive);
+  const conversionAnalytics = salesConversion(sales.paidOrders, uniqueSessions);
 
   const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : 0;
 
@@ -200,35 +171,9 @@ export default async function AdminMetricsPage({
   });
 
   const cartTotalN = cartsTotal.length;
-  const cartAbandonedN = Math.max(0, cartTotalN - cartsPaidN);
+  const avgPayMs = sales.avgPaymentMs;
 
-  const [beginByCart, purchaseByCart] = await Promise.all([
-    prisma.analyticsEvent.groupBy({
-      by: ["cartId"],
-      where: { ...rangeWhere, type: "begin_checkout", ...QUALITY_FILTER, cartId: { not: "" } },
-      _min: { createdAt: true },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["cartId"],
-      where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-      _min: { createdAt: true },
-    }),
-  ]);
-
-  const beginMap = new Map<string, Date>();
-  for (const b of beginByCart) if (b.cartId && b._min.createdAt) beginMap.set(b.cartId, b._min.createdAt);
-
-  const payDurations: number[] = [];
-  for (const p of purchaseByCart) {
-    if (!p.cartId || !p._min.createdAt) continue;
-    const t0 = beginMap.get(p.cartId);
-    if (!t0) continue;
-    const ms = p._min.createdAt.getTime() - t0.getTime();
-    if (ms > 0 && ms < 1000 * 60 * 60 * 2) payDurations.push(ms);
-  }
-  const avgPayMs = payDurations.length ? Math.round(payDurations.reduce((a, b) => a + b, 0) / payDurations.length) : null;
-
-  const [pageViewsByDevice, visitorsByDevicePairs, sessionsByDevicePairs, purchasesByDeviceCartPairs, beginByDeviceCart, purchaseByDeviceCart2] =
+  const [pageViewsByDevice, visitorsByDevicePairs, sessionsByDevicePairs] =
     await Promise.all([
       prisma.analyticsEvent.groupBy({
         by: ["device"],
@@ -245,21 +190,6 @@ export default async function AdminMetricsPage({
         by: ["device", "sessionId"],
         where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, sessionId: { not: "" } },
         _count: { sessionId: true },
-      }),
-      prisma.analyticsEvent.groupBy({
-        by: ["device", "cartId"],
-        where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-        _count: { cartId: true },
-      }),
-      prisma.analyticsEvent.groupBy({
-        by: ["device", "cartId"],
-        where: { ...rangeWhere, type: "begin_checkout", ...QUALITY_FILTER, cartId: { not: "" } },
-        _min: { createdAt: true },
-      }),
-      prisma.analyticsEvent.groupBy({
-        by: ["device", "cartId"],
-        where: { ...rangeWhere, type: "purchase", ...QUALITY_FILTER, cartId: { not: "" } },
-        _min: { createdAt: true },
       }),
     ]);
 
@@ -278,37 +208,8 @@ export default async function AdminMetricsPage({
     deviceSessions.set(k, (deviceSessions.get(k) ?? 0) + 1);
   }
 
-  const devicePurchases = new Map<string, number>();
-  for (const row of purchasesByDeviceCartPairs) {
-    const k = row.device ?? "unknown";
-    devicePurchases.set(k, (devicePurchases.get(k) ?? 0) + 1);
-  }
-
-  const beginDCMap = new Map<string, Date>();
-  for (const b of beginByDeviceCart) {
-    const dev = b.device ?? "unknown";
-    const cart = b.cartId ?? "";
-    if (!cart || !b._min.createdAt) continue;
-    beginDCMap.set(`${dev}__${cart}`, b._min.createdAt);
-  }
-
-  const devicePayAgg = new Map<string, { sum: number; n: number }>();
-  for (const p of purchaseByDeviceCart2) {
-    const dev = p.device ?? "unknown";
-    const cart = p.cartId ?? "";
-    if (!cart || !p._min.createdAt) continue;
-    const t0 = beginDCMap.get(`${dev}__${cart}`);
-    if (!t0) continue;
-    const ms = p._min.createdAt.getTime() - t0.getTime();
-    if (ms <= 0 || ms >= 1000 * 60 * 60 * 2) continue;
-    const cur = devicePayAgg.get(dev) ?? { sum: 0, n: 0 };
-    cur.sum += ms;
-    cur.n += 1;
-    devicePayAgg.set(dev, cur);
-  }
-
-  const deviceAvgPayMs = new Map<string, number>();
-  for (const [dev, v] of devicePayAgg.entries()) deviceAvgPayMs.set(dev, Math.round(v.sum / v.n));
+  const devicePurchases = new Map(sales.devices.map((row) => [row.device, row.purchases]));
+  const deviceAvgPayMs = new Map(sales.devices.map((row) => [row.device, row.avgPaymentMs]));
 
   const allDevices = Array.from(new Set([...devicePageviews.keys(), ...deviceVisitors.keys(), ...deviceSessions.keys(), ...devicePurchases.keys()]));
   allDevices.sort((a, b) => (devicePageviews.get(b) ?? 0) - (devicePageviews.get(a) ?? 0));
@@ -400,9 +301,9 @@ export default async function AdminMetricsPage({
       <Kpi title="Pageviews" value={nice(pageViews)} subtitle={`leave: ${nice(pageLeaves)}`} />
       <Kpi title="Pagine / sessione" value={round1(avgPagesPerSession)} subtitle="(media)" />
       <Kpi
-        title="Conv. (analytics)"
+        title="Conversione vendite"
         value={pct(conversionAnalytics)}
-        subtitle={`${nice(cartsPaidN)} acquisti (cartId)`}
+        subtitle={`${nice(sales.paidOrders)} ordini pagati / ${nice(uniqueSessions)} visite`}
       />
       <Kpi title="Ordini (DB)" value={nice(ordersCount)} subtitle="(conteggio raw)" />
     </div>
@@ -410,16 +311,16 @@ export default async function AdminMetricsPage({
     {/* Funnel + tempo pagamento */}
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
       <Kpi title="Carrelli totali" value={nice(cartTotalN)} subtitle="add_to_cart / begin_checkout" />
-      <Kpi title="Carrelli pagati" value={nice(cartsPaidN)} subtitle="purchase" />
+      <Kpi title="Vendite confermate" value={nice(sales.paidOrders)} subtitle="ordini commerciali pagati nel periodo" />
       <Kpi
-        title="Abbandono"
-        value={cartTotalN > 0 ? pct(cartAbandonedN / cartTotalN) : "—"}
-        subtitle={`${nice(cartAbandonedN)} abbandonati`}
+        title="Checkout non pagati"
+        value={pct(sales.unpaidCheckoutRate)}
+        subtitle={`${nice(sales.unpaidCheckouts)} ancora non pagati su ${nice(sales.startedCheckouts)} checkout creati`}
       />
       <Kpi
         title="Tempo medio pagamento"
         value={msToNice(avgPayMs)}
-        subtitle={`${nice(payDurations.length)} acquisti misurati`}
+        subtitle={`${nice(sales.paymentSamples)} ordini: creazione - pagamento`}
       />
     </div>
 
@@ -448,7 +349,7 @@ export default async function AdminMetricsPage({
           const ss = deviceSessions.get(dev) ?? 0;
           const purchases = devicePurchases.get(dev) ?? 0;
           const pps = ss > 0 ? pv / ss : 0;
-          const convDev = vs > 0 ? purchases / vs : 0;
+          const convDev = salesConversion(purchases, ss);
           const avgPayDev = deviceAvgPayMs.get(dev) ?? null;
 
           return (
@@ -464,8 +365,8 @@ export default async function AdminMetricsPage({
                 <Row label="Visitatori unici" value={nice(vs)} />
                 <Row label="Sessioni" value={nice(ss)} />
                 <Row label="Pagine / sessione" value={String(round1(pps))} />
-                <Row label="Acquisti" value={nice(purchases)} />
-                <Row label="Conversione" value={pct(convDev)} />
+                <Row label="Ordini pagati" value={nice(purchases)} />
+                <Row label="Vendite / visite" value={pct(convDev)} />
                 <Row label="Tempo pagamento" value={msToNice(avgPayDev)} />
               </div>
             </div>

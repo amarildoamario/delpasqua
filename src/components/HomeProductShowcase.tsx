@@ -8,7 +8,7 @@ import { Link } from "@/i18n/routing";
 import IqoBadgePair from "@/components/IqoBadgePair";
 import { useScrollTextReveal } from "./useScrollTextReveal";
 
-const SHOWCASE_BACKGROUND = "/home_bottiglie_e_selezione/bottiglie_e_selezione_background.png";
+const SHOWCASE_BACKGROUND = "/home_gallery/DJI_20240922100135_0145_D.jpg";
 
 export default function HomeProductShowcase() {
   const t = useTranslations("HomePage.HomeProductShowcase");
@@ -28,7 +28,7 @@ export default function HomeProductShowcase() {
         className="hidden object-cover object-left lg:block"
       />
 
-      <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(247,241,232,0)_0%,rgba(247,241,232,0)_50%,rgba(247,241,232,0.34)_68%,rgba(247,241,232,0.78)_100%)] lg:block" />
+      <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(247,241,232,0)_0%,rgba(247,241,232,0)_34%,rgba(247,241,232,0.72)_58%,rgba(247,241,232,0.94)_76%,rgba(247,241,232,0.97)_100%)] lg:block" />
 
       <div className="relative z-10 lg:hidden">
         <div className="px-6 pb-8 pt-14 sm:px-10">

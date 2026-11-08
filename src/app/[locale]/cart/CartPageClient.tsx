@@ -181,7 +181,7 @@ export default function CartPageClient({
 
   const linesCount = lines.length;
   useEffect(() => {
-    track({ type: "view_cart", data: { itemsCount: linesCount } });
+    track({ type: "view_cart", data: { itemsCount: linesCount, isTest: lines.length > 0 && lines.every((line) => line.productId === "prodotto-test") } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -358,6 +358,7 @@ export default function CartPageClient({
       track({
         type: "begin_checkout",
         data: {
+          isTest: lines.length > 0 && lines.every((line) => line.productId === "prodotto-test"),
           itemsCount: lines.length,
           totalCents: totals.totalCents,
         },
