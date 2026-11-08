@@ -1,4 +1,5 @@
 export const runtime = "nodejs";
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
@@ -32,3 +33,6 @@ export async function POST(req: NextRequest) {
   const res = await processOutboxBatch({ limit });
   return NextResponse.json({ ok: true, ...res }, { status: 200 });
 }
+
+// Vercel Cron invokes scheduled routes with GET; keep POST for existing callers.
+export const GET = POST;

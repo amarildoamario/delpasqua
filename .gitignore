@@ -44,6 +44,11 @@ next-env.d.ts
 # Local product photo originals, working files and replacement backups
 /archivio/immagini-prodotti/
 
+# Local DNS snapshots and exports (not application configuration)
+/archivio/dns/
+/archivio/magazzino/
+/dnsrecords_export*.txt
+
 /src/generated/prisma
 
 
@@ -63,3 +68,6 @@ tsconfig.tsbuildinfo
 *.log
 
 .vercel
+
+/scratch/
+/output/

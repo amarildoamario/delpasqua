@@ -5,10 +5,10 @@ Registro centrale delle verifiche del progetto `delpasqua`. Questo file indica q
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-08-18
-- OpenItems: 9
-- AgentAction: non lanciare test senza richiesta esplicita; prima del go-live rieseguire i gate locali, poi completare i test production solo dopo piano database, deploy e collegamento del dominio.
-- Note: gli esiti sotto sono storici e non certificano automaticamente il commit o il deployment corrente. Registrare ogni nuova esecuzione nella tabella, indicando ambiente, data ed esito.
+- LastVerified: 2026-11-08
+- OpenItems: 3
+- AgentAction: test locali, database e nuovo deploy production verificati; procedere con dominio e collaudo funzionale. Resend resta sospeso su richiesta dell'utente.
+- Note: esiti utente del 2026-11-07 integrati con le verifiche agent del 2026-11-08 (lint/typecheck, 36 test server, build, PDF simulato, database e deploy). Nuovo deployment `dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x` da working tree locale con modifiche non committate rispetto a HEAD `390a209e6955b82647251007d66f1302a5711084`; il solo SHA Git non identifica tutte le modifiche distribuite. Le verifiche locali non sostituiscono i controlli production.
 
 ## Regole Del Registro
 
@@ -23,25 +23,27 @@ Registro centrale delle verifiche del progetto `delpasqua`. Questo file indica q
 
 | Area | Comando o verifica | Ambiente registrato | Ultimo esito documentato | Stato per go-live | Evidenza |
 | --- | --- | --- | --- | --- | --- |
-| TypeScript | `npm run typecheck` | locale | PASS, 0 errori, 2026-06-08 | Da rieseguire sul codice finale | `docs/to_do_quality_ci.md` |
-| ESLint | `npm run lint` | locale | PASS, 0 errori e 0 warning, 2026-06-08 | Da rieseguire sul codice finale | `docs/to_do_quality_ci.md` |
-| Test server critici | `npm run test:server` | locale | PASS, 35 test, 2026-08-18 | Da rieseguire sul codice finale | `docs/to_do_quality_ci.md` |
-| Build Next.js | `npm run build` | production locale | PASS documentato, 2026-06-28 | Da rieseguire sul codice finale | `docs/to_do_performance.md` |
+| Navigazione mobile Home/carrello/menu | `node scratch/verify-mobile-navigation.cjs`, lint e typecheck | locale, Chromium + WebKit | PASS, 2026-11-08: 8 configurazioni; menu aderente al viewport dopo resize, footer raggiungibile, X carrello 44x44px, CTA shop visibile | Implementazione verificata; collaudo iPhone fisico a cura utente | `scratch/mobile-navigation/report.json` e screenshot |
+| Azzeramento avvio | `node scratch/reset-production-start.cjs --apply` | database Vercel Production `delpasqua-db` | PASS, 2026-11-08: dopo commit 0 ordini/prenotazioni/log email/outbox e 28 varianti stock 50/reserved 0 | Eseguito su richiesta esplicita utente, con backup locale escluso da Git/deploy | `scratch/production-reset-result.json` |
+| TypeScript | `npm run typecheck` | locale | PASS, 2026-11-07, confermato dall'utente | Completato al 100% | Conferma utente del 2026-11-08; storico sotto |
+| ESLint | `npm run lint` | locale | PASS, 2026-11-07, confermato dall'utente | Completato al 100% | Conferma utente del 2026-11-08; storico sotto |
+| Test server critici | `npm run test:server` | locale | PASS, 2026-11-07, confermato dall'utente; conteggio non comunicato | Completato al 100% | Conferma utente del 2026-11-08; precedente esito: 35 test il 2026-08-18 |
+| Build Next.js | `npm run build` | production locale | PASS, 2026-11-07, confermato dall'utente | Completato al 100% | Conferma utente del 2026-11-08; precedente PASS documentato il 2026-06-28 |
 | Gestionale admin | `npm run test:gestionale` | locale con DB di test | PASS, 12/12 script, 2026-06-03 | Da valutare/rieseguire su ambiente sicuro | `scratch/gestionale-risultati/report.txt` |
-| Audit SEO completo | `npm run seo:all` | localhost + WordPress live dell'epoca | PASS, 13/13 task, 2026-05-31 | Da rieseguire dopo il cambio dominio | `scratch/seo-risultati/seo-suite-report.txt` |
-| Traduzioni blog | `npm run check:blog-translations` | locale | PASS, 51/51 post completi, 2026-06-04 | Rieseguire solo se cambiano contenuti/traduzioni | `docs/blog-translation-check.md` |
-| Migrazione database | `npm run verify:migration` | dipende dalla configurazione | Nessun esito recente centralizzato | Da eseguire sul database production con cautela | `package.json` |
+| Audit SEO completo | `npm run seo:all` | locale | PASS, 2026-11-07, confermato dall'utente il 2026-11-08; conteggio non comunicato | Locale completato al 100%; verifica dominio finale dopo collegamento | Conferma utente; precedente report: `scratch/seo-risultati/seo-suite-report.txt` |
+| Traduzioni blog | `npm run check:blog-translations` | locale | PASS, 2026-11-07, confermato dall'utente il 2026-11-08; conteggio non comunicato | Locale completato al 100%; rieseguire solo se cambiano contenuti/traduzioni | Conferma utente; storico: `docs/blog-translation-check.md` |
+| Migrazione database | Prisma MCP + connessioni pg con DATABASE_URL/DIRECT_URL production | Prisma `delpasqua-db`, Frankfurt + env Vercel production | PASS, 2026-11-08: 7 migrazioni complete con timestamp corrispondenti, nessun rollback, colonne recenti presenti | Completato: storico e corrispondenza database production verificati | `scratch/database-production-check.json`; sola lettura, nessuna mutazione |
 | Collaudo end-to-end | ordine, Stripe, email, stock e gestionale | production `delpasqua.com` | Non eseguito sul dominio finale | Bloccante dopo collegamento dominio | `docs/to_check_live/README.md` |
 
 ## Gate Prima Del Deploy Production
 
-- [ ] Registrare commit o stato del codice candidato al go-live.
-- [ ] Eseguire `npm run typecheck` e registrare l'esito.
-- [ ] Eseguire `npm run lint` e registrare l'esito.
-- [ ] Eseguire `npm run test:server` e registrare numero di test passati/falliti.
-- [ ] Eseguire `npm run build` e registrare l'esito della build production.
+- [x] Registrare commit o stato del codice candidato al go-live: deployment CLI `dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x`, working tree locale modificato rispetto a `390a209e6955b82647251007d66f1302a5711084` (2026-11-08).
+- [x] Eseguire `npm run typecheck` e registrare l'esito: PASS del 2026-11-07, confermato dall'utente.
+- [x] Eseguire `npm run lint` e registrare l'esito: PASS del 2026-11-07, confermato dall'utente.
+- [x] Eseguire `npm run test:server` e registrare l'esito: tutti i test passano secondo l'utente, 2026-11-07; conteggio non comunicato.
+- [x] Eseguire `npm run build` e registrare l'esito della build production locale: PASS del 2026-11-07, confermato dall'utente.
 - [ ] Valutare `npm run test:gestionale` su database non production o con dati di test controllati.
-- [ ] Verificare la migrazione sul database corretto prima di accettare traffico reale.
+- [x] Verificare lo storico migrazioni di `delpasqua-db`: 7/7 completate, nessun rollback (Prisma MCP, 2026-11-08). Corrispondenza con entrambi gli env Vercel production confermata tramite connessioni reali in sola lettura.
 
 ## Gate Dopo Il Collegamento Del Dominio
 
@@ -55,6 +57,18 @@ Copiare una riga per ogni nuova esecuzione senza cancellare lo storico utile.
 | Data | Commit/deployment | Ambiente | Test/comando | Esito | Dettagli o report | Eseguito da |
 | --- | --- | --- | --- | --- | --- | --- |
 | YYYY-MM-DD | commit o URL deployment | local/preview/production | comando o verifica | PASS/FAIL/PARZIALE | percorso o nota breve | nome/agent |
+| 2026-11-08 | Database `delpasqua-db`, env Vercel Production | production | Impostazione autorizzata stock a 50 + verifica post-commit | PASS | 28 varianti catalogo aggiornate, 16 unita` prenotate conservate, riga tecnica non-catalogo invariata a zero. Backup precedente ignorato da Git/deploy in `archivio/magazzino/`; `scratch/production-stock-50-result.json` | Codex |
+| 2026-11-08 | `dpl_HmQ96DQD6Xt8V7KxJJMwJZ4eipzC` | Vercel production, fra1 | Rotazione ADMIN_PASSWORD, redeploy, verifica login/logout e sessioni admin | PASS | 32 caratteri casuali negli env locali/Vercel sensitive; deployment READY. Login nuova password 200 con cookie, logout 200, password errata 401. Nessuna sessione precedente attiva; nessuna password/token nei report. `scratch/admin-password-verification.json` | Codex |
+| 2026-11-08 | Dominio finale, dopo cambio DNS Aruba | DNS pubblici e delpasqua.com | Confronto export, query 4 nameserver autorevoli + Google/Cloudflare, API Vercel, HEAD HTTPS | PARZIALE | Record inseriti corretti e posta preservata; propagazione discordante (Google/dns3/dns4 nuovi IP, altri ancora precedenti). www riconosciuto da Vercel; apex e HTTPS finale ancora da confermare. Nessun pagamento avviato | Codex |
+| 2026-11-08 | `dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x` | Vercel production, fra1 | `vercel deploy --prod --archive=tgz`, stato e build log API, error scan runtime | PASS | READY; alias `delpasqua.vercel.app`, URL https://delpasqua-52j5w8bqw-leonardomori23-1887s-projects.vercel.app. Codice da working tree locale, incluse modifiche non committate. Build remota completata; nessun runtime error nella finestra immediatamente dopo READY, senza smoke test HTTP. Dominio finale, cron/PDF runtime e Resend ancora da collaudare | Codex |
+| 2026-11-08 | Progetto Vercel `delpasqua`, env Production | Database production | `scratch/verify-production-database.cjs`, query in transazione READ ONLY | PASS | DATABASE_URL e DIRECT_URL connesse, credenziali identiche, 7 nomi/timestamp migrazioni corrispondenti a `delpasqua-db`, colonne isTest/attentionDismissedAt presenti. Nessun dato modificato o segreto salvato; `scratch/database-production-check.json` | Codex |
+| 2026-11-08 | Working tree, allegato ordine e Chromium | production locale | `npm run build`, controllo tracing e protezione download PDF | PASS | 1533 pagine generate; binari Chromium e logo inclusi nelle 3 route controllate (circa 83 MB per trace), download admin senza sessione restituisce 401. Durante build un timeout Prisma sulle disponibilita` prodotto gestito dal fallback esistente. Invio reale e runtime Linux/Vercel ancora da collaudare dopo deploy | Codex |
+| 2026-11-08 | Working tree, template email e allegato ordine | local, provider/DB simulati | `npm run typecheck`, `npm run lint`, `npm run test:server`, `node --import tsx scratch/verify-order-email.cjs` | PASS | 36/36 test server; HTML stampa condiviso identico a quello precedente, PDF A4 di 1 pagina verificato a vista, allegato solo ORDER_PAID commerciale, nessun allegato per ordini test/spedizioni, duplicati saltati ed errori provider riconosciuti. Zero invii reali. `scratch/email-previews/delivery-verification.json` e `output/pdf/anteprima-ordine-DP-2026-0042.pdf` | Codex |
+| 2026-11-08 | Working tree, pagina anteprima email | local | `npm run lint`, `npm run typecheck`, verifica browser | PASS | Pagina semplificata, box UI con raggio 5px, template invariati; tre selezioni verificate, altezza iframe adattiva, zero pageerror e nessun overflow pagina mobile. Screenshot in `scratch/email-preview-page/` | Codex |
+| 2026-11-08 | Working tree, fix GET cron | local | `npm run lint`, `npm run typecheck`, controlli autenticazione cron | PASS | Nuova verifica necessaria dopo modifica: GET/POST di entrambe le route restituiscono 401 senza token o con token errato (8 controlli); nessun job eseguito. Fix ancora da distribuire | Codex |
+| 2026-11-08 | Repo HEAD `390a209e6955b82647251007d66f1302a5711084` | Prisma `delpasqua-db` | SELECT migration_name, finished_at, rolled_back_at da `_prisma_migrations` | PASS | 7/7 migrazioni completate, nessun rollback, incluse flag ordini test e attention acknowledgement. Sola lettura tramite Prisma MCP dopo approvazione | Codex |
+| 2026-11-07 | Codice locale collaudato dall'utente | local | Traduzioni, SEO e altri test locali | PASS | Conferma utente del 2026-11-08; nessun nuovo log o conteggio allegato. Audit sul dominio finale ancora da effettuare | Utente |
+| 2026-11-07 | Codice locale collaudato dall'utente; hash non comunicato | local / production locale per build | Gate locali: typecheck, lint, test server e build | PASS | Conferma utente del 2026-11-08: test eseguiti ieri sera, tutto funzionante; fase test locali completata al 100%. Nessuna nuova esecuzione agent, log o conteggio allegato | Utente |
 | 2026-11-07 | Working tree, secondo aumento scala bottiglie | local | `npm run lint` e `npm run typecheck` | PASS | 0 errori e 0 warning | Codex |
 | 2026-11-07 | Working tree, secondo aumento scala bottiglie | local | Controllo browser shop e suggerimenti olio-toscano | PASS | Bottiglie dal 80% al 84%, aromatizzati dal 76% al 80%; quattro viste desktop/mobile con prodotto entro i bordi. `scratch/bottle-card-scale-v2/report.json` e screenshot | Codex |
 | 2026-11-07 | Working tree, scala bottiglie nelle card | local | `npm run lint`, `npm run typecheck` e verifica browser della scala foto | PASS | Bottiglie 80%, aromatizzati 76%; home/shop e tre landing controllate su desktop/mobile, scheda EVO ancora intera. Report e screenshot in `scratch/evo-photo-framing/` e `scratch/bottle-card-scale/` | Codex |
@@ -72,8 +86,8 @@ Copiare una riga per ogni nuova esecuzione senza cancellare lo storico utile.
 
 ## Ordine Consigliato
 
-1. Chiudere piano, fatturazione, regione e backup del database production.
-2. Sul codice finale eseguire typecheck, lint, test server e build.
+1. [RISOLTO - 100%] Piano Starter e fatturazione Vercel verificati il 2026-11-08; regione Frankfurt e backup disponibili.
+2. [RISOLTO - 100%] Test locali del 2026-11-07 positivi, confermati dall'utente il 2026-11-08.
 3. Verificare migrazioni e variabili production senza riportare segreti nei file.
 4. Fare deploy production e collegare il dominio.
 5. Eseguire smoke test pubblico e audit SEO sul dominio finale.

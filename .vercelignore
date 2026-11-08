@@ -12,3 +12,13 @@ out.txt
 tmp-*
 .env
 .env.local
+.env.*
+scratch
+output
+tmp
+archivio
+prototipi
+
+# Local DNS snapshots and exports
+archivio/dns
+/dnsrecords_export*.txt

@@ -59,7 +59,7 @@ const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
         }
         {...props}
       >
-        <Drawer.Content className="flex h-full flex-col">
+        <Drawer.Content className="flex h-full min-h-0 flex-col">
           {children}
           {!hideClose ? (
             <Drawer.Close

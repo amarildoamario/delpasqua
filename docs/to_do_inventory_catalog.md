@@ -5,12 +5,21 @@ Data audit: 2026-05-29
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-05
+- LastVerified: 2026-11-08
 - OpenItems: 1
 - AgentAction: non ripartire da zero; resta aperta solo la decisione operativa sul prodotto test, mantenuto intenzionalmente per test futuri.
 - Note: Rimosso `src/app/lib` (duplicazione legacy). Chiusi bootstrap client, SKU operativo unico, availability real-time no-store e mapping automatico dei carrelli storici sulle rinomine catalogo. Gli ordini composti solo da `prodotto-test` sono isolati tramite `Order.isTest`; le verifiche finali di esclusione pubblica vivono anche in `docs/to_check_live/README.md`.
 
 ## [RISOLTO] P0 - Catalogo runtime importato come JSON statico
+
+Operazione magazzino, 2026-11-08:
+- Aggiornamento successivo: su richiesta esplicita dell'utente eseguito azzeramento dei dati operativi production per l'avvio. Eliminati 14 ordini e relativi dettagli/eventi, prenotazioni, log email e outbox; analytics, contatti e degustazioni verificati vuoti. Azzerati i progressivi ordine/fattura e gli utilizzi promozione. Catalogo, configurazione, merchandising, autenticazione e schema conservati.
+- Verifica dopo commit: zero ordini (quindi zero annullati al checkout), zero prenotazioni, 28 varianti con stock 50 e reserved 0. Rimossa la riga tecnica extra. Questo stato sostituisce quello della prima operazione descritta sotto.
+- Backup precedente al reset: `archivio/magazzino/prima-azzeramento-2026-11-08T13-57-15-598Z.json`, escluso da Git e deploy; report senza dati personali o credenziali: `scratch/production-reset-result.json`. Nessuna operazione su pagamenti o rimborsi Stripe.
+- Su richiesta dell'utente impostato `InventoryItem.stock = 50` per tutte le 28 varianti del catalogo nel database production `delpasqua-db`, tramite credenziali Vercel Production.
+- Transazione con lock sulle righe, verifica delle prenotazioni e conferma dopo commit: 28/28 stock a 50; 16 unita` prenotate mantenute, nessun ordine modificato.
+- Riga tecnica extra `__test__gestionale-sku-v1`, estranea al catalogo, lasciata a stock/reserved zero.
+- Valori precedenti salvati in `archivio/magazzino/prima-stock-50-2026-11-08T13-42-15-448Z.json`, escluso da Git e dai deploy. Report senza credenziali: `scratch/production-stock-50-result.json`.
 
 Nomi commerciali e home, 2026-11-07:
 - Fruttato leggero → La Dama; medio → Il Musico; intenso → Il Cavaliere. Aggiornati catalogo, titoli dei 18 formati fruttati e otto traduzioni, con identificativi operativi e prezzi conservati.

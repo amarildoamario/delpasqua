@@ -2,6 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { getTastingTypes } from "@/lib/tasting/slots";
+import { splitTastingPrice } from "@/lib/tasting/price";
 import dynamic from "next/dynamic";
 
 const TastingsCalendar = dynamic(() => import("./TastingCalendar"), {
@@ -121,7 +122,7 @@ async function DegustazioniPage({ params }: { params: Promise<{ locale: string }
                 .map((tastingType) => {
                   const isPremium = tastingType.id === "premium";
                   const isIntermedia = tastingType.id === "intermedia";
-                  const price = splitTastingPrice(tastingType.priceFrom);
+                  const price = splitTastingPrice(tastingType.priceFrom, locale);
                   const accentColor = isPremium ? "#B8860B" : isIntermedia ? "#8B7355" : "#3D5A3D";
                   const accentBgLight = isPremium 
                     ? "bg-gradient-to-br from-white to-[#B8860B]/[0.02]" 
@@ -204,7 +205,7 @@ async function DegustazioniPage({ params }: { params: Promise<{ locale: string }
                             </span>
                             {price.unit ? (
                               <span className="pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a7c6e]">
-                                {price.unit}
+                                /{price.unit}
                               </span>
                             ) : null}
                           </div>
@@ -372,22 +373,6 @@ function IconLeaf({ className }: { className?: string }) {
     </svg>
   );
 }
-
-function splitTastingPrice(rawPrice?: string): { hasFrom: boolean; amount: string; unit?: string } | null {
-  const raw = rawPrice?.trim();
-  if (!raw) return null;
-
-  const hasFrom = /^da\s+/i.test(raw);
-  const withoutFrom = raw.replace(/^da\s+/i, "");
-  const [amount, unit] = withoutFrom.split("/");
-
-  return {
-    hasFrom,
-    amount: amount.trim(),
-    unit: unit?.trim(),
-  };
-}
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function DegustazioniPageWrapper(props: any) {

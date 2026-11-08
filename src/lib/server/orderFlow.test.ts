@@ -990,6 +990,25 @@ test("processOutboxBatch processes pending and failed outbox events using raw qu
   assert.deepEqual(emailed[1], { type: "ORDER_SHIPPED", orderId: "order-2" });
 });
 
+test("processOutboxBatch retries a reported delivery failure instead of marking it done", async () => {
+  const createdAt = new Date(Date.now() - 60_000);
+  const { store, tx } = buildFakeTx({ outboxEvents: [{
+    id: "delivery-failed", type: "ORDER_PAID", payload: { orderId: "order-1" },
+    status: "pending", attempts: 0, runAt: createdAt, createdAt, updatedAt: createdAt,
+  }] });
+  const result = await processOutboxBatch({
+    tx,
+    sendEmailFn: async () => ({ ok: false, status: "failed", error: "Provider rejected attachment" }),
+  });
+  assert.equal(result.processed, 0);
+  assert.equal(result.failed, 1);
+  const event = store.outboxEvents.get("delivery-failed");
+  assert.equal(event?.status, "pending");
+  assert.equal(event?.attempts, 1);
+  assert.equal(event?.lastError, "Provider rejected attachment");
+  assert.ok(event && event.runAt > new Date());
+});
+
 test("processOutboxBatch falls back to soft-locking when raw query fails", async () => {
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);

@@ -70,6 +70,15 @@
 }
 
 /* Drawer mobile */
+.mobile-menu-panel {
+  top: 0;
+  bottom: auto;
+  height: var(--overlay-viewport-height);
+  max-height: var(--overlay-viewport-height);
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 @keyframes mobile-menu-enter {
   from {
     opacity: 0;

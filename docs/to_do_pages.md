@@ -12,6 +12,14 @@ Data audit: 2026-06-19
 
 ---
 
+## [RISOLTO] Navigazione mobile Home, carrello e menu - 2026-11-08
+
+- Reso visibile il link localizzato "Vai allo shop" accanto al titolo "I piu acquistati" anche su mobile, con area di tocco di almeno 44px.
+- Chiusura carrello mobile: pulsante grigio con bordo, raggio 5px, area 44x44px e icona X da 24px.
+- Menu e carrello usano l'altezza dinamica `100dvh`, mantenendo la compensazione zoom desktop separata. Menu con header non comprimibile, area scorrevole `min-h-0`, contenimento dello scroll e safe area iOS sopra/sotto.
+- Verifica locale Chromium e WebKit: 8 configurazioni (320, 375, 390 e 844px), riduzione/aumento altezza a menu aperto, footer lingue raggiungibile, pulsanti di chiusura funzionanti, nessun errore JavaScript. Screenshot e report: `scratch/mobile-navigation/`. Non equivale a un collaudo su iPhone fisico.
+- `npm run lint` e `npm run typecheck`: PASS. Revisione React: nessun nuovo effetto o stato, link e label accessibili/localizzati, modifiche limitate al layout.
+
 ## Stato Collegamento Interno (Internal Linking)
 
 Per garantire l'indicizzazione ed il passaggio di autorità alle nuove pagine, sono già stati implementati i seguenti blocchi:

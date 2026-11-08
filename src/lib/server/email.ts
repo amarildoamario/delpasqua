@@ -23,7 +23,7 @@ function baseUrl() {
 }
 
 function brandName() {
-  return process.env.EMAIL_BRAND_NAME || "Delpasqua";
+  return process.env.EMAIL_BRAND_NAME || "Frantoio Del Pasqua";
 }
 
 function supportEmail() {
@@ -154,8 +154,8 @@ function policiesFooterText() {
     "Assistenza: rispondi a questa email oppure usa i link qui sotto.",
     `Spedizioni: ${url}/spedizioni`,
     `Resi e rimborsi: ${url}/resi`,
-    `Privacy: ${url}/privacy`,
-    `Termini: ${url}/termini`,
+    `Privacy: ${url}/privacy-policy/`,
+    `Termini: ${url}/condizioni-generali-di-vendita/`,
   ].join("\n");
 }
 
@@ -165,37 +165,45 @@ function css() {
   // Inline + embedded CSS: robusto per client email (Gmail/Apple Mail/Outlook web)
   return `
   <style>
-    html,body{margin:0;padding:0;background:#f6f7fb;}
-    .wrapper{width:100%;background:#f6f7fb;padding:24px 12px;}
-    .container{max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #eef0f5;}
-    .header{padding:20px 20px 10px 20px;}
-    .brand{font-size:18px;font-weight:700;color:#111827;letter-spacing:.2px;}
-    .tag{font-size:12px;color:#6b7280;margin-top:6px;}
-    .content{padding:20px;}
-    .h1{font-size:20px;line-height:1.2;margin:0 0 8px;color:#111827;}
-    .p{font-size:14px;line-height:1.55;margin:0 0 12px;color:#111827;}
-    .muted{color:#6b7280;}
-    .card{background:#f9fafb;border:1px solid #eef0f5;border-radius:14px;padding:14px;margin:14px 0;}
+    html,body{margin:0;padding:0;background:#f3f3ef;font-family:Arial,Helvetica,sans-serif;color:#282d25;}
+    *{box-sizing:border-box;}
+    .wrapper{width:100%;background:#f3f3ef;padding:32px 16px;}
+    .container{max-width:600px;margin:0 auto;background:#ffffff;border-radius:5px;overflow:hidden;border:1px solid #e4e6de;}
+    .header{padding:28px 32px 24px;border-bottom:1px solid #e8eae3;}
+    .brand{font-size:22px;font-weight:700;color:#334a37;letter-spacing:-.5px;}
+    .tag{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#7a8175;margin-top:8px;}
+    .content{padding:30px 32px 24px;}
+    .h1{font-size:25px;line-height:1.25;margin:0 0 12px;color:#282d25;font-weight:600;letter-spacing:-.6px;}
+    .p{font-size:14px;line-height:1.75;margin:0 0 16px;color:#282d25;}
+    .muted{color:#72786b;}
+    .card{padding:0;margin:24px 0;}
+    .order-details{border-top:1px solid #e4e6de;border-bottom:1px solid #e4e6de;margin:26px 0;padding:18px 0 0;}
+    .order-summary{width:100%;border-collapse:collapse;margin-bottom:16px;}
+    .order-summary td{vertical-align:top;}
+    .shipping{border-top:1px solid #e4e6de;padding-top:22px;}
     .row{display:flex;gap:12px;flex-wrap:wrap;}
     .col{flex:1;min-width:220px;}
-    .kv{font-size:12px;color:#6b7280;margin:0 0 4px;}
-    .vv{font-size:14px;color:#111827;margin:0;font-weight:600;}
+    .kv{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#7a8175;margin:0 0 7px;}
+    .vv{font-size:14px;color:#282d25;margin:0;font-weight:600;}
     .table{width:100%;border-collapse:collapse;margin-top:10px;}
-    .th{font-size:12px;text-align:left;color:#6b7280;padding:10px 0;border-bottom:1px solid #eef0f5;}
-    .td{font-size:14px;color:#111827;padding:10px 0;border-bottom:1px solid #eef0f5;}
+    .th{font-size:11px;font-weight:400;text-align:left;color:#72786b;padding:12px 0;border-bottom:1px solid #e8eae3;}
+    .td{font-size:13px;line-height:1.5;color:#282d25;padding:14px 0;border-bottom:1px solid #eff0eb;}
+    .td:first-child{padding-right:12px;}
+    .table tr:last-child .td{border-bottom:0;}
     .right{text-align:right;}
     .btnWrap{margin:16px 0 4px;}
     .btn{display:inline-block;background:#111827;color:#ffffff;text-decoration:none;padding:12px 16px;border-radius:12px;font-weight:700;font-size:14px;}
     .btnSecondary{display:inline-block;background:#ffffff;color:#111827;text-decoration:none;padding:12px 16px;border-radius:12px;font-weight:700;font-size:14px;border:1px solid #eef0f5;}
-    .footer{padding:16px 20px;background:#fbfbfd;border-top:1px solid #eef0f5;}
-    .footlinks a{color:#111827;text-decoration:none;font-size:12px;margin-right:12px;}
-    .small{font-size:12px;color:#6b7280;line-height:1.5;margin:8px 0 0;}
+    .footer{padding:22px 32px;background:#fafbf7;border-top:1px solid #e8eae3;}
+    .footlinks a{color:#57634e;text-decoration:underline;font-size:11px;margin-right:14px;line-height:2;}
+    .small{font-size:11px;color:#7a8175;line-height:1.7;margin:12px 0 0;}
     @media (max-width: 480px){
-      .wrapper{padding:18px 10px;}
-      .content{padding:16px;}
-      .header{padding:16px 16px 8px;}
-      .footer{padding:14px 16px;}
-      .h1{font-size:18px;}
+      .wrapper{padding:16px 10px;}
+      .content{padding:24px 20px 20px;}
+      .header{padding:22px 20px;}
+      .footer{padding:20px;}
+      .h1{font-size:23px;}
+      .brand{font-size:21px;}
     }
   </style>
   `;
@@ -225,7 +233,7 @@ function htmlShell(args: {
         <div class="container">
           <div class="header">
             <div class="brand">${escapeHtml(brand)}</div>
-            <div class="tag">Aggiornamento ordine</div>
+            <div class="tag">Dal nostro frantoio, a casa tua</div>
           </div>
 
           <div class="content">
@@ -260,8 +268,8 @@ function htmlShell(args: {
             <div class="footlinks">
               <a href="${url}/spedizioni">Spedizioni</a>
               <a href="${url}/resi">Resi</a>
-              <a href="${url}/privacy">Privacy</a>
-              <a href="${url}/termini">Termini</a>
+              <a href="${url}/privacy-policy/">Privacy</a>
+              <a href="${url}/condizioni-generali-di-vendita/">Termini</a>
             </div>
             <p class="small">
               ${
@@ -280,39 +288,27 @@ function htmlShell(args: {
 function orderSummaryCardHtml(o: unknown) {
   const orderNumber = escapeHtml(String(getOptStr(o, "orderNumber") || getOptStr(o, "id")));
   const total = escapeHtml(eur(getNum(o, "totalCents")));
-  const status = escapeHtml(getOptStr(o, "status"));
-  const email = escapeHtml(getOptStr(o, "email"));
 
   return `
-    <div class="card">
-      <div class="row">
-        <div class="col">
+    <table class="order-summary" role="presentation">
+      <tr>
+        <td>
           <p class="kv">Numero ordine</p>
           <p class="vv">${orderNumber}</p>
-        </div>
-        <div class="col">
+        </td>
+        <td class="right">
           <p class="kv">Totale</p>
           <p class="vv">${total}</p>
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <div class="col">
-          <p class="kv">Stato</p>
-          <p class="vv">${status}</p>
-        </div>
-        <div class="col">
-          <p class="kv">Email</p>
-          <p class="vv">${email || "—"}</p>
-        </div>
-      </div>
-    </div>
+        </td>
+      </tr>
+    </table>
   `;
 }
 
 function shippingCardHtml(o: unknown) {
   const ship = escapeHtml(formatShipping(o)).replaceAll("\n", "<br/>");
   return `
-    <div class="card">
+    <div class="card shipping">
       <p class="kv">Spedizione a</p>
       <p class="p" style="margin:0;">${ship}</p>
     </div>
@@ -340,7 +336,6 @@ function itemsTableHtml(items: unknown) {
     .join("");
 
   return `
-    <div class="card">
       <table class="table" role="presentation">
         <thead>
           <tr>
@@ -353,8 +348,11 @@ function itemsTableHtml(items: unknown) {
           ${rows}
         </tbody>
       </table>
-    </div>
   `;
+}
+
+function orderDetailsHtml(o: TransactionalEmailPreviewPayload) {
+  return `<div class="order-details">${orderSummaryCardHtml(o)}${itemsTableHtml(o.items)}</div>`;
 }
 
 function totalsCardHtml(o: unknown) {
@@ -398,6 +396,7 @@ function totalsCardHtml(o: unknown) {
 /** ---------- BUILD EMAILS (HTML + TEXT) ---------- **/
 
 export type TransactionalEmailPreviewPayload = {
+  isTest?: boolean;
   id: string;
   orderNumber: string | null;
   status: string;
@@ -438,26 +437,26 @@ function buildEmail(type: TransactionalEmailType, o: TransactionalEmailPreviewPa
   const shippingText = formatShipping(o);
 
   if (type === "ORDER_PAID") {
-    const subject = `Pagamento confermato • ${orderNumber}`;
-    const title = "Pagamento confermato ✅";
-    const intro = "Abbiamo ricevuto il pagamento. Prepariamo il tuo ordine e ti aggiorniamo appena viene spedito.";
+    const subject = `Ordine ricevuto • ${orderNumber}`;
+    const title = "Grazie per il tuo ordine.";
+    const intro = "Grazie per aver scelto Frantoio Del Pasqua. Il pagamento è confermato: prepariamo con cura il tuo ordine e ti avviseremo appena sarà spedito.";
 
     const html = htmlShell({
       title,
       intro,
       bodyHtml:
-        orderSummaryCardHtml(o) +
-        itemsTableHtml(o.items ?? []) +
+        orderDetailsHtml(o) +
         totalsCardHtml(o) +
         shippingCardHtml(o) +
-        `<p class="p muted">Se hai inserito note per la consegna, le abbiamo ricevute.</p>`,
+        (o.isTest ? "" : `<p class="p muted">In allegato trovi il riepilogo del tuo ordine in PDF.</p>`) +
+        `<p class="p muted">Per qualsiasi domanda, rispondi a questa email. Saremo felici di aiutarti.</p>`,
       footerNote: "Conserva questa email come ricevuta d’ordine.",
     });
 
     const text = [
       `Ciao ${o.fullName || ""},`,
       "",
-      "Pagamento confermato ✅. Prepariamo il tuo ordine.",
+      intro,
       `Numero ordine: ${orderNumber}`,
       "",
       "Articoli:",
@@ -468,6 +467,7 @@ function buildEmail(type: TransactionalEmailType, o: TransactionalEmailPreviewPa
       "",
       "Spedizione a:",
       shippingText,
+      ...(o.isTest ? [] : ["", "In allegato trovi il riepilogo del tuo ordine in PDF."]),
       policiesFooterText(),
     ]
       .filter(Boolean)
@@ -477,21 +477,21 @@ function buildEmail(type: TransactionalEmailType, o: TransactionalEmailPreviewPa
   }
 
   if (type === "ORDER_SHIPPED") {
-    const subject = `PACCO SPEDITO • ${orderNumber}`;
-    const title = "Il tuo pacco è stato spedito 🚚";
+    const subject = `Il tuo ordine è stato spedito • ${orderNumber}`;
+    const title = "Il tuo ordine è in viaggio.";
     const intro = "Il tuo ordine è stato spedito. Qui trovi i dettagli e l’indirizzo di consegna.";
 
     const html = htmlShell({
       title,
       intro,
-      bodyHtml: orderSummaryCardHtml(o) + itemsTableHtml(o.items ?? []) + shippingCardHtml(o),
-      footerNote: "Conserva questa email per riferimento.",
+      bodyHtml: orderDetailsHtml(o) + shippingCardHtml(o),
+      footerNote: "Grazie per aver scelto Frantoio Del Pasqua.",
     });
 
     const text = [
       `Ciao ${o.fullName || ""},`,
       "",
-      "Il tuo pacco è stato spedito 🚚.",
+      "Il tuo ordine è stato spedito. Grazie per aver scelto Frantoio Del Pasqua.",
       `Numero ordine: ${orderNumber}`,
       "",
       "Articoli:",
@@ -510,13 +510,13 @@ function buildEmail(type: TransactionalEmailType, o: TransactionalEmailPreviewPa
 
   if (type === "ORDER_REFUNDED") {
     const subject = `Rimborso effettuato • ${orderNumber}`;
-    const title = "Rimborso effettuato 💸";
+    const title = "Il rimborso è stato effettuato.";
     const intro = "Abbiamo registrato un rimborso relativo al tuo ordine.";
 
     const html = htmlShell({
       title,
       intro,
-      bodyHtml: orderSummaryCardHtml(o) + itemsTableHtml(o.items ?? []) + totalsCardHtml(o),
+      bodyHtml: orderDetailsHtml(o) + totalsCardHtml(o),
       footerNote: "I tempi di accredito dipendono dal metodo di pagamento e dalla banca.",
     });
 
@@ -613,14 +613,7 @@ export function buildTransactionalEmailPreview(
 
 type SendResult = { ok: true; messageId?: string | null } | { ok: false; error: string };
 
-type ResendSendResponseLike = { id?: unknown };
-function getResendMessageId(res: unknown): string | null {
-  if (!res || typeof res !== "object") return null;
-  const id = (res as ResendSendResponseLike).id;
-  return typeof id === "string" && id.length > 0 ? id : null;
-}
-
-async function sendViaResend(args: { to: string; subject: string; text: string; html: string }): Promise<SendResult> {
+async function sendViaResend(args: { to: string; subject: string; text: string; html: string; idempotencyKey: string; attachments?: Array<{ filename: string; content: Buffer; contentType: string }> }): Promise<SendResult> {
   const from = process.env.EMAIL_FROM;
   if (!from) return { ok: false, error: "Missing EMAIL_FROM" };
   if (!resend) return { ok: false, error: "Missing RESEND_API_KEY" };
@@ -632,10 +625,13 @@ async function sendViaResend(args: { to: string; subject: string; text: string; 
       subject: args.subject,
       text: args.text,
       html: args.html,
+      ...(args.attachments?.length ? { attachments: args.attachments } : {}),
       ...(process.env.EMAIL_REPLY_TO ? { replyTo: process.env.EMAIL_REPLY_TO } : {}),
-    });
+    }, { idempotencyKey: args.idempotencyKey });
 
-    return { ok: true, messageId: getResendMessageId(res) };
+    if (res.error) return { ok: false, error: res.error.message };
+    if (!res.data?.id) return { ok: false, error: "Email provider returned no message ID" };
+    return { ok: true, messageId: res.data.id };
   } catch (e: unknown) {
     return { ok: false, error: getErrText(e, "Email send failed") };
   }
@@ -644,7 +640,7 @@ async function sendViaResend(args: { to: string; subject: string; text: string; 
 export async function sendTransactionalEmail(args: {
   type: TransactionalEmailType;
   orderId: string;
-}): Promise<{ ok: boolean; status: "sent" | "failed" | "skipped"; messageId?: string | null }> {
+}): Promise<{ ok: boolean; status: "sent" | "failed" | "skipped"; messageId?: string | null; error?: string }> {
   const { type, orderId } = args;
 
   const existing = await prisma.transactionalEmailLog
@@ -658,11 +654,11 @@ export async function sendTransactionalEmail(args: {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: {
-      items: { select: { title: true, variantLabel: true, qty: true, unitPriceCents: true } },
+      items: { orderBy: { title: "asc" } },
     },
   });
 
-  if (!order) return { ok: false, status: "failed" };
+  if (!order) return { ok: false, status: "failed", error: "Order not found" };
 
   const to = String(order.email ?? "").trim();
   if (!to) {
@@ -676,11 +672,30 @@ export async function sendTransactionalEmail(args: {
 
   const built = buildEmail(type, order);
 
+  // Use the same renderer as the admin print sheet; no print/audit or fiscal counters are mutated.
+  let attachments: Array<{ filename: string; content: Buffer; contentType: string }> | undefined;
+  if (type === "ORDER_PAID" && !order.isTest) {
+    try {
+      const { buildOrderPdfAttachment } = await import("@/lib/server/orderPdf");
+      attachments = [await buildOrderPdfAttachment(order)];
+    } catch {
+      const error = "Unable to generate order PDF attachment";
+      await prisma.transactionalEmailLog.upsert({
+        where: { orderId_type: { orderId, type } },
+        create: { orderId, type, status: "failed", toEmail: to, error },
+        update: { status: "failed", toEmail: to, error },
+      });
+      return { ok: false, status: "failed", error };
+    }
+  }
+
   const result = await sendViaResend({
     to,
     subject: built.subject,
     text: built.text,
     html: built.html,
+    idempotencyKey: `order-email/${orderId}/${type}`,
+    attachments,
   });
 
   if (result.ok) {
@@ -698,5 +713,5 @@ export async function sendTransactionalEmail(args: {
     update: { status: "failed", toEmail: to, error: result.error },
   });
 
-  return { ok: false, status: "failed" };
+  return { ok: false, status: "failed", error: result.error };
 }

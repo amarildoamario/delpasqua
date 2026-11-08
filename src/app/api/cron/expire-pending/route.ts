@@ -31,3 +31,6 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ ok: true, ...res }, { status: 200 });
 }
+
+// Vercel Cron invokes scheduled routes with GET; keep POST for existing callers.
+export const GET = POST;

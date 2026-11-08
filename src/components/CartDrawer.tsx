@@ -327,32 +327,34 @@ export default function CartDrawer({
 
   const ui = (
     <div
-      className={["fixed top-0 left-0 w-full z-[9999]", open ? "pointer-events-auto" : "pointer-events-none"].join(" ")}
-      style={{ height: "var(--viewport-height)" }}
+      className={cn(
+        "fixed inset-0 z-[9999]",
+        open ? "pointer-events-auto" : "pointer-events-none"
+      )}
       aria-hidden={!open}
     >
       <button
         type="button"
-        className={[
+        className={cn(
           "absolute inset-0 bg-black/70 transition-opacity duration-200",
-          open ? "opacity-100" : "opacity-0",
-        ].join(" ")}
+          open ? "opacity-100" : "opacity-0"
+        )}
         onClick={onClose}
         aria-label={t("drawer.close_cart")}
         tabIndex={open ? 0 : -1}
       />
 
       <aside
-        className={[
-          "fixed right-0 top-0",
-          "w-[min(98vw,820px)] sm:w-[640px] lg:w-[820px]",
+        className={cn(
+          "fixed inset-y-0 right-0",
+          "w-full sm:w-[640px] lg:w-[820px]",
           "border-l border-black/10 bg-white shadow-2xl",
           "transition-transform duration-[250ms] ease-out",
-          open ? "translate-x-0" : "translate-x-full",
-        ].join(" ")}
-        style={{ height: "var(--viewport-height)", maxHeight: "var(--viewport-height)" }}
+          "flex flex-col h-full max-h-full",
+          open ? "translate-x-0" : "translate-x-full"
+        )}
       >
-        <div className="flex h-full flex-col">
+        <div className="flex h-full min-h-0 flex-col">
           <ToggleMessage open={stockToastOpen} message={stockToast} onClose={() => setStockToastOpen(false)} />
           <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
             <div className="flex items-center gap-3">
@@ -363,17 +365,15 @@ export default function CartDrawer({
               </div>
             </div>
 
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="icon"
               onClick={onClose}
-              className="rounded-full text-zinc-700 hover:bg-black/5"
+              className="inline-flex size-11 items-center justify-center rounded-full border border-stone-300 bg-stone-100 text-stone-900 shadow-sm transition-all hover:bg-stone-200 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 active:scale-95"
               aria-label={t("drawer.close")}
               title={t("drawer.close")}
             >
-              <X className="h-6 w-6" strokeWidth={1.5} />
-            </Button>
+              <X className="size-6 text-stone-900" strokeWidth={2.5} />
+            </button>
           </div>
 
           {lines.length > 0 && (

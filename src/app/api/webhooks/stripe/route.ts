@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/server/prisma";
 import { releaseReserved } from "@/lib/server/inventory";
-import { processOutboxBatch } from "@/lib/server/outbox";
+import { scheduleOutboxBatch } from "@/lib/server/outboxScheduling";
 import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
 import {
   extractOrderIdFromCheckoutSession,
@@ -13,6 +13,7 @@ import {
 import { sendTastingBookingAdminEmail, sendTastingConfirmedCustomerEmail } from "@/lib/server/tastingEmail";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -622,9 +623,7 @@ export async function POST(req: NextRequest) {
 
         // Processa subito l'outbox (best-effort) per inviare la conferma ordine
         // immediatamente invece di aspettare il cron. Il cron resta come backup.
-        processOutboxBatch({ limit: 5 }).catch((e: unknown) => {
-          console.error("❌ outbox inline failed (stripe webhook):", e);
-        });
+        scheduleOutboxBatch({ limit: 5 });
 
         return NextResponse.json({ received: true }, { status: 200 });
       }
@@ -775,9 +774,7 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        processOutboxBatch({ limit: 5 }).catch((e: unknown) => {
-          console.error("❌ outbox inline failed (stripe async success):", e);
-        });
+        scheduleOutboxBatch({ limit: 5 });
 
         return NextResponse.json({ received: true }, { status: 200 });
       }

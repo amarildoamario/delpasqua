@@ -1,4 +1,5 @@
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 import { prisma } from "@/lib/server/prisma";
 import { createOrderEvent } from "@/lib/server/orderEvents";
@@ -7,7 +8,7 @@ import type * as Prisma from "@/generated/prisma/client";
 import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { NextResponse } from "next/server";
-import { processOutboxBatch } from "@/lib/server/outbox";
+import { scheduleOutboxBatch } from "@/lib/server/outboxScheduling";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
@@ -37,9 +38,7 @@ async function enqueueRefundedEmailOutbox(args: { orderId: string; actor: string
   });
 
   // AUTO: processa subito (se fallisce resta in outbox e lo riprendi via /api/cron/outbox)
-  processOutboxBatch({ limit: 10 }).catch((e) => {
-    console.error("❌ outbox auto-process failed (REFUNDED):", e);
-  });
+  scheduleOutboxBatch({ limit: 10 });
 }
 
 void enqueueRefundedEmailOutbox;
@@ -231,9 +230,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
       // RIMBORSATO is handled exclusively via the /refund endpoint (see early-return guard above)
       if (nextStatus === "PAGATO" && current === "IN_ATTESA") {
-        processOutboxBatch({ limit: 10 }).catch((e) => {
-          console.error("outbox auto-process failed (PAGATO manual):", e);
-        });
+        scheduleOutboxBatch({ limit: 10 });
       }
     } else {
       if (

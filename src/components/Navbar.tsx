@@ -510,7 +510,7 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
       </header>
 
       <SheetContent side="left" hideClose data-menu-open={mobileOpen} className="mobile-menu-panel max-w-sm border-r border-stone-200">
-        <div className="flex h-[72px] items-center justify-between border-b border-stone-100 px-6">
+        <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-stone-100 px-6">
           <LocaleLink href="/" onClick={() => setMobileOpen(false)} className="relative h-10 w-32">
             <Image
               src="/logo.png"
@@ -536,8 +536,8 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
         <SheetTitle className="sr-only">{t("navbar.menu")}</SheetTitle>
         <SheetDescription className="sr-only">Mobile navigation drawer</SheetDescription>
 
-        <div className="flex flex-1 flex-col overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex-1 px-6 py-8">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex-1 shrink-0 px-6 py-8">
             <div className="space-y-1">
               {mobileLinks.map((link, index) => (
                 <LocaleLink
@@ -576,8 +576,8 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
           </div>
 
           <div
-            className="border-t border-stone-100 bg-stone-50/50 px-6 pt-5"
-            style={{ paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom))" }}
+            className="shrink-0 border-t border-stone-100 bg-stone-50/50 px-6 pt-5"
+            style={{ paddingBottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))" }}
           >
             <div className="mb-5 flex items-center justify-between">
               <div className="flex items-center gap-3">

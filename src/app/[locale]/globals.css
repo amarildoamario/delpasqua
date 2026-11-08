@@ -138,6 +138,8 @@ html {
 
 :root {
   --viewport-height: 100svh; /* overridden on desktop below */
+  --overlay-viewport-height: 100vh;
+  --overlay-viewport-height: 100dvh;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -234,6 +236,7 @@ html {
 @media (min-width: 1024px) {
   :root {
     --viewport-height: calc(100svh / 0.9);
+    --overlay-viewport-height: calc(100dvh / 0.9);
   }
 }
 

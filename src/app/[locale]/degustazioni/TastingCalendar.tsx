@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import type { TastingType } from "@/lib/tasting/slots";
+import { splitTastingPrice, getPriceFromLabel } from "@/lib/tasting/price";
 import { useTranslations, useLocale } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -152,7 +153,7 @@ export default function TastingsCalendar(props: {
 
   const isMorningShift = selected ? new Date(selected.start).getHours() < 14 : false;
   const activeType = useMemo(() => props.tastingTypes.find((t) => t.id === typeId) || props.tastingTypes[0], [typeId, props.tastingTypes]);
-  const activePrice = splitTastingPrice(activeType?.priceFrom);
+  const activePrice = splitTastingPrice(activeType?.priceFrom, locale);
   const fromLabel = getPriceFromLabel(locale);
 
   const suggestedTime = useMemo(() => {
@@ -765,7 +766,7 @@ export default function TastingsCalendar(props: {
                   <div role="radiogroup" aria-label={t("modal.form.type_label")} className="grid gap-2 lg:grid-cols-3">
                     {props.tastingTypes.map((tastingType) => {
                       const accent = tastingType.id === "premium" ? "gold" : tastingType.id === "intermedia" ? "terracotta" : "olive";
-                      const price = splitTastingPrice(tastingType.priceFrom);
+                      const price = splitTastingPrice(tastingType.priceFrom, locale);
                       const accentClass =
                         accent === "olive"
                           ? "border-[#d8e3d4] bg-[#f5f9f3] text-[#3D5A3D]"
@@ -1048,35 +1049,4 @@ export default function TastingsCalendar(props: {
       ) : null}
     </div>
   );
-}
-
-function splitTastingPrice(rawPrice?: string): { hasFrom: boolean; amount: string; unit?: string } | null {
-  const raw = rawPrice?.trim();
-  if (!raw) return null;
-
-  const hasFrom = /^da\s+/i.test(raw);
-  const withoutFrom = raw.replace(/^da\s+/i, "");
-  const [amount, unit] = withoutFrom.split("/");
-
-  return {
-    hasFrom,
-    amount: amount.trim(),
-    unit: unit?.trim(),
-  };
-}
-
-function getPriceFromLabel(locale: string) {
-  const labels: Record<string, string> = {
-    it: "Da",
-    en: "From",
-    us: "From",
-    de: "Ab",
-    nl: "Vanaf",
-    da: "Fra",
-    no: "Fra",
-    es: "Desde",
-    fr: "Dès",
-  };
-
-  return labels[locale] ?? labels.it;
 }

@@ -875,8 +875,6 @@ function FeatureShowcase({
   
   return (
     <div className="group relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#FAF8F5] p-6 transition-all duration-300 hover:border-[#3D5A3D]/30 hover:shadow-xl lg:p-10 flex flex-col h-full font-sans">
-      <div className="absolute left-0 top-0 h-1 w-0 bg-[#3D5A3D] transition-all duration-500 group-hover:w-full" />
-
       <div className="flex-grow">
         <div className={`inline-flex items-center gap-2 px-3 py-1 text-[10px] font-bold tracking-[0.25em] uppercase border rounded-[5px] ${badgeBorder}`}>
           {kicker}

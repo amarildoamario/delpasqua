@@ -5,12 +5,19 @@ Data audit: 2026-05-29
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-08-05
+- LastVerified: 2026-11-08
 - OpenItems: 1
 - AgentAction: attendere lo spostamento di `delpasqua.com` dal sito WordPress al deployment production della nuova app; solo dopo configurare e collaudare il webhook Stripe live.
 - Note: i flussi Stripe checkout, webhook e refund sono stati richiusi il 2026-06-02. Il task go-live e` aperto ma intenzionalmente bloccato dal dominio, che il 2026-08-05 punta ancora al sito WordPress. I nuovi ordini composti esclusivamente da `prodotto-test` sono marcati `isTest`, separati dagli ordini commerciali ed esclusi da metriche, clienti, report, conti ed export operativi. Checkout Session e PaymentIntent ricevono `orderType=test`. Non viene eseguito alcun backfill o tentativo di riconciliazione dei vecchi pagamenti presenti soltanto in Stripe.
 
 ## [⏳ TODO] P0 Go-live - Riallineare Stripe webhook e dominio production
+
+Aggiornamento 2026-11-08:
+- Email ordine ridisegnate; conferma ordine ricevuto con PDF identico al foglio “Stampa Ordine” (renderer condiviso). Nuovo pulsante “Scarica PDF” nel dettaglio admin; nessuna variazione alle numerazioni fiscali. Localmente verificati allegato commerciale, esclusione ordini test, idempotenza e risposta errore provider, senza invii reali. Resta collaudo production dopo Resend/dominio.
+- Vercel production: chiavi secret/public con prefisso live; `STRIPE_LIVEMODE_EXPECTED=true`; quattro env URL sito coerenti con `https://delpasqua.com`.
+- API Stripe: un solo webhook live abilitato sul dominio finale, sottoscritto a `checkout.session.completed` e `checkout.session.expired`; nessun endpoint vecchio/preview.
+- Il codice gestisce anche `checkout.session.async_payment_succeeded` e `checkout.session.async_payment_failed`, attualmente non sottoscritti: allineare se si abilitano metodi di pagamento differiti.
+- Il dominio non e` ancora collegato al progetto Vercel. Presenza/formato del webhook secret verificati, corrispondenza e risposta 2xx ancora da collaudare. Nessun pagamento avviato.
 
 Stato verificato il 2026-08-05:
 - `https://delpasqua.com/` risponde dal sito WordPress corrente (`nginx` e header WordPress), non dalla nuova app.

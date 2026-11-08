@@ -1,4 +1,5 @@
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -8,7 +9,7 @@ import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { AdminOrderRefundSchema } from "@/lib/server/schemas";
 import { applyStripeRefundToOrderTx, isRefundableOrderStatus } from "@/lib/server/orderRefund";
-import { processOutboxBatch } from "@/lib/server/outbox";
+import { scheduleOutboxBatch } from "@/lib/server/outboxScheduling";
 import { OrderInvariantError } from "@/lib/server/orderStatus";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -109,9 +110,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       })
     );
 
-    processOutboxBatch({ limit: 10 }).catch((error) => {
-      console.error("outbox auto-process failed (admin refund):", error);
-    });
+    scheduleOutboxBatch({ limit: 10 });
 
     return guard.attach(
       NextResponse.json(

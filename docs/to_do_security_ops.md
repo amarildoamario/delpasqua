@@ -5,12 +5,34 @@ Data audit: 2026-05-29
 ## Agent Status
 
 - FileStatus: PARTIAL
-- LastVerified: 2026-06-20
-- OpenItems: 1
-- AgentAction: Aggiunto controllo go-live per configurazione Resend e recapito notifiche form contatti.
+- LastVerified: 2026-11-08
+- OpenItems: 2
+- AgentAction: nuovo codice distribuito su Vercel production (dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x, READY). Resend resta aperto in attesa DNS; verificare invii con allegato dopo configurazione Resend e invocazioni cron nei log production.
 - Note: alcuni punti sono gia` risolti solo su singole route; controllare sempre le verifiche aggiunte sotto.
 
+## [RISOLTO] Password gestionale rinforzata
+
+- Completato il 2026-11-08 su richiesta dell'utente: nuova password casuale di 32 caratteri (192 bit generati con crypto.randomBytes), con maiuscole, minuscole, cifre e caratteri URL-safe.
+- Aggiornati gli env locali ignorati `.env` e `.env.local` e la variabile ADMIN_PASSWORD Vercel, ora sensitive. L'entry Vercel esistente e` condivisa fra production, preview e development; il nuovo valore e` stato applicato a quell'entry.
+- Redeploy production `dpl_HmQ96DQD6Xt8V7KxJJMwJZ4eipzC` READY in fra1, derivato dal precedente deploy CLI completo; nessuna modifica al codice auth o ai controlli di protezione Vercel.
+- Controllata revoca delle sessioni admin attive: nessuna sessione precedente non scaduta da revocare. Il test ha creato una sessione poi chiusa tramite logout.
+- Collaudo reale sull'endpoint del nuovo deployment: login 200 con nuova password e cookie sessione, logout 200, password casuale errata 401. Password e token transitati solo in memoria/stdin; nessun valore riportato nei log o in questo documento.
+- Password recuperabile dall'utente nella variabile ADMIN_PASSWORD del proprio `.env.local`; nessuna credenziale salvata nel codice, nei report o nei file versionati. Report sanitizzato: `scratch/admin-password-verification.json`.
+
 ## [⏳ TODO] Go-live - Verificare Resend e notifiche form contatti
+
+Verifica production del 2026-11-08:
+- Lettura sicura env Vercel: chiave presente, ma API Resend `GET /domains` restituisce HTTP 400, `validation_error`, `API key is invalid`.
+- `EMAIL_FROM` usa il dominio `gmail.com`: configurare un mittente sul dominio verificato in Resend. `EMAIL_NOTIFY` ha formato email; recapito da collaudare.
+- Nessuna email inviata durante il controllo e nessuna credenziale salvata nel repo.
+
+Revisione flusso email ordine (2026-11-08, sola lettura):
+- Tre template cliente effettivi: pagamento, spedizione e rimborso. Ordine normale: 2 email al cliente, nessuna notifica nuovo ordine admin implementata; `orderNotificationEmail` e` solo un'impostazione predisposta.
+- Anteprime reali generate con dati dimostrativi in `scratch/email-previews/`; nessun invio e nessuna query DB.
+- Corretto localmente: `sendViaResend` controlla `error` e `data.id` dell'SDK, passa una chiave di idempotenza per ordine/tipo; `processOutboxBatch` tratta `{ok:false}` come errore riprovabile. Test regressione incluso nella suite server (36/36 PASS). Se il PDF non viene generato, l'email resta fallita/riprovabile e non parte senza allegato.
+- Ordine ricevuto: allegato PDF ricavato dallo stesso renderer di “Stampa Ordine”; nuovo download admin autenticato `/api/admin/orders/[id]/document`, con rate limit. Nessuna mutazione di stampe, numerazioni o fatture. Ordini test esclusi dall'allegato.
+- Invio dopo risposta HTTP tramite `after()` nelle route webhook e admin che accodano email, con durata massima 60 secondi; il cron resta recupero. Da verificare su deployment finale.
+- Richiesta utente: rinviare configurazione/attivazione Resend finche` non sara` disponibile l'accesso ai DNS del dominio. Questo punto resta aperto.
 
 Problema:
 - In sviluppo e` comparso in gestionale l'errore `API key is invalid` sulla notifica e-mail del form contatti.
@@ -24,6 +46,15 @@ Fix richiesto:
 - Verificare che `EMAIL_FROM` usi un dominio/mittente verificato su Resend.
 - Verificare `ADMIN_NOTIFY_EMAIL` o `EMAIL_NOTIFY` come destinatario reale.
 - Inviare un messaggio di test dal form contatti dopo il deploy e confermare sia salvataggio in `/admin/messages` sia recapito nella casella e-mail.
+
+## [PARZIALE] P0 Go-live - Cron Vercel: metodo HTTP e secret
+
+- Rilevato il 2026-11-08: Vercel invoca i cron in GET, mentre `outbox` ed `expire-pending` esponevano soltanto POST. `CRON_SECRET` assente negli env production.
+- Correzione locale: aggiunto `export const GET = POST` a entrambe le route; autenticazione e supporto POST preservati.
+- Configurazione: creato `CRON_SECRET` casuale (32 byte), sensibile e limitato a Production, tramite CLI sul progetto `delpasqua`; nessun valore stampato o scritto nel repo.
+- Verifiche locali dopo il fix: lint e typecheck PASS; 8 controlli su GET/POST senza token o con token errato restituiscono 401, senza eseguire job.
+- Deploy completato il 2026-11-08: `dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x` READY in fra1. Restano da verificare invocazioni programmate e log cron production. Nessun job avviato manualmente in questa sessione.
+- Riferimenti: https://vercel.com/docs/cron-jobs e https://vercel.com/docs/cron-jobs/manage-cron-jobs.
 
 ## [✅ RISOLTO] P0 - Build puo ignorare errori TypeScript
 

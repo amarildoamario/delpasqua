@@ -1,11 +1,12 @@
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 import { prisma } from "@/lib/server/prisma";
 import { createOrderEvent } from "@/lib/server/orderEvents";
 import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { NextResponse } from "next/server";
-import { processOutboxBatch } from "@/lib/server/outbox";
+import { scheduleOutboxBatch } from "@/lib/server/outboxScheduling";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { AdminOrderShipSchema, Id64Schema } from "@/lib/server/schemas";
 
@@ -18,9 +19,7 @@ async function enqueueShippedEmail(orderId: string, actor: string | null) {
     },
   });
   // Processa immediatamente — non aspetta il cron
-  processOutboxBatch({ limit: 5 }).catch((e) => {
-    console.error("❌ outbox inline failed (ship route):", e);
-  });
+  scheduleOutboxBatch({ limit: 5 });
 }
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {

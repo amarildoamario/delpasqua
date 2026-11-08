@@ -7,12 +7,42 @@ Questo non e` un backlog tecnico: contiene verifiche manuali o semi-manuali da f
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-08-05
-- OpenItems: 78
-- AgentAction: attivare prima la fatturazione e un piano Prisma/Postgres adatto alla produzione; poi procedere con dominio, webhook Stripe e test ordine live.
+- LastVerified: 2026-11-08
+- OpenItems: 65
+- AgentAction: utente ha aggiornato correttamente i record web Aruba; propagazione in corso con risposte discordanti fra nameserver/resolver. Non ripetere modifiche DNS; ricontrollare allineamento e certificato HTTPS prima di segnare dominio live. Resend resta aperto.
 - Note: il 2026-08-05 `delpasqua.com` punta ancora al sito WordPress e `/api/webhooks/stripe` restituisce 404. La route della nuova app e` invece presente su `delpasqua.vercel.app` (GET restituisce 405, coerente con una route POST-only). Le attivita` Stripe live dipendenti dal dominio restano intenzionalmente non spuntate. Lasciare questo file in `docs` anche quando alcune sezioni saranno chiuse; spostamenti o archiviazioni si decidono dopo il go-live.
 
 ## Regole d'uso
+
+### Verifiche del 2026-11-08
+
+- Isolamento ambiente locale: confronto degli env risolti da Next in development con DATABASE_URL Vercel Production conferma stesso host, porta, database, utente e password (confrontati in memoria, non riportati). Le URL grezze differiscono ma le componenti di connessione coincidono. Il sito localhost usa quindi lo stesso Postgres production; carrello browser locale, ordini e annullamenti persistono nel database condiviso. Non considerare i test locali di checkout isolati dai dati production; nessun ordine modificato durante questa verifica.
+
+- Password gestionale: sostituita con valore casuale di 32 caratteri negli env locali ignorati e in Vercel sensitive. Nuovo redeploy production `dpl_HmQ96DQD6Xt8V7KxJJMwJZ4eipzC` READY in fra1, alias delpasqua.com/www/delpasqua.vercel.app. Login reale con nuova password 200, logout 200, password errata 401; nessuna sessione admin precedente attiva. Questo verifica l'autenticazione del deployment, non certifica l'allineamento DNS/HTTPS del dominio finale. Nessuna password riportata nei documenti.
+
+- Backup DNS precedente fornito dall'utente archiviato localmente in `archivio/dns/2026-11-08-pre-vercel/dnsrecords_export.txt`, originale invariato e SHA-256 verificato. Cartella e nuovi export alla radice esclusi da Git e Vercel. Nella stessa cartella: istruzioni di ripristino e manifest integrita`. Per tornare al vecchio sito ripristinare gli A apex/www a `35.214.242.117`, mantenendo disponibile il vecchio hosting WordPress; questo backup non include file/database WordPress. Nessun DNS modificato durante l'archiviazione.
+
+- Dominio: configurazione precedente con apex/www A `35.214.242.117`, senza AAAA rilevati. L'utente ha ora fornito export aggiornato con A apex `216.150.1.1` e `216.150.16.1`, CNAME www `f1f4340baefc8370.vercel-dns-017.com.`: valori corretti. Nameserver e posta invariati (MX `mx.delpasqua.com`, priorita` 10; SPF Aruba e verifica Google presenti).
+- Vercel: aggiunti `delpasqua.com` e `www.delpasqua.com` al progetto `delpasqua`; ownership verified=true per entrambi. Impostato redirect permanente 308 da www ad apex, coerente con SITE_URL. Ownership verificata non significa DNS/HTTPS pronti: aggiornamento Aruba applicato dall'utente, propagazione ancora da completare.
+- Record consigliati restituiti dall'API Vercel per il progetto: A apex `216.150.1.1` e `216.150.16.1`; CNAME www `f1f4340baefc8370.vercel-dns-017.com.`. Ri-verificare configurazione Vercel prima di applicare. Nessun DNS Aruba modificato dall'agent.
+- Controllo successivo al cambio: `dns3.arubadns.net`, `dns4.arubadns.cz` e Google DNS 8.8.8.8 rispondono gia` con i nuovi A; dns.technorail.com, dns2.technorail.com e Cloudflare 1.1.1.1 rispondono ancora col vecchio IP o con cache intermedia. CNAME www gia` visibile su piu` server. Vercel riconosce www come configurato, apex ancora misconfigured. Richieste HTTPS con resolver locale servono ancora WordPress; connessione TLS forzata ai nuovi IP non ancora riuscita. Dominio/HTTPS NON segnati completati; nessun ordine reale avviato.
+
+- API Vercel via CLI autenticata: integrazione Prisma Marketplace con `vendorBillingPlan.id: starter`, nome Starter, costo dichiarato `$10/month + usage`; 1M operazioni/mese incluse poi $8/milione, 10 GB inclusi poi $2/GB. Billing gestito tramite Vercel. Metodo di pagamento e avvisi non verificati. Il connettore Vercel aveva restituito 403 sulla stessa lettura; fallback CLI riuscito.
+- Prisma MCP: `delpasqua-db` risulta `ready`, regione Europe (Frankfurt) / `eu-central-1`.
+- Prisma MCP: backup disponibili con stato `completed`, incluso backup full del 2026-11-08 alle 00:36:52 UTC. Nessun restore eseguito.
+- Documentazione Prisma: billing tramite Vercel per installazioni Marketplace; Starter prevede snapshot giornalieri sui giorni di attivita`, conservati per 7 giorni. Riferimenti: https://www.prisma.io/docs/guides/postgres/vercel#billing-and-pricing e https://www.prisma.io/docs/postgres/database/backups.
+- Repo e API deployment: `vercel.json` e nuovo deployment production confermati in `fra1`.
+- Repo: presente anche la migrazione `20260819153000_add_order_attention_acknowledgement`; includerla nella verifica dello stato migrazioni production.
+- Vercel: nuovo deployment production CLI `dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x` in stato READY, regione `fra1`, alias `delpasqua.vercel.app`. Sorgente: working tree locale con modifiche non committate rispetto a HEAD `390a209e6955b82647251007d66f1302a5711084` (non un redeploy del solo commit Git). URL immutabile: https://delpasqua-52j5w8bqw-leonardomori23-1887s-projects.vercel.app. Build remota e assegnazione alias completate, nessun errore runtime nella finestra immediatamente successiva al READY; non sostituisce collaudo funzionale. `delpasqua.com` non collegato. `.vercelignore` esclude env, scratch, output, tmp e archivi locali dall'upload.
+- Vercel CLI: letti singolarmente gli env production senza registrare segreti. I quattro URL sito puntano a `https://delpasqua.com`; chiavi Stripe secret/public con prefisso live, `STRIPE_LIVEMODE_EXPECTED=true`, webhook secret presente nel formato atteso (corrispondenza ancora da collaudare). DATABASE_URL e DIRECT_URL verificate con connessione reale in sola lettura: credenziali identiche su `db.prisma.io`, 7 migrazioni con nomi e timestamp esattamente corrispondenti a `delpasqua-db` verificato via Prisma MCP, colonne `isTest` e `attentionDismissedAt` presenti. Risorsa Vercel `delpasqua-db` in `fra1`; credenziali gestite manualmente, nessun progetto collegato automaticamente alla risorsa. Report senza segreti: `scratch/database-production-check.json`.
+- Stripe API: un solo endpoint live, abilitato, `https://delpasqua.com/api/webhooks/stripe`; eventi sottoscritti `checkout.session.completed` e `checkout.session.expired`. Nessun endpoint vecchio/preview nell'elenco. Valutare anche gli eventi async gestiti dal codice se si abilitano metodi di pagamento differiti.
+- Resend API: HTTP 400 `API key is invalid`; `EMAIL_FROM` su `gmail.com`. Blocco email aperto in `docs/to_do_security_ops.md`.
+- Cron: supporto GET e CRON_SECRET production configurati; codice distribuito nel nuovo deployment READY. Lint/typecheck e 8 controlli locali di rifiuto richieste non autorizzate PASS. Restano verifica invocazioni e log cron, nessuna esecuzione job avviata manualmente.
+- Email ordine: nuova grafica e PDF del foglio “Stampa Ordine” implementati; controllati layout condiviso, invio simulato con allegato, esclusione ordini test e gestione errori. Build locale PASS e dipendenze Chromium/logo incluse nei trace controllati. Dopo deploy verificare generazione PDF sul runtime Vercel e recapito reale tramite Resend, ancora sospeso per accesso DNS.
+- Prisma: dopo approvazione, query di sola lettura su `_prisma_migrations` riuscita: tutte le 7 migrazioni presenti nel repo risultano completate (`finished_at` valorizzato, `rolled_back_at` nullo), incluse `20260818120000_add_test_order_flag` e `20260819153000_add_order_attention_acknowledgement`. Nessuna migrazione applicata in questa sessione. Corrispondenza degli env Vercel production confermata con connessioni reali e confronto dello storico migrazioni.
+- Utente: confermato esito positivo anche per traduzioni, SEO e altri test locali della sera del 2026-11-07; resta distinta la verifica sul dominio finale.
+
+## Regole Di Verifica
 
 - Spuntare una voce solo dopo verifica reale su production o dashboard ufficiale.
 - Se una voce richiede una modifica al repo, aprire/aggiornare il relativo `docs/to_do_*.md`.
@@ -26,10 +56,10 @@ Il progetto e` funzionalmente completo: e-commerce, Stripe, inventario, gestiona
 
 Ordine di esecuzione consigliato:
 
-1. Attivare in Prisma un piano database adatto alla produzione e configurarne la fatturazione.
-2. Sul codice finale rieseguire typecheck, lint, test server e build; registrare gli esiti in `docs/test_registry.md`.
-3. Verificare migrazioni, variabili production, regione delle Functions e collegamento al database corretto.
-4. Collegare `delpasqua.com` al deployment Vercel production corretto.
+1. **[RISOLTO - 100%] Piano database e fatturazione**: Starter attivo e billing tramite Vercel verificati il 2026-11-08; database a Frankfurt e backup disponibili.
+2. **[RISOLTO - 100%] Test locali prima del deploy**: typecheck, lint, test server e build con esito positivo, secondo conferma dell'utente ricevuta il 2026-11-08 sui test eseguiti la sera del 2026-11-07. Esito registrato in `docs/test_registry.md`; nessuna nuova esecuzione richiesta.
+3. **[RISOLTO - DATABASE]** Migrazioni 7/7, regione Frankfurt e collegamento database production confermati il 2026-11-08. Le verifiche ancora aperte sui servizi esterni restano elencate sotto.
+4. **[DEPLOY RISOLTO - 100%]** Nuove modifiche distribuite su Vercel production, stato READY (2026-11-08). Resta collegare `delpasqua.com` al deployment corretto.
 5. Verificare dominio, HTTPS, canonical, sitemap e `robots.txt`.
 6. Eseguire lo smoke test pubblico production su pagine, lingue, mobile, carrello e checkout.
 7. Rieseguire la suite SEO contro il dominio finale e archiviare il nuovo report.
@@ -85,22 +115,22 @@ Questi controlli vanno eseguiti sul deployment e sul dominio finali. Non sostitu
 
 Blocco operativo verificato il 2026-08-05: il dominio pubblico serve ancora WordPress. Non configurare il webhook Stripe live su `delpasqua.com` e non fare ordini live finche` il dominio non punta alla nuova app.
 
-- [ ] Attivare la fatturazione e un piano Prisma/Postgres adatto all'uso production prima di collegare il dominio.
+- [x] Attivare la fatturazione e un piano Prisma/Postgres adatto all'uso production prima di collegare il dominio.
 - [ ] Verificare nel piano scelto limiti di utilizzo, costi oltre soglia, disponibilita` del servizio e opzioni di backup/restore.
 - [ ] Verificare che il metodo di pagamento e gli avvisi di fatturazione del database siano configurati correttamente.
-- [ ] Confermare in Prisma Console che il database production e` in Frankfurt / `eu-central-1`.
-- [ ] Confermare che `vercel.json` contiene `"regions": ["fra1"]`.
-- [ ] Fare un nuovo deploy production dopo il cambio regione Vercel.
-- [ ] Verificare dal deployment Vercel che le Serverless Functions risultino in `fra1`.
-- [ ] Verificare che `DATABASE_URL` e `DIRECT_URL` production puntino al database corretto, senza copiare i valori nel repo.
-- [ ] Applicare la migrazione `20260818120000_add_test_order_flag`; non tentare di importare o ricostruire automaticamente i vecchi pagamenti test presenti soltanto in Stripe.
-- [ ] Verificare che Stripe production usi chiavi live e webhook live.
-- [ ] In Stripe Dashboard live, verificare che l'endpoint webhook production sia `https://delpasqua.com/api/webhooks/stripe`.
-- [ ] Disattivare o rimuovere endpoint Stripe live vecchi, preview o puntati ad ambienti di sviluppo.
+- [x] Confermare in Prisma Console o tramite Prisma MCP che il database production e` in Frankfurt / `eu-central-1`.
+- [x] Confermare che `vercel.json` contiene `"regions": ["fra1"]`.
+- [x] Fare un nuovo deploy production dopo il cambio regione Vercel: `dpl_FGyb8RqsTKnQnhH8gvHHaLFUXh5x` READY, 2026-11-08.
+- [x] Verificare dal deployment Vercel che le Serverless Functions risultino in `fra1` (API deployment, 2026-11-08).
+- [x] Verificare che `DATABASE_URL` e `DIRECT_URL` production puntino al database corretto, senza copiare i valori nel repo: entrambe connesse e storico migrazioni corrispondente a `delpasqua-db` (2026-11-08, sola lettura).
+- [x] Applicare la migrazione `20260818120000_add_test_order_flag`: gia` completata, verificata via Prisma MCP il 2026-11-08, insieme alla successiva `20260819153000_add_order_attention_acknowledgement`. Non tentare di importare o ricostruire automaticamente i vecchi pagamenti test presenti soltanto in Stripe.
+- [x] Verificare che Stripe production usi chiavi live e webhook live (env Vercel e API Stripe, 2026-11-08).
+- [x] In Stripe Dashboard live o API ufficiale, verificare che l'endpoint webhook production sia `https://delpasqua.com/api/webhooks/stripe`.
+- [x] Disattivare o rimuovere endpoint Stripe live vecchi, preview o puntati ad ambienti di sviluppo: nessuno presente nell'elenco API del 2026-11-08.
 - [ ] Verificare che `STRIPE_WEBHOOK_SECRET` production corrisponda esattamente all'endpoint live configurato su Stripe.
-- [ ] Verificare che `STRIPE_LIVEMODE_EXPECTED` sia coerente con l'ambiente production.
+- [x] Verificare che `STRIPE_LIVEMODE_EXPECTED` sia coerente con l'ambiente production: `true`, verificato il 2026-11-08.
 - [ ] Verificare che email production (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_NOTIFY`) siano corrette.
-- [ ] Verificare che `NEXT_PUBLIC_SITE_URL`, `SITE_URL`, `NEXT_PUBLIC_APP_URL` e `APP_ORIGIN` puntino al dominio finale.
+- [x] Verificare che `NEXT_PUBLIC_SITE_URL`, `SITE_URL`, `NEXT_PUBLIC_APP_URL` e `APP_ORIGIN` puntino al dominio finale: tutti `https://delpasqua.com` (2026-11-08).
 - [ ] Eseguire almeno un ordine test completo in production prima di rimuovere il prodotto test.
 - [ ] Prima del collaudo aprire il sito con `?test_mode=1`; al termine usare `?test_mode=0` per rimuovere la modalita` interna dal browser.
 - [ ] Verificare ricezione email ordine/admin sul test production.
@@ -164,7 +194,7 @@ Blocco operativo verificato il 2026-08-05: il dominio pubblico serve ancora Word
 
 ## P1 - Performance E Infrastruttura
 
-- [ ] Dopo il deploy, verificare che Vercel production riporti Functions in `fra1`.
+- [x] Dopo il deploy, verificare che Vercel production riporti Functions in `fra1`: API nuovo deployment READY, 2026-11-08.
 - [ ] Verificare TTFB home/shop/PDP dopo warm-up.
 - [ ] Verificare TTFB API critiche: `/api/products`, `/api/inventory/availability`, `/api/order`.
 - [ ] Verificare che non ci siano errori Prisma nei runtime logs Vercel.

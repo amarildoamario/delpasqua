@@ -24,6 +24,12 @@ export async function processOutboxBatch(opts: {
 } = {}) {
   const client = (opts.tx as typeof prisma) ?? prisma;
   const sendEmail = opts.sendEmailFn ?? (sendTransactionalEmail as (args: { type: TransactionalEmailType; orderId: string }) => Promise<unknown>);
+  const sendChecked = async (type: TransactionalEmailType, orderId: string) => {
+    const result = await sendEmail({ type, orderId });
+    if (result && typeof result === "object" && "ok" in result && result.ok === false) {
+      throw new Error(getErrText("error" in result ? result.error : null, "Transactional email delivery failed"));
+    }
+  };
   const limit = Math.max(1, Math.min(50, opts.limit ?? 10));
   const now = new Date();
 
@@ -114,16 +120,16 @@ export async function processOutboxBatch(opts: {
 
       switch (ev.type) {
         case "ORDER_PAID":
-          if (orderId) await sendEmail({ type: "ORDER_PAID" as TransactionalEmailType, orderId });
+          if (orderId) await sendChecked("ORDER_PAID", orderId);
           break;
         case "ORDER_SHIPPED":
-          if (orderId) await sendEmail({ type: "ORDER_SHIPPED" as TransactionalEmailType, orderId });
+          if (orderId) await sendChecked("ORDER_SHIPPED", orderId);
           break;
         case "ORDER_CANCELED":
-          if (orderId) await sendEmail({ type: "ORDER_CANCELED" as TransactionalEmailType, orderId });
+          if (orderId) await sendChecked("ORDER_CANCELED", orderId);
           break;
         case "ORDER_REFUNDED":
-          if (orderId) await sendEmail({ type: "ORDER_REFUNDED" as TransactionalEmailType, orderId });
+          if (orderId) await sendChecked("ORDER_REFUNDED", orderId);
           break;
         default:
           break;

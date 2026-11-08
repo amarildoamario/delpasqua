@@ -64,6 +64,13 @@ const hstsHeader = isProd
 const nextConfig: any = {
   reactCompiler: true,
   trailingSlash: true,
+  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+  outputFileTracingIncludes: {
+    "/api/webhooks/stripe": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
+    "/api/cron/outbox": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
+    "/api/admin/outbox/retry": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
+    "/api/admin/orders/**": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
+  },
 
   // toglie "X-Powered-By: Next.js"
   poweredByHeader: false,
