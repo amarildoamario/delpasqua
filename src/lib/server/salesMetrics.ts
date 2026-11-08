@@ -30,17 +30,33 @@ function romeMidnight(day: string) {
   return new Date(utc.getTime() - (hour * 60 + minute) * 60_000);
 }
 
-export function metricsPeriod(startParam?: string, endParam?: string, now = new Date()) {
+export function metricsPeriod(startParam?: string, endParam?: string, now = new Date(), defaultDays = 7) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(now);
   const part = (type: string) => parts.find((value) => value.type === type)!.value;
   const today = `${part("year")}-${part("month")}-${part("day")}`;
-  const startISO = validDay(startParam) ?? shiftDay(today, -7);
+  const startISO = validDay(startParam) ?? shiftDay(today, -defaultDays);
   const requestedEnd = validDay(endParam) ?? today;
   const endISO = requestedEnd < startISO ? startISO : requestedEnd;
   const endExclusiveISO = shiftDay(endISO, 1);
   return { startISO, endISO, endExclusiveISO, start: romeMidnight(startISO), endExclusive: romeMidnight(endExclusiveISO) };
+}
+
+export function metricsMonthKey(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Rome", year: "numeric", month: "2-digit",
+  }).formatToParts(date);
+  return `${parts.find((part) => part.type === "year")!.value}-${parts.find((part) => part.type === "month")!.value}`;
+}
+
+export function metricsMonthWindow(startISO: string, endISO: string) {
+  const nextMonth = new Date(`${endISO.slice(0, 7)}-01T00:00:00Z`);
+  nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
+  return {
+    startMonthDate: romeMidnight(`${startISO.slice(0, 7)}-01`),
+    endMonthDate: romeMidnight(nextMonth.toISOString().slice(0, 10)),
+  };
 }
 
 export function salesConversion(paidOrders: number, sessions: number) {

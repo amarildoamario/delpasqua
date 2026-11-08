@@ -103,3 +103,4 @@ Copiare una riga per ogni nuova esecuzione senza cancellare lo storico utile.
 7. Attivare `?test_mode=1`, eseguire un ordine reale controllato e verificare tutti gli effetti nel gestionale senza alimentare GA4.
 8. Disattivare il prodotto test e ripetere i controlli di esposizione pubblica.
 9. Disattivare la modalita` interna con `?test_mode=0` e monitorare production per almeno 48 ore.
+| 2026-11-08 | Working tree, filtro temporale Dashboard | local | lint, typecheck, test:server e browser autenticato | PASS | 60/60 test; selettore condiviso, settembre 0 e novembre 5 visitatori; date singolo giorno ed export coerenti, filtri mercato conservati, nessun overflow mobile o pageerror. Nessun dato commerciale o evento modificato; scratch/dashboard-range-local.json | Codex |

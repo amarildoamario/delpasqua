@@ -4,6 +4,8 @@ import { prisma } from "@/lib/server/prisma";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
+import RangePicker from "./RangerPicker";
+import { metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
 
 import { readCatalog } from "@/lib/server/catalog";
 
@@ -20,36 +22,6 @@ export const dynamic = "force-dynamic";
 function euro(cents: number) {
 
   return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
-
-}
-
-
-
-function toISODate(d: Date) {
-
-  const y = d.getFullYear();
-
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-
-  const day = String(d.getDate()).padStart(2, "0");
-
-  return `${y}-${m}-${day}`;
-
-}
-
-
-
-function parseDate(s?: string) {
-
-  if (!s) return null;
-
-  // accetta solo YYYY-MM-DD
-
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
-
-  const d = new Date(`${s}T00:00:00`);
-
-  return Number.isNaN(d.getTime()) ? null : d;
 
 }
 
@@ -315,37 +287,7 @@ export default async function AdminDashboard({
 
 
 
-  const today = new Date();
-
-  const defaultStart = new Date(today);
-
-  defaultStart.setDate(today.getDate() - 30);
-
-
-
-  const start = parseDate(startParam) ?? defaultStart;
-
-  const end = parseDate(endParam) ?? today;
-
-
-
-  // end inclusive -> endExclusive (giorno dopo)
-
-  const endExclusive = new Date(end);
-
-  endExclusive.setDate(end.getDate() + 1);
-
-
-
-  const startISO = toISODate(start);
-
-  const endISO = toISODate(end);
-
-
-
-  // src/app/admin/dashboard/page.tsx
-
-
+  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam, new Date(), 30);
 
   const PAID_LIKE = [
 
@@ -898,11 +840,7 @@ export default async function AdminDashboard({
 
   // Fetch all orders in the monthly periods overlapping the selected date range
 
-  const startMonthDate = new Date(start.getFullYear(), start.getMonth(), 1);
-
-  const endMonthDate = new Date(endExclusive.getFullYear(), endExclusive.getMonth() + 1, 1);
-
-
+  const { startMonthDate, endMonthDate } = metricsMonthWindow(startISO, endISO);
 
   const monthlyOrders = await prisma.order.findMany({
 
@@ -961,7 +899,7 @@ export default async function AdminDashboard({
 
     const d = new Date(order.createdAt);
 
-    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const monthKey = metricsMonthKey(d);
 
 
 
@@ -1015,7 +953,7 @@ export default async function AdminDashboard({
 
       const d = new Date(order.createdAt);
 
-      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const monthKey = metricsMonthKey(d);
 
 
 
@@ -1479,6 +1417,8 @@ export default async function AdminDashboard({
       />
 
 
+
+      <RangePicker startISO={startISO} endISO={endISO} />
 
       {/* KPI Principali */}
 

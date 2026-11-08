@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
+import { metricsMonthKey, metricsMonthWindow, metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
 
 const start = new Date("2026-11-08T00:00:00Z");
 const end = new Date("2026-11-09T00:00:00Z");
@@ -68,4 +68,17 @@ test("calendar boundaries follow daylight saving changes and reject rolled dates
   assert.equal(spring.endExclusive.getTime() - spring.start.getTime(), 23 * 60 * 60_000);
   assert.equal(fall.endExclusive.getTime() - fall.start.getTime(), 25 * 60 * 60_000);
   assert.notEqual(metricsPeriod("2026-02-31", "2026-11-08", start).startISO, "2026-02-31");
+});
+
+test("dashboard keeps its thirty-day default while metrics retain their seven-day default", () => {
+  const now = new Date("2026-11-08T12:00:00Z");
+  assert.equal(metricsPeriod(undefined, undefined, now, 30).startISO, "2026-10-09");
+  assert.equal(metricsPeriod(undefined, undefined, now).startISO, "2026-11-01");
+});
+
+test("monthly dashboard accounting follows Italian calendar months across UTC midnight and year rollover", () => {
+  assert.equal(metricsMonthKey(new Date("2026-10-31T23:30:00Z")), "2026-11");
+  const period = metricsMonthWindow("2026-11-05", "2026-12-31");
+  assert.equal(period.startMonthDate.toISOString(), "2026-10-31T23:00:00.000Z");
+  assert.equal(period.endMonthDate.toISOString(), "2026-12-31T23:00:00.000Z");
 });

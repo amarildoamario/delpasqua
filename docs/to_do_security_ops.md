@@ -295,3 +295,9 @@ Richiesta utente del 2026-11-08: conversioni calcolate dalle visite in rapporto 
 - Aggregazione condivisa trafficGeography.ts: ogni visitatore/sessione attribuito alla prima nazione conosciuta nel periodo, cosi cambi IP/VPN non duplicano i totali. Localita assenti indicate ND, non inventate IT; nessuna modifica retroattiva ai dati. Calcolo in memoria sugli eventi gia letti, senza nuove query o migrazioni.
 - Verifiche locali: lint/typecheck PASS, suite server 58/58 PASS; regressione 3 IT + 2 MT, paesi non serviti, localita sconosciute, visite ripetute e cambi paese/sessione. Browser autenticato dashboard e SELECT READ ONLY coerenti: 5 visitatori e 5 sessioni, IT=3 MT=2 in entrambi i grafici, zero pageerror; logout eseguito. Nessun evento, ordine o pagamento modificato.
 - Report locale: scratch/traffic-geography-local.json e screenshot omonimo .png. Push e rilascio production previsti nello stesso intervento; collaudo successivo nel report scratch/traffic-geography-production.json e nel deployment Vercel collegato al commit.
+
+## [RISOLTO] Filtro temporale Dashboard come Metriche
+
+- Montato il selettore condiviso delle Metriche: date Da/A, mese, anno, trimestre e semestre. Cambio periodo applicato ai dati e all export JSON, mantenendo gli altri filtri nella navigazione; default Dashboard conservato a 30 giorni prima di oggi.
+- Confini giornalieri e contabilita mensile in Europe/Rome, condivisi tra pagina ed export. Export geografia allineato ai grafici: tutti i paesi, inclusa Malta, con visitatori/sessioni attribuiti una sola volta.
+- Nessuna nuova query periodica, scrittura di eventi o migrazione. Verifiche locali: lint/typecheck PASS, 60/60 test server PASS; browser autenticato settembre 0 visitatori, novembre 5, intervallo singolo giorno ed export coerenti, filtri mercato conservati, mobile senza overflow, zero pageerror. Logout eseguito; nessun ordine, pagamento o evento modificato. Report scratch/dashboard-range-local.json.

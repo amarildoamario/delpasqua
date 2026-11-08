@@ -7,38 +7,13 @@ import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth"
 import { rateLimit } from "@/lib/server/rateLimit";
 import { readCatalog } from "@/lib/server/catalog";
 import { getStoreSettings } from "@/lib/server/settings";
-
-function isISODateOnly(s: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(s);
-}
-
-function parseDateOnly(s?: string | null) {
-  if (!s || !isISODateOnly(s)) return null;
-  const d = new Date(`${s}T00:00:00`);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function toISODate(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+import { metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
+import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 
 function deriveVatCents(order: { vatCents: number; subtotalCents: number }, vatRatePercent: number) {
   if (order.vatCents > 0) return order.vatCents;
   const vatRateDec = vatRatePercent / 100;
   return Math.round((order.subtotalCents * vatRateDec) / (1 + vatRateDec));
-}
-
-function getAnalyticsCountryCode(data: unknown) {
-  if (!data || typeof data !== "object") return "IT";
-  const meta = (data as { meta?: unknown }).meta;
-  if (!meta || typeof meta !== "object") return "IT";
-  const countryCode = (meta as { countryCode?: unknown }).countryCode;
-  return typeof countryCode === "string" && countryCode.trim()
-    ? countryCode.trim().toUpperCase()
-    : "IT";
 }
 
 export async function GET(req: Request) {
@@ -59,18 +34,7 @@ export async function GET(req: Request) {
   const startParam = url.searchParams.get("start");
   const endParam = url.searchParams.get("end");
 
-  const today = new Date();
-  const defaultStart = new Date(today);
-  defaultStart.setDate(today.getDate() - 30);
-
-  const start = parseDateOnly(startParam) ?? defaultStart;
-  const end = parseDateOnly(endParam) ?? today;
-
-  const endExclusive = new Date(end);
-  endExclusive.setDate(end.getDate() + 1);
-
-  const startISO = toISODate(start);
-  const endISO = toISODate(end);
+  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam ?? undefined, endParam ?? undefined, new Date(), 30);
 
   const PAID_LIKE = [
     "PAGATO",
@@ -119,6 +83,7 @@ export async function GET(req: Request) {
       },
       select: {
         type: true,
+        createdAt: true,
         visitorId: true,
         sessionId: true,
         productKey: true,
@@ -210,47 +175,14 @@ export async function GET(req: Request) {
   void canceledOrdersByCountry;
   void checkoutCanceledByCountry;
 
-  // Calcolo visite uniche, sessioni e geografia reali in-memoria
-  const sessionsSet = new Set<string>();
-  const visitorsSet = new Set<string>();
-  const countryVisitorMap = new Map<string, Set<string>>();
-  const countrySessionMap = new Map<string, Set<string>>();
+  const { uniqueVisitorsCount, uniqueSessionsCount, visitorCountriesData, sessionCountriesData } =
+    summarizeTrafficGeography(analyticsEvents);
   const productViewCounts = new Map<string, number>();
-  const productViewCountryMap = new Map<string, Map<string, number>>();
-
-  for (const ev of analyticsEvents) {
-    const country = getAnalyticsCountryCode(ev.data);
-
-    if (ev.type === "page_view") {
-      if (ev.visitorId) visitorsSet.add(ev.visitorId);
-      if (ev.sessionId) sessionsSet.add(ev.sessionId);
-
-      if (ALLOWED_COUNTRIES.includes(country)) {
-        if (ev.visitorId) {
-          if (!countryVisitorMap.has(country)) {
-            countryVisitorMap.set(country, new Set());
-          }
-          countryVisitorMap.get(country)!.add(ev.visitorId);
-        }
-        if (ev.sessionId) {
-          if (!countrySessionMap.has(country)) {
-            countrySessionMap.set(country, new Set());
-          }
-          countrySessionMap.get(country)!.add(ev.sessionId);
-        }
-      }
-    } else if (ev.type === "product_view" && ev.productKey) {
-      productViewCounts.set(ev.productKey, (productViewCounts.get(ev.productKey) || 0) + 1);
-      if (!productViewCountryMap.has(ev.productKey)) {
-        productViewCountryMap.set(ev.productKey, new Map());
-      }
-      const countryMap = productViewCountryMap.get(ev.productKey)!;
-      countryMap.set(country, (countryMap.get(country) || 0) + 1);
+  for (const event of analyticsEvents) {
+    if (event.type === "product_view" && event.productKey) {
+      productViewCounts.set(event.productKey, (productViewCounts.get(event.productKey) ?? 0) + 1);
     }
   }
-
-  const uniqueVisitorsCount = visitorsSet.size;
-  const uniqueSessionsCount = sessionsSet.size;
 
   // Risoluzione prodotto più visto
   const sortedProductViews = Array.from(productViewCounts.entries()).sort((a, b) => b[1] - a[1]);
@@ -260,21 +192,15 @@ export async function GET(req: Request) {
 
   // Aggregazione viste per nazione
   const countryProductViews = new Map<string, Map<string, number>>();
-  for (const ev of analyticsEvents) {
-    if (ev.type === "product_view" && ev.productKey) {
-      const country = getAnalyticsCountryCode(ev.data);
-
-      if (ALLOWED_COUNTRIES.includes(country)) {
-        if (!countryProductViews.has(country)) {
-          countryProductViews.set(country, new Map());
-        }
-        const prodMap = countryProductViews.get(country)!;
-        prodMap.set(ev.productKey, (prodMap.get(ev.productKey) || 0) + 1);
-      }
-    }
+  for (const event of analyticsEvents) {
+    if (event.type !== "product_view" || !event.productKey) continue;
+    const country = getAnalyticsCountryCode(event.data);
+    const products = countryProductViews.get(country) ?? new Map<string, number>();
+    products.set(event.productKey, (products.get(event.productKey) ?? 0) + 1);
+    countryProductViews.set(country, products);
   }
 
-  const topProductViewsPerCountry = ALLOWED_COUNTRIES.map((country) => {
+  const topProductViewsPerCountry = Array.from(countryProductViews.keys()).map((country) => {
     const prodMap = countryProductViews.get(country);
     if (!prodMap || prodMap.size === 0) {
       return { country, productSku: "—", count: 0 };
@@ -314,15 +240,8 @@ export async function GET(req: Request) {
   })).filter(r => ALLOWED_COUNTRIES.includes(r.country) && r.qty > 0);
 
   // 1. Visitatori e sessioni per nazione
-  const visitorsByCountry = Array.from(countryVisitorMap.entries()).map(([country, visitorSet]) => ({
-    country,
-    count: visitorSet.size,
-  })).sort((a, b) => b.count - a.count);
-
-  const sessionsByCountry = Array.from(countrySessionMap.entries()).map(([country, sessionSet]) => ({
-    country,
-    count: sessionSet.size,
-  })).sort((a, b) => b.count - a.count);
+  const visitorsByCountry = visitorCountriesData.map(({ label, value }) => ({ country: label, count: value }));
+  const sessionsByCountry = sessionCountriesData.map(({ label, value }) => ({ country: label, count: value }));
 
   // 2. Fatturato e ordini per nazione
   const ordersByCountry = totalOrdersByCountry.map((r) => ({
@@ -354,8 +273,7 @@ export async function GET(req: Request) {
   const overrides = overridesRow ? JSON.parse(overridesRow.value) : {};
 
   // Fetch all orders in the monthly periods overlapping the selected date range
-  const startMonthDate = new Date(start.getFullYear(), start.getMonth(), 1);
-  const endMonthDate = new Date(endExclusive.getFullYear(), endExclusive.getMonth() + 1, 1);
+  const { startMonthDate, endMonthDate } = metricsMonthWindow(startISO, endISO);
 
   const monthlyOrders = await prisma.order.findMany({
     where: {
@@ -386,7 +304,7 @@ export async function GET(req: Request) {
 
   for (const order of monthlyOrders) {
     const d = new Date(order.createdAt);
-    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const monthKey = metricsMonthKey(d);
 
     const autoStripe = order.stripeFeeCents > 0 ? order.stripeFeeCents : Math.round(order.totalCents * 0.015 + 25);
     const autoVat = deriveVatCents(order, vatRatePercent);
@@ -412,7 +330,7 @@ export async function GET(req: Request) {
   for (const order of monthlyOrders) {
     if (order.createdAt >= start && order.createdAt < endExclusive) {
       const d = new Date(order.createdAt);
-      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const monthKey = metricsMonthKey(d);
 
       const ov = overrides[monthKey] || {};
       const mDb = monthsDbTotals[monthKey];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 function pad2(n: number) {
@@ -55,6 +55,7 @@ export default function RangePicker({
   endISO: string;
 }) {
   const router = useRouter();
+  const id = useId();
   const pathname = usePathname();
   const sp = useSearchParams();
 
@@ -198,8 +199,9 @@ export default function RangePicker({
     <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-neutral-500">Da</label>
+          <label htmlFor={`${id}-start`} className="text-xs font-semibold text-neutral-500">Da</label>
           <input
+            id={`${id}-start`}
             type="date"
             value={startISO}
             onChange={(e) => onChangeStart(e.target.value)}
@@ -208,8 +210,9 @@ export default function RangePicker({
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-neutral-500">A</label>
+          <label htmlFor={`${id}-end`} className="text-xs font-semibold text-neutral-500">A</label>
           <input
+            id={`${id}-end`}
             type="date"
             value={endISO}
             onChange={(e) => onChangeEnd(e.target.value)}
@@ -220,8 +223,9 @@ export default function RangePicker({
         <div className="hidden h-10 w-px bg-neutral-200 sm:block" />
 
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-neutral-500">Mese</label>
+          <label htmlFor={`${id}-month`} className="text-xs font-semibold text-neutral-500">Mese</label>
           <input
+            id={`${id}-month`}
             type="month"
             value={monthValue}
             onChange={(e) => onSelectMonth(e.target.value)}
@@ -230,8 +234,9 @@ export default function RangePicker({
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-neutral-500">Anno</label>
+          <label htmlFor={`${id}-year`} className="text-xs font-semibold text-neutral-500">Anno</label>
           <select
+            id={`${id}-year`}
             value={String(year)}
             onChange={(e) => onYearChange(e.target.value)}
             className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900"
@@ -245,8 +250,9 @@ export default function RangePicker({
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-neutral-500">Trimestre</label>
+          <label htmlFor={`${id}-quarter`} className="text-xs font-semibold text-neutral-500">Trimestre</label>
           <select
+            id={`${id}-quarter`}
             value={quarter}
             onChange={(e) => onSelectQuarter(e.target.value)}
             className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900"
@@ -260,8 +266,9 @@ export default function RangePicker({
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-neutral-500">Semestre</label>
+          <label htmlFor={`${id}-semester`} className="text-xs font-semibold text-neutral-500">Semestre</label>
           <select
+            id={`${id}-semester`}
             value={semester}
             onChange={(e) => onSelectSemester(e.target.value)}
             className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900"
