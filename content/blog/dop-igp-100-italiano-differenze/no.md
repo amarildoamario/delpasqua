@@ -6,7 +6,7 @@ category: "Kjøpsguide"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "5 min"
-author: "Redazione Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/tracciabilita-lotto-analisi-qualita.jpg"
 references:
   - label: "Ministero delle Politiche Agricole (MASAF) — Denominazioni d'Origine Italiane"

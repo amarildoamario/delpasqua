@@ -7,10 +7,10 @@ Questo file non deve essere uno storico completo di tutto quello che e` gia stat
 ## Agent Status
 
 - FileStatus: ACTIVE
-- LastVerified: 2026-06-27
-- OpenItems: 7
+- LastVerified: 2026-11-09
+- OpenItems: 5
 - AgentAction: usare questo file come lista SEO corrente; prima di chiudere un punto, verificare il codice locale o l'ambiente production reale.
-- Note: aggiornato allo stato attuale del repo. La copertura locale di routing, sitemap, canonical, hreflang e noindex preview esiste; restano soprattutto verifiche production, Search Console, recensioni reali e pulizia finale del prodotto test.
+- Note: aggiornato con i dati del lancio ufficiale del 08/11/2026. Dominio attaccato a Vercel, primo push ufficiale `de4e3b1` (preceduto da DNS cutover `b02a3b4`). Salvata la baseline di traffico organico pre-lancio da Search Console nella cartella `Analisi traffico Pre-Lancio/`.
 
 ## Lettura rapida
 
@@ -175,10 +175,16 @@ Definition of Done:
 
 ### [TODO] P2 - Monitorare Search Console dopo go-live
 
+Stato baseline:
+- Baseline pre-lancio salvata il 08/11/2026 da Google Search Console (periodo 09/07/2025 - 07/11/2026): 722 clic, 11.674 impressioni, CTR 6,18%, pos. 8,8.
+- Cartella di riferimento: `Analisi traffico Pre-Lancio/` con file Excel `delpasqua.com-Performance-on-Search-2026-11-09.xlsx` e `README.md`.
+- Lancio ufficiale avvenuto con cutover dominio il 08/11/2026; primo push GitHub ufficiale `de4e3b1` (deploy Vercel `dpl_whwcDUpJhzo9wKsNHV94NAYYccvw`).
+
 Da fare:
 - Inviare `https://delpasqua.com/sitemap.xml` in Google Search Console.
 - Verificare che la sitemap venga accettata.
 - Controllare copertura, pagine escluse, 404, canonical scelti da Google.
+- Confrontare settimanalmente le performance post-lancio rispetto alla baseline pre-lancio salvata in `Analisi traffico Pre-Lancio/`.
 - Monitorare query perse e query nuove nelle prime settimane.
 - Evitare modifiche continue alle URL appena dopo il go-live.
 
@@ -187,6 +193,7 @@ Definition of Done:
 
 ## Collegamenti ad altri file
 
+- `Analisi traffico Pre-Lancio/README.md`: documentazione baseline traffico pre-lancio e metadati del primo commit del lancio ufficiale.
 - `docs/to_check_live/README.md`: checklist completa pre/durante/post go-live.
 - `docs/to_do_checkout_payments.md`: Stripe webhook, dominio production e ordine test live.
 - `docs/to_do_security_ops.md`: Resend e notifiche form contatti.

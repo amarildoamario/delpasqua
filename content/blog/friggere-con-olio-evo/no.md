@@ -6,7 +6,7 @@ category: "Riktig Bruk"
 date: "2026-02-05"
 updateDate: "2026-02-05"
 readingTime: "3 min"
-author: "Chef del Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/frittura.jpg"
 references:
   - label: "Abrante-Pascual S. et al. (2024) — Olive oil as a premium frying oil (Foods, MDPI)"

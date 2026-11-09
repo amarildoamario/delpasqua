@@ -6,7 +6,7 @@ category: "Oppskrifter & Parringer"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "3 min"
-author: "Chef del Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/olio-pizza.jpg"
 ---
 

@@ -6,7 +6,7 @@ category: "Información sobre el Aceite de Oliva"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "8 min"
-author: "Redazione Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/glossario.jpg"
 references:
   - label: "Commission Delegated Regulation (EU) 2022/2104 — Marketing standards for olive oil"

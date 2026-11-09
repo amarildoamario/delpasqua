@@ -6,7 +6,7 @@ category: "Guide d'Achat"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "5 min"
-author: "Emanuele Del Pasqua"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/olio-nuovo-cose-e-quanto-dura.jpg"
 references:
   - label: "Baccouri et al. (2009) — Analytical profiles and changes during the first months of Extra Virgin Olive Oils"

@@ -6,7 +6,7 @@ category: "Chimica dell'olio di oliva"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "5 min"
-author: "Dipartimento Qualità"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/gramolazione-aroma.jpg"
 ---
 

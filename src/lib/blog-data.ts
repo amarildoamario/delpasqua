@@ -64,7 +64,7 @@ const corePosts: BlogPost[] = [
         date: "2026-02-28",
         updateDate: "2026-02-28",
         readingTime: "4 min",
-        author: "Dipartimento Qualità",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/acidita-olio-oliva.png",
         category: "Chimica dell'olio di oliva"
     },
@@ -77,7 +77,7 @@ const corePosts: BlogPost[] = [
         date: "2026-02-27",
         updateDate: "2026-02-27",
         readingTime: "5 min",
-        author: "Dipartimento Qualità",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/polifenoli-e-perossidi.jpg",
         category: "Chimica dell'olio di oliva"
     },
@@ -102,7 +102,7 @@ const corePosts: BlogPost[] = [
         date: "2026-02-20",
         updateDate: "2026-02-20",
         readingTime: "5 min",
-        author: "Emanuele Del Pasqua",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/come-nasce-nostro-olio.jpg", 
         category: "Consigli di acquisto"
     },
@@ -197,7 +197,7 @@ const corePosts: BlogPost[] = [
         date: "2026-02-05",
         updateDate: "2026-02-05",
         readingTime: "3 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/frittura.jpg",
         category: "Consumo corretto"
     },
@@ -227,7 +227,7 @@ const corePosts: BlogPost[] = [
         date: "2026-02-02",
         updateDate: "2026-02-02",
         readingTime: "4 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/olio-nuovo-cose-e-quanto-dura.jpg",
         category: "Consumo corretto"
     }
@@ -295,7 +295,7 @@ export async function loadMarkdownPost(post: BlogPost, locale: string): Promise<
                 date: data.date ?? post.date,
                 updateDate: data.updateDate ?? post.updateDate,
                 readingTime: data.readingTime ?? post.readingTime,
-                author: data.author ?? post.author,
+                author: "Frantoio del Pasqua",
                 imageUrl: data.imageUrl ?? post.imageUrl
             };
         }

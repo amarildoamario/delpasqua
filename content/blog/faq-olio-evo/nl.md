@@ -6,7 +6,7 @@ category: "Olijfolie-informatie"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "6 min"
-author: "Redazione Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/FAQ.jpg"
 references:
   - label: "Regolamento delegato (UE) 2022/2104 — Standard di commercializzazione dell’olio d’oliva"

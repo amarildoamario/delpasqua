@@ -6,7 +6,7 @@ category: "Défauts de l'huile d'olive"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "4 min"
-author: "Dipartimento Qualità"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/rancido-cause.jpg"
 references:
   - label: "International Olive Council (IOC/COI) — Standards & Methods (sensory + quality assessment)"

@@ -6,7 +6,7 @@ category: "Chimica dell'olio di oliva"
 date: "2026-02-28"
 updateDate: "2026-02-28"
 readingTime: "4 min"
-author: "Dipartimento Qualità"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
 ---
 

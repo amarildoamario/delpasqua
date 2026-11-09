@@ -6,7 +6,7 @@ category: "Defectos del Aceite de Oliva"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "3 min"
-author: "Dipartimento Qualità"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/rancido-cause-prevenzione.jpg"
 references:
   - label: "EUR-Lex — Olive oil analysis (riassunto UE: categorie e difetti organolettici)"

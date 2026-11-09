@@ -6,7 +6,7 @@ category: "Uso correcto"
 date: "2026-02-02"
 updateDate: "2026-02-02"
 readingTime: "4 min"
-author: "Chef del Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/olio-nuovo-cose-e-quanto-dura.jpg"
 references:
   - label: "CREA — Conoscere e riconoscere l’olio (analisi sensoriale e attributi positivi)"

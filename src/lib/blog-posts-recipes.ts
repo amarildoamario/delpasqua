@@ -9,7 +9,7 @@ export const postsRicette: BlogPost[] = [
         date: "2026-03-01",
         updateDate: "2026-03-01",
         readingTime: "4 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/olio-per-insalata.jpg",
         category: "Ricette e abbinamenti",
         content: ""
@@ -22,7 +22,7 @@ export const postsRicette: BlogPost[] = [
         date: "2026-03-01",
         updateDate: "2026-03-01",
         readingTime: "3 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/olio-per-insalata.jpg",
         category: "Ricette e abbinamenti",
         content: ""
@@ -35,7 +35,7 @@ export const postsRicette: BlogPost[] = [
         date: "2026-03-01",
         updateDate: "2026-03-01",
         readingTime: "4 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/olio-per-pizza.jpg",
         category: "Ricette e abbinamenti",
         content: ""
@@ -48,7 +48,7 @@ export const postsRicette: BlogPost[] = [
         date: "2026-03-01",
         updateDate: "2026-03-01",
         readingTime: "3 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/olio-per-legumi-zuppe.jpg",
         category: "Ricette e abbinamenti",
         content: ""
@@ -74,7 +74,7 @@ export const postsRicette: BlogPost[] = [
         date: "2026-03-01",
         updateDate: "2026-03-01",
         readingTime: "4 min",
-        author: "Chef del Frantoio",
+        author: "Frantoio del Pasqua",
         imageUrl: "/blog/fruttato-leggero-abbinamenti.jpg",
         category: "Ricette e abbinamenti",
         content: ""

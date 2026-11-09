@@ -6,7 +6,7 @@ category: "Gezondheid & Welzijn"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "3 min"
-author: "Redazione Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/calorie-olio-evo-porzioni.jpg"
 references:
   - label: "LARN 2014 — Livelli di Assunzione di Riferimento di Nutrienti per la popolazione italiana (IV Revisione)"

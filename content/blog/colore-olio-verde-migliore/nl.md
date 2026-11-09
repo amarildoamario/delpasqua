@@ -6,7 +6,7 @@ category: "Olijfolie-informatie"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "3 min"
-author: "Dipartimento Qualità"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/colore-olio-verde-migliore.jpg"
 references:
   - label: "COI/IOC (2020) — Glass for oil tasting (COI/T.20/Doc. n. 5/Rev. 2)"

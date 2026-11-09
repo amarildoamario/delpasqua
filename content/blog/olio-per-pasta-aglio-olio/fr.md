@@ -6,7 +6,7 @@ category: "Recettes et Accords"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "4 min"
-author: "Chef del Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/olio-per-pizza.jpg"
 ---
 

@@ -6,7 +6,7 @@ category: "Olive Oil Chemistry"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "6 min"
-author: "Quality Department"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/spettrometria-massa-olio-oliva-gcms-lcms.jpg"
 ---
 

@@ -6,7 +6,7 @@ category: "Olivenolje-informasjon"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "8 min"
-author: "Redazione Frantoio"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/glossario.jpg"
 references:
   - label: "Kommisjonsdelegert forordning (EU) 2022/2104 — Markedsføringsstandarder for olivenolje"

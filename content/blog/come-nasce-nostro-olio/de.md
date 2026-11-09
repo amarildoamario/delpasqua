@@ -6,7 +6,7 @@ category: "Unsere Ölmühle"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "5 min"
-author: "Emanuele Del Pasqua"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/come-nasce-il-nostro-olio.jpg"
 ---
 

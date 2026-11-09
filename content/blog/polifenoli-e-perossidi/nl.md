@@ -6,7 +6,7 @@ category: "Olijfoliechemie"
 date: "2026-02-27"
 updateDate: "2026-02-27"
 readingTime: "5 min"
-author: "Dipartimento Qualità"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-e-perossidi.jpg"
 ---
 

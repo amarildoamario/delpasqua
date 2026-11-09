@@ -6,7 +6,7 @@ category: "Einkaufsführer"
 date: "2026-02-20"
 updateDate: "2026-02-20"
 readingTime: "5 min"
-author: "Emanuele Del Pasqua"
+author: "Frantoio del Pasqua"
 imageUrl: "/blog/come-nasce-nostro-olio.jpg"
 references:
   - label: "ISMEA Mercati — Osservatorio economico e andamento dei prezzi dell'olio d'oliva in Italia"
