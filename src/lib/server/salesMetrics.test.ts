@@ -1,6 +1,55 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { metricsMonthKey, metricsMonthWindow, metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
+import { parseVariantLiters, isCanFormat, summarizeCartDemand } from "./salesMetrics";
+
+test("volume parsing uses exact units and formats distinguish one-litre bottles from cans", () => {
+  for (const [key, expected] of [["500ml", .5], ["750ml", .75], ["1lt", 1], ["3lt", 3], ["5lt", 5], ["1500ml", 1.5], ["15lt", 15], ["0,75 L", .75], ["standard", 0]] as const) {
+    assert.equal(parseVariantLiters(key), expected, key);
+  }
+  assert.equal(parseVariantLiters(null, "olio-5-litri"), 5);
+  assert.equal(isCanFormat("1lt", "vino"), false);
+  assert.equal(isCanFormat("1lt", "fruttato-intenso"), false);
+  assert.equal(isCanFormat("750ml", "evo-latta"), true);
+});
+
+test("cart demand rejects malformed quantities and prices and reports incomplete history", () => {
+  const ev = { productKey: "vino", variantKey: "1lt", cartId: "cart-1", data: { qty: 2, unitPriceCents: 2000 } };
+  const summary = summarizeCartDemand([
+    ev, { ...ev, data: { qty: -2 } }, { ...ev, data: { qty: Infinity } },
+    { ...ev, data: { qty: 1.5 } }, { ...ev, data: { qty: 0 } },
+    { ...ev, productKey: "prodotto-test" },
+    { ...ev, productKey: "other", variantKey: "standard", data: { qty: 1, unitPriceCents: -100 } },
+  ]);
+  assert.equal(summary.addedUnits, 3);
+  assert.equal(summary.litersWineDemanded, 2);
+  assert.equal(summary.litersOilDemanded, 0);
+  assert.equal(summary.unknownFormatUnits, 1);
+  assert.equal(summary.potentialCartRevenueEur, null);
+  assert.equal(summary.avgCartValueEur, null);
+  assert.equal(summary.unpricedUnits, 1);
+  assert.equal(summary.lostCartRevenueEur, null);
+  assert.equal(summarizeCartDemand([]).avgCartValueEur, null);
+  assert.equal(summarizeCartDemand([{ ...ev, data: { unitPriceCents: 0 } }]).potentialCartRevenueEur, 0);
+});
+
+test("commercial totals use payment cohorts, normalized customer emails and all oil families", () => {
+  const sales = summarizeSales([
+    order({ totalCents: 2500, email: " BUYER@example.com ", items: [{ productId: "vino" }, { productId: "peperoncino" }] }),
+    order({ id: "second", totalCents: 5000, email: "buyer@example.com", items: [{ sku: "WINE-1LT" }, { sku: "TRUF-500ML" }] }),
+    order({ id: "blank", totalCents: 0, email: "   " }),
+    order({ id: "pending", totalCents: 10000, paidAt: null }),
+    order({ id: "test", isTest: true, totalCents: 999999 }),
+    order({ id: "later", totalCents: 3000, paidAt: end }),
+  ], start, end);
+  assert.equal(sales.realizedRevenueEur, 75);
+  assert.equal(sales.realizedAovEur, 25);
+  assert.equal(sales.potentialCheckoutRevenueEur, 205);
+  assert.equal(sales.lostCheckoutRevenueEur, 100);
+  assert.equal(sales.uniquePayingCustomers, 1);
+  assert.equal(sales.repeatPayingCustomers, 1);
+  assert.equal(sales.bundleOlioVinoRatePct, 100);
+});
 
 const start = new Date("2026-11-08T00:00:00Z");
 const end = new Date("2026-11-09T00:00:00Z");
@@ -81,4 +130,21 @@ test("monthly dashboard accounting follows Italian calendar months across UTC mi
   const period = metricsMonthWindow("2026-11-05", "2026-12-31");
   assert.equal(period.startMonthDate.toISOString(), "2026-10-31T23:00:00.000Z");
   assert.equal(period.endMonthDate.toISOString(), "2026-12-31T23:00:00.000Z");
+});
+
+test("reversed URL dates are reordered just like the dashboard and metrics controls", () => {
+  const normal = metricsPeriod("2026-10-25", "2026-11-09");
+  const reversed = metricsPeriod("2026-11-09", "2026-10-25");
+  assert.deepEqual(reversed, normal);
+});
+
+test("month, quarter and semester ranges include full last days and leap years", () => {
+  for (const [startISO, endISO, days] of [["2024-02-01", "2024-02-29", 29], ["2026-01-01", "2026-03-31", 90], ["2026-07-01", "2026-12-31", 184]] as const) {
+    const period = metricsPeriod(startISO, endISO);
+    assert.equal(period.startISO, startISO);
+    assert.equal(period.endISO, endISO);
+    // Count Italian date labels, independent of the 23h/25h DST days.
+    const dayCount = (Date.parse(`${period.endExclusiveISO}T00:00:00Z`) - Date.parse(`${startISO}T00:00:00Z`)) / 86_400_000;
+    assert.equal(dayCount, days);
+  }
 });

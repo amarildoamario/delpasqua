@@ -114,6 +114,7 @@ const mockPrisma = {
         stripeCheckoutSessionId: data.stripeCheckoutSessionId || null,
         notes: data.notes || null,
       };
+      if (data.events?.create) db.orderEvents.push({ ...data.events.create, orderId: id });
       db.orders.set(id, order);
       console.log("Mock prisma.order.create: Saved order with ID:", id, "Total orders in DB:", db.orders.size);
       return order;
@@ -265,6 +266,7 @@ test("successful checkout session creation reserves stock and persists session",
     headers: {
       "Idempotency-Key": "success-key-1",
       "Content-Type": "application/json",
+      "Cookie": "v_id=visitor-0001; s_id=session-0001; analytics_consent=1",
     },
     body: JSON.stringify({
       items: [{ productId: "evo", variantId: "500ml", qty: 2 }],
@@ -294,6 +296,8 @@ test("successful checkout session creation reserves stock and persists session",
   assert.ok(order);
   assert.equal(order.status, "IN_ATTESA");
   assert.equal(order.stripeCheckoutSessionId, "cs_test_success");
+  const context = db.orderEvents.find((event) => event.type === "ANALYTICS_CONTEXT");
+  assert.deepEqual(JSON.parse(context.metaJson), { visitorId: "visitor-0001", sessionId: "session-0001", env: "dev" });
 
   // Verify stock was reserved
   const item = db.inventory.get("EVO-B-500ML");

@@ -106,23 +106,23 @@ export default function MobileListCard({
       qty: 1,
     });
 
+    if (result.status === "rejected") {
+      setToastMsg(locale === "it" ? "Prodotto esaurito." : "Product out of stock.");
+      setToastOpen(true);
+      return;
+    }
+
     track({
       type: "add_to_cart",
       cartId: getOrCreateCartId(),
       productKey: product.id,
       variantKey: product.defaultVariantId,
       data: {
-        qty: 1,
+        qty: result.addedQty,
         unitPriceCents: product.priceCents ?? null,
         slug: product.slug,
       },
     });
-
-    if (result.status === "rejected") {
-      setToastMsg(locale === "it" ? "Prodotto esaurito." : "Product out of stock.");
-      setToastOpen(true);
-      return;
-    }
 
     if (result.status === "adjusted") {
       setToastMsg(

@@ -3,6 +3,7 @@ export const ANALYTICS_TYPES = [
   "view_item_list", "filter_apply", "promo_view", "promo_click", "add_to_cart",
   "remove_from_cart", "update_cart_quantity", "clear_cart", "view_cart",
   "checkout_click", "begin_checkout", "checkout_canceled", "purchase",
+  "contact_click",
 ] as const;
 
 export type AnalyticsType = typeof ANALYTICS_TYPES[number];

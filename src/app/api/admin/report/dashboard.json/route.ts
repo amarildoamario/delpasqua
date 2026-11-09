@@ -9,6 +9,7 @@ import { readCatalog } from "@/lib/server/catalog";
 import { getStoreSettings } from "@/lib/server/settings";
 import { metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
+import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 
 function deriveVatCents(order: { vatCents: number; subtotalCents: number }, vatRatePercent: number) {
   if (order.vatCents > 0) return order.vatCents;
@@ -80,6 +81,7 @@ export async function GET(req: Request) {
         type: { in: ["page_view", "product_view"] },
         isInternal: false,
         env: "prod",
+        ...SITE_ANALYTICS_FILTER,
       },
       select: {
         type: true,
@@ -450,7 +452,7 @@ export async function GET(req: Request) {
     }>
   >`
     SELECT
-      TO_CHAR("createdAt", 'YYYY-MM-DD') AS day,
+      TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD') AS day,
       COUNT(*)::int AS orders,
       SUM(
         CASE
@@ -470,7 +472,7 @@ export async function GET(req: Request) {
     FROM "Order"
     WHERE "createdAt" >= ${start.toISOString()}::timestamp AND "createdAt" < ${endExclusive.toISOString()}::timestamp
       AND "isTest" = false
-    GROUP BY TO_CHAR("createdAt", 'YYYY-MM-DD')
+    GROUP BY TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD')
     ORDER BY day ASC
   `) ?? [];
 

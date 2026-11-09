@@ -1,10 +1,26 @@
+import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 import React from "react";
 import RangePicker from "@/app/[locale]/admin/dashboard/RangerPicker";
 import { prisma } from "@/lib/server/prisma";
-import { metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
+import {
+  metricsPeriod,
+  readSalesMetrics,
+  salesConversion,
+  summarizeCartDemand,
+} from "@/lib/server/salesMetrics";
 import PageHeader from "../_components/PageHeader";
+import CommerceInsights from "../_components/CommerceInsights";
+import { readCommerceInsights } from "@/lib/server/commerceInsights";
+import { readCustomerMetrics } from "@/lib/server/customerMetrics";
+import InfoTooltip from "../_components/InfoTooltip";
+import { METRIC_DESCRIPTIONS } from "../_components/metricDescriptions";
 
 export const dynamic = "force-dynamic";
+
+function formatEur(n: number | null | undefined) {
+  if (n === null || n === undefined) return "—";
+  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
+}
 
 function getOne(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
@@ -29,7 +45,7 @@ function round1(n: number) {
 }
 
 function msToNice(ms?: number | null) {
-  if (!ms || ms <= 0) return "—";
+  if (ms === null || ms === undefined || ms < 0) return "—";
   const s = Math.round(ms / 1000);
   const m = Math.floor(s / 60);
   const r = s % 60;
@@ -37,7 +53,7 @@ function msToNice(ms?: number | null) {
 }
 
 function normalizeForDuration(path: string) {
-  if (path.startsWith("/shop/")) {
+  if (/^\/(?:[a-z]{2}\/)?shop\//.test(path)) {
     const q = path.indexOf("?");
     return q >= 0 ? path.slice(0, q) : path;
   }
@@ -61,17 +77,7 @@ export default async function AdminMetricsPage({
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
-  const SITE_ONLY = {
-    NOT: [
-      { path: { startsWith: "/checkout" } },
-      { path: { startsWith: "/payment" } },
-      { path: { startsWith: "/payments" } },
-      { path: { startsWith: "/stripe" } },
-      { path: { startsWith: "/api" } },
-      { path: { startsWith: "/_next" } },
-      { path: { startsWith: "/admin" } },
-    ],
-  };
+  const SITE_ONLY = SITE_ANALYTICS_FILTER;
 
   // ✅ Se internal=1 NON filtriamo nulla (né env né isInternal)
   // ✅ Se internal=0 applichiamo filtro qualità
@@ -125,16 +131,17 @@ export default async function AdminMetricsPage({
   const avgDurations = await prisma.analyticsEvent.groupBy({
     by: ["path"],
     where: { ...rangeWhere, type: "page_leave", durationMs: { not: null }, ...SITE_ONLY, ...QUALITY_FILTER },
-    _avg: { durationMs: true },
+    _sum: { durationMs: true },
+    _count: { durationMs: true },
   });
 
   const durationAgg = new Map<string, { sum: number; n: number }>();
   for (const a of avgDurations) {
-    if (!a.path || !a._avg.durationMs) continue;
+    if (!a.path || !a._count.durationMs) continue;
     const base = normalizeForDuration(a.path);
     const cur = durationAgg.get(base) ?? { sum: 0, n: 0 };
-    cur.sum += a._avg.durationMs;
-    cur.n += 1;
+    cur.sum += a._sum.durationMs ?? 0;
+    cur.n += a._count.durationMs;
     durationAgg.set(base, cur);
   }
 
@@ -214,8 +221,21 @@ export default async function AdminMetricsPage({
   const allDevices = Array.from(new Set([...devicePageviews.keys(), ...deviceVisitors.keys(), ...deviceSessions.keys(), ...devicePurchases.keys()]));
   allDevices.sort((a, b) => (devicePageviews.get(b) ?? 0) - (devicePageviews.get(a) ?? 0));
   
-    // --- v3: list CTR, checkout click rate, add_to_cart per variante, select_variant ---
-  const [listViews, productClicks, checkoutClicks, cartsCheckoutClicked] = await Promise.all([
+  // --- v3 & v4: metriche commerciali, lead, contatti, litraggio ---
+  const [
+    listViews,
+    productClicks,
+    checkoutClicks,
+    cartsCheckoutClicked,
+    addToCartByVariant,
+    variantSelections,
+    contactClicksGroup,
+    viewCartCount,
+    sessionsWithAddToCartGroup,
+    allAddToCartEvents,
+    contactMessagesCount,
+    tastingBookingsCount,
+  ] = await Promise.all([
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "view_item_list", ...QUALITY_FILTER } }),
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "product_click", ...QUALITY_FILTER } }),
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "checkout_click", ...QUALITY_FILTER } }),
@@ -224,13 +244,6 @@ export default async function AdminMetricsPage({
       where: { ...rangeWhere, type: "checkout_click", ...QUALITY_FILTER, cartId: { not: "" } },
       _count: { cartId: true },
     }),
-  ]);
-
-  const listCtr = listViews > 0 ? productClicks / listViews : 0;
-  const cartsCheckoutClickedN = cartsCheckoutClicked.length;
-  const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : 0;
-
-  const [addToCartByVariant, variantSelections] = await Promise.all([
     prisma.analyticsEvent.groupBy({
       by: ["productKey", "variantKey"],
       where: { ...rangeWhere, type: "add_to_cart", ...QUALITY_FILTER, productKey: { not: "" } },
@@ -245,6 +258,52 @@ export default async function AdminMetricsPage({
       orderBy: { _count: { productKey: "desc" } },
       take: 20,
     }),
+    prisma.analyticsEvent.groupBy({
+      by: ["productKey"],
+      where: { ...rangeWhere, type: "contact_click", ...QUALITY_FILTER },
+      _count: { productKey: true },
+    }),
+    prisma.analyticsEvent.count({
+      where: { ...rangeWhere, type: "view_cart", ...QUALITY_FILTER },
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: { ...rangeWhere, type: "add_to_cart", ...QUALITY_FILTER, sessionId: { not: "" } },
+      _count: { sessionId: true },
+    }),
+    prisma.analyticsEvent.findMany({
+      where: { ...rangeWhere, type: "add_to_cart", ...QUALITY_FILTER, productKey: { not: "" } },
+      select: { productKey: true, variantKey: true, data: true, cartId: true },
+    }),
+    prisma.contactMessage.count({ where: rangeWhere }),
+    prisma.tastingBooking.count({ where: rangeWhere }),
+  ]);
+
+  const listCtr = listViews > 0 ? productClicks / listViews : 0;
+  const knownCarts = new Set(cartsTotal.map((row) => row.cartId));
+  const cartsCheckoutClickedN = cartsCheckoutClicked.filter((row) => knownCarts.has(row.cartId)).length;
+  const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : 0;
+
+  const contactMap = new Map<string, number>();
+  for (const c of contactClicksGroup) {
+    if (c.productKey) contactMap.set(c.productKey, c._count.productKey);
+  }
+
+  const measuredSessions = new Set(sessions.map((row) => row.sessionId));
+  const sessionsWithAddToCartN = sessionsWithAddToCartGroup.filter((row) => measuredSessions.has(row.sessionId)).length;
+  const sessionAddToCartRate = salesConversion(sessionsWithAddToCartN, uniqueSessions);
+
+  const {
+    litersDemandedTotal, litersOilDemanded, litersWineDemanded,
+    cansUnits, bottlesUnits, cansPct, bottlesPct, unknownFormatUnits,
+    potentialCartRevenueEur, avgCartValueEur,
+    cartsWithAdditions, unpricedUnits, addsByProduct,
+  } = summarizeCartDemand(allAddToCartEvents);
+
+  const addToCartTotalMap = addsByProduct;
+  const [insights, customers] = await Promise.all([
+    readCommerceInsights(prisma, start, endExclusive, includeInternal),
+    readCustomerMetrics(prisma),
   ]);
 
  return (
@@ -269,6 +328,7 @@ export default async function AdminMetricsPage({
 
 
     <RangePicker startISO={startISO} endISO={endISO} />
+    <CommerceInsights insights={insights} customers={customers} />
 
     {/* ✅ DEBUG BOX solo quando internal=1 */}
     {includeInternal ? (
@@ -294,6 +354,104 @@ export default async function AdminMetricsPage({
       </div>
     ) : null}
 
+    {/* 💼 INTELLIGENCE COMMERCIALE & FATTURATO */}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
+        <h2 className="text-base font-extrabold text-neutral-900">
+          Commerciale & Valore Economico
+        </h2>
+        <span className="text-xs font-semibold text-neutral-500">
+          Incassato, ordini, scontrino medio e valore carrelli
+        </span>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <Kpi
+          title="Fatturato Incassato"
+          value={formatEur(sales.realizedRevenueEur)}
+          subtitle={`${nice(sales.paidOrders)} ordini pagati nel periodo`}
+        />
+        <Kpi
+          title="Scontrino Medio (AOV)"
+          value={formatEur(sales.realizedAovEur)}
+          subtitle="Media valore ordini pagati"
+        />
+        <Kpi
+          title="Valore Prodotti Aggiunti"
+          value={formatEur(potentialCartRevenueEur)}
+          subtitle={`Media aggiunte: ${formatEur(avgCartValueEur)} (${nice(cartsWithAdditions)} carrelli; ${nice(unpricedUnits)} unità senza prezzo)`}
+        />
+        <Kpi
+          title="Valore Checkout Non Pagati"
+          value={formatEur(sales.lostCheckoutRevenueEur)}
+          subtitle={`${nice(sales.unpaidCheckouts)} checkout non pagati, inclusi quelli in corso`}
+        />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <Kpi
+          title="Attach Rate Olio + Vino"
+          value={pct(sales.bundleOlioVinoRate)}
+          subtitle="Ordini pagati con olio e vino"
+        />
+        <Kpi
+          title="Riordini nel Periodo"
+          value={pct(sales.repeatCustomerRate)}
+          subtitle={`${nice(sales.repeatPayingCustomers)} clienti con ≥ 2 ordini`}
+        />
+        <Kpi
+          title="Litri Richiesti a Carrello"
+          value={`${round1(litersDemandedTotal)} L`}
+          subtitle={`Olio: ${round1(litersOilDemanded)}L • Vino: ${round1(litersWineDemanded)}L`}
+        />
+        <Kpi
+          title="Formato: Latte vs Bottiglie"
+          value={`${cansPct}% / ${bottlesPct}%`}
+          subtitle={`${nice(cansUnits)} latte (${cansPct}%) • ${nice(bottlesUnits)} bottiglie (${bottlesPct}%) • ${nice(unknownFormatUnits)} altri`}
+        />
+      </div>
+    </div>
+
+    {/* 📞 LEAD & CONTATTI DIRETTI */}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
+        <h2 className="text-base font-extrabold text-neutral-900">
+          Lead & Conversioni Dirette (B2B / Off-line)
+        </h2>
+        <span className="text-xs font-semibold text-neutral-500">
+          Contatti, messaggi e visite in frantoio fuori dal carrello
+        </span>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Kpi
+          title="Click WhatsApp"
+          value={nice(contactMap.get("whatsapp") ?? 0)}
+          subtitle="Chat diretta avviata"
+        />
+        <Kpi
+          title="Click Telefono"
+          value={nice(contactMap.get("phone") ?? 0)}
+          subtitle="Chiamate al frantoio"
+        />
+        <Kpi
+          title="Click Email"
+          value={nice(contactMap.get("email") ?? 0)}
+          subtitle="Email dirette"
+        />
+        <Kpi
+          title="Messaggi Form"
+          value={nice(contactMessagesCount)}
+          subtitle="Richieste ricevute dal form"
+        />
+        <Kpi
+          title="Degustazioni"
+          value={nice(tastingBookingsCount)}
+          subtitle="Prenotazioni tour/visite"
+        />
+      </div>
+    </div>
+
     {/* KPI (v2) */}
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
       <Kpi title="Visitatori unici" value={nice(uniqueVisitors)} subtitle="(solo sito)" />
@@ -309,8 +467,13 @@ export default async function AdminMetricsPage({
     </div>
 
     {/* Funnel + tempo pagamento */}
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
       <Kpi title="Carrelli totali" value={nice(cartTotalN)} subtitle="add_to_cart / begin_checkout" />
+      <Kpi
+        title="Session Add-to-Cart"
+        value={pct(sessionAddToCartRate)}
+        subtitle={`${nice(sessionsWithAddToCartN)} sessioni con aggiunta su ${nice(uniqueSessions)}`}
+      />
       <Kpi title="Vendite confermate" value={nice(sales.paidOrders)} subtitle="ordini commerciali pagati nel periodo" />
       <Kpi
         title="Checkout non pagati"
@@ -324,8 +487,9 @@ export default async function AdminMetricsPage({
       />
     </div>
 
-    {/* ✅ KPI v3 */}
+    {/* Step Funnel & List CTR */}
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <Kpi title="Carrelli visti (view_cart)" value={nice(viewCartCount)} subtitle="Aperture pagina carrello" />
       <Kpi title="List CTR" value={pct(listCtr)} subtitle={`${nice(productClicks)} click / ${nice(listViews)} liste`} />
       <Kpi
         title="Checkout click rate"
@@ -333,7 +497,6 @@ export default async function AdminMetricsPage({
         subtitle={`${nice(cartsCheckoutClickedN)} carrelli con click su pagamento`}
       />
       <Kpi title="Checkout click (eventi)" value={nice(checkoutClicks)} subtitle="checkout_click" />
-      <Kpi title="Product click (eventi)" value={nice(productClicks)} subtitle="product_click" />
     </div>
 
     {/* Device */}
@@ -532,6 +695,49 @@ export default async function AdminMetricsPage({
           </table>
         </div>
       </div>
+
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm xl:col-span-2">
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-extrabold text-neutral-900">
+            Cart-to-Detail Rate per Prodotto (Conversione Scheda)
+          </div>
+          <span className="text-xs text-neutral-500">
+            Aggiunte a carrello / Visualizzazioni scheda prodotto
+          </span>
+        </div>
+        <div className="mt-3 overflow-hidden rounded-2xl border border-neutral-200">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-neutral-50 text-xs font-bold uppercase tracking-wide text-neutral-500">
+              <tr>
+                <th className="px-3 py-2">Prodotto</th>
+                <th className="px-3 py-2 text-right">Views Totali</th>
+                <th className="px-3 py-2 text-right">Aggiunte a Carrello</th>
+                <th className="px-3 py-2 text-right">Cart-to-Detail Rate</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200">
+              {topProductViews.map((p) => {
+                const adds = addToCartTotalMap.get(p.productKey ?? "") ?? 0;
+                const views = p._count.productKey;
+                const rate = views > 0 ? adds / views : 0;
+                return (
+                  <tr key={p.productKey ?? "x"} className="hover:bg-neutral-50">
+                    <td className="px-3 py-2 font-semibold text-neutral-900">{p.productKey ?? "—"}</td>
+                    <td className="px-3 py-2 text-right">{nice(views)}</td>
+                    <td className="px-3 py-2 text-right font-extrabold">{nice(adds)}</td>
+                    <td className="px-3 py-2 text-right font-extrabold text-emerald-700">{pct(rate)}</td>
+                  </tr>
+                );
+              })}
+              {!topProductViews.length ? (
+                <tr>
+                  <td colSpan={4} className="px-3 py-6 text-neutral-600">Nessuna view prodotto nel periodo.</td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 );
@@ -550,7 +756,7 @@ function Row({ label, value }: { label: string; value: string }) {
 function Kpi({ title, value, subtitle }: { title: string; value: React.ReactNode; subtitle?: string }) {
   return (
     <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <div className="text-xs font-bold uppercase tracking-wide text-neutral-500">{title}</div>
+      <div className="flex items-center justify-between gap-1 text-xs font-bold uppercase tracking-wide text-neutral-500"><span>{title}</span><InfoTooltip label={title} description={METRIC_DESCRIPTIONS[title] ?? subtitle ?? title} /></div>
       <div className="mt-1 text-2xl font-extrabold text-neutral-900">{value}</div>
       {subtitle ? <div className="mt-1 text-xs text-neutral-600">{subtitle}</div> : null}
     </div>

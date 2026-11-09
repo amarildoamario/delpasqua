@@ -532,18 +532,6 @@ export default function CartPageClient({
                               type="button"
                               onClick={async () => {
                                 if (!firstVariant) return;
-                                track({
-                                  type: "add_to_cart",
-                                  productKey: prod.id,
-                                  variantKey: firstVariant.id,
-                                  data: {
-                                    qty: 1,
-                                    unitPriceCents: price,
-                                    variantLabel: firstVariant.label,
-                                    slug: prod.slug,
-                                  },
-                                  cartId: null,
-                                });
                                 const result = await cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
                                 const title = [prod.title, firstVariant.label].filter(Boolean).join(" - ");
                                 if (result.status === "rejected") {
@@ -551,6 +539,18 @@ export default function CartPageClient({
                                   setCartToastOpen(true);
                                   return;
                                 }
+                                track({
+                                  type: "add_to_cart",
+                                  productKey: prod.id,
+                                  variantKey: firstVariant.id,
+                                  data: {
+                                    qty: result.addedQty,
+                                    unitPriceCents: price,
+                                    variantLabel: firstVariant.label,
+                                    slug: prod.slug,
+                                  },
+                                  cartId: null,
+                                });
                                 if (result.status === "adjusted") {
                                   setCartToast(statusText.addAdjusted(title, result.addedQty, result.availableQty));
                                   setCartToastOpen(true);
@@ -1077,17 +1077,6 @@ export default function CartPageClient({
                               type="button"
                               onClick={async () => {
                                 if (!firstVariant) return;
-                                track({
-                                  type: "add_to_cart",
-                                  productKey: prod.id,
-                                  variantKey: firstVariant.id,
-                                  data: {
-                                    qty: 1,
-                                    unitPriceCents: price,
-                                    variantLabel: firstVariant.label,
-                                    slug: prod.slug,
-                                  },
-                                });
                                 const result = await cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
                                 const title = [prod.title, firstVariant.label].filter(Boolean).join(" - ");
                                 if (result.status === "rejected") {
@@ -1095,6 +1084,17 @@ export default function CartPageClient({
                                   setCartToastOpen(true);
                                   return;
                                 }
+                                track({
+                                  type: "add_to_cart",
+                                  productKey: prod.id,
+                                  variantKey: firstVariant.id,
+                                  data: {
+                                    qty: result.addedQty,
+                                    unitPriceCents: price,
+                                    variantLabel: firstVariant.label,
+                                    slug: prod.slug,
+                                  },
+                                });
                                 if (result.status === "adjusted") {
                                   setCartToast(statusText.addAdjusted(title, result.addedQty, result.availableQty));
                                   setCartToastOpen(true);

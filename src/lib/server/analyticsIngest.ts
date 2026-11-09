@@ -3,6 +3,7 @@ import type { z } from "zod";
 import { analyticsPath, isAdminPath } from "@/lib/analytics/events";
 import type { AnalyticsEventSchema } from "@/lib/server/schemas";
 import { normalizeTrafficCountry } from "@/lib/server/trafficGeography";
+import { acquisitionSource } from "@/lib/analytics/acquisition";
 
 type IncomingEvent = z.infer<typeof AnalyticsEventSchema>;
 type Writer = { $executeRaw: (sql: TemplateStringsArray, ...values: unknown[]) => Promise<number> };
@@ -49,8 +50,9 @@ export function prepareAnalyticsEvents(events: IncomingEvent[], req: Request, no
     for (const key of ["qty", "unitPriceCents", "totalCents", "itemsCount", "fromQty", "toQty", "delta", "resultsCount"]) {
       if (typeof source[key] === "number" && Number.isFinite(source[key])) data[key] = source[key];
     }
-    data.meta = { source: "web", trafficType: "real", env, isInternal: false, device, countryCode };
+    data.meta = { source: "web", trafficType: "real", env, isInternal: false, device, countryCode, acquisition: acquisitionSource(ua, event.referrer) };
     const id = event.type === "purchase" ? `ana-purchase-${event.orderId ?? "missing"}` :
+      event.type === "checkout_canceled" && event.orderId ? `ana-cancel-${event.orderId}` :
       event.type === "page_leave" && event.pageId ? `ana-leave-${event.visitorId}-${event.pageId}` :
       `ana-${event.eventId ?? randomUUID()}`;
     unique.set(id, {
@@ -91,8 +93,10 @@ export async function saveAnalyticsBatch(db: Writer, events: IncomingEvent[], re
       e."durationMs", e."productKey", e."variantKey", e."cartId", e."orderId",
       e.device, e.env, e."isInternal", e.data
     FROM incoming e
-    LEFT JOIN "Order" o ON e.type = 'purchase' AND o.id = e."orderId"
-    WHERE e.type <> 'purchase' OR (o."isTest" = false AND o."paidAt" IS NOT NULL)
+    LEFT JOIN "Order" o ON e.type IN ('purchase', 'checkout_canceled') AND o.id = e."orderId"
+    WHERE (e.type NOT IN ('purchase', 'checkout_canceled'))
+      OR (e.type = 'purchase' AND o."isTest" = false AND o."paidAt" IS NOT NULL)
+      OR (e.type = 'checkout_canceled' AND o."isTest" = false AND o."stripeSessionId" IS NOT NULL)
     ON CONFLICT (id) DO UPDATE SET "durationMs" = GREATEST(existing."durationMs", EXCLUDED."durationMs")
     WHERE existing.type = 'page_leave' AND EXCLUDED.type = 'page_leave'
       AND existing."visitorId" = EXCLUDED."visitorId" AND existing."pageId" = EXCLUDED."pageId"

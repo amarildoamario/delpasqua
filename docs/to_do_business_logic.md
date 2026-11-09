@@ -15,6 +15,14 @@ Legenda priorita:
 - P1 = incoerenza operativa che puo creare errori o costi manuali.
 - P2 = debito tecnico/UX che puo diventare bug.
 
+## [✅ RISOLTO] Metriche commerciali e clienti — 2026-11-09
+
+- Aggiunti acquisizione automatica Instagram/Facebook/Google, fuga Stripe osservata per coorte, tempo dalla prima visita misurata, LTV storico e segmenti clienti, attività 24h e settimana.
+- Corrette esclusioni checkout nelle lingue, medie durata pesate e collegamento allo storico cliente. Dashboard con bandiere SVG locali.
+- Fonte delle vendite confermate: pagamenti del database. Gli esiti Stripe senza ritorno misurato e gli ordini senza storia visite non producono stime inventate.
+- Verifiche e limiti documentati in `docs/metrics_verification.md`; riconciliazione database in sola lettura e casi non vuoti coperti da fixture. Nessuna migrazione/deploy eseguita.
+- Rifinitura successiva: dettagli solo in Metriche, tooltip informativi, istogrammi più larghi e bandiere squadrate. Filtri con date invertite, scelta del mese intero e trend su calendario italiano verificati; 80 test server.
+
 ## [✅ RISOLTO] P0 - Quantita carrello non vincolata allo stock
 
 Regressione pannello laterale corretta il 2026-11-07:

@@ -360,22 +360,23 @@ export default function ProductCard({
 
       const result = await add({ productId: product.id, variantId: variantIdToAdd, qty: 1 })
 
+
+      if (result.status === "rejected") {
+        showToast(text.rejected)
+        return
+      }
+
       track({
         type: "add_to_cart",
         cartId: getOrCreateCartId(),
         productKey: product.id,
         variantKey: variantIdToAdd,
         data: {
-          qty: 1,
+          qty: result.addedQty,
           unitPriceCents: typeof product.priceCents === "number" ? product.priceCents : null,
           slug: product.slug,
         },
       })
-
-      if (result.status === "rejected") {
-        showToast(text.rejected)
-        return
-      }
 
       if (result.status === "adjusted") {
         showToast(text.adjusted(result.availableQty))

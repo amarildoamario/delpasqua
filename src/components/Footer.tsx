@@ -4,6 +4,7 @@ import { Link } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
 import { companyInfo } from "@/lib/companyInfo";
 import PaymentMethodsBadges from "@/components/PaymentMethodsBadges";
+import { track } from "@/lib/analytics/track";
 import {
   ArrowUp,
   MapPin,
@@ -139,6 +140,7 @@ export default function Footer() {
                   className="text-stone-400 hover:text-emerald-400 transition-colors font-sans"
                   href="tel:+390575810065"
                   aria-label="Chiama"
+                  onClick={() => track({ type: "contact_click", productKey: "phone", variantKey: "footer" })}
                 >
                   +39 0575 810065
                 </a>
@@ -151,6 +153,7 @@ export default function Footer() {
                   className="text-stone-400 hover:text-emerald-400 transition-colors font-sans"
                   href="mailto:info@delpasqua.com"
                   aria-label="Email"
+                  onClick={() => track({ type: "contact_click", productKey: "email", variantKey: "footer" })}
                 >
                   info@delpasqua.com
                 </a>

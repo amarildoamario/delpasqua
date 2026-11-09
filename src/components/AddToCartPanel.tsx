@@ -196,19 +196,6 @@ export default function AddToCartPanel({
     const safeQty = clampInt(qty, 1, maxQty);
     const cartId = getOrCreateCartId();
 
-    track({
-      type: "add_to_cart",
-      cartId,
-      productKey: product.id,
-      variantKey: variantId,
-      data: {
-        qty: safeQty,
-        unitPriceCents: typeof variant?.priceCents === "number" ? variant.priceCents : null,
-        variantLabel: variant?.label ?? null,
-        slug: product.slug ?? null,
-      },
-    });
-
     const result = await add({ productId: product.id, variantId, qty: safeQty });
     if (result.status === "rejected") {
       showToast(t("panel.out_of_stock_toast"));
@@ -217,6 +204,19 @@ export default function AddToCartPanel({
 
     const title = product.title ?? product.slug ?? t("common.product_fallback");
     const vLabel = variant?.label ? ` — ${variant.label}` : "";
+    track({
+      type: "add_to_cart",
+      cartId,
+      productKey: product.id,
+      variantKey: variantId,
+      data: {
+        qty: result.addedQty,
+        unitPriceCents: typeof variant?.priceCents === "number" ? variant.priceCents : null,
+        variantLabel: variant?.label ?? null,
+        slug: product.slug ?? null,
+      },
+    });
+
     if (result.status === "adjusted") {
       showToast(`${title}${vLabel} - ${statusText.adjusted(result.availableQty, result.addedQty)}`);
       return;

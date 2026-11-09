@@ -1,0 +1,3 @@
+flag-icons 7.6.0
+https://github.com/lipis/flag-icons
+MIT License. Vendored 4:3 SVGs; no external requests.

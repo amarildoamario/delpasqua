@@ -14,6 +14,16 @@ const request = (ua = "Mozilla/5.0 Chrome/130") => new Request("https://delpasqu
   headers: { "user-agent": ua, "x-vercel-ip-country": "DE" },
 });
 
+test("contact clicks pass the public schema and ingestion without leaking contact details", () => {
+  const payload = AnalyticsPayloadSchema.parse([event({ type: "contact_click", productKey: "whatsapp", variantKey: "contatti_page", data: { email: "private@example.com" } })]);
+  assert(Array.isArray(payload));
+  const [row] = prepareAnalyticsEvents(payload, request(), now);
+  assert.equal(row.type, "contact_click");
+  assert.equal(row.productKey, "whatsapp");
+  assert.equal(row.variantKey, "contatti_page");
+  assert.equal((row.data as Record<string, unknown>).email, undefined);
+});
+
 test("batches use one SQL call with parameterized data, with no read-before-write", async () => {
   const calls: unknown[][] = [];
   const db = { $executeRaw: async (sql: TemplateStringsArray, ...values: unknown[]) => {
@@ -21,6 +31,7 @@ test("batches use one SQL call with parameterized data, with no read-before-writ
     assert.match(sql.join("?"), /ON CONFLICT/);
     assert.match(sql.join("?"), /o\."isTest" = false/);
     assert.match(sql.join("?"), /o\."paidAt" IS NOT NULL/);
+    assert.match(sql.join("?"), /e\.type = 'checkout_canceled' AND o\."isTest" = false AND o\."stripeSessionId" IS NOT NULL/);
     return 30;
   } };
   await saveAnalyticsBatch(db, Array.from({ length: 30 }, (_, i) => event({ eventId: `event-${i}` })), request(), now);
@@ -41,7 +52,7 @@ test("ingestion removes query strings and arbitrary data and preserves event tim
   const [row] = prepareAnalyticsEvents([event({ data: { qty: 2, email: "private@example.com", meta: { countryCode: "US" } } })], request(), now);
   assert.equal(row.path, "/shop/");
   assert.equal(row.createdAt, new Date(now).toISOString());
-  assert.deepEqual(row.data, { qty: 2, meta: { source: "web", trafficType: "real", env: "prod", isInternal: false, device: "desktop", countryCode: "DE" } });
+  assert.deepEqual(row.data, { qty: 2, meta: { source: "web", trafficType: "real", env: "prod", isInternal: false, device: "desktop", countryCode: "DE", acquisition: { source: "direct", evidence: "none" } } });
 });
 
 test("missing country headers remain unknown rather than being counted as Italian", () => {

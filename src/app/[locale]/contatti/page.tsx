@@ -1,3 +1,4 @@
+import ContactLink from "@/components/ContactLink";
 import { setRequestLocale } from 'next-intl/server';
 import { getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
@@ -5,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import ContactForm from "./ContactForm";
+import WhatsAppButton from "./WhatsAppButton";
 import { getTranslations } from "next-intl/server";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
@@ -132,44 +134,7 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
 
               {/* Box WhatsApp Ufficiale in Cima */}
               <div className="mt-8 flex justify-center md:justify-start">
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    backgroundColor: "#25D366",
-                    color: "#ffffff",
-                    borderRadius: "5px",
-                    boxShadow: "0 10px 25px -4px rgba(37, 211, 102, 0.45), 0 4px 6px -2px rgba(37, 211, 102, 0.2)",
-                  }}
-                  className="btn-whatsapp group mx-auto inline-flex items-center gap-3.5 rounded-[5px] border border-[#20BA59] px-5 py-3.5 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_14px_30px_-4px_rgba(37,211,102,0.6)] active:scale-[0.98] sm:gap-4 sm:px-6 md:mx-0"
-                >
-                  {/* Badge bianco che fa risaltare al 100% l'icona verde originale di WhatsApp */}
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 group-hover:scale-105">
-                    <WhatsAppIcon className="h-7 w-7 shrink-0" />
-                  </div>
-
-                  <div className="flex flex-col text-left">
-                    <span className="text-[16px] font-bold leading-tight text-white tracking-wide">
-                      {wa.label}
-                    </span>
-                    <span className="mt-0.5 text-xs font-medium text-white/90">
-                      {wa.sublabel}
-                    </span>
-                  </div>
-
-                  <svg
-                    className="ml-2 h-5 w-5 text-white/90 transition-transform duration-300 group-hover:translate-x-1"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </a>
+                <WhatsAppButton url={waUrl} label={wa.label} sublabel={wa.sublabel} />
               </div>
 
               <div className="mt-8 flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3">
@@ -222,17 +187,17 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                   </InfoRow>
 
                   <InfoRow label={t("info.phone_label")}>
-                    <a className="text-[#3D5A3D] hover:underline" href="tel:+390575810065">
+                    <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="tel:+390575810065">
                       +39 0575 810065
-                    </a>
+                    </ContactLink>
                   </InfoRow>
 
                   <InfoRow label={t("info.mobile_label")}>
                     <div className="flex flex-wrap items-center gap-3">
-                      <a className="text-[#3D5A3D] hover:underline" href="tel:+393388110356">
+                      <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="tel:+393388110356">
                         +39 338 811 0356
-                      </a>
-                      <a
+                      </ContactLink>
+                      <ContactLink channel="whatsapp" source="contatti_page_inline"
                         href={waUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -240,14 +205,14 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                       >
                         <WhatsAppIcon className="h-3.5 w-3.5 fill-[#25D366] shrink-0" />
                         WhatsApp
-                      </a>
+                      </ContactLink>
                     </div>
                   </InfoRow>
 
                   <InfoRow label={t("info.email_label")}>
-                    <a className="text-[#3D5A3D] hover:underline" href="mailto:info@delpasqua.com">
+                    <ContactLink channel="email" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="mailto:info@delpasqua.com">
                       info@delpasqua.com
-                    </a>
+                    </ContactLink>
                   </InfoRow>
                 </div>
 

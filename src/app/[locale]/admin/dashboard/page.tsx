@@ -1,4 +1,6 @@
 import Link from "next/link";
+import CountryFlag from "@/components/CountryFlag";
+import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 
 import { prisma } from "@/lib/server/prisma";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
@@ -36,36 +38,6 @@ function deriveVatCents(order: { vatCents: number; subtotalCents: number }, vatR
   return Math.round((order.subtotalCents * vatRateDec) / (1 + vatRateDec));
 
 }
-
-function getCountryFlag(code: string): string {
-
-  const flags: Record<string, string> = {
-
-    IT: "🇮🇹",
-
-    US: "🇺🇸",
-
-    GB: "🇬🇧",
-
-    DE: "🇩🇪",
-
-    NL: "🇳🇱",
-
-    DK: "🇩🇰",
-
-    NO: "🇳🇴",
-
-    ES: "🇪🇸",
-
-    FR: "🇫🇷",
-
-  };
-
-  return flags[code.toUpperCase()] || code;
-
-}
-
-
 
 function Section({
 
@@ -213,11 +185,11 @@ function CountryBarChart({
 
         {(showAll ? data : data.slice(0, 5)).map((item, idx) => {
           const wPct = Math.min(100, Math.max(5, Math.round((item.value / maxValue) * 100)));
-          const flag = getCountryFlag(item.label);
+
           const barBackground = `linear-gradient(to right, rgb(59 130 246 / 0.8) 0 ${wPct}%, rgb(245 245 245) ${wPct}% 100%)`;
           return (
             <div key={`${item.label}:${item.barLabel ?? ""}:${idx}`} className="flex items-center gap-3 text-xs">
-              <div title={item.label === "ND" ? "Nazione non disponibile" : item.label} className="w-8 shrink-0 text-sm font-semibold text-neutral-700 truncate">{flag}</div>
+              <div title={item.label === "ND" ? "Nazione non disponibile" : item.label} className="w-8 shrink-0 text-sm font-semibold text-neutral-700 truncate"><CountryFlag code={item.label} /></div>
               <div
                 className="flex-1 h-5 rounded-lg overflow-hidden flex items-center justify-between px-2 text-[10px] font-bold text-neutral-900"
                 style={{ background: barBackground }}
@@ -371,6 +343,7 @@ export default async function AdminDashboard({
         isInternal: false,
 
         env: "prod",
+        ...SITE_ANALYTICS_FILTER,
 
       },
 
@@ -1215,7 +1188,7 @@ export default async function AdminDashboard({
 
   SELECT
 
-    TO_CHAR("createdAt", 'YYYY-MM-DD') AS day,
+    TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD') AS day,
 
     COUNT(*)::int AS orders,
 
@@ -1268,7 +1241,7 @@ export default async function AdminDashboard({
 
     AND (${marketFilter}::text IS NULL OR "countryCode" = ${marketFilter}::text)
 
-  GROUP BY TO_CHAR("createdAt", 'YYYY-MM-DD')
+  GROUP BY TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD')
 
   ORDER BY day ASC
 
@@ -1482,7 +1455,7 @@ export default async function AdminDashboard({
 
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Top Vendite</span>
 
-                <span className="text-[9px] text-neutral-500 font-bold uppercase">Target: {activePurchCountry ? getCountryFlag(activePurchCountry) : "🌐"}</span>
+                <span className="text-[9px] text-neutral-500 font-bold uppercase">Target: <CountryFlag code={activePurchCountry} /></span>
 
               </div>
 
@@ -1514,7 +1487,7 @@ export default async function AdminDashboard({
 
                     >
 
-                      <span>{m.flag}</span>
+                      <CountryFlag code={m.code} />
 
                     </Link>
 
@@ -1832,7 +1805,7 @@ export default async function AdminDashboard({
 
               >
 
-                <span>{m.flag}</span>
+                <CountryFlag code={m.code} />
 
                 <span>{m.label}</span>
 

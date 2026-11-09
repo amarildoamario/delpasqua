@@ -456,19 +456,27 @@ export default function ProductDetailsClient({
 
     await new Promise((r) => setTimeout(r, 450));
 
-    void add({
-      productId: currentProduct.id,
-      variantId: selectedVariant.id,
-      qty: safeQty,
-    }).then((result) => {
+    try {
+      const result = await add({
+        productId: currentProduct.id,
+        variantId: selectedVariant.id,
+        qty: safeQty,
+      });
+      if (result.status === "rejected") {
+        setErrorMessage(text.outOfStock);
+        return;
+      }
       if (result.addedQty > 0) track({
         type: "add_to_cart", productKey: currentProduct.id, variantKey: selectedVariant.id,
         data: { qty: result.addedQty, unitPriceCents: selectedVariant.priceCents },
       });
-    });
-    setIsAdding(false);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2200);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2200);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : text.outOfStock);
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const handleDirectCheckout = async () => {
@@ -1393,6 +1401,7 @@ export default function ProductDetailsClient({
               whileHover={!isOutOfStock && !isAdding ? { scale: 1.01 } : {}}
               whileTap={!isOutOfStock && !isAdding ? { scale: 0.99 } : {}}
               onClick={handleAddToCart}
+              data-testid="add-to-cart"
               disabled={isOutOfStock || isAdding}
               className={`flex items-center justify-center gap-2.5 w-full py-4 text-xs font-bold tracking-[0.15em] rounded-[5px] border border-[#B5945B]/60 transition-all cursor-pointer ${
                 isOutOfStock

@@ -106,13 +106,20 @@ export function track(event: Track) {
     if (typeof data[key] === "number" && Number.isFinite(data[key])) numbers[key] = data[key];
   }
   const env = location.hostname === "delpasqua.com" || location.hostname === "www.delpasqua.com" ? "prod" : "dev";
+  const ids = identity();
+  let referrer = document.referrer ? analyticsPath(document.referrer) : null;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem("analytics_entry_v1") ?? "null");
+    if (saved?.sessionId === ids.sessionId && (typeof saved.referrer === "string" || saved.referrer === null)) referrer = saved.referrer;
+    else sessionStorage.setItem("analytics_entry_v1", JSON.stringify({ sessionId: ids.sessionId, referrer }));
+  } catch { /* Attribution still works for the current document. */ }
   let cartId = event.cartId;
   try { cartId ||= getOrCreateCartId(); } catch { /* Storage can be disabled. */ }
   const item: AnalyticsEvent = {
-    ...event, ...identity(), type: event.type as AnalyticsEvent["type"],
+    ...event, ...ids, type: event.type as AnalyticsEvent["type"],
     eventId: event.eventId ?? crypto.randomUUID(), occurredAt: event.occurredAt ?? new Date().toISOString(),
     path: analyticsPath(event.path ?? location.pathname),
-    referrer: document.referrer ? analyticsPath(document.referrer) : null,
+    referrer,
     cartId, env, isInternal: env !== "prod", data: numbers,
   };
   const pending = getQueue();

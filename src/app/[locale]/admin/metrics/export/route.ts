@@ -1,6 +1,15 @@
+import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
-import { metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
+import { requireAdminApi } from "@/lib/server/adminAuth";
+import { readCommerceInsights } from "@/lib/server/commerceInsights";
+import { readCustomerMetrics } from "@/lib/server/customerMetrics";
+import {
+  metricsPeriod,
+  readSalesMetrics,
+  salesConversion,
+  summarizeCartDemand,
+} from "@/lib/server/salesMetrics";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +18,7 @@ function getOne(v: string | string[] | undefined) {
 }
 
 function normalizeForDuration(path: string) {
-  if (path.startsWith("/shop/")) {
+  if (/^\/(?:[a-z]{2}\/)?shop\//.test(path)) {
     const q = path.indexOf("?");
     return q >= 0 ? path.slice(0, q) : path;
   }
@@ -21,29 +30,21 @@ function pct(n: number | null) {
 }
 
 export async function GET(req: Request) {
+  const guard = await requireAdminApi(req, { csrf: false });
+  if (!guard.ok) return guard.response;
   const { searchParams } = new URL(req.url);
 
   const startParam = getOne(searchParams.get("start") ?? undefined);
   const endParam = getOne(searchParams.get("end") ?? undefined);
   const internalRaw = (searchParams.get("internal") ?? "").toLowerCase();
-const includeInternal = internalRaw === "1" || internalRaw === "true" || internalRaw === "yes" || internalRaw === "on";
+  const includeInternal = internalRaw === "1" || internalRaw === "true" || internalRaw === "yes" || internalRaw === "on";
 
 
   const { start, endExclusive, startISO, endISO, endExclusiveISO } = metricsPeriod(startParam, endParam);
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
-  const SITE_ONLY = {
-    NOT: [
-      { path: { startsWith: "/checkout" } },
-      { path: { startsWith: "/payment" } },
-      { path: { startsWith: "/payments" } },
-      { path: { startsWith: "/stripe" } },
-      { path: { startsWith: "/api" } },
-      { path: { startsWith: "/_next" } },
-      { path: { startsWith: "/admin" } },
-    ],
-  };
+  const SITE_ONLY = SITE_ANALYTICS_FILTER;
 
   const QUALITY_FILTER = includeInternal ? {} : { isInternal: false, env: "prod" as const };
 
@@ -95,17 +96,18 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     prisma.analyticsEvent.groupBy({
       by: ["path"],
       where: { ...rangeWhere, type: "page_leave", durationMs: { not: null }, ...SITE_ONLY, ...QUALITY_FILTER },
-      _avg: { durationMs: true },
+      _sum: { durationMs: true },
+    _count: { durationMs: true },
     }),
   ]);
 
   const durationAgg = new Map<string, { sum: number; n: number }>();
   for (const a of avgDurations) {
-    if (!a.path || !a._avg.durationMs) continue;
+    if (!a.path || !a._count.durationMs) continue;
     const base = normalizeForDuration(a.path);
     const cur = durationAgg.get(base) ?? { sum: 0, n: 0 };
-    cur.sum += a._avg.durationMs;
-    cur.n += 1;
+    cur.sum += a._sum.durationMs ?? 0;
+    cur.n += a._count.durationMs;
     durationAgg.set(base, cur);
   }
   const avgByPath: Record<string, number> = {};
@@ -130,7 +132,7 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     }),
   ]);
 
-    // --- Nuove metriche (v3) ---
+    // --- Nuove metriche (v3 + v4 commercial) ---
   const [
     listViews,
     productClicks,
@@ -139,6 +141,12 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     addToCartByVariant,
     addToCartTotal,
     variantSelections,
+    contactClicksGroup,
+    viewCartCount,
+    sessionsWithAddToCartGroup,
+    allAddToCartEvents,
+    contactMessagesCount,
+    tastingBookingsCount,
   ] = await Promise.all([
     prisma.analyticsEvent.count({
       where: { ...rangeWhere, type: "view_item_list", ...QUALITY_FILTER },
@@ -175,11 +183,48 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       orderBy: { _count: { productKey: "desc" } },
       take: 50,
     }),
+    prisma.analyticsEvent.groupBy({
+      by: ["productKey"],
+      where: { ...rangeWhere, type: "contact_click", ...QUALITY_FILTER },
+      _count: { productKey: true },
+    }),
+    prisma.analyticsEvent.count({
+      where: { ...rangeWhere, type: "view_cart", ...QUALITY_FILTER },
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["sessionId"],
+      where: { ...rangeWhere, type: "add_to_cart", ...QUALITY_FILTER, sessionId: { not: "" } },
+      _count: { sessionId: true },
+    }),
+    prisma.analyticsEvent.findMany({
+      where: { ...rangeWhere, type: "add_to_cart", ...QUALITY_FILTER, productKey: { not: "" } },
+      select: { productKey: true, variantKey: true, data: true, cartId: true },
+    }),
+    prisma.contactMessage.count({ where: rangeWhere }),
+    prisma.tastingBooking.count({ where: rangeWhere }),
   ]);
 
   const listCtr = listViews > 0 ? productClicks / listViews : 0;
-  const cartsCheckoutClickedN = cartsCheckoutClicked.length;
+  const knownCarts = new Set(cartsTotal.map((row) => row.cartId));
+  const cartsCheckoutClickedN = cartsCheckoutClicked.filter((row) => knownCarts.has(row.cartId)).length;
   const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : 0;
+
+  const contactMap = new Map<string, number>();
+  for (const c of contactClicksGroup) {
+    if (c.productKey) contactMap.set(c.productKey, c._count.productKey);
+  }
+  const contactClicksTotal = [...contactMap.values()].reduce((sum, n) => sum + n, 0);
+
+  const measuredSessions = new Set(sessions.map((row) => row.sessionId));
+  const sessionsWithAddToCartN = sessionsWithAddToCartGroup.filter((row) => measuredSessions.has(row.sessionId)).length;
+  const sessionAddToCartRate = salesConversion(sessionsWithAddToCartN, uniqueSessions);
+
+  const {
+    litersDemandedTotal, litersOilDemanded, litersWineDemanded,
+    cansUnits, bottlesUnits, cansPct, bottlesPct, unknownFormatUnits,
+    potentialCartRevenueEur, avgCartValueEur, lostCartRevenueEur,
+    cartsWithAdditions, unpricedUnits, addsByProduct,
+  } = summarizeCartDemand(allAddToCartEvents);
 
 
   // --- Device metrics (business) ---
@@ -249,7 +294,12 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
     };
   });
 
+  const [insights, customers] = await Promise.all([
+    readCommerceInsights(prisma, start, endExclusive, includeInternal), readCustomerMetrics(prisma),
+  ]);
   const payload = {
+    insights,
+    customers,
     meta: {
       generatedAt: new Date().toISOString(),
       period: { startISO, endISO, endExclusiveISO },
@@ -261,7 +311,7 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
         siteOnlyExcludedPrefixes: ["/checkout", "/payment", "/payments", "/stripe", "/api", "/_next", "/admin"],
         shopDurationNormalized: "For /shop/* the duration is aggregated ignoring query string (?v=...)",
       },
-      version: "metrics-export-v4",
+      version: "metrics-export-v5",
       salesSource: "Order.paidAt",
       conversionDenominator: "uniqueSessions",
     },
@@ -287,6 +337,9 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
 
     funnel: {
       cartsTotal: cartTotalN,
+      sessionAddToCartRate,
+      sessionAddToCartRatePct: pct(sessionAddToCartRate),
+      sessionsWithAddToCart: sessionsWithAddToCartN,
       paidOrders: sales.paidOrders,
       checkoutsStarted: sales.startedCheckouts,
       unpaidCheckouts: sales.unpaidCheckouts,
@@ -294,6 +347,47 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       unpaidCheckoutRatePct: pct(sales.unpaidCheckoutRate),
       avgPaymentMs,
       avgPaymentSamples: sales.paymentSamples,
+      steps: {
+        cartViewed: viewCartCount,
+        checkoutClicked: checkoutClicks,
+        checkoutsStarted: sales.startedCheckouts,
+        paidOrders: sales.paidOrders,
+      },
+    },
+
+    commercial: {
+      realizedRevenueEur: sales.realizedRevenueEur,
+      realizedAovEur: sales.realizedAovEur,
+      potentialCheckoutRevenueEur: sales.potentialCheckoutRevenueEur,
+      lostCheckoutRevenueEur: sales.lostCheckoutRevenueEur,
+      potentialCartRevenueEur,
+      lostCartRevenueEur,
+      avgCartValueEur,
+      cartsWithAdditions,
+      unpricedUnits,
+      litersDemandedTotal: +litersDemandedTotal.toFixed(2),
+      litersOilDemanded: +litersOilDemanded.toFixed(2),
+      litersWineDemanded: +litersWineDemanded.toFixed(2),
+      formatDemand: {
+        cansUnits,
+        bottlesUnits,
+        unknownFormatUnits,
+        cansPct,
+        bottlesPct,
+      },
+      bundleOlioVinoRatePct: sales.bundleOlioVinoRatePct,
+      repeatCustomerRatePct: sales.repeatCustomerRatePct,
+      uniquePayingCustomers: sales.uniquePayingCustomers,
+      repeatPayingCustomers: sales.repeatPayingCustomers,
+    },
+
+    leadsAndDirectSales: {
+      whatsappClicks: contactMap.get("whatsapp") ?? 0,
+      phoneClicks: contactMap.get("phone") ?? 0,
+      emailClicks: contactMap.get("email") ?? 0,
+      totalContactClicks: contactClicksTotal,
+      contactMessagesCount,
+      tastingBookingsCount,
     },
 
     devices: { rows: deviceRows },
@@ -313,6 +407,19 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
         productKey: r.productKey ?? "",
         views: r._count.productKey,
       })),
+      productCartToDetail: topProductViews.map((r) => {
+        const pk = r.productKey ?? "";
+        const views = r._count.productKey;
+        const adds = addsByProduct.get(pk) ?? 0;
+        const rate = views > 0 ? adds / views : 0;
+        return {
+          productKey: pk,
+          views,
+          adds,
+          cartToDetailRate: +rate.toFixed(4),
+          cartToDetailRatePct: pct(rate),
+        };
+      }),
       addToCartByVariant: addToCartByVariant.map((r) => ({
         productKey: r.productKey ?? "",
         variantKey: r.variantKey ?? null,
@@ -338,7 +445,29 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       "kpis.avgPagesPerSession": "pageViews / uniqueSessions.",
       "kpis.paidOrders": "Ordini commerciali con paidAt nel periodo; ogni ordine conta una volta, indipendentemente da cookie, cartId e pagina di ritorno. I rimborsi successivi non cancellano il pagamento storico.",
       "kpis.conversionAnalytics": "paidOrders / uniqueSessions, oppure null se mancano visite misurate. Nessun evento purchase browser richiesto.",
+      "commercial.realizedRevenueEur": "Fatturato complessivo incassato da ordini commerciali pagati nel periodo (in Euro).",
+      "commercial.realizedAovEur": "Scontrino medio degli ordini pagati nel periodo (realizedRevenueEur / paidOrders).",
+      "commercial.potentialCheckoutRevenueEur": "Valore totale degli ordini commerciali iniziati nel periodo.",
+      "commercial.lostCheckoutRevenueEur": "Valore totale dei checkout iniziati nel periodo ma rimasti non pagati.",
+      "commercial.potentialCartRevenueEur": "Somma prezzi registrati × quantità aggiunte nel periodo; null se mancano prezzi. Include successive rimozioni e aggiunte ripetute.",
+      "commercial.lostCartRevenueEur": "Non disponibile: eventi add_to_cart e incassi non identificano la stessa coorte di carrelli.",
+      "commercial.avgCartValueEur": "Valore lordo aggiunte / carrelli con aggiunte nel periodo; null senza carrelli o con prezzi mancanti. Non è il saldo del carrello.",
+      "commercial.unpricedUnits": "Unità aggiunte senza un prezzo storico valido; rendono indisponibili valore e media delle aggiunte.",
+      "commercial.formatDemand.unknownFormatUnits": "Unità con formato sconosciuto, incluse nel denominatore delle percentuali formato.",
+      "commercial.litersDemandedTotal": "Litri totali di prodotto richiesti tramite aggiunta al carrello nel periodo.",
+      "commercial.litersOilDemanded": "Litri di olio EVO richiesti a carrello.",
+      "commercial.litersWineDemanded": "Litri di vino richiesti a carrello.",
+      "commercial.formatDemand.cansPct": "Percentuale di unità richieste in formato latta, inclusa la 750ml.",
+      "commercial.formatDemand.bottlesPct": "Percentuale di unità richieste in formato bottiglia, inclusa la 1L.",
+      "commercial.bundleOlioVinoRatePct": "Percentuale di ordini pagati contenenti sia Olio che Vino (cross-selling).",
+      "commercial.repeatCustomerRatePct": "Percentuale di clienti paganti identificati tramite email normalizzata con almeno 2 ordini pagati nello stesso periodo. Non misura il riordino storico.",
+      "leadsAndDirectSales.whatsappClicks": "Click su link o pulsanti di contatto WhatsApp.",
+      "leadsAndDirectSales.phoneClicks": "Click per chiamata telefonica al frantoio.",
+      "leadsAndDirectSales.emailClicks": "Click per invio email diretta.",
+      "leadsAndDirectSales.contactMessagesCount": "Richieste/messaggi di contatto ricevuti dal form del sito nel periodo.",
+      "leadsAndDirectSales.tastingBookingsCount": "Prenotazioni di degustazione registrate nel periodo.",
       "funnel.cartsTotal": "Numero di carrelli distinti (cartId) che hanno avuto add_to_cart o begin_checkout nel periodo.",
+      "funnel.sessionAddToCartRatePct": "Percentuale di sessioni con almeno un add_to_cart (sessionsWithAddToCart / uniqueSessions).",
       "funnel.paidOrders": "Ordini commerciali pagati nel periodo, da Order.paidAt.",
       "funnel.unpaidCheckouts": "Ordini commerciali creati nel periodo e attualmente privi di paidAt; include checkout ancora in corso, non equivale ad abbandoni definitivi.",
       "funnel.unpaidCheckoutRate": "unpaidCheckouts / checkoutsStarted, oppure null senza checkout. I carrelli tracciati sono separati dagli ordini.",
@@ -352,6 +481,7 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
       "top.pages[].avgDurationMsProductNormalized": "Tempo medio da page_leave.durationMs; per /shop/* aggrega ignorando ?v= (tutte le varianti).",
       "top.productViewsByVariant": "Ranking view prodotto per variante, da evento product_view su (productKey, variantKey).",
       "top.productViewsTotal": "Ranking view prodotto aggregate (somma varianti), da evento product_view su productKey.",
+      "top.productCartToDetail": "Tasso di conversione da visualizzazione prodotto ad add_to_cart per ciascun prodotto.",
       "kpis.listViews": "Conteggio eventi view_item_list nel periodo.",
       "kpis.productClicks": "Conteggio eventi product_click nel periodo.",
       "kpis.listCtr": "productClicks / listViews.",
@@ -366,11 +496,11 @@ const includeInternal = internalRaw === "1" || internalRaw === "true" || interna
 
   const filename = `metrics_${startISO}_to_${endISO}${includeInternal ? "_inclInternal" : ""}.json`;
 
-  return new NextResponse(JSON.stringify(payload, null, 2), {
+  return guard.attach(new NextResponse(JSON.stringify(payload, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Content-Disposition": `attachment; filename="${filename}"`,
       "Cache-Control": "no-store",
     },
-  });
+  }));
 }

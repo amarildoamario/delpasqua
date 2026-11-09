@@ -15,6 +15,7 @@ import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { computeRiskScore } from "@/lib/server/antiFraud";
 import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
 import { hasMixedTestAndCommercialItems, isTestOrderItems } from "@/lib/server/testOrders";
+import { orderAnalyticsContext } from "@/lib/server/orderAnalytics";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 type StripeAllowedCountry = NonNullable<
@@ -162,6 +163,7 @@ export async function POST(req: Request) {
       );
     }
     const isTest = isTestOrderItems(pricing.items);
+    const analyticsContext = isTest ? null : orderAnalyticsContext(req);
 
     // meta
     const orderPublicToken = randomUUID().replace(/-/g, "");
@@ -270,6 +272,7 @@ export async function POST(req: Request) {
           ipAddress,
           userAgent,
           paymentProvider: "stripe",
+          ...(analyticsContext ? { events: { create: { type: "ANALYTICS_CONTEXT", metaJson: JSON.stringify(analyticsContext) } } } : {}),
           promotionCode: pricing.promotionApplied?.code ?? null,
         },
         include: { items: true },

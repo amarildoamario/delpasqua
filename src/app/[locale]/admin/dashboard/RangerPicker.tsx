@@ -64,7 +64,10 @@ export default function RangePicker({
 
   // valori "derivati" (niente setState in useEffect)
   const year = isValidDate(startDate) ? startDate.getFullYear() : new Date().getFullYear();
-  const monthValue = isValidDate(startDate) ? `${year}-${pad2(startDate.getMonth() + 1)}` : `${year}-01`;
+  const fullMonth = isValidDate(startDate) && isValidDate(endDate) &&
+    startDate.getFullYear() === endDate.getFullYear() && startDate.getMonth() === endDate.getMonth() &&
+    isFirstDay(startDate) && isLastDayOfThisMonth(endDate);
+  const monthValue = fullMonth ? `${year}-${pad2(startDate.getMonth() + 1)}` : "";
 
   const { quarter, semester } = useMemo(() => {
     if (!isValidDate(startDate) || !isValidDate(endDate)) return { quarter: "", semester: "" };
@@ -100,9 +103,9 @@ export default function RangePicker({
   }, [startDate, endDate]);
 
   const years = useMemo(() => {
-    const y = new Date().getFullYear();
-    return [y, y - 1, y - 2, y - 3, y - 4];
-  }, []);
+    const y = Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Rome", year: "numeric" }).format(new Date()));
+    return [...new Set([year, y, y - 1, y - 2, y - 3, y - 4])].sort((a, b) => b - a);
+  }, [year]);
 
   function applyRange(start: Date, end: Date) {
     if (!isValidDate(start) || !isValidDate(end)) return;

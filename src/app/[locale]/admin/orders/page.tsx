@@ -65,6 +65,7 @@ export default async function AdminOrdersPage({
   const statusParam = getOne(sp.status);
   const shipped = getOne(sp.shipped);
   const q = getOne(sp.q);
+  const customerEmail = getOne(sp.email)?.trim();
   const testParam = getOne(sp.test);
   const testOnly = testParam === "1";
 
@@ -86,9 +87,10 @@ export default async function AdminOrdersPage({
   endExclusive.setDate(end.getDate() + 1);
 
   const where: Prisma.Prisma.OrderWhereInput = {
-    createdAt: { gte: start, lt: endExclusive },
+    ...(customerEmail && !startParam && !endParam ? {} : { createdAt: { gte: start, lt: endExclusive } }),
     isTest: testOnly,
   };
+  if (customerEmail) where.email = { equals: customerEmail, mode: "insensitive" };
 
   if (statusParam && isOrderStatus(statusParam)) {
     where.status = statusParam;
