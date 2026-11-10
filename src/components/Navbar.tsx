@@ -545,12 +545,17 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className="mobile-menu-item group flex items-center justify-between border-b border-stone-100 py-4 transition-colors hover:text-green-700"
-                  style={{ animationDelay: `${80 + index * 55}ms` }}
+                  style={{ animationDelay: `${120 + index * 45}ms` }}
                 >
                   <span className="text-2xl font-light text-stone-800 transition-colors group-hover:text-green-700">
                     {link.label}
                   </span>
-                  <ArrowUpRight className="h-5 w-5 text-stone-400 transition-colors group-hover:text-green-600" strokeWidth={1.5} />
+                  <ArrowUpRight
+                    className="mobile-menu-arrow h-5 w-5 text-stone-400 transition-colors group-hover:text-green-600"
+                    style={{ animationDelay: `${420 + index * 25}ms` }}
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
                 </LocaleLink>
               ))}
             </div>

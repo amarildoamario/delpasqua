@@ -72,6 +72,47 @@ test("Rome summer time is used rather than a fixed UTC offset", () => {
   assert.equal(result.weekdays[0].visits, 1);
 });
 
+test("hourly totals use only the final Rome calendar day and deduplicate independently of previous days", () => {
+  const rangeStart = new Date("2026-11-07T23:00:00Z");
+  const midnight = new Date("2026-11-08T23:00:00Z");
+  const events = [
+    event({ createdAt: new Date(midnight.getTime() - 1) }),
+    event({ type: "add_to_cart", createdAt: new Date(midnight.getTime() - 1) }),
+    event({ createdAt: midnight }),
+    event({ createdAt: new Date(midnight.getTime() + 1000) }),
+    event({ type: "add_to_cart", createdAt: midnight }),
+    event({ createdAt: new Date(end.getTime() - 1), sessionId: "late-session" }),
+    event({ createdAt: end, sessionId: "tomorrow" }),
+  ];
+  const result = summarizeCommerceInsights([
+    order({ id: "previous", paidAt: new Date(midnight.getTime() - 1) }),
+    order({ id: "midnight", paidAt: midnight }),
+    order({ id: "end-boundary", paidAt: end }),
+  ], events, [], rangeStart, end);
+  assert.equal(result.hourlyDay, "2026-11-09");
+  assert.deepEqual(result.hourly[0], { label: "00:00", visits: 1, carts: 1, orders: 1 });
+  assert.equal(result.hourly[23].visits, 1);
+  assert.equal(result.hourly.reduce((sum, row) => sum + row.visits, 0), 2);
+  assert.equal(result.hourly.reduce((sum, row) => sum + row.orders, 0), 1);
+  assert.equal(result.weekdays.reduce((sum, row) => sum + row.orders, 0), 2);
+});
+
+test("daily activity follows Rome midnight through both daylight saving transitions", () => {
+  for (const [from, to, day, hours] of [
+    ["2026-03-28T23:00:00Z", "2026-03-29T22:00:00Z", "2026-03-29", 23],
+    ["2026-10-24T22:00:00Z", "2026-10-25T23:00:00Z", "2026-10-25", 25],
+  ] as const) {
+    const fromDate = new Date(from), toDate = new Date(to);
+    const rows = Array.from({ length: hours }, (_, i) => event({ createdAt: new Date(fromDate.getTime() + i * 3600000), sessionId: `session-${i}` }));
+    const result = summarizeCommerceInsights([], rows, [], new Date(fromDate.getTime() - 86400000), toDate);
+    assert.equal(result.hourlyDay, day);
+    assert.equal(result.hourly.reduce((sum, row) => sum + row.visits, 0), hours);
+    assert.equal(result.hourly[0].visits, 1);
+    assert.equal(result.hourly[23].visits, 1);
+    assert.equal(result.hourly[2].visits, hours === 23 ? 0 : 2);
+  }
+});
+
 test("LTV normalizes emails across all history, subtracts refunds, deduplicates and segments customers", () => {
   const now = new Date("2026-11-09T12:00:00Z");
   const base = { id: "a", isTest: false, email: " VIP@example.com ", fullName: "VIP", paidAt: now, totalCents: 10000, refundCents: 1000, items: [{ productId: "evo-latta", variantId: "5lt", qty: 2 }] };

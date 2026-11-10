@@ -39,7 +39,19 @@ export default function CommerceInsights({ insights, customers }: { insights: In
       <div className="mt-2 flex flex-wrap gap-2">{Object.entries(CUSTOMER_SEGMENTS).map(([key, label]) => <Link key={key} href={`/admin/customers?segment=${key}`} className="rounded-xl bg-neutral-100 px-3 py-2 text-xs font-semibold">{label}: {customers.segments[key as keyof typeof CUSTOMER_SEGMENTS]}</Link>)}</div>
       <p className="mt-3 text-xs text-neutral-500">Intera storia fino a oggi, indipendente dal filtro temporale. Netto = pagato − rimborsi.</p>
     </section>
-    <div className="space-y-4"><ActivityHistogram title="Attività nelle 24 ore" rows={insights.hourly} description="Somma visite (sessioni uniche), carrelli con almeno un'aggiunta e ordini pagati per ora italiana nel periodo selezionato. Ogni visita o carrello compare nella prima fascia osservata nel periodo; gli ordini sono collocati all'ora effettiva del pagamento. Le tre serie condividono la stessa scala, con gestione dell'ora legale. La tabella contiene i valori esatti." /><ActivityHistogram title="Attività per giorno della settimana" rows={insights.weekdays} description="Confronta visite, carrelli con aggiunte e ordini pagati dal lunedì alla domenica, sommando le occorrenze nel periodo selezionato. Sono conteggi totali, non medie per giorno. Visite e carrelli sono assegnati al primo giorno osservato nel periodo; ordini al giorno del pagamento, nel fuso Europe/Rome." /></div>
-    <p className="text-xs text-neutral-500">Orario Europe/Rome, inclusa ora legale. Visite = sessioni; carrelli = carrelli con aggiunte. Ogni visita/carrello compare nella prima fascia osservata nel periodo; gli ordini all’ora del pagamento.</p>
+    <div className="space-y-8 border-t border-neutral-200 pt-6">
+      <ActivityHistogram
+        title="Attività nelle 24 ore"
+        subtitle={`${insights.hourlyDay.split("-").reverse().join("/")} · Dalle 00:00 alle 24:00 · Giorno finale del filtro`}
+        rows={insights.hourly}
+        description="Conta solo il giorno indicato, dalla mezzanotte alla mezzanotte successiva nel fuso Europe/Rome. Visite e carrelli sono unici nel giorno e assegnati alla prima ora osservata quel giorno; ordini all'ora del pagamento. I totali si azzerano a ogni nuovo giorno. Per scegliere un altro giorno cambia la data finale del filtro. Nei cambi di ora legale il giorno può durare 23 o 25 ore: le ore ripetute sono unite."
+      />
+      <ActivityHistogram
+        title="Attività per giorno della settimana"
+        subtitle="Intero periodo selezionato · Totali da lunedì a domenica"
+        rows={insights.weekdays}
+        description="Confronta visite, carrelli con aggiunte e ordini pagati dal lunedì alla domenica, sommando le occorrenze nell'intero periodo selezionato. Sono conteggi totali, non medie. Ogni visita/carrello compare nel primo giorno osservato nel periodo; gli ordini al giorno del pagamento, nel fuso Europe/Rome. Questo grafico usa un intervallo distinto da quello giornaliero sopra."
+      />
+    </div>
   </div>;
 }

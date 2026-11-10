@@ -15,6 +15,21 @@ Legenda priorita:
 - P1 = incoerenza operativa che puo creare errori o costi manuali.
 - P2 = debito tecnico/UX che puo diventare bug.
 
+## [✅ RISOLTO] Apertura mobile menu e carrello — 2026-11-10
+
+- Apertura dei pannelli mobile rallentata a 650 ms con decelerazione morbida. Il carrello, montato solo quando aperto, usa un ingresso CSS esplicito per evitare l'apparizione immediata.
+- Nel menu le voci entrano in sequenza; su successiva richiesta le frecce sono anticipate a 420 ms con intervalli di 25 ms e rotazione di 300 ms. Movimento ridotto rispettato; tempi desktop invariati.
+- Verifica Chromium a 390×844: durata pannello, ritardi e visibilità finale frecce, apertura carrello, chiusura/riapertura e `prefers-reduced-motion`. Lint e typecheck superati. Modifiche locali, non pubblicate.
+
+## [✅ RISOLTO] Risposta diretta ai contatti dal gestionale — 2026-11-10
+
+- Sostituito il link `mailto:` della risposta rapida con POST admin protetto da sessione, CSRF, limite richieste e validazione del corpo effettivo.
+- Invio tramite Resend con `EMAIL_FROM` del dominio; destinatario letto dal contatto nel database. Nessuna risposta reale inviata durante lo sviluppo.
+- Testo preservato sugli errori, pulsante bloccato durante l'invio, chiave idempotente sui retry e ricevuta con ID Resend. La conferma indica accettazione del provider, non consegna o lettura.
+- Il contatto viene segnato letto solo dopo accettazione. Un errore DB successivo non trasforma una spedizione riuscita in un fallimento apparente.
+- Nessuna migrazione o modifica alle notifiche del form pubblico. Il recapito amministrativo configurato su `email.it`, risultato respinto, resta da correggere separatamente.
+- Verifiche: test di composizione/validazione e route con provider/database simulati; lint e typecheck. Modifica locale, non pubblicata.
+
 ## [✅ RISOLTO] Metriche commerciali e clienti — 2026-11-09
 
 - Aggiunti acquisizione automatica Instagram/Facebook/Google, fuga Stripe osservata per coorte, tempo dalla prima visita misurata, LTV storico e segmenti clienti, attività 24h e settimana.

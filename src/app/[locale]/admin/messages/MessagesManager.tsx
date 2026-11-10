@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   AtSign,
   Clock,
@@ -176,6 +176,11 @@ export default function MessagesManager({
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("thanks");
   const [customReplySubject, setCustomReplySubject] = useState("");
   const [customReplyBody, setCustomReplyBody] = useState("");
+  const [replyRequestId, setReplyRequestId] = useState("");
+  const [replySending, setReplySending] = useState(false);
+  const replyInFlight = useRef(false);
+  const [replyError, setReplyError] = useState("");
+  const [replyReceipt, setReplyReceipt] = useState<{ emailId: string; from: string } | null>(null);
 
   // Calcolo statistiche
   const stats = useMemo(() => {
@@ -259,6 +264,10 @@ export default function MessagesManager({
 
   // Apertura modale di risposta rapida
   function openReplyModal(m: SerializedContactMessage) {
+    if (replyInFlight.current) return;
+    setReplyRequestId(crypto.randomUUID());
+    setReplyError("");
+    setReplyReceipt(null);
     setReplyModalMessage(m);
     setSelectedTemplateId("thanks");
     const tpl = QUICK_REPLY_TEMPLATES[0];
@@ -273,6 +282,34 @@ export default function MessagesManager({
     if (tpl) {
       setCustomReplySubject(`Re: ${replyModalMessage.subject || tpl.subject}`);
       setCustomReplyBody(tpl.body(replyModalMessage.name));
+    }
+  }
+
+  async function sendReply() {
+    if (!replyModalMessage || replyInFlight.current || replyReceipt) return;
+    replyInFlight.current = true;
+    setReplySending(true);
+    setReplyError("");
+    try {
+      const res = await adminFetch(`/api/admin/contact-messages/${replyModalMessage.id}/reply`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ subject: customReplySubject, body: customReplyBody, requestId: replyRequestId }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.ok || !result.emailId) {
+        throw new Error(result.error || "Impossibile confermare l'invio. Riprova senza cambiare il testo.");
+      }
+      setReplyReceipt({ emailId: result.emailId, from: result.from });
+      if (result.readAt) {
+        setMessages((prev) => prev.map((m) => m.id === replyModalMessage.id && m.status === "UNREAD"
+          ? { ...m, status: "READ", readAt: result.readAt } : m));
+      }
+    } catch (error) {
+      setReplyError(error instanceof Error ? error.message : "Impossibile confermare l'invio. Riprova senza cambiare il testo.");
+    } finally {
+      replyInFlight.current = false;
+      setReplySending(false);
     }
   }
 
@@ -903,7 +940,7 @@ export default function MessagesManager({
       ========================================================= */}
       {replyModalMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-lg rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="max-h-[90dvh] overflow-y-auto w-full max-w-lg rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
             {/* Header Modale */}
             <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
               <div className="flex items-center gap-2.5">
@@ -917,6 +954,8 @@ export default function MessagesManager({
               </div>
               <button
                 type="button"
+                disabled={replySending}
+                aria-label="Chiudi risposta"
                 onClick={() => setReplyModalMessage(null)}
                 className="rounded-xl p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 cursor-pointer"
               >
@@ -935,6 +974,7 @@ export default function MessagesManager({
                   <button
                     key={tpl.id}
                     type="button"
+                    disabled={replySending || !!replyReceipt}
                     onClick={() => handleSelectTemplate(tpl.id)}
                     className={`rounded-xl border p-2 text-left text-xs font-bold transition-all cursor-pointer ${
                       selectedTemplateId === tpl.id
@@ -954,6 +994,9 @@ export default function MessagesManager({
                 Oggetto Email:
               </label>
               <input
+                aria-label="Oggetto email"
+                maxLength={200}
+                disabled={replySending || !!replyReceipt}
                 value={customReplySubject}
                 onChange={(e) => setCustomReplySubject(e.target.value)}
                 className="w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-neutral-900 focus:outline-none"
@@ -966,6 +1009,9 @@ export default function MessagesManager({
                 Testo del Messaggio:
               </label>
               <textarea
+                aria-label="Testo della risposta"
+                maxLength={20000}
+                disabled={replySending || !!replyReceipt}
                 value={customReplyBody}
                 onChange={(e) => setCustomReplyBody(e.target.value)}
                 rows={6}
@@ -973,6 +1019,14 @@ export default function MessagesManager({
               />
             </div>
 
+            {replyError && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800">{replyError}</p>}
+            {replyReceipt && (
+              <div role="status" className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900">
+                <p className="font-bold">Risposta inviata da {replyReceipt.from}.</p>
+                <p>Accettata da Resend. La consegna al destinatario non è ancora confermata.</p>
+                <p className="mt-1 break-all text-xs">ID email: {replyReceipt.emailId}</p>
+              </div>
+            )}
             {/* Footer Azioni */}
             <div className="flex items-center justify-between gap-2 border-t border-neutral-100 pt-3">
               <button
@@ -992,27 +1046,21 @@ export default function MessagesManager({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  disabled={replySending}
                   onClick={() => setReplyModalMessage(null)}
                   className="rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50 cursor-pointer"
                 >
                   Chiudi
                 </button>
-                <a
-                  href={`mailto:${replyModalMessage.email}?subject=${encodeURIComponent(
-                    customReplySubject
-                  )}&body=${encodeURIComponent(customReplyBody)}`}
-                  onClick={() => {
-                    // Segna anche come letto in automatico quando risponde
-                    if (replyModalMessage.status === "UNREAD") {
-                      updateMessageStatus(replyModalMessage.id, "READ");
-                    }
-                    setReplyModalMessage(null);
-                  }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-neutral-800 transition-all"
+                <button
+                  type="button"
+                  onClick={sendReply}
+                  disabled={replySending || !!replyReceipt || !customReplySubject.trim() || !customReplyBody.trim()}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-neutral-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="h-3.5 w-3.5" />
-                  <span>Invia con il tuo Client Email</span>
-                </a>
+                  <span>{replySending ? "Invio in corso..." : replyReceipt ? "Risposta inviata" : "Invia risposta"}</span>
+                </button>
               </div>
             </div>
           </div>

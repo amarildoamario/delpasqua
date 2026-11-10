@@ -5,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "next-intl";
 import { createPortal } from "react-dom";
+import "./CartDrawer.css";
 import { useTranslations } from "next-intl";
 
 import ToggleMessage from "@/components/ui/ToggleMessage";
@@ -336,7 +337,7 @@ export default function CartDrawer({
       <button
         type="button"
         className={cn(
-          "absolute inset-0 bg-black/70 transition-opacity duration-200",
+          "cart-drawer-backdrop absolute inset-0 bg-black/70 transition-opacity duration-200",
           open ? "opacity-100" : "opacity-0"
         )}
         onClick={onClose}
@@ -346,7 +347,7 @@ export default function CartDrawer({
 
       <aside
         className={cn(
-          "fixed inset-y-0 right-0",
+          "cart-drawer-panel fixed inset-y-0 right-0",
           "w-full sm:w-[640px] lg:w-[820px]",
           "border-l border-black/10 bg-white shadow-2xl",
           "transition-transform duration-[250ms] ease-out",

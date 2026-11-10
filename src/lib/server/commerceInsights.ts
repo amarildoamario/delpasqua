@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@/generated/prisma";
 import { acquisitionSource, ACQUISITION_LABELS, isSitePage } from "@/lib/analytics/acquisition";
+import { metricsPeriod } from "./salesMetrics";
 
 type InsightEvent = {
   type: string; createdAt: Date; visitorId: string; sessionId: string;
@@ -27,6 +28,11 @@ function context(order: InsightOrder, includeInternal: boolean) {
 
 export function summarizeCommerceInsights(orders: InsightOrder[], events: InsightEvent[], history: InsightEvent[], start: Date, endExclusive: Date, includeInternal = false) {
   const inRange = (date: Date) => date >= start && date < endExclusive;
+  const dayParts = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(endExclusive.getTime() - 1));
+  const dayPart = (type: string) => dayParts.find((part) => part.type === type)!.value;
+  const hourlyDay = `${dayPart("year")}-${dayPart("month")}-${dayPart("day")}`;
+  const dailyPeriod = metricsPeriod(hourlyDay, hourlyDay);
+  const inDay = (date: Date) => inRange(date) && date >= dailyPeriod.start && date < dailyPeriod.endExclusive;
   const uniqueOrders = [...new Map(orders.filter((o) => !o.isTest).map((o) => [o.id, o])).values()];
   const paid = uniqueOrders.filter((o) => o.paidAt && inRange(o.paidAt));
   const cohort = uniqueOrders.filter((o) => o.stripeCheckoutSessionId && inRange(o.createdAt));
@@ -72,9 +78,9 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
 
   const buckets = (count: number) => Array.from({ length: count }, () => ({ visits: new Set<string>(), carts: new Set<string>(), orders: new Set<string>() }));
   const hours = buckets(24), days = buckets(7);
-  const bucketPair = (date: Date) => {
+  const bucketIndexes = (date: Date) => {
     const parts = clock.formatToParts(date);
-    return [hours[Number(parts.find((p) => p.type === "hour")!.value)], days[weekdays.indexOf(parts.find((p) => p.type === "weekday")!.value)]];
+    return [Number(parts.find((p) => p.type === "hour")!.value), weekdays.indexOf(parts.find((p) => p.type === "weekday")!.value)];
   };
   // A visit/cart is counted once in its first observed bucket inside the selected period.
   const cartStarts = new Map<string, InsightEvent>();
@@ -82,15 +88,32 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     const previous = cartStarts.get(e.cartId);
     if (!previous || e.createdAt < previous.createdAt) cartStarts.set(e.cartId, e);
   }
-  for (const [id, e] of sessions) for (const bucket of bucketPair(e.createdAt)) bucket.visits.add(id);
-  for (const [id, e] of cartStarts) for (const bucket of bucketPair(e.createdAt)) bucket.carts.add(id);
-  for (const o of paid) for (const bucket of bucketPair(o.paidAt!)) bucket.orders.add(o.id);
+  for (const [id, e] of sessions) days[bucketIndexes(e.createdAt)[1]].visits.add(id);
+  for (const [id, e] of cartStarts) days[bucketIndexes(e.createdAt)[1]].carts.add(id);
+  for (const o of paid) days[bucketIndexes(o.paidAt!)[1]].orders.add(o.id);
+  // Daily deduplication is independent of the first occurrence in the full
+  // selected range: a session/cart can span the midnight boundary.
+  const dailySessions = new Map<string, InsightEvent>();
+  const dailyCarts = new Map<string, InsightEvent>();
+  for (const e of events) {
+    if (!inDay(e.createdAt)) continue;
+    const target = e.type === "page_view" && isSitePage(e.path) && e.visitorId && e.sessionId ? dailySessions
+      : e.type === "add_to_cart" && e.cartId ? dailyCarts : null;
+    const key = target === dailySessions ? e.sessionId : e.cartId;
+    if (!target || !key) continue;
+    const previous = target.get(key);
+    if (!previous || e.createdAt < previous.createdAt) target.set(key, e);
+  }
+  for (const [id, e] of dailySessions) hours[bucketIndexes(e.createdAt)[0]].visits.add(id);
+  for (const [id, e] of dailyCarts) hours[bucketIndexes(e.createdAt)[0]].carts.add(id);
+  for (const o of paid) if (inDay(o.paidAt!)) hours[bucketIndexes(o.paidAt!)[0]].orders.add(o.id);
   const serialize = (bucket: typeof hours[number], label: string) => ({ label, visits: bucket.visits.size, carts: bucket.carts.size, orders: bucket.orders.size });
   return {
     acquisition: Object.entries(ACQUISITION_LABELS).map(([source, label]) => ({ source, label, sessions: sourceCounts.get(source as keyof typeof ACQUISITION_LABELS) ?? 0 })),
     stripe: { started: cohort.length, paid: cohortPaid.length, canceledUnpaid: canceledUnpaid.length, recovered: recovered.length,
       pendingOrUnobserved: cohort.length - outcomes, exitRate: outcomes ? canceledUnpaid.length / outcomes : null },
     decision: { samples: decisionDays.length, paidOrders: paid.length, avgDays: avg(decisionDays), avgSessions: avg(decisionSessions) },
+    hourlyDay,
     hourly: hours.map((b, i) => serialize(b, `${String(i).padStart(2, "0")}:00`)),
     weekdays: days.map((b, i) => serialize(b, dayLabels[i])), timeZone: "Europe/Rome",
   };

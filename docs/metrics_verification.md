@@ -1,5 +1,12 @@
 # Verifica nuove metriche — 9 novembre 2026
 
+## Revisione istogrammi — 10 novembre 2026
+
+- Il grafico orario e i suoi contatori usano esclusivamente il giorno finale del filtro, indicato nel sottotitolo, dalle 00:00 alla mezzanotte successiva in Europe/Rome. Sessioni e carrelli sono deduplicati nel giorno, indipendentemente dalla prima comparsa nel periodo complessivo.
+- Il grafico settimanale resta sull'intero periodo selezionato. Riquadri separati, sottotitoli distinti, colori pieni blu/arancio/verde e larghezza minima oraria ridotta da 1232 a 680 pixel; le serie a zero non occupano spazi vuoti fra le barre. Le ore e i giorni senza attività restano sull'asse temporale.
+- Test sui confini di mezzanotte, fine intervallo esclusa e cambi di ora legale (giorni di 23/25 ore). Verifica browser con fixture a 1440 e 390 pixel, nessun overflow della pagina e tabelle espandibili funzionanti. Immagini in `scratch/gestionale-risultati/metrics-1440.png` e `metrics-390.png`.
+- Lint e typecheck superati. Modifica locale, senza pubblicazione o mutazioni di dati commerciali.
+
 Verifica del working tree rispetto a `origin/main` (`45ac4c4`). Eseguita in locale, senza push o deploy e senza creare ordini, messaggi o prenotazioni.
 
 ## Correzioni
