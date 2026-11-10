@@ -3,14 +3,20 @@ import ActivityHistogram from "./ActivityHistogram";
 import Link from "next/link";
 import type { readCommerceInsights } from "@/lib/server/commerceInsights";
 import type { readCustomerMetrics } from "@/lib/server/customerMetrics";
+import type { readActivityTimeline } from "@/lib/server/activityTimeline";
 import { CUSTOMER_SEGMENTS, CUSTOMER_RULES } from "@/lib/server/customerMetrics";
 
 type Insights = Awaited<ReturnType<typeof readCommerceInsights>>;
 type Customers = Awaited<ReturnType<typeof readCustomerMetrics>>;
 const number = (value: number | null, digits = 1) => value === null ? "—" : new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value);
 
-export default function CommerceInsights({ insights, customers }: { insights: Insights; customers: Customers }) {
+export default function CommerceInsights({ insights, customers, activity, activityLinks = [] }: {
+  insights: Insights; customers: Customers;
+  activity?: Awaited<ReturnType<typeof readActivityTimeline>>;
+  activityLinks?: { key: string; label: string; href: string }[];
+}) {
   const { stripe, decision } = insights;
+  const weeklyMax = Math.max(1, ...insights.weekdays.flatMap((row) => [row.visits, row.orders]));
   return <div className="space-y-4">
     <div className="grid gap-3 md:grid-cols-3">
       <section className="rounded-2xl border border-neutral-200 bg-white p-4">
@@ -39,19 +45,22 @@ export default function CommerceInsights({ insights, customers }: { insights: In
       <div className="mt-2 flex flex-wrap gap-2">{Object.entries(CUSTOMER_SEGMENTS).map(([key, label]) => <Link key={key} href={`/admin/customers?segment=${key}`} className="rounded-xl bg-neutral-100 px-3 py-2 text-xs font-semibold">{label}: {customers.segments[key as keyof typeof CUSTOMER_SEGMENTS]}</Link>)}</div>
       <p className="mt-3 text-xs text-neutral-500">Intera storia fino a oggi, indipendente dal filtro temporale. Netto = pagato − rimborsi.</p>
     </section>
-    <div className="space-y-8 border-t border-neutral-200 pt-6">
+    <div id="activity-timeline" className="scroll-mt-6 space-y-8 border-t border-neutral-200 pt-6">
       <ActivityHistogram
-        title="Attività nelle 24 ore"
-        subtitle={`${insights.hourlyDay.split("-").reverse().join("/")} · Dalle 00:00 alle 24:00 · Giorno finale del filtro`}
-        rows={insights.hourly}
-        description="Conta solo il giorno indicato, dalla mezzanotte alla mezzanotte successiva nel fuso Europe/Rome. Visite e carrelli sono unici nel giorno e assegnati alla prima ora osservata quel giorno; ordini all'ora del pagamento. I totali si azzerano a ogni nuovo giorno. Per scegliere un altro giorno cambia la data finale del filtro. Nei cambi di ora legale il giorno può durare 23 o 25 ore: le ore ripetute sono unite."
+        title="Attività nel tempo"
+        subtitle={activity?.subtitle ?? `${insights.hourlyDay.split("-").reverse().join("/")} · Dalle 00:00 alle 24:00`}
+        rows={activity?.rows ?? insights.hourly}
+        description="I pulsanti cambiano solo questo grafico, prendendo come riferimento la data finale del filtro in alto. Giorno va da mezzanotte a mezzanotte; 7, 30 e 90 giorni includono quella data e i giorni precedenti. Ultima ora mostra i 60 minuti più recenti per oggi, oppure l'ultima ora della data storica. Ogni visita e carrello sono contati una volta nella prima fascia osservata nell'intervallo, gli ordini alla data del pagamento. Le fasce sono consecutive: nessun evento viene saltato."
+        footer="Orario italiano. Fasce consecutive, comprese quelle a zero. Nei cambi di ora legale i giorni possono durare 23 o 25 ore. Le altre sezioni seguono il filtro generale."
+        controls={activityLinks.length ? <nav className="mt-4 flex flex-wrap gap-2" aria-label="Periodo del grafico attività">{activityLinks.map((item) => <Link key={item.key} href={item.href} scroll={false} prefetch={false} aria-current={activity?.key === item.key ? "page" : undefined} className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${activity?.key === item.key ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"}`}>{item.label}</Link>)}</nav> : undefined}
       />
-      <ActivityHistogram
-        title="Attività per giorno della settimana"
-        subtitle="Intero periodo selezionato · Totali da lunedì a domenica"
-        rows={insights.weekdays}
-        description="Confronta visite, carrelli con aggiunte e ordini pagati dal lunedì alla domenica, sommando le occorrenze nell'intero periodo selezionato. Sono conteggi totali, non medie. Ogni visita/carrello compare nel primo giorno osservato nel periodo; gli ordini al giorno del pagamento, nel fuso Europe/Rome. Questo grafico usa un intervallo distinto da quello giornaliero sopra."
-      />
+      <section aria-label="Attività per giorno della settimana" className="space-y-3">
+        <div><h2 className="text-base font-bold text-neutral-900">Attività per giorno della settimana</h2><p className="mt-1 text-xs text-neutral-500">Intero periodo selezionato · Due grafici della stessa larghezza e con la stessa scala.</p></div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <ActivityHistogram title="Visite per giorno" subtitle="Sessioni uniche nel periodo" rows={insights.weekdays} seriesKeys={["visits"]} axisMaximum={weeklyMax} description="Ogni sessione è attribuita al primo giorno osservato nel periodo generale. I giorni con zero visite conservano la propria colonna, con altezza zero." />
+          <ActivityHistogram title="Ordini per giorno" subtitle="Ordini pagati nel periodo" rows={insights.weekdays} seriesKeys={["orders"]} axisMaximum={weeklyMax} description="Ordini commerciali pagati, attribuiti al giorno del pagamento in Italia. Ogni ordine viene contato una volta. La scala è la stessa del grafico delle visite; gli zeri restano a zero." />
+        </div>
+      </section>
     </div>
   </div>;
 }

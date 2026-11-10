@@ -10,6 +10,9 @@ import {
 } from "@/lib/server/salesMetrics";
 import PageHeader from "../_components/PageHeader";
 import CommerceInsights from "../_components/CommerceInsights";
+import PageRankings from "../_components/PageRankings";
+import { summarizePageRankings } from "@/lib/pageRankings";
+import { ACTIVITY_TIMEFRAMES, readActivityTimeline } from "@/lib/server/activityTimeline";
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
 import InfoTooltip from "../_components/InfoTooltip";
@@ -50,14 +53,6 @@ function msToNice(ms?: number | null) {
   const m = Math.floor(s / 60);
   const r = s % 60;
   return m > 0 ? `${m}m ${r}s` : `${r}s`;
-}
-
-function normalizeForDuration(path: string) {
-  if (/^\/(?:[a-z]{2}\/)?shop\//.test(path)) {
-    const q = path.indexOf("?");
-    return q >= 0 ? path.slice(0, q) : path;
-  }
-  return path;
 }
 
 export default async function AdminMetricsPage({
@@ -120,33 +115,19 @@ export default async function AdminMetricsPage({
 
   const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : 0;
 
-  const topPages = await prisma.analyticsEvent.groupBy({
-    by: ["path"],
-    where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER },
-    _count: { path: true },
-    orderBy: { _count: { path: "desc" } },
-    take: 20,
-  });
-
-  const avgDurations = await prisma.analyticsEvent.groupBy({
-    by: ["path"],
-    where: { ...rangeWhere, type: "page_leave", durationMs: { not: null }, ...SITE_ONLY, ...QUALITY_FILTER },
-    _sum: { durationMs: true },
-    _count: { durationMs: true },
-  });
-
-  const durationAgg = new Map<string, { sum: number; n: number }>();
-  for (const a of avgDurations) {
-    if (!a.path || !a._count.durationMs) continue;
-    const base = normalizeForDuration(a.path);
-    const cur = durationAgg.get(base) ?? { sum: 0, n: 0 };
-    cur.sum += a._sum.durationMs ?? 0;
-    cur.n += a._count.durationMs;
-    durationAgg.set(base, cur);
-  }
-
-  const avgByPath = new Map<string, number>();
-  for (const [base, v] of durationAgg.entries()) avgByPath.set(base, Math.round(v.sum / v.n));
+  const [pageViewGroups, pageDurationGroups] = await Promise.all([
+    prisma.analyticsEvent.groupBy({
+      by: ["path"],
+      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER },
+      _count: { path: true },
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["path"],
+      where: { ...rangeWhere, type: "page_leave", durationMs: { gte: 0 }, ...SITE_ONLY, ...QUALITY_FILTER },
+      _sum: { durationMs: true }, _count: { durationMs: true }, _max: { durationMs: true },
+    }),
+  ]);
+  const pageRankings = summarizePageRankings(pageViewGroups, pageDurationGroups);
 
   const [topVariantViews, topProductViews] = await Promise.all([
     prisma.analyticsEvent.groupBy({
@@ -301,10 +282,16 @@ export default async function AdminMetricsPage({
   } = summarizeCartDemand(allAddToCartEvents);
 
   const addToCartTotalMap = addsByProduct;
-  const [insights, customers] = await Promise.all([
+  const [insights, customers, activity] = await Promise.all([
     readCommerceInsights(prisma, start, endExclusive, includeInternal),
     readCustomerMetrics(prisma),
+    readActivityTimeline(prisma, getOne(sp.activity), endISO, includeInternal),
   ]);
+  const activityLinks = ACTIVITY_TIMEFRAMES.map((item) => {
+    const query = new URLSearchParams({ start: startISO, end: endISO, activity: item.key });
+    if (includeInternal) query.set("internal", "1");
+    return { key: item.key, label: item.label, href: `?${query.toString()}#activity-timeline` };
+  });
 
  return (
   <div className="space-y-5">
@@ -328,7 +315,7 @@ export default async function AdminMetricsPage({
 
 
     <RangePicker startISO={startISO} endISO={endISO} />
-    <CommerceInsights insights={insights} customers={customers} />
+    <CommerceInsights insights={insights} customers={customers} activity={activity} activityLinks={activityLinks} />
 
     {/* ✅ DEBUG BOX solo quando internal=1 */}
     {includeInternal ? (
@@ -541,40 +528,7 @@ export default async function AdminMetricsPage({
 
     {/* Tabelle */}
     <div className="grid gap-4 xl:grid-cols-2">
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
-        <div className="text-sm font-extrabold text-neutral-900">Pagine più viste</div>
-        <div className="mt-3 overflow-hidden rounded-2xl border border-neutral-200">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-neutral-50 text-xs font-bold uppercase tracking-wide text-neutral-500">
-              <tr>
-                <th className="px-3 py-2">Pagina</th>
-                <th className="px-3 py-2 text-right">Views</th>
-                <th className="px-3 py-2 text-right">Tempo medio</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-200">
-              {topPages.map((p) => (
-                <tr key={p.path ?? "null"} className="hover:bg-neutral-50">
-                  <td className="px-3 py-2">
-                    <div className="truncate font-semibold text-neutral-900">{p.path ?? "—"}</div>
-                  </td>
-                  <td className="px-3 py-2 text-right font-extrabold">{nice(p._count.path)}</td>
-                  <td className="px-3 py-2 text-right text-neutral-600">
-                    {msToNice(avgByPath.get(normalizeForDuration(p.path ?? "")) ?? null)}
-                  </td>
-                </tr>
-              ))}
-              {!topPages.length ? (
-                <tr>
-                  <td colSpan={3} className="px-3 py-6 text-neutral-600">
-                    Nessun dato nel periodo.
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <PageRankings rows={pageRankings} />
 
       <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
         <div className="text-sm font-extrabold text-neutral-900">Prodotti più visti (per variante)</div>

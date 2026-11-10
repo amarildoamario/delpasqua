@@ -15,6 +15,13 @@ Legenda priorita:
 - P1 = incoerenza operativa che puo creare errori o costi manuali.
 - P2 = debito tecnico/UX che puo diventare bug.
 
+## [✅ RISOLTO] Timeframe attività e ordinamenti pagine — 2026-11-10
+
+- Due grafici settimanali equidimensionali per visite e ordini, stessa scala e colonne a zero preservate.
+- Periodi rapidi nel grafico temporale: ultima ora, giorno, 7/30/90 giorni. Fasce consecutive di ampiezza adeguata al periodo; filtro generale preservato.
+- Pagine ordinabili per visite, tempo totale, media pesata e visita più lunga, con ricerca e scelta del numero di risultati. Classifiche calcolate sull'intero dataset del periodo.
+- 93 test server, lint, typecheck e prova browser desktop/mobile superati. Dettagli e limiti in `docs/metrics_verification.md`.
+
 ## [✅ RISOLTO] Apertura mobile menu e carrello — 2026-11-10
 
 - Apertura dei pannelli mobile rallentata a 650 ms con decelerazione morbida. Il carrello, montato solo quando aperto, usa un ingresso CSS esplicito per evitare l'apparizione immediata.

@@ -1,5 +1,13 @@
 # Verifica nuove metriche — 9 novembre 2026
 
+## Filtri temporali e classifiche pagine — 10 novembre 2026
+
+- Attività settimanale divisa in due grafici di uguale larghezza (visite e ordini pagati), stessa scala verticale e sette colonne costanti: gli zeri hanno altezza zero.
+- Il grafico temporale ha pulsanti indipendenti dal filtro generale: ultima ora (5 minuti per fascia), giorno (1 ora), 7 giorni (6 ore), 30 giorni (giorni di calendario), 90 giorni (3 giorni). L'ancora è la data finale del filtro; ultima ora usa i 60 minuti più recenti se l'ancora è oggi, oppure 23:00–24:00 per una data storica. Intervalli consecutivi, nessun campionamento che perda eventi; confini italiani e ora legale coperti.
+- Classifica pagine su tutti i gruppi, senza tagliare prima alle 20 pagine più viste. Ordinamenti per visualizzazioni, durata totale, durata media pesata e permanenza singola massima; ricerca per percorso e scelta 20/50/tutte. Querystring e slash finali normalizzati in modo coerente per visite e durate. Durate mancanti distinte dagli zeri; numero di misurazioni e limite attuale di 20 minuti dichiarati nell'interfaccia.
+- 93 test server superati, lint e typecheck. Verifica browser autenticata sul server locale: tutti e cinque i timeframe, filtri generali preservati, larghezze e valori zero, ricerca e ordinamenti, desktop 1440 px e mobile 390 px. Sessione di verifica chiusa; nessuna mutazione di ordini, contatti o pagamenti.
+- Evidenze locali: `scratch/verify-metrics-timeframes.cjs`, `scratch/gestionale-risultati/timeframes-desktop.png`, `timeframes-mobile.png`, `page-rankings.png`.
+
 ## Revisione istogrammi — 10 novembre 2026
 
 - Il grafico orario e i suoi contatori usano esclusivamente il giorno finale del filtro, indicato nel sottotitolo, dalle 00:00 alla mezzanotte successiva in Europe/Rome. Sessioni e carrelli sono deduplicati nel giorno, indipendentemente dalla prima comparsa nel periodo complessivo.
