@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "12 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/nmr-olio-oliva-analisi.jpg"
+references:
+  - label: "Mannina L. et al. (2001) — Hochauflösende 1H-NMR-Charakterisierung von Olivenölen. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf010373a"
+    note: "Grundlegende Arbeit zur Bestimmung geografischer Herkunft und Sortenauthentizität mittels 1H-NMR und Chemometrie."
+  - label: "Vigli G. et al. (2003) — 13C-NMR study of olive oils and its use for the detection of adulteration. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf0210080"
+    note: "Quantitative 13C-NMR-Spektroskopie zur Untersuchung der stereospezifischen Triglyceridstruktur gegen synthetische Mischöle."
+  - label: "Dais P. & Hatzakis E. (2013) — Quality assessment and authentication of virgin olive oil by NMR spectroscopy. Anal. Chim. Acta"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0003267013000627"
+    note: "Umfassender Überblick über 1H-, 13C- und 31P-NMR zur simultanen Analyse von Fettsäuren, Diglyceriden und Polyphenolen."
+  - label: "COI/T.20/Doc. No 30 (2013) — Anwendung der NMR-Spektroskopie bei Olivenöl. Internationaler Olivenrat"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Richtlinien des Internationalen Olivenrates zur Nutzung von NMR-Spektren als analytischer Fingerabdruck."
 ---
 
 ## Eine Revolution in der Olivenöl-Analyse

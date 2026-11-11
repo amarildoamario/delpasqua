@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "EØF-forordning 2568/91 (Vedlegg II: Bestemmelse av frie fettsyrer)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31991R2568"
+    note: "Det europeiske regelverket for titrimetrisk syregradsbestemmelse og øvre grense på 0,8 % for ekstra jomfruolivenolje."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Viktig artikkel i Nature som viser at stikket i halsen skyldes oleokantal og ikke syrenivået."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Enzymatisk hydrolyse i skadede oliven og kinetikk bak frigjøring av frie fettsyrer."
+  - label: "COI/T.20/Doc. No 34/Rev. 1 (2017) — Bestemmelse av frie fettsyrer. Det internasjonale olivenråd"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Offisiell referansemetode fra Det internasjonale olivenråd for kvantifisering av fri surhet."
 ---
 
 ## Hva mener vi med Syreinnhold?

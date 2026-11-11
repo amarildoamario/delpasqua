@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/filtraggio-olio.jpg"
+references:
+  - label: "Lozano-Sánchez J. et al. (2012) — Filtration of virgin olive oil: Effect on quality, sensory profile and phenolic compounds. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814611017353"
+    note: "Studio fondamentale sull'effetto della filtrazione con filtri di cellulosa su acqua dispersa, polifenoli e stabilità all'ossidazione."
+  - label: "Breschi C. et al. (2019) — Effect of filtration on the shelf life of extra virgin olive oil: A systematic review. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/10.1002/ejlt.201800412"
+    note: "Revisione sistematica che dimostra come la rimozione di acqua e micro-residui prevenga la formazione di morchia e l'idrolisi enzimatica."
+  - label: "Ciafardini G. & Zullo B.A. (2002) — Survival of microorganisms in extra virgin olive oil during storage. Food Microbiology"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0740002002906103"
+    note: "Analisi microbiologica sulla sopravvivenza di lieviti e batteri nell'olio grezzo e correlazione con i difetti fermentativi (morchia, avvinato)."
+  - label: "Fregapane G. et al. (2006) — Influence of filtration on the quality and stability of virgin olive oil during storage. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S030881460500350X"
+    note: "Valutazione comparativa a lungo termine tra oli filtrati e torbidi sull'evoluzione di perossidi, acidità e antiossidanti."
 ---
 
 ## Cosa contiene un olio non filtrato

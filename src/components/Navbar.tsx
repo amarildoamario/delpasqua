@@ -173,6 +173,7 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
     { href: "/shop", label: t("navbar.shop") },
     { href: "/produzione", label: t("navbar.frantoio") },
     { href: "/degustazioni", label: t("navbar.degustazioni") },
+    { href: "/blog", label: t("navbar.blog") || "Blog" },
     { href: "/contatti", label: t("navbar.contatti") },
   ];
 
@@ -296,27 +297,26 @@ export default function Navbar({ initialCatalog }: { initialCatalog: NavbarCatal
             <nav className="flex h-[70px] items-center justify-between md:h-[86px]">
               {/* LOGO (Far left) */}
               <div className="flex-shrink-0 -ml-8 md:ml-0">
-                <div className="relative h-[40px] w-[140px] md:h-[50px] md:w-[180px] lg:h-[56px] lg:w-[200px]">
-                  <Image
-                    src="/logo.png"
-                    alt="Logo"
-                    fill
-                    priority
-                    className="object-contain"
-                    sizes="(max-width: 768px) 140px, (max-width: 1024px) 180px, 200px"
-                  />
-                </div>
+                <LocaleLink href="/" className="group block">
+                  <div className="relative h-[40px] w-[140px] md:h-[50px] md:w-[180px] lg:h-[56px] lg:w-[200px]">
+                    <Image
+                      src="/logo.png"
+                      alt="Logo"
+                      fill
+                      priority
+                      className="object-contain"
+                      sizes="(max-width: 768px) 140px, (max-width: 1024px) 180px, 200px"
+                    />
+                  </div>
+                </LocaleLink>
               </div>
 
               {/* DESKTOP NAV LINKS (Centered/Left-aligned next to logo) */}
               <div className="hidden flex-1 items-center gap-5 pl-4 md:flex lg:gap-6 xl:gap-7">
                 {navLinks.map((link) => (
-                  <span
-                    key={link.href}
-                    className="text-[13px] font-medium uppercase tracking-[0.1em] text-stone-600"
-                  >
+                  <NavLink key={link.href} href={link.href}>
                     {link.label}
-                  </span>
+                  </NavLink>
                 ))}
               </div>
 

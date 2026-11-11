@@ -379,6 +379,11 @@ export async function GET(req: Request) {
       repeatCustomerRatePct: sales.repeatCustomerRatePct,
       uniquePayingCustomers: sales.uniquePayingCustomers,
       repeatPayingCustomers: sales.repeatPayingCustomers,
+      newPayingCustomers: sales.newPayingCustomers,
+      newRevenueEur: sales.newRevenueEur,
+      repeatRevenueEur: sales.repeatRevenueEur,
+      netGoodsRevenueEur: sales.netGoodsRevenueEur,
+      estimatedContributionMarginEur: sales.estimatedContributionMarginEur,
     },
 
     leadsAndDirectSales: {

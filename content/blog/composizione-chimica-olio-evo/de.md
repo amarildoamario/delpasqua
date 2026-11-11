@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "7 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/composizione-chimica-olio.jpg"
+references:
+  - label: "Boskou D. (2006) — Olive Oil: Minor Constituents and Health. CRC Press"
+    url: "https://www.taylorfrancis.com/books/mono/10.1201/9781420059939/olive-oil-dimitrios-boskou"
+    note: "Grundlegendes Werk über den unverseifbaren Anteil: Squalen, Phytosterole, Tocopherole und Biophenole."
+  - label: "Owen R.W. et al. (2000) — The antioxidant/anticancer potential of phenolic compounds isolated from olive oil. Eur. J. Cancer"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0959804900001037"
+    note: "Pionierstudie über das antioxidative und zellschützende Potenzial der Mikronährstoffe in Olivenöl."
+  - label: "Visioli F. & Galli C. (2002) — Biological properties of olive oil phytochemicals. Crit. Rev. Food Sci. Nutr."
+    url: "https://www.tandfonline.com/doi/abs/10.1080/10408690290825529"
+    note: "Klinische Übersicht über die gefäßschützenden und entzündungshemmenden Eigenschaften der Begleitstoffe."
+  - label: "Guinda A. et al. (2010) — Pentacyclic triterpenoids from olive fruit and leaf: Characterization and nutritional significance. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf1000676"
+    note: "Charakterisierung von Maslinsäure und Oleanolsäure in Fruchthaut und unverseifbarem Anteil."
+  - label: "Delegierte Verordnung (EU) 2022/2104 der Kommission (Merkmale von Olivenöl)"
+    url: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32022R2104"
+    note: "Gesetzliche Grenzwerte für Triglyceride, Sterole, Wachse und spektrophotometrische Parameter bei Nativem Olivenöl Extra."
 ---
 
 ## Ein natürliches Meisterwerk der Molekularbiologie

@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "7 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/composizione-chimica-olio.jpg"
+references:
+  - label: "Boskou D. (2006) — Olive Oil: Minor Constituents and Health. CRC Press"
+    url: "https://www.taylorfrancis.com/books/mono/10.1201/9781420059939/olive-oil-dimitrios-boskou"
+    note: "Comprehensive treatise on the unsaponifiable fraction of olive oil: squalene, phytosterols, tocopherols, and biophenols."
+  - label: "Owen R.W. et al. (2000) — The antioxidant/anticancer potential of phenolic compounds isolated from olive oil. Eur. J. Cancer"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0959804900001037"
+    note: "Pioneering study evaluating the cellular antioxidant and chemopreventive capacity of extra virgin olive oil micro-constituents."
+  - label: "Visioli F. & Galli C. (2002) — Biological properties of olive oil phytochemicals. Crit. Rev. Food Sci. Nutr."
+    url: "https://www.tandfonline.com/doi/abs/10.1080/10408690290825529"
+    note: "Clinical examination of anti-inflammatory, vasoprotective, and cardioprotective roles of virgin olive oil minor constituents."
+  - label: "Guinda A. et al. (2010) — Pentacyclic triterpenoids from olive fruit and leaf: Characterization and nutritional significance. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf1000676"
+    note: "Quantification of maslinic acid and oleanolic acid triterpenes within the unsaponifiable lipid matrix."
+  - label: "Commission Delegated Regulation (EU) 2022/2104 (Olive oil characteristics)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2104"
+    note: "Binding European standard defining triglyceride, sterol, wax, and spectrophotometric purity parameters for Extra Virgin Olive Oil."
 ---
 
 ## A natural molecular masterpiece

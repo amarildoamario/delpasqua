@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { mockBlogPosts, hasBlogPostTranslation } from "@/lib/blog-data";
 import { getLocalizedBlogCategorySlug, getLocalizedBlogSlug } from "@/lib/blogSlugs";
 import { locales, localizedPathnames } from "@/i18n/pathnames";
-import { absoluteUrl, getBlogAlternateUrls } from "@/lib/seo";
+import { absoluteUrl, getBlogAlternateUrls, getBlogCategoryAlternateUrls } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +22,49 @@ function escapeXml(unsafe: string): string {
 export async function GET() {
   const urls: string[] = [];
 
+  // 1. Blog Category pages across all locales
+  const uniqueCategoryPosts = new Map<string, (typeof mockBlogPosts)[number]>();
+  for (const post of mockBlogPosts) {
+    const itCatSlug = getLocalizedBlogCategorySlug(post, "it");
+    const existing = uniqueCategoryPosts.get(itCatSlug);
+    if (!existing) {
+      uniqueCategoryPosts.set(itCatSlug, post);
+    } else {
+      const existingDate = new Date(existing.updateDate || existing.date);
+      const currentDate = new Date(post.updateDate || post.date);
+      if (currentDate > existingDate) {
+        uniqueCategoryPosts.set(itCatSlug, post);
+      }
+    }
+  }
+
+  for (const representativePost of uniqueCategoryPosts.values()) {
+    const alternatesMap = getBlogCategoryAlternateUrls(representativePost);
+    const altTags = Object.entries(alternatesMap)
+      .map(([lang, href]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${escapeXml(href)}"/>`)
+      .join("\n");
+    const lastmod = new Date(representativePost.updateDate || representativePost.date).toISOString().split("T")[0];
+
+    for (const locale of locales) {
+      if (!hasBlogPostTranslation(representativePost, locale)) continue;
+
+      const categorySlug = getLocalizedBlogCategorySlug(representativePost, locale);
+      const template = localizedPathnames["/blog/category/[category]"]?.[locale] || "/blog/category/[category]";
+      const resolvedPath = template.replace("[category]", categorySlug);
+      const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
+      const url = absoluteUrl(fullPath);
+
+      urls.push(`  <url>
+    <loc>${escapeXml(url)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+${altTags}
+  </url>`);
+    }
+  }
+
+  // 2. Individual Blog Post pages across all locales
   for (const post of mockBlogPosts) {
     const alternatesMap = getBlogAlternateUrls(post);
     const altTags = Object.entries(alternatesMap)

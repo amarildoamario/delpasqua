@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidi-grassi.jpg"
+references:
+  - label: "Uitvoeringsverordening (EU) 2022/2105 (Conformiteitscontroles en vetzuurgrenzen)"
+    url: "https://eur-lex.europa.eu/legal-content/NL/TXT/?uri=CELEX:32022R2105"
+    note: "Europese wetgeving die verplichte percentages voor vetzuren in extra vierge olijfolie vastlegt."
+  - label: "Beltrán G. et al. (2004) — Influence of cultivar and environment on olive oil fatty acid composition. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814603004862"
+    note: "Onderzoek naar de invloed van cultivar, bodem en klimaat op het gehalte aan oliezuur en linolzuur."
+  - label: "Mensink R.P. et al. (2003) — Effects of dietary fatty acids on the ratio of serum total to HDL cholesterol. Am. J. Clin. Nutr."
+    url: "https://academic.oup.com/ajcn/article/77/5/1146/4689813"
+    note: "Meta-analyse over de cardiovasculaire voordelen van enkelvoudig onverzadigde vetzuren."
+  - label: "Boskou D. (2015) — Olive Oil: Chemistry and Technology (2nd Edition, AOCS Press)"
+    url: "https://www.sciencedirect.com/book/9781893997882/olive-oil"
+    note: "Grondig standaardwerk over triglyceridenstructuren, hittebestendigheid en oxidatiestabiliteit."
+  - label: "IOC Trade Standard COI/T.15/NC No 3/Rev. 19 (2022) — Internationale Olijfraad"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Internationale authenticiteitsnormen voor vetzuren ter bescherming tegen menging met zaadolie."
 ---
 
 ## De bouwstenen van olijfolie

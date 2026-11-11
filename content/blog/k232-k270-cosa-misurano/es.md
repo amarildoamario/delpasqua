@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/k232.jpg"
+references:
+  - label: "Reglamento CEE 2568/91 (Anexo IX: Examen espectrofotométrico en el ultravioleta)"
+    url: "https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:31991R2568"
+    note: "Método oficial de espectrofotometría UV para la cuantificación de K232, K270 y cálculo del Delta-K en aceite de oliva."
+  - label: "ISO 3656:2011 — Grasas y aceites de origen vegetal y animal: Determinación de la absorbancia ultravioleta"
+    url: "https://www.iso.org/standard/53612.html"
+    note: "Norma ISO internacional que describe la medición de dienos y trienos conjugados en disolución con isooctano."
+  - label: "Perez-Camino M.C. et al. (2008) — Changes in virgin olive oil quality indicators during long-term storage. Eur. Food Res. Technol."
+    url: "https://link.springer.com/article/10.1007/s00217-007-0744-8"
+    note: "Evolución comparativa de K232 y K270 como indicadores analíticos de degradación oxidativa primaria y secundaria."
+  - label: "COI/T.20/Doc. No 19/Rev. 5 (2019) — Examen espectrofotométrico en el ultravioleta. Consejo Oleícola Internacional"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Directrices del Consejo Oleícola Internacional para detectar la adición fraudulenta de aceites refinados."
 ---
 
 ## ¿Qué son los coeficientes de extinción ultravioleta?

@@ -32,6 +32,7 @@ const CORE_PATHS = [
   "/parita-di-genere",
   "/resi",
   "/spedizioni",
+  "/smaltimenti",
   "/blog",
   "/olio-toscano",
   "/olio-biologico",
@@ -39,24 +40,36 @@ const CORE_PATHS = [
   "/olio-5-litri",
 ];
 
+const PRIMARY_NAV_PATHS = new Set([
+  "/storia",
+  "/shop",
+  "/produzione",
+  "/degustazioni",
+  "/blog",
+  "/contatti",
+]);
+
+const LEGAL_UTILITY_PATHS = new Set([
+  "/privacy",
+  "/cookie",
+  "/termini",
+  "/resi",
+  "/spedizioni",
+  "/smaltimenti",
+  "/parita-di-genere",
+]);
+
 function getPageParams(path: string) {
   if (path === "/") {
     return { priority: "1.0", changefreq: "weekly" };
   }
-  if (path === "/shop") {
+  if (PRIMARY_NAV_PATHS.has(path)) {
     return { priority: "0.9", changefreq: "weekly" };
   }
-  if (
-    path === "/privacy" ||
-    path === "/cookie" ||
-    path === "/termini" ||
-    path === "/resi" ||
-    path === "/spedizioni" ||
-    path === "/parita-di-genere"
-  ) {
-    return { priority: "0.5", changefreq: "monthly" };
+  if (LEGAL_UTILITY_PATHS.has(path)) {
+    return { priority: "0.3", changefreq: "yearly" };
   }
-  return { priority: "0.7", changefreq: "monthly" };
+  return { priority: "0.6", changefreq: "monthly" };
 }
 
 export async function GET() {

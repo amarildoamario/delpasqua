@@ -22,7 +22,19 @@ export default function CommerceInsights({ insights, customers, activity, activi
       <section className="rounded-2xl border border-neutral-200 bg-white p-4">
         <h2 className="flex items-center gap-1 text-sm font-bold">Provenienza automatica<InfoTooltip label="Provenienza automatica" description="Una sessione viene attribuita alla fonte della sua prima visita nel periodo. Riconosciamo Instagram, Facebook e Google tramite indizi specifici del browser o il dominio del referrer, senza link speciali. Chrome da solo non significa Google; senza segnali la fonte resta diretta o sconosciuta. I vecchi dati si possono riclassificare solo quando conservano questi indizi." /></h2>
         <p className="mt-1 text-xs text-neutral-500">Sessioni per firma del browser o referrer, senza link speciali.</p>
-        <dl className="mt-3 space-y-2 text-sm">{insights.acquisition.map((s) => <div key={s.source} className="flex justify-between gap-2"><dt>{s.label}</dt><dd className="font-bold">{number(s.sessions, 0)}</dd></div>)}</dl>
+        <dl className="mt-3 space-y-2 text-sm">{insights.acquisition.map((s) => (
+          <div key={s.source} className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-1">
+            <dt className="text-neutral-700">{s.label}</dt>
+            <dd className="text-right">
+              <span className="font-bold text-neutral-900">{number(s.sessions, 0)}</span>
+              {s.orders > 0 ? (
+                <span className="ml-2 text-xs font-semibold text-emerald-700">
+                  {s.orders} {s.orders === 1 ? "ordine" : "ordini"} ({s.conversionRate !== null ? `${number(s.conversionRate * 100)}%` : "—"})
+                </span>
+              ) : null}
+            </dd>
+          </div>
+        ))}</dl>
         <p className="mt-3 text-xs text-neutral-500">Attribuzione stimata sulle sessioni misurate nel periodo.</p>
       </section>
       <section className="rounded-2xl border border-neutral-200 bg-white p-4">

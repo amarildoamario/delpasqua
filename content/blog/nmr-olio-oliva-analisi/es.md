@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "12 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/nmr-olio-oliva-analisi.jpg"
+references:
+  - label: "Mannina L. et al. (2001) — High-resolution 1H-NMR characterization of olive oils. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf010373a"
+    note: "Trabajo pionero sobre el uso de la espectroscopía 1H-RMN de alta resolución y quimiometría para determinar el origen varietal y geográfico."
+  - label: "Vigli G. et al. (2003) — 13C-NMR study of olive oils and its use for the detection of adulteration. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf0210080"
+    note: "Espectroscopía 13C-RMN cuantitativa para el análisis de distribución estereoespecífica en triglicéridos frente a fraudes."
+  - label: "Dais P. & Hatzakis E. (2013) — Quality assessment and authentication of virgin olive oil by NMR spectroscopy. Anal. Chim. Acta"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0003267013000627"
+    note: "Revisión integral de las aplicaciones de 1H, 13C y 31P-RMN para cuantificar ácidos grasos, diglicéridos y componentes minoritarios."
+  - label: "COI/T.20/Doc. No 30 (2013) — Aplicación de la espectroscopía RMN en la autenticación del aceite de oliva. Consejo Oleícola Internacional"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Protocolo del Consejo Oleícola Internacional para el empleo de huellas espectrales RMN en el control de pureza."
 ---
 
 ## Una revolución en el análisis del aceite de oliva

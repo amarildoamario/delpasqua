@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "Règlement CEE 2568/91 (Annexe II : Détermination de l'acidité libre)"
+    url: "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:31991R2568"
+    note: "Norme européenne fixant le plafond d'acidité de 0,8 % et la méthode officielle de dosage pour l'huile vierge extra."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Démonstration scientifique établissant que l'ardence en gorge provient de l'oléocanthal et non de l'acidité libre."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Étude de l'hydrolyse enzymatique des triglycérides par les lipases endogènes lors de l'altération des olives."
+  - label: "COI/T.20/Doc. No 34/Rev. 1 (2017) — Détermination des acides gras libres. Conseil Oléicole International"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Protocole officiel normalisé du Conseil Oléicole International pour l'analyse titrimétrique de l'acidité."
 ---
 
 ## Qu'entendons-nous par Acidité ?

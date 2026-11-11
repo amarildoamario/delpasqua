@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-e-perossidi.jpg"
+references:
+  - label: "EEC Regulation 2568/91 (Annex III: Determination of peroxide value)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31991R2568"
+    note: "Official European standard analytical method for iodometric titration of lipid hydroperoxides in virgin olive oils."
+  - label: "Dobarganes C. & Márquez-Ruiz G. (2003) — Oxidative stability of edible oils: primary and secondary oxidation products. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200390021"
+    note: "Detailed examination of hydroperoxide decomposition into volatile aldehydes and explanation of the peroxide paradox."
+  - label: "Pristouri G. et al. (2010) — Effect of packaging material headspace, and storage conditions on quality indicators of extra virgin olive oil. Food Control"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0956713509002606"
+    note: "Empirical study evaluating peroxide escalation kinetics driven by light, headspace oxygen, and room temperature."
+  - label: "Kamal-Eldin A. (2006) — Effect of fatty acids and tocopherols on the oxidative stability of vegetable oils. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200500290"
+    note: "Radical chain mechanisms of lipid autoxidation and the protective stability conferred by high monounsaturated oleic acid levels."
+  - label: "IOC/T.20/Doc. No 35/Rev. 1 (2017) — Determination of peroxide value. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Official laboratory reference method established by the International Olive Council for peroxide analysis."
 ---
 
 ## What is a peroxide?

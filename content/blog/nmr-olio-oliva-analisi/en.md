@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "12 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/nmr-olio-oliva-analisi.jpg"
+references:
+  - label: "Mannina L. et al. (2001) — High-resolution 1H-NMR characterization of olive oils in terms of geographical origin. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf010373a"
+    note: "Pioneering study applying high-resolution 1H-NMR spectroscopy and multivariate statistics to verify olive oil geographical provenance."
+  - label: "Vigli G. et al. (2003) — 13C-NMR study of olive oils and its use for the detection of adulteration. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf0210080"
+    note: "Quantitative 13C-NMR investigation tracking stereospecific triglyceride acylation patterns (sn-1,3 vs sn-2) to detect synthetic blends."
+  - label: "Dais P. & Hatzakis E. (2013) — Quality assessment and authentication of virgin olive oil by NMR spectroscopy: A critical review. Anal. Chim. Acta"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0003267013000627"
+    note: "Comprehensive review detailing 1H, 13C, and 31P-NMR applications for holistic profiling of fatty acids, diglycerides, and minor components."
+  - label: "IOC/T.20/Doc. No 30 (2013) — Application of NMR spectroscopy in olive oil authentication. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Official International Olive Council guidelines supporting nuclear magnetic resonance fingerprints for purity verification."
 ---
 
 ## A revolution in olive oil analytics

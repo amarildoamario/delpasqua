@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "6 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/spettrometria-massa-olio-oliva-gcms-lcms.jpg"
+references:
+  - label: "Aparicio R. & Morales M.T. (1998) — Characterization of olive oil aromas by sensory analysis and GC-MS. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814697001487"
+    note: "Trabajo fundamental sobre la identificación de hexanal, (E)-2-hexenal y compuestos volátiles marcadores de frescura mediante SPME-GC-MS."
+  - label: "Carrasco-Pancorbo A. et al. (2005) — Evaluation of the antioxidant capacity of individual phenolic compounds by LC-MS. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf058043b"
+    note: "Metodología de referencia para la separación en cromatografía líquida y cuantificación por espectrometría de masas en tándem (LC-ESI-IT-MS)."
+  - label: "Angerosa F. (2002) — Influence of volatile compounds on virgin olive oil sensory profile: A review. J. Chromatogr. A"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0021967302002778"
+    note: "Revisión científica sobre el uso de GC-MS para correlacionar el perfil químico de volátiles con las evaluaciones del Panel Test."
+  - label: "Alagna F. et al. (2012) — Comprehensive profiling of olive fruit and oil polyphenols by LC-MS/MS. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf205156v"
+    note: "Perfilado de alta sensibilidad de secoiridoides complejos, feniletílicos y flavonoides en el aceite de oliva virgen extra."
 ---
 
 ## Principios de la espectrometría de masas

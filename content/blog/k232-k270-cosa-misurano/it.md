@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/k232.jpg"
+references:
+  - label: "Regolamento (CEE) N. 2568/91 (Allegato IX: Esame spettrofotometrico nell'ultravioletto)"
+    url: "https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:31991R2568"
+    note: "Metodo ufficiale di spettrofotometria UV per la determinazione di K232, K270 e calcolo del Delta-K nell'olio d'oliva."
+  - label: "ISO 3656:2011 — Animal and vegetable fats and oils: Ultraviolet absorbance as specific UV extinction"
+    url: "https://www.iso.org/standard/53612.html"
+    note: "Norma ISO internazionale per la misurazione spettrofotometrica dei dieni e trieni coniugati in solvente isoottano."
+  - label: "Perez-Camino M.C. et al. (2008) — Changes in virgin olive oil quality indicators during long-term storage. Eur. Food Res. Technol."
+    url: "https://link.springer.com/article/10.1007/s00217-007-0744-8"
+    note: "Studio cinetico comparativo sull'incremento di K232 e K270 come marker di degradazione ossidativa primaria e secondaria."
+  - label: "COI/T.20/Doc. No 19/Rev. 5 (2019) — Spectrophotometric investigation in the ultraviolet. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Linee guida del Consiglio Oleicolo Internazionale per l'uso dei valori UV nell'identificazione di oli rettificati o invecchiati."
 ---
 
 ## Cosa sono i coefficienti di estinzione UV

@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "Reglamento CEE 2568/91 (Anexo II: Determinación de la acidez libre)"
+    url: "https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:31991R2568"
+    note: "Norma comunitaria que establece el límite máximo de acidez del 0,8% para el aceite de oliva virgen extra y su método de valoración."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Estudio demostrativo de que el picor en garganta es originado por el oleocantal en los receptores TRPA1 y no por la acidez."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Mecanismo enzimático de hidrólisis de triglicéridos por lipasas endógenas en aceitunas dañadas o sobremaduras."
+  - label: "COI/T.20/Doc. No 34/Rev. 1 (2017) — Determinación de los ácidos grasos libres. Consejo Oleícola Internacional"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Método de laboratorio estandarizado del Consejo Oleícola Internacional para la cuantificación de la acidez libre."
 ---
 
 ## ¿A qué nos referimos con Acidez?

@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-e-perossidi.jpg"
+references:
+  - label: "EWG-Verordnung 2568/91 (Anhang III: Bestimmung der Peroxidzahl)"
+    url: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:31991R2568"
+    note: "Offizielles EU-Referenzverfahren zur iodometrischen Bestimmung von Hydroperoxiden in Olivenöl."
+  - label: "Dobarganes C. & Márquez-Ruiz G. (2003) — Oxidative stability of edible oils: primary and secondary oxidation products. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200390021"
+    note: "Untersuchung des Peroxid-Paradoxons und des Zerfalls von Primärperoxiden in sekundäre Aldehyde."
+  - label: "Pristouri G. et al. (2010) — Effect of packaging material headspace, and storage conditions on quality indicators of extra virgin olive oil. Food Control"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0956713509002606"
+    note: "Empirische Studie über die Bildung von Peroxiden in Abhängigkeit von Licht, Temperatur und Restsauerstoff."
+  - label: "Kamal-Eldin A. (2006) — Effect of fatty acids and tocopherols on the oxidative stability of vegetable oils. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200500290"
+    note: "Radikalische Mechanismen der Lipidperoxidation und die Schutzwirkung einfach ungesättigter Ölsäure."
+  - label: "COI/T.20/Doc. No 35/Rev. 1 (2017) — Bestimmung der Peroxidzahl. Internationaler Olivenrat"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Referenzmethode des Internationalen Olivenrates zur standardisierten Peroxidmessung."
 ---
 
 ## Was sind Peroxide?

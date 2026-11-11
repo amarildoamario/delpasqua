@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidi-grassi.jpg"
+references:
+  - label: "Reglamento de Ejecución (UE) 2022/2105 (Controles de conformidad y perfil de ácidos grasos)"
+    url: "https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32022R2105"
+    note: "Normativa comunitaria que define los límites porcentuales de ácidos grasos para la autenticidad del AOVE."
+  - label: "Beltrán G. et al. (2004) — Influence of cultivar and environment on olive oil fatty acid composition. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814603004862"
+    note: "Estudio comparativo sobre el impacto varietal y las condiciones bioclimáticas en los porcentajes de ácido oleico."
+  - label: "Mensink R.P. et al. (2003) — Effects of dietary fatty acids on the ratio of serum total to HDL cholesterol. Am. J. Clin. Nutr."
+    url: "https://academic.oup.com/ajcn/article/77/5/1146/4689813"
+    note: "Metaanálisis clínico que demuestra la reducción del colesterol LDL inducida por el consumo de ácido oleico."
+  - label: "Boskou D. (2015) — Olive Oil: Chemistry and Technology (2nd Edition, AOCS Press)"
+    url: "https://www.sciencedirect.com/book/9781893997882/olive-oil"
+    note: "Monografía esencial sobre la estructura molecular de los triglicéridos y la estabilidad térmica del aceite virgen extra."
+  - label: "COI Norma Comercial COI/T.15/NC No 3/Rev. 19 (2022) — Consejo Oleícola Internacional"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Límites de pureza internacionales para garantizar la ausencia de mezclas fraudulentas con aceites de semillas."
 ---
 
 ## Los componentes básicos del aceite de oliva

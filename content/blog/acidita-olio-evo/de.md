@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "EWG-Verordnung 2568/91 (Anhang II: Bestimmung der freien Fettsäuren)"
+    url: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:31991R2568"
+    note: "EU-Verordnung mit verbindlichem Grenzwert von 0,8 % für freie Fettsäuren bei nativem Olivenöl extra."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Nature-Studie: Das Schärfegefühl im Rachen stammt von Oleocanthal und nicht vom chemischen Säuregehalt."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Untersuchung der enzymatischen Esterspaltung durch endogene Lipasen bei beschädigten Oliven."
+  - label: "COI/T.20/Doc. No 34/Rev. 1 (2017) — Bestimmung freier Fettsäuren. Internationaler Olivenrat"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Offizielles titrimetrisches Referenzverfahren des Internationalen Olivenrates zur Säurebestimmung."
 ---
 
 ## Was verstehen wir unter Säuregehalt?

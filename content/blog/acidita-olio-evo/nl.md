@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "EEG-verordening 2568/91 (Bijlage II: Bepaling van de vrije zuurgraad)"
+    url: "https://eur-lex.europa.eu/legal-content/NL/TXT/?uri=CELEX:31991R2568"
+    note: "Officiële Europese norm die het maximum van 0,8% vrije vetzuren voor extra vierge olijfolie vastlegt."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Onderzoek dat aantoont dat de prikkeling in de keel veroorzaakt wordt door oleocanthal en niet door zuurgraad."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Analyse van enzymatische estersplitsing door lipasen in beschadigde olijven en het ontstaan van vrije vetzuren."
+  - label: "IOC/T.20/Doc. No 34/Rev. 1 (2017) — Bepaling van vrije vetzuren. Internationale Olijfraad"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Gestandaardiseerde titratiemethode van de Internationale Olijfraad voor zuurgraadmetingen."
 ---
 
 ## Wat bedoelen we met Zuurgraad?

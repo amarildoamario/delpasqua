@@ -125,6 +125,7 @@ const REQUIRED_CORE_INTERNAL_PATHS = [
   "/olio-biologico/",
   "/nuovo-raccolto/",
   "/olio-5-litri/",
+  "/smaltimenti/",
 ] as const;
 
 export const REQUIRED_CORE_INDEXABLE_PATHS = REQUIRED_CORE_INTERNAL_PATHS.flatMap((path) =>
@@ -155,6 +156,7 @@ const HREFLANG_CORE_PATHS = new Set([
   "/parita-di-genere/",
   "/resi/",
   "/spedizioni/",
+  "/smaltimenti/",
   "/blog/",
   "/olio-toscano/",
   "/olio-biologico/",
@@ -188,8 +190,24 @@ type LocalizedSeoCopy = {
  * search-facing text for the new language markets in one place, so title,
  * description and Open Graph cannot silently fall back to Italian.
  */
-const SEO_COPY_BY_PATH: Partial<Record<string, Partial<Record<"es" | "fr" | "us", LocalizedSeoCopy>>>> = {
+const SEO_COPY_BY_PATH: Partial<Record<string, Partial<Record<"de" | "nl" | "da" | "no" | "es" | "fr" | "us", LocalizedSeoCopy>>>> = {
   "/": {
+    de: {
+      title: "Frantoio Del Pasqua",
+      description: "Natives Olivenöl extra, Tradition der toskanischen Ölmühle und ausgewählte Produkte von Del Pasqua.",
+    },
+    nl: {
+      title: "Frantoio Del Pasqua",
+      description: "Extra vierge olijfolie, traditie van de Toscaanse olijfmolen en geselecteerde producten van Del Pasqua.",
+    },
+    da: {
+      title: "Frantoio Del Pasqua",
+      description: "Ekstra jomfruolivenolie, toscansk oliemølletradition og udvalgte produkter fra Del Pasqua.",
+    },
+    no: {
+      title: "Frantoio Del Pasqua",
+      description: "Ekstra virgin olivenolje, toskansk oljemølletradisjon og utvalgte produkter fra Del Pasqua.",
+    },
     es: {
       title: "Frantoio Del Pasqua",
       description: "Aceite de oliva virgen extra, tradición del molino toscano y productos Del Pasqua seleccionados.",
@@ -204,31 +222,55 @@ const SEO_COPY_BY_PATH: Partial<Record<string, Partial<Record<"es" | "fr" | "us"
     },
   },
   "/storia/": {
+    de: { title: "Unsere Geschichte", description: "Familiengeschichte, Olivenhaine und toskanische Landwirtschaftstradition von Frantoio Del Pasqua." },
+    nl: { title: "Ons Verhaal", description: "Familiegeschiedenis, olijfgaarden en Toscaanse landbouwtraditie van Frantoio Del Pasqua." },
+    da: { title: "Vores Historie", description: "Familiehistorie, olivenlunde og toscansk landbrugstradition hos Frantoio Del Pasqua." },
+    no: { title: "Vår Historie", description: "Familiehistorie, olivenlunder og toskansk landbrukstradisjon hos Frantoio Del Pasqua." },
     es: { title: "Nuestra historia", description: "Historia familiar, olivares y tradición agrícola toscana de Frantoio Del Pasqua." },
     fr: { title: "Notre histoire", description: "Histoire familiale, oliveraies et tradition agricole toscane de Frantoio Del Pasqua." },
     us: { title: "Our Story", description: "Family history, olive groves and Tuscan agricultural tradition of Frantoio Del Pasqua." },
   },
   "/produzione/": {
+    de: { title: "Produktion und Ölmühle", description: "Entdecken Sie die Produktion von Frantoio Del Pasqua: Kaltextraktion, kontrollierter Prozess und Rückverfolgbarkeit." },
+    nl: { title: "Productie en Olijfmolen", description: "Ontdek de productie van Frantoio Del Pasqua: koude extractie, gecontroleerd proces en traceerbaarheid." },
+    da: { title: "Produktion og Oliemølle", description: "Oplev produktionen hos Frantoio Del Pasqua: koldpresning, kontrolleret proces og sporbarhed." },
+    no: { title: "Produksjon og Oljemølle", description: "Oppdag produksjonen hos Frantoio Del Pasqua: kaldpressing, kontrollert prosess og sporbarhet." },
     es: { title: "Producción y almazara", description: "Descubre la producción de Frantoio Del Pasqua: extracción en frío, proceso controlado y trazabilidad." },
     fr: { title: "Production et moulin à huile", description: "Découvrez la production de Frantoio Del Pasqua : extraction à froid, procédé contrôlé et traçabilité." },
     us: { title: "Production and Oil Mill", description: "Discover Del Pasqua oil mill production: cold extraction, controlled process and traceability." },
   },
   "/il-nostro-olio/": {
+    de: { title: "Unser Olivenöl", description: "Entdecken Sie die nativen Olivenöle extra von Del Pasqua, ihre Formate und sensorischen Profile." },
+    nl: { title: "Onze Olijfolie", description: "Ontdek de extra vierge olijfoliën van Del Pasqua, de formaten en sensorische profielen." },
+    da: { title: "Vores Olivenolie", description: "Oplev Del Pasquas ekstra jomfruolivenolier, formater og smagsprofiler." },
+    no: { title: "Vår Olivenolje", description: "Oppdag Del Pasquas ekstra virgin olivenoljer, formater og smaksprofiler." },
     es: { title: "Nuestro aceite de oliva", description: "Descubre los aceites de oliva virgen extra Del Pasqua, sus formatos y perfiles sensoriales." },
     fr: { title: "Notre huile d'olive", description: "Découvrez les huiles d'olive vierge extra Del Pasqua, leurs formats et leurs profils sensoriels." },
     us: { title: "Our Olive Oil", description: "Discover Del Pasqua extra virgin olive oils, formats and sensory profiles." },
   },
   "/shop/": {
+    de: { title: "Online-Shop", description: "Kaufen Sie natives Olivenöl extra und ausgewählte Produkte von Del Pasqua online." },
+    nl: { title: "Winkel", description: "Koop extra vierge olijfolie en geselecteerde producten van Del Pasqua online." },
+    da: { title: "Butik", description: "Køb Del Pasqua ekstra jomfruolivenolie og udvalgte produkter online." },
+    no: { title: "Butikk", description: "Kjøp Del Pasqua ekstra virgin olivenolje og utvalgte produkter på nett." },
     es: { title: "Tienda", description: "Compra online aceite de oliva virgen extra Del Pasqua y productos seleccionados." },
     fr: { title: "Boutique", description: "Achetez en ligne l'huile d'olive vierge extra Del Pasqua et une sélection de produits." },
     us: { title: "Shop", description: "Buy Del Pasqua extra virgin olive oil and selected products online." },
   },
   "/acquista/": {
+    de: { title: "Del Pasqua Olivenöl kaufen", description: "Kaufen Sie natives Olivenöl extra von Del Pasqua im offiziellen Online-Shop." },
+    nl: { title: "Del Pasqua olijfolie kopen", description: "Koop extra vierge olijfolie van Del Pasqua online in de officiële winkel." },
+    da: { title: "Køb Del Pasqua olivenolie", description: "Køb Del Pasqua ekstra jomfruolivenolie online i den officielle butik." },
+    no: { title: "Kjøp Del Pasqua olivenolje", description: "Kjøp Del Pasqua ekstra virgin olivenolje på nett i den offisielle butikken." },
     es: { title: "Comprar aceite de oliva Del Pasqua", description: "Compra online aceite de oliva virgen extra Del Pasqua en la tienda oficial." },
     fr: { title: "Acheter l'huile d'olive Del Pasqua", description: "Achetez en ligne l'huile d'olive vierge extra Del Pasqua dans la boutique officielle." },
     us: { title: "Buy Del Pasqua Olive Oil", description: "Buy Del Pasqua extra virgin olive oil online from the official shop." },
   },
   "/contatti/": {
+    de: { title: "Kontakt", description: "Kontaktieren Sie Frantoio Del Pasqua in Monte San Savino für Produkte, Bestellungen und geschäftliche Anfragen." },
+    nl: { title: "Contact", description: "Neem contact op met Frantoio Del Pasqua in Monte San Savino voor producten, bestellingen en zakelijke aanvragen." },
+    da: { title: "Kontakt", description: "Kontakt Frantoio Del Pasqua i Monte San Savino vedrørende produkter, ordrer og erhvervshenvendelser." },
+    no: { title: "Kontakt", description: "Kontakt Frantoio Del Pasqua i Monte San Savino for produkter, bestillinger og bedriftshenvendelser." },
     es: { title: "Contacto", description: "Contacta con Frantoio Del Pasqua en Monte San Savino para productos, pedidos y solicitudes comerciales." },
     fr: { title: "Contact", description: "Contactez Frantoio Del Pasqua à Monte San Savino pour les produits, commandes et demandes commerciales." },
     us: { title: "Contact", description: "Contact Frantoio Del Pasqua in Monte San Savino for products, orders and business requests." },
@@ -302,7 +344,16 @@ const SEO_COPY_BY_PATH: Partial<Record<string, Partial<Record<"es" | "fr" | "us"
 
 function getLocalizedSeoCopy(path: string, locale: string, fallback: LocalizedSeoCopy): LocalizedSeoCopy {
   const normalizedPath = normalizePath(path);
-  const marketLocale = locale === "es" || locale === "fr" || locale === "us" ? locale : null;
+  const marketLocale =
+    locale === "de" ||
+    locale === "nl" ||
+    locale === "da" ||
+    locale === "no" ||
+    locale === "es" ||
+    locale === "fr" ||
+    locale === "us"
+      ? locale
+      : null;
   return (marketLocale && SEO_COPY_BY_PATH[normalizedPath]?.[marketLocale]) ?? fallback;
 }
 
@@ -340,6 +391,21 @@ export function getProductAlternateUrls(product: { id: string; slug?: string | n
     const slug = getLocalizedProductSlug(product, locale);
     const template = localizedPathnames["/shop/[prodotto]"]?.[locale] || "/shop/[prodotto]";
     const resolvedPath = template.replace("[prodotto]", slug);
+    const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
+    urls[getSeoLocale(locale)] = absoluteUrl(fullPath);
+  }
+  urls["x-default"] = urls["it"];
+  return urls;
+}
+
+export function getBlogCategoryAlternateUrls(post: BlogSlugSource) {
+  const urls: Record<string, string> = {};
+  for (const locale of locales) {
+    if (!hasBlogPostTranslation(post, locale)) continue;
+
+    const categorySlug = getLocalizedBlogCategorySlug(post, locale);
+    const template = localizedPathnames["/blog/category/[category]"]?.[locale] || "/blog/category/[category]";
+    const resolvedPath = template.replace("[category]", categorySlug);
     const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
     urls[getSeoLocale(locale)] = absoluteUrl(fullPath);
   }

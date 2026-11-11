@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "12 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/nmr-olio-oliva-analisi.jpg"
+references:
+  - label: "Mannina L. et al. (2001) — Caractérisation de l'huile d'olive par RMN 1H à haute résolution. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf010373a"
+    note: "Étude pionnière sur l'utilisation de la résonance magnétique nucléaire et de la chimiométrie pour l'authentification de l'origine."
+  - label: "Vigli G. et al. (2003) — 13C-NMR study of olive oils and its use for the detection of adulteration. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf0210080"
+    note: "RMN 13C quantitative appliquée à la distribution stéréospécifique des triglycérides pour identifier les huiles réestérifiées."
+  - label: "Dais P. & Hatzakis E. (2013) — Quality assessment and authentication of virgin olive oil by NMR spectroscopy. Anal. Chim. Acta"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0003267013000627"
+    note: "Revue critique sur le dosage simultané des acides gras, diglycérides et fractions phénoliques par RMN 1H, 13C et 31P."
+  - label: "COI/T.20/Doc. No 30 (2013) — Application de la spectroscopie RMN à l'authentification de l'huile d'olive. Conseil Oléicole International"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Lignes directrices du Conseil Oléicole International relatives à l'empreinte spectrale RMN."
 ---
 
 ## Une révolution dans l'analyse de l'huile d'olive

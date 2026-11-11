@@ -10,7 +10,6 @@ export default function AnalyticsTracker() {
   useEffect(() => {
     if (!analyticsAllowed()) return;
     const pageId = crypto.randomUUID();
-    const occurredAt = new Date().toISOString();
     let activeMs = 0;
     let visibleSince = document.visibilityState === "visible" ? performance.now() : null;
     track({ type: "page_view", eventId: `view-${pageId}`, pageId, path: pathname });
@@ -19,7 +18,7 @@ export default function AnalyticsTracker() {
       if (visibleSince !== null) activeMs += performance.now() - visibleSince;
       visibleSince = null;
       track({
-        type: "page_leave", eventId: `leave-${pageId}`, occurredAt, pageId,
+        type: "page_leave", eventId: `leave-${pageId}`, occurredAt: new Date().toISOString(), pageId,
         path: pathname, durationMs: Math.min(Math.round(activeMs), 20 * 60_000),
       });
     };

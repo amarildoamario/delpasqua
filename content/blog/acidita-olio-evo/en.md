@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "EEC Regulation 2568/91 (Annex II: Determination of free fatty acids)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31991R2568"
+    note: "Official European standard setting the 0.8% free acidity threshold and titrimetric quantification protocol for extra virgin olive oil."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Landmark study proving that throat pungency is triggered by oleocanthal on TRPA1 receptors, not by free fatty acidity."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Detailed examination of endogenous lipase-driven ester bond hydrolysis in damaged olive fruit releasing free fatty acids."
+  - label: "IOC/T.20/Doc. No 34/Rev. 1 (2017) — Determination of free fatty acids. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Standardized chemical reference method established by the International Olive Council for titrimetric acidity determination."
 ---
 
 ## What do we mean by Acidity?

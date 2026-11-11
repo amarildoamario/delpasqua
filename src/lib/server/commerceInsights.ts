@@ -62,10 +62,29 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   }
   const legacyLinks = new Map(events.filter((e) => e.type === "purchase" && e.orderId).map((e) => [e.orderId!, e]));
   const decisionDays: number[] = [], decisionSessions: number[] = [];
+  const sourceOrders = new Map<keyof typeof ACQUISITION_LABELS, number>();
   for (const order of paid) {
     const saved = context(order, includeInternal);
     const legacy = legacyLinks.get(order.id);
+    const sessionId = saved?.sessionId;
     const visitorId = saved?.visitorId ?? legacy?.visitorId;
+    let orderSource: keyof typeof ACQUISITION_LABELS | null = null;
+    if (sessionId && sessions.has(sessionId)) {
+      const ev = sessions.get(sessionId)!;
+      const meta = ev.data && typeof ev.data === "object" ? (ev.data as { meta?: { acquisition?: { source?: string } } }).meta : undefined;
+      const stored = meta?.acquisition?.source;
+      orderSource = stored && Object.hasOwn(ACQUISITION_LABELS, stored) ? stored as keyof typeof ACQUISITION_LABELS : acquisitionSource(ev.userAgent ?? "", ev.referrer).source;
+    } else if (visitorId) {
+      const userVisits = visits.get(visitorId) ?? [];
+      if (userVisits.length > 0) {
+        const first = userVisits[0];
+        const meta = first.data && typeof first.data === "object" ? (first.data as { meta?: { acquisition?: { source?: string } } }).meta : undefined;
+        const stored = meta?.acquisition?.source;
+        orderSource = stored && Object.hasOwn(ACQUISITION_LABELS, stored) ? stored as keyof typeof ACQUISITION_LABELS : acquisitionSource(first.userAgent ?? "", first.referrer).source;
+      }
+    }
+    if (orderSource) sourceOrders.set(orderSource, (sourceOrders.get(orderSource) ?? 0) + 1);
+
     if (!visitorId) continue;
     const before = (visits.get(visitorId) ?? []).filter((e) => e.createdAt <= order.paidAt!);
     if (!before.length) continue;
@@ -109,7 +128,17 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   for (const o of paid) if (inDay(o.paidAt!)) hours[bucketIndexes(o.paidAt!)[0]].orders.add(o.id);
   const serialize = (bucket: typeof hours[number], label: string) => ({ label, visits: bucket.visits.size, carts: bucket.carts.size, orders: bucket.orders.size });
   return {
-    acquisition: Object.entries(ACQUISITION_LABELS).map(([source, label]) => ({ source, label, sessions: sourceCounts.get(source as keyof typeof ACQUISITION_LABELS) ?? 0 })),
+    acquisition: Object.entries(ACQUISITION_LABELS).map(([source, label]) => {
+      const s = sourceCounts.get(source as keyof typeof ACQUISITION_LABELS) ?? 0;
+      const o = sourceOrders.get(source as keyof typeof ACQUISITION_LABELS) ?? 0;
+      return {
+        source,
+        label,
+        sessions: s,
+        orders: o,
+        conversionRate: s > 0 ? o / s : null,
+      };
+    }),
     stripe: { started: cohort.length, paid: cohortPaid.length, canceledUnpaid: canceledUnpaid.length, recovered: recovered.length,
       pendingOrUnobserved: cohort.length - outcomes, exitRate: outcomes ? canceledUnpaid.length / outcomes : null },
     decision: { samples: decisionDays.length, paidOrders: paid.length, avgDays: avg(decisionDays), avgSessions: avg(decisionSessions) },

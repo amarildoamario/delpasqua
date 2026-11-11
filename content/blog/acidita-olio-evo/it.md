@@ -8,6 +8,19 @@ updateDate: "2026-02-28"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidita-olio-oliva.png"
+references:
+  - label: "Regolamento (CEE) N. 2568/91 (Allegato II: Determinazione dell'acidità libera)"
+    url: "https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:31991R2568"
+    note: "Normativa comunitaria che definisce il metodo ufficiale di titolazione e il limite massimo di acidità dello 0,8% per l'olio extra vergine."
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Studio fondamentale che dimostra come il pizzicore in gola sia generato dall'oleocantale sui recettori TRPA1 e non dall'acidità libera."
+  - label: "Kiritsakis A. et al. (1998) — Olive Oil: From the Tree to the Table (Food & Nutrition Press)"
+    url: "https://link.springer.com/book/10.1007/978-1-4615-5683-1"
+    note: "Trattato sull'idrolisi enzimatica ad opera delle lipasi endogene nell'oliva danneggiata e dinamica di rilascio degli acidi grassi liberi."
+  - label: "COI/T.20/Doc. No 34/Rev. 1 (2017) — Determination of free fatty acids. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Metodo analitico ufficiale del Consiglio Oleicolo Internazionale per la quantificazione dell'acidità titolabile."
 ---
 
 ## Cosa intendiamo per Acidità?

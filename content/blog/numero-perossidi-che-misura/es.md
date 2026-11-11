@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-e-perossidi.jpg"
+references:
+  - label: "Reglamento CEE 2568/91 (Anexo III: Determinación del índice de peróxidos)"
+    url: "https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:31991R2568"
+    note: "Método oficial de la Unión Europea para la valoración yodométrica de los hidroperóxidos lipídicos."
+  - label: "Dobarganes C. & Márquez-Ruiz G. (2003) — Oxidative stability of edible oils: primary and secondary oxidation products. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200390021"
+    note: "Descomposición de los hidroperóxidos primarios en aldehídos volátiles y justificación analítica de la paradoja de los peróxidos."
+  - label: "Pristouri G. et al. (2010) — Effect of packaging material headspace, and storage conditions on quality indicators of extra virgin olive oil. Food Control"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0956713509002606"
+    note: "Evaluación experimental del ascenso de peróxidos en función del oxígeno disuelto, la luz y la temperatura ambiente."
+  - label: "Kamal-Eldin A. (2006) — Effect of fatty acids and tocopherols on the oxidative stability of vegetable oils. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200500290"
+    note: "Mecanismos de autooxidación radicalaria y estabilidad conferida por el alto porcentaje de ácido oleico."
+  - label: "COI/T.20/Doc. No 35/Rev. 1 (2017) — Determinación del índice de peróxidos. Consejo Oleícola Internacional"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Protocolo oficial del Consejo Oleícola Internacional para el análisis de rutina de los peróxidos en laboratorio."
 ---
 
 ## ¿Qué es un peróxido?

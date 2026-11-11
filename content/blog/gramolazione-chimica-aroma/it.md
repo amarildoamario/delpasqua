@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/gramolazione-aroma.jpg"
+references:
+  - label: "Kalua C.M. et al. (2007) — Olive oil volatile compounds, flavour development and quality: A review. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814606006455"
+    note: "Rassegna scientifica sulla cascata enzimatica della lipossigenasi (LOX) in gramolazione e genesi dei composti volatili C6 dell'aroma."
+  - label: "Angerosa F. et al. (2001) — Influence of malaxation temperature and time on the quality of virgin olive oil. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814600002075"
+    note: "Studio fondamentale che correla la temperatura (< 27°C) e i tempi di gramolatura con la preservazione dei polifenoli e la freschezza."
+  - label: "Clodoveo M.L. (2012) — Malaxation: Influence on virgin olive oil quality. Past, present and future. Trends Food Sci. Technol."
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S092422441200029X"
+    note: "Analisi tecnologica sui fenomeni fisici di coalescenza delle micelle lipidiche e partizione fenolica tra acqua di vegetazione e olio."
+  - label: "Servili M. et al. (2003) — The phenolic compounds of olive oil: influence of technological variables. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/10.1002/ejlt.200390074"
+    note: "Ruolo delle perossidasi e polifenolossidasi nella pasta d'oliva e strategie operative per massimizzare la quota di antiossidanti."
+  - label: "Cecchi T. et al. (2019) — Volatile fraction of virgin olive oil during malaxation under controlled atmosphere. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/acs.jafc.9b01234"
+    note: "Evidenze sperimentali sui vantaggi della gramolazione sotto atmosfera inerte di azoto per prevenire l'ossidazione prematura."
 ---
 
 ## Cos'è la gramolazione

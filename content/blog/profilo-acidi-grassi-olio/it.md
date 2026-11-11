@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidi-grassi.jpg"
+references:
+  - label: "Regolamento di Esecuzione (UE) 2022/2105 (Controlli di conformità e limiti degli acidi grassi)"
+    url: "https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:32022R2105"
+    note: "Normativa comunitaria che definisce la composizione percentuale limite di acidi grassi ammessi per l'autenticità dell'olio EVO."
+  - label: "Beltrán G. et al. (2004) — Influence of cultivar and environment on olive oil fatty acid composition. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814603004862"
+    note: "Studio approfondito sulla variabilità del tenore di acido oleico e linoleico in base a cultivar, clima e altitudine."
+  - label: "Mensink R.P. et al. (2003) — Effects of dietary fatty acids on the ratio of serum total to HDL cholesterol. Am. J. Clin. Nutr."
+    url: "https://academic.oup.com/ajcn/article/77/5/1146/4689813"
+    note: "Meta-analisi clinica che dimostra i benefici dei grassi monoinsaturi nella riduzione dell'LDL e tutela cardiovascolare."
+  - label: "Boskou D. (2015) — Olive Oil: Chemistry and Technology (2nd Edition, AOCS Press)"
+    url: "https://www.sciencedirect.com/book/9781893997882/olive-oil"
+    note: "Trattato enciclopedico sulla biochimica dei trigliceridi dell'olio d'oliva e loro straordinaria stabilità ossidativa e termica."
+  - label: "IOC Trade Standard COI/T.15/NC No 3/Rev. 19 (2022) — International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Standard commerciale internazionale con le tolleranze di purezza del profilo di acidi grassi per la prevenzione delle frodi."
 ---
 
 ## I tre acidi grassi principali dell'EVO

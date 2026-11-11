@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "6 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/spettrometria-massa-olio-oliva-gcms-lcms.jpg"
+references:
+  - label: "Aparicio R. & Morales M.T. (1998) — Characterization of olive oil aromas by sensory analysis and GC-MS. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814697001487"
+    note: "Key benchmark study identifying hexanal, (E)-2-hexenal, and freshness marker volatiles using solid-phase microextraction (SPME-GC-MS)."
+  - label: "Carrasco-Pancorbo A. et al. (2005) — Evaluation of the antioxidant capacity of individual phenolic compounds by LC-MS. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf058043b"
+    note: "Core analytical methodology for liquid chromatographic separation and tandem mass spectrometric quantification (LC-ESI-IT-MS)."
+  - label: "Angerosa F. (2002) — Influence of volatile compounds on virgin olive oil sensory profile: A review. J. Chromatogr. A"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0021967302002778"
+    note: "Scientific review directly linking volatile gas chromatographic fingerprints with official sensory panel test evaluations."
+  - label: "Alagna F. et al. (2012) — Comprehensive profiling of olive fruit and oil polyphenols by LC-MS/MS. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf205156v"
+    note: "High-sensitivity triple quadrupole LC-MS/MS profiling of complex secoiridoids, phenyl-ethyl alcohols, and flavonoids."
 ---
 
 ## Principles of Mass Spectrometry

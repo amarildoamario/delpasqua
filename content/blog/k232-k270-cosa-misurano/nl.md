@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/k232.jpg"
+references:
+  - label: "EEG-verordening 2568/91 (Bijlage IX: Spectrofotometrisch onderzoek in het ultraviolet)"
+    url: "https://eur-lex.europa.eu/legal-content/NL/TXT/?uri=CELEX:31991R2568"
+    note: "Officiële Europese meetmethode voor de UV-extinctiewaarden K232, K270 en Delta-K."
+  - label: "ISO 3656:2011 — Dierlijke en plantaardige vetten en oliën: Bepaling van ultravioletabsorptie"
+    url: "https://www.iso.org/standard/53612.html"
+    note: "Internationale ISO-norm voor spectrofotometrische meting van geconjugeerde diënen en triënen in isooctaan."
+  - label: "Perez-Camino M.C. et al. (2008) — Changes in virgin olive oil quality indicators during long-term storage. Eur. Food Res. Technol."
+    url: "https://link.springer.com/article/10.1007/s00217-007-0744-8"
+    note: "Kinetische evaluatie van K232 en K270 als betrouwbare markers voor primaire en secundaire oxidatie."
+  - label: "IOC/T.20/Doc. No 19/Rev. 5 (2019) — Spectrofotometrisch onderzoek in het ultraviolet. Internationale Olijfraad"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Richtlijn van de Internationale Olijfraad om geraffineerde of verouderde olijfolie op te sporen."
 ---
 
 ## Wat zijn K-waarden?

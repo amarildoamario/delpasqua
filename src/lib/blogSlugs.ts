@@ -86,17 +86,35 @@ export function findCategoryNameBySlug(routeParam: unknown, locale: string): str
   if (!wanted) return undefined;
 
   const supportedLocale: Locale = isLocale(locale) ? locale : "it";
+  const lookupLocale: Locale = supportedLocale === "us" ? "en" : supportedLocale;
 
   // Search in BLOG_POST_TRANSLATIONS
   for (const translations of Object.values(BLOG_POST_TRANSLATIONS)) {
     for (const trans of Object.values(translations)) {
       if (normalizeBlogSlug(trans.category) === wanted) {
-        return translations[supportedLocale]?.category ?? trans.category;
+        return translations[lookupLocale]?.category ?? translations.en?.category ?? trans.category;
       }
     }
   }
 
   return undefined;
+}
+
+export function findPostByCategorySlug<T extends BlogSlugSource>(posts: T[], routeParam: unknown): T | undefined {
+  const wanted = normalizeBlogSlug(routeParam);
+  if (!wanted) return undefined;
+
+  return posts.find((post) => {
+    const translations = BLOG_POST_TRANSLATIONS[post.id];
+    if (translations) {
+      for (const trans of Object.values(translations)) {
+        if (normalizeBlogSlug(trans.category) === wanted) {
+          return true;
+        }
+      }
+    }
+    return normalizeBlogSlug(post.category) === wanted;
+  });
 }
 
 export function getBlogCategoryHref(category: string) {

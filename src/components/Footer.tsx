@@ -56,6 +56,24 @@ export default function Footer() {
       { href: "/olio-biologico", label: "Økologisk Olivenolje" },
       { href: "/nuovo-raccolto", label: "Ny Høst" },
       { href: "/olio-5-litri", label: "5 Liters Kanne" }
+    ],
+    es: [
+      { href: "/olio-toscano", label: "Aceite de Oliva Toscano" },
+      { href: "/olio-biologico", label: "Aceite AOVE Ecológico" },
+      { href: "/nuovo-raccolto", label: "Aceite Nueva Cosecha" },
+      { href: "/olio-5-litri", label: "Lata de 5 Litros" }
+    ],
+    fr: [
+      { href: "/olio-toscano", label: "Huile d'Olive Toscane" },
+      { href: "/olio-biologico", label: "Huile Vierge Extra Bio" },
+      { href: "/nuovo-raccolto", label: "Huile Nouvelle Récolte" },
+      { href: "/olio-5-litri", label: "Bidon de 5 Litres" }
+    ],
+    us: [
+      { href: "/olio-toscano", label: "Tuscan Extra Virgin Oil" },
+      { href: "/olio-biologico", label: "Organic EVO Oil" },
+      { href: "/nuovo-raccolto", label: "New Harvest Olive Oil" },
+      { href: "/olio-5-litri", label: "5 Liters Can" }
     ]
   };
 
@@ -66,17 +84,20 @@ export default function Footer() {
     de: "Unsere Auswahlen",
     nl: "Onze Selecties",
     da: "Vores Udvalg",
-    no: "Vårt Utvalg"
+    no: "Vårt Utvalg",
+    es: "Nuestras Selecciones",
+    fr: "Nos Sélections",
+    us: "Our Selections"
   }[locale] || "Le nostre Selezioni";
 
   const navLinks = [
     { href: "/", label: tNav("home") },
     { href: "/storia", label: tNav("about_us") },
-    { href: "/il-nostro-olio", label: tNav("olio") },
+    { href: "/shop", label: tNav("shop") },
     { href: "/produzione", label: tNav("frantoio") },
     { href: "/degustazioni", label: tNav("degustazioni") },
-    { href: "/shop", label: tNav("shop") },
     { href: "/blog", label: tNav("blog") },
+    { href: "/contatti", label: tNav("contatti") },
   ];
 
   return (

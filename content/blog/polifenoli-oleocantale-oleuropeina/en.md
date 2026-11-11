@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "6 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-olio.jpg"
+references:
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Pioneering Nature study establishing the anti-inflammatory COX-inhibiting potency and peppery throat sensation of oleocanthal."
+  - label: "EFSA Panel on Dietetic Products, Nutrition and Allergies (2011) — Health claims related to olive oil polyphenols. EFSA Journal"
+    url: "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2033"
+    note: "Official scientific opinion of the EFSA validating the protection of blood lipids (LDL cholesterol) against oxidative damage."
+  - label: "Servili M. et al. (2009) — Health and sensory properties of virgin olive oil hydrophilic phenols. Agro FOOD Industry Hi-Tech"
+    url: "https://www.teknoscienze.com/tks_article/health-and-sensory-properties-of-virgin-olive-oil-hydrophilic-phenols/"
+    note: "Analysis of hydrophilic secoiridoids (oleuropein and ligstroside aglycons) responsible for noble bitterness and aging resilience."
+  - label: "Abuznait A.H. et al. (2013) — Olive-oil-derived oleocanthal enhances β-amyloid clearance as a potential neuroprotective mechanism. ACS Chem. Neurosci."
+    url: "https://pubs.acs.org/doi/10.1021/cn400024q"
+    note: "In vitro and preclinical evidence investigating oleocanthal-induced clearance of neurotoxic Alzheimer's-linked beta-amyloid proteins."
 ---
 
 ## The molecular treasures of EVOO

@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/k232.jpg"
+references:
+  - label: "EEC Regulation 2568/91 (Annex IX: Spectrophotometric examination in the ultraviolet)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31991R2568"
+    note: "Official European UV spectrophotometry testing method for K232, K270, and Delta-K purity parameters in olive oil."
+  - label: "ISO 3656:2011 — Animal and vegetable fats and oils: Ultraviolet absorbance as specific UV extinction"
+    url: "https://www.iso.org/standard/53612.html"
+    note: "International ISO standard specifying spectrophotometric extinction determination for conjugated dienes and trienes in isooctane."
+  - label: "Perez-Camino M.C. et al. (2008) — Changes in virgin olive oil quality indicators during long-term storage. Eur. Food Res. Technol."
+    url: "https://link.springer.com/article/10.1007/s00217-007-0744-8"
+    note: "Longitudinal analysis of K232 and K270 progression as reliable indicators of primary and secondary lipid degradation."
+  - label: "IOC/T.20/Doc. No 19/Rev. 5 (2019) — Spectrophotometric investigation in the ultraviolet. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Official International Olive Council guidelines applying UV absorption coefficients to detect refined and aged oil mixtures."
 ---
 
 ## What are UV extinction coefficients?

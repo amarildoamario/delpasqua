@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "6 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/spettrometria-massa-olio-oliva-gcms-lcms.jpg"
+references:
+  - label: "Aparicio R. & Morales M.T. (1998) — Characterization of olive oil aromas by sensory analysis and GC-MS. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814697001487"
+    note: "Fundamenteel werk over de identificatie van hexanal, (E)-2-hexenal en vluchtige versheidsmarkers via SPME-GC-MS."
+  - label: "Carrasco-Pancorbo A. et al. (2005) — Evaluation of the antioxidant capacity of individual phenolic compounds by LC-MS. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf058043b"
+    note: "Referentiemethode voor vloeistofchromatografiescheiding en kwantificering met tandem-massaspectrometrie (LC-ESI-IT-MS)."
+  - label: "Angerosa F. (2002) — Influence of volatile compounds on virgin olive oil sensory profile: A review. J. Chromatogr. A"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0021967302002778"
+    note: "Wetenschappelijk overzicht van het gebruik van GC-MS om het vluchtige profiel te correleren met sensorische paneltestbeoordelingen."
+  - label: "Alagna F. et al. (2012) — Comprehensive profiling of olive fruit and oil polyphenols by LC-MS/MS. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf205156v"
+    note: "Zeer gevoelige profilering van complexe secoiridoïden, fenylethylderivaten en flavonoïden in extra vierge olijfolie."
 ---
 
 ## Principes van Massaspectrometrie

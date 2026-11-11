@@ -1,222 +1,202 @@
 ---
 id: "tec-3"
 title: "Metodi ISO per l'analisi dell'olio di oliva: da ISO 660 a ISO 27107 — guida completa"
-excerpt: "ISO 660, 662, 3960, 3961, 5509, 11701, 27107: i metodi ufficiali per l'analisi dell'olio d'oliva spiegati in dettaglio, con principio chimico, procedura e limiti di legge applicabili."
+excerpt: "ISO 660, 3960, 3961, 5509, 27107, 29822, 18363: i metodi ufficiali per l'analisi dell'olio d'oliva spiegati in dettaglio, con principio chimico, procedura di laboratorio e limiti di legge applicabili."
 category: "Chimica dell'olio di oliva"
 date: "2026-03-01"
 updateDate: "2026-03-01"
 readingTime: "12 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/metodi-iso-analisi-olio-oliva.jpg"
+references:
+  - label: "Regolamento (CEE) N. 2568/91 e Regolamento Delegato (UE) 2022/2104 della Commissione"
+    url: "https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:32022R2104"
+    note: "Normativa ufficiale dell'Unione Europea relativa alle caratteristiche qualitative e analitiche dell'olio d'oliva e ai relativi metodi di prova."
+  - label: "ISO 660:2020 & ISO 3960:2017 — Animal and vegetable fats and oils: Acid value and Peroxide value"
+    url: "https://www.iso.org/standard/74735.html"
+    note: "Standard internazionali di riferimento per la determinazione titolimetrica dell'acidità libera e iodometrica dei perossidi lipidici."
+  - label: "ISO 12966-2:2017 & ISO 12966-4:2015 — Fatty acid methyl esters (FAME) by gas chromatography"
+    url: "https://www.iso.org/standard/65306.html"
+    note: "Metodiche ufficiali per la transesterificazione rapida a FAME e quantificazione su colonna capillare GC-FID."
+  - label: "ISO 12228-2:2014 & ISO 27107:2008 — Determination of individual and total sterols in olive oils"
+    url: "https://www.iso.org/standard/55219.html"
+    note: "Protocollo per l'isolamento della frazione insaponificabile e quantificazione dei fitosteroli markers contro le adulterazioni."
+  - label: "Aparicio R. & Harwood J. (2013) — Handbook of Olive Oil: Analysis and Properties (Springer)"
+    url: "https://link.springer.com/book/10.1007/978-1-4614-7777-8"
+    note: "Trattato internazionale di riferimento per la chimica dell'olio di oliva, autenticità, contaminanti di processo (3-MCPD) e cere."
 ---
 
-## Contesto normativo: ISO e regolamenti UE
+## 1. Quadro normativo: standard ISO, regolamenti UE e COI
 
-Il quadro normativo per l'analisi dell'olio d'oliva è strutturato su due livelli interconnessi:
+La valutazione analitica dell'olio d'oliva poggia su un'architettura normativa rigorosa a doppio livello, concepita per tutelare il consumatore e certificare l'autenticità del prodotto:
 
-1. **Standard ISO** (*International Organization for Standardization*, Ginevra): definiscono i metodi analitici ufficiali a livello internazionale. Adottati come standard nazionali dai paesi membri (EN ISO in Europa, UNI EN ISO in Italia).
+1. **Standard ISO (*International Organization for Standardization*)**: definiscono i metodi analitici di riferimento a livello mondiale. Vengono recepiti come standard armonizzati a livello continentale (EN ISO) e nazionale (UNI EN ISO in Italia).
+2. **Regolamento UE 2568/91 (e successivi aggiornamenti, tra cui il Reg. delegato UE 2022/2104)**: stabilisce le caratteristiche chimico-fisiche, i limiti di tolleranza e i metodi di prova ufficiali necessari per la classificazione merceologica e doganale delle diverse categorie di olio d'oliva.
 
-2. **Regolamento UE 2568/91** (e s.m.i.) con i suoi allegati: stabilisce i metodi di analisi ufficiali accettati per la classificazione doganale e commerciale dell'olio d'oliva nell'Unione Europea. Rimanda esplicitamente a specifici metodi ISO e COI.
+A questo sistema si affianca il **COI (*Consiglio Oleicolo Internazionale*)**, con sede a Madrid, che sviluppa metodiche d'avanguardia (serie COI/T.20) spesso anticipate rispetto alla standardizzazione ISO, con particolare rilevanza per i protocolli del Panel Test sensoriale.
 
-Il **COI** (*Consiglio Oleicolo Internazionale*, Madrid) pubblica metodi analitici propri (serie COI/T.20) che spesso precedono o affiancano la standardizzazione ISO, specialmente per l'analisi sensoriale.
+Tutti i laboratori d'analisi accreditati secondo la norma **ISO/IEC 17025** operano nel rispetto di severi criteri di convalida: calcolo del limite di rivelabilità (LOD), quantificazione (LOQ), ripetibilità, riproducibilità intra-laboratorio e stima dell'incertezza di misura.
 
-I laboratori accreditati (**ISO/IEC 17025:2017**) devono implementare i metodi ISO validati, con documentazione di:
-- Dichiarazione di applicabilità del metodo
-- Parametri di validazione (LOD, LOQ, ripetibilità, riproducibilità, incertezza)
-- Riferimento alla versione ISO corrente (molte sono in revisione continua)
+---
 
-## ISO 660:2009 — Acidità libera (metodo titolimetrico)
+## 2. ISO 660 — Acidità libera e tempestività di molitura
 
-### Principio chimico
+L'acidità libera è il parametro primario per stimare la salute del frutto e la cura adottata durante raccolta e trasformazione. Esprime la percentuale in peso di acidi grassi liberi (FFA, *Free Fatty Acids*), convenzionalmente calcolata come grammi di acido oleico per 100 grammi di olio (% m/m), oppure in mg di KOH necessari a neutralizzare un grammo di grasso.
 
-L'**acidità libera** misura il contenuto di **acidi grassi liberi** (FFA, *Free Fatty Acids*) nell'olio, espressa convenzionalmente in g di **acido oleico** per 100 g (% di acidità) oppure in mg KOH/g (indice di acidità).
+**Il principio chimico:**
+I trigliceridi sani sono molecole stabili. Quando l'oliva subisce traumi meccanici, attacchi da mosca olearia (*Bactrocera oleae*) o fermentazioni dovute a soste prolungate prima della frangitura, gli enzimi lipasi endogeni degradano i legami estere, rilasciando acidi grassi liberi. La determinazione sfrutta una reazione stechiometrica acido-base di neutralizzazione:
 
-Reazione di neutralizzazione:
 > RCOOH + KOH → RCOOK + H₂O
 
-Gli FFA si formano dall'**idrolisi enzimatica** (lipasi) dei trigliceridi durante la maturazione del frutto, la conservazione post-raccolta e la lavorazione. Valori elevati indicano olive danneggiate, fermentate o molitura ritardata.
+**La procedura di laboratorio:**
+Si pesano con precisione analitica circa 2.000 g di campione, disciolti in 50 mL di una miscela etanolo 95°/dietiletere (1:1 v/v) preventivamente neutralizzata. Si aggiunge l'indicatore fenolftaleina (viraggio incolore → rosa a pH 8.2) e si titola con una soluzione standardizzata di idrossido di potassio (KOH 0.1 o 0.5 mol/L) fino a viraggio persistente per almeno 30 secondi. La formula applicata è:
 
-### Procedura
+> Acidità % = (V × M × 28.2) / m
 
-1. Pesare **2.000 g** di olio (bilancia analitica, d = 0.0001 g)
-2. Sciogliere in **50 ml** di miscela solvente: etanolo 95° v/v / dietiletere 1:1 (precedentemente neutralizzata con KOH 0.1 mol/L)
-3. Aggiungere 5 gocce di soluzione alcolica di **fenolftaleina** 10 g/L (indicatore vira da incolore a rosa a pH 8.2)
-4. Titolare con **soluzione KOH 0.5 mol/L** fino a viraggio rosa persistente (30 s)
-5. Calcolo: **A% = (V × M × 28.2) / m** dove V = volume KOH (mL), M = molarità, m = massa campione
+dove *V* è il volume di KOH consumato (mL), *M* la molarità della soluzione e *m* la massa del campione in grammi. Per campioni torbidi o molto pigmentati, la norma ISO 660 e il metodo ufficiale UE prescrivono la titolazione potenziometrica con elettrodo di pH combinato, azzerando ogni errore visivo.
 
-### Limiti di legge (Reg. UE 2568/91, Allegato I)
-- *Extra Vergine*: ≤ **0.8%** (≤ 8.0 mg KOH/g)
-- *Vergine*: ≤ **2.0%**
-- *Lampante*: > **2.0%** (non commercializzabile direttamente)
-- *Olio di sansa vergine*: ≤ **3.0%**
-
-### Varianti e interferenze
-
-Il metodo ISO 660 prevede anche la **determinazione potenziometrica** (titolazione con pH-metro, più accurata per campioni colorati che rendono difficile la lettura del viraggio visivo dell'indicatore). La variante potenziometrica è obbligatoria per il metodo ufficiale UE.
+**Limiti legali e realtà artigianale:**
+La normativa europea ammette per la categoria Extra Vergine un valore massimo di acidità dello **0.8%**. Tuttavia, negli oli artigianali di eccellenza moliti a freddo entro poche ore dalla raccolta, come quelli del Frantoio del Pasqua, l'acidità reale si attesta stabilmente tra lo **0.15% e lo 0.25%**, indice inequivocabile di olive sane e lavorazione impeccabile.
 
 ---
 
-## ISO 3960:2017 — Numero di perossidi (metodo iodometrico)
+## 3. ISO 3960 — Numero di perossidi e ossidazione primaria
 
-### Principio chimico
+Mentre l'acidità misura una degradazione idrolitica, il numero di perossidi (NP) rileva lo stato di ossidazione chimica primaria dell'olio, quantificando la presenza di idroperossidi lipidici (ROOH).
 
-Il **numero di perossidi** (NP) quantifica i perossidi lipidici (idroperossidi ROOH) — prodotti primari dell'ossidazione. L'iodo viene liberato per reazione dei perossidi con ioduro di potassio in condizioni acide:
+**Il principio chimico:**
+In presenza di ossigeno e luce, i radicali liberi attaccano le catene insature dell'olio formando perossidi. La determinazione iodometrica ISO 3960 sfrutta il potere ossidante di questi composti capaci di ossidare lo ione ioduro a iodio elementare in ambiente acido:
 
-> ROOH + 2 KI + 2 AcOH → ROH + I₂ + 2 KOAc + H₂O
+> ROOH + 2 KI + 2 CH₃COOH → ROH + I₂ + 2 CH₃COOK + H₂O
 
-Lo iodio libero viene poi titolato con **Na₂S₂O₃** (*tiosolfato di sodio*):
+Lo iodio molecolare formatosi viene quantificato mediante titolazione di ritorno con tiosolfato di sodio (Na₂S₂O₃), impiegando una salda d'amido come indicatore di fine reazione (decolorazione del complesso blu amido-iodio):
 
 > I₂ + 2 Na₂S₂O₃ → 2 NaI + Na₂S₄O₆
 
-L'NP è espresso in **mEq O₂ / kg** di olio.
+**La procedura e i dettagli critici:**
+In beuta conica con tappo smerigliato si sciolgono circa 5 g di olio in 30 mL di miscela cloroformio/acido acetico glaciale (oppure isoottano/acido acetico secondo le revisioni più ecocompatibili). Si aggiungono 0.5 mL di soluzione satura di KI, agitando esattamente per 60 secondi al riparo dalla luce. Dopo l'aggiunta di acqua distillata e salda d'amido, si procede immediatamente alla titolazione.
 
-### Procedura
+> Un accorgimento analitico fondamentale consiste nel degassare i solventi con azoto (N₂): l'ossigeno disciolto nell'aria atmosferica falserebbe il risultato per auto-ossidazione dello ioduro, provocando falsi positivi.
 
-1. **5.000 g** di olio in beuta iodometrica a tappo smerigliato
-2. Sciogliere in **30 ml** di soluzione cloroformio:acido acetico glaciale 2:3 (v/v; in alternativa: isoottano/acido acetico 3:2 secondo ISO 3960:2007)
-3. **Aggiungere 0.5 ml** di soluzione KI satura (fresca, preparata in acqua bidistillata priva di ossigeno)
-4. **Agitare 1 minuto** in oscurità a temperatura ambiente
-5. Aggiungere **75 ml** di acqua bidistillata e 1 ml di soluzione amido 5 g/L (indicatore)
-6. Titolare immediatamente con **Na₂S₂O₃ 0.01 mol/L** fino a scomparsa del colore blu
-7. Calcolo: **NP = (V − V₀) × 10 × M / m** dove V₀ = blank senza campione
-
-**Attenzione critica**: la presenza di ossigeno disciolto nella soluzione cloroformio/AcOH produce valori falsamente elevati (*falso positivo*). La soluzione solvente deve essere *purgata con N₂* prima dell'uso.
-
-### Limiti di legge e valori indicativi
-
-- *Extra Vergine*: ≤ **20 mEq O₂/kg**
-- *Olio di oliva vergine*: ≤ 20
-- *Olio di sansa vergine*: ≤ 15
-- **Olio fresco di alta qualità**: tipicamente 4–10 mEq O₂/kg
+**Limiti e interpretazione:**
+Il limite UE per l'EVO è fissato a **≤ 20 mEq O₂/kg**. Negli oli freschi di alta qualità appena estratti il valore è tipicamente compreso tra **4 e 8 mEq O₂/kg**. Valori crescenti testimoniano l'avvio della degradazione ossidativa, che nel tempo sfocerà nell'irrancidimento secondario.
 
 ---
 
-## ISO 3961:2013 — Indice di iodio
+## 4. ISO 3961 — Indice di iodio e grado di insaturazione
 
-### Principio e significato
+L'indice di iodio (metodo di Wijs) quantifica il numero di grammi di alogeno assorbiti da 100 grammi di sostanza grassa, offrendo una stima complessiva del numero di doppi legami presenti nei trigliceridi.
 
-L'**indice di iodio** (II) misura il grado di insaturazione di un grasso: quanti grammi di I₂ vengono assorbiti da 100 g di olio. Un olio ricco di acidi grassi insaturi (molti doppi legami) assorbe più iodio.
+**Il principio e il metodo di Wijs:**
+Il reattivo di Wijs (monocloruro di iodio, ICl, disciolto in acido acetico glaciale) si addiziona quantitativamente ai doppi legami carbonio-carbonio insaturi. L'eccesso di reattivo non consumato viene convertito in iodio libero con ioduro di potassio e titolato con tiosolfato di sodio standard.
 
-Per l'olio d'oliva: II tipico = **75–94 g I₂/100 g** (Wijs).
+Nell'olio extra vergine d'oliva l'indice di iodio tipico oscilla tra **75 e 94 g I₂/100 g**. Può essere stimato con ottima approssimazione a partire dal profilo gascromatografico:
 
-Calcolato dalla composizione in acidi grassi, l'II *teorico* è:
-> II = 0.899 × (%C18:1) + 1.810 × (%C18:2) + 2.735 × (%C18:3) + ...
+> II = 0.899 × (% C18:1) + 1.810 × (% C18:2) + 2.735 × (% C18:3)
 
-Il metodo di Wijs (reattivo: ICl in acido acetico glaciale) è quello ufficiale ISO 3961.
-
-**Utilizzo**: non più primario per la classificazione doganale (sostituito dall'analisi GC degli acidi grassi), ma ancora usato per verifiche rapide di adulterazione grossolana con oli molto diversi (palma, cocco con II bassissimo vs. oli polinsaturi con II > 100).
+Sebbene le moderne tecniche cromatografiche abbiano soppiantato questo saggio nell'analisi di routine, la determinazione ISO 3961 conserva un valore storico e ispettivo per identificare miscelazioni macroscopiche con oli tropicali a basso tenore insaturo (olio di palma, II < 55) o con oli vegetali iper-insaturi (soia, girasole, II > 120).
 
 ---
 
-## ISO 5509:2000 (EN ISO 5508:1995) — Profilo degli acidi grassi tramite GC con metilazione
+## 5. ISO 5509 e ISO 12966 — Profilo degli acidi grassi in GC
 
-### Principio
+La vera identità nutrizionale e biologica dell'olio extra vergine risiede nella composizione in acidi grassi. Poiché i trigliceridi intatti sono molecole altobollenti non idonee alla separazione diretta in gascromatografia, la norma ISO 5509 (ora evoluta nella serie ISO 12966) prescrive la loro preventiva conversione in esteri metilici degli acidi grassi (FAME, *Fatty Acid Methyl Esters*).
 
-Il metodo di riferimento per l'analisi quantitativa degli **acidi grassi** nell'olio è la **gascromatografia su colonna capillare** previa conversione degli acidi in **esteri metilici** (FAME, *Fatty Acid Methyl Esters*).
+**La preparazione del campione (transesterificazione rapida):**
+In ambiente alcalino, circa 0.1 g di olio vengono trattati a caldo con una soluzione di idrossido di potassio in metanolo (KOH 2M). I gruppi metilici sostituiscono il glicerolo con formazione quantitativa di FAME volatili, successivamente estratti nella fase superiore con isoottano e neutralizzati.
 
-La derivatizzazione a FAME è necessaria perché gli acidi grassi liberi e i trigliceridi non sono abbastanza volatili per essere analizzati direttamente in GC a temperature ragionevoli.
+**Condizioni strumentali:**
+L'estratto viene iniettato in un gascromatografo dotato di:
+- Colonna capillare ad alta polarità (es. CP-Sil 88 o DB-Wax, 50 m × 0.25 mm × 0.20 μm), capace di risolvere gli isomeri cis/trans.
+- Gas di trasporto: elio o idrogeno ad alta purezza.
+- Rivelatore a ionizzazione di fiamma (FID), con risposta proporzionale al contenuto di carbonio organico.
 
-### Derivatizzazione (transmetilazione)
+**I requisiti di purezza stabiliti dall'Unione Europea:**
 
-Il metodo ISO 5509 prevede la transesterificazione alcalina con **metanolo/KOH 2M** (metodo "rapido" per oli saponificabili):
+| Acido grasso | Formula | Range ammesso nell'EVO (Reg. UE) |
+| :--- | :--- | :--- |
+| Acido miristico | C14:0 | ≤ 0.03% |
+| Acido palmitico | C16:0 | 7.50 – 20.00% |
+| Acido palmitoleico | C16:1 | 0.30 – 3.50% |
+| Acido eptadecanoico | C17:0 | ≤ 0.40% |
+| Acido stearico | C18:0 | 0.50 – 5.00% |
+| Acido oleico | C18:1 | **55.00 – 83.00%** |
+| Acido linoleico | C18:2 | 2.50 – 21.00% |
+| Acido α-linolenico | C18:3 | **≤ 1.00%** |
+| Acido arachico | C20:0 | ≤ 0.60% |
+| Acido gadoleico | C20:1 | ≤ 0.50% |
+| Acido beenico | C22:0 | ≤ 0.20% |
+| Acido lignocerico | C24:0 | ≤ 0.20% |
 
-1. **0.1 g** di olio + 1 ml di soluzione KOH 2M in metanolo
-2. Agitazione in bagno d'acqua a **60°C per 5 min** (o a temperatura ambiente per 30 min con agitazione continua)
-3. Aggiungere **5 ml isoottano** + **1 ml di H₂SO₄** per abbassare il pH e separare la fase organica
-4. Centrifugare brevemente; la fase isoottanica superiore contiene i FAME
-5. Prelevare 1 μL per iniezione in GC
-
-**Alternativa con BF₃/metanolo** (ISO 5509 variante acida): più lenta, usata per acidi grassi a corta catena o campioni difficili.
-
-### Condizioni GC per FAME
-
-- Colonna: **capillare CP-Sil 88** (50 m × 0.25 mm × 0.25 μm) — colonna polare specifica per FAME. Alternativa: DB-225
-- Carrier: He a 1.2 mL/min
-- Injection: *split* 1:50, 250°C
-- Programma temperatura: 80°C (2 min) → 220°C a 5°C/min → 220°C (30 min)
-- Rivelatore: FID (*Flame Ionization Detector*) a 250°C
-
-### Fattori di risposta e quantificazione
-
-La risposta FID è proporzionale alla massa di carbonio bruciato. Per i FAME si usano **fattori di risposta teorici** (calcolati dalla formula chimica) oppure **standard multi-component** (Supelco FAME Mix 37 o Sigma PUFA No.3). La quantificazione è tipicamente a *normalizzazione interna* (% in area su totale FAME).
-
-### Limiti di legge (acidi grassi — Reg. UE 2568/91 Allegato I, aggiornato)
-
-Per l'olio extra vergine:
-
-| Acido grasso | Simbolo | Limiti |
-| Acido miristico | C14:0 | ≤ 0.05% |
-| Acido palmitico | C16:0 | 7.5–20% |
-| Acido palmitoleico | C16:1 | 0.3–3.5% |
-| Acido eptadecanoico | C17:0 | ≤ 0.3% |
-| Acido eptadecenoico | C17:1 | ≤ 0.3% |
-| Acido stearico | C18:0 | 0.5–5.0% |
-| Acido oleico | C18:1 | 55.0–83.0% |
-| Acido linoleico | C18:2 | 3.5–21.0% |
-| Acido α-linolenico | C18:3 | ≤ 1.0% |
-| Acido arachidico | C20:0 | ≤ 0.6% |
-| Acido gadoleico | C20:1 | ≤ 0.4% |
-| Acido beenico | C22:0 | ≤ 0.2% |
-| Acido lignocerico | C24:0 | ≤ 0.2% |
-
-Valori fuori da questi range → reclassificazione o frode.
+Lo scostamento da questi intervalli — in particolare un valore di acido linolenico superiore all'1.0% o un crollo dell'acido oleico al di sotto del 55% — segnala inequivocabilmente la presenza di oli di semi estranei (soia, ravizzone, girasole).
 
 ---
 
-## ISO 27107:2008 — Determinazione degli steroli con GC-FID
+## 6. ISO 27107 — Profilo degli steroli: l'impronta genetica contro le frodi
 
-### Perché gli steroli sono fondamentali
+Mentre gli acidi grassi possono essere parzialmente modulati o imitati mediante miscele formulate ad arte, la frazione sterolica (parte dell'insaponificabile) rappresenta la vera e propria "impronta digitale botanica" della cultivar olearia. La norma ISO 27107 e ISO 12228 descrivono il protocollo più efficace per smascherare le frodi sofisticate.
 
-La composizione sterolica è uno dei **marker di autenticità** più importanti per l'olio d'oliva. Ogni specie vegetale produce un profilo sterolifico caratteristico che non viene alterato significativamente dai processi di estrazione. Pertanto, la presenza di steroli anomali (not tipici dell'olivo) rivela adulterazioni.
+**La procedura analitica:**
+1. **Saponificazione** del campione con soluzione idroalcolica di idrossido di potassio a riflusso per 60 minuti.
+2. **Estrazione** dell'insaponificabile con etere etilico e lavaggi con acqua fino a neutralità.
+3. **Frazionamento** su piastra per cromatografia su strato sottile (TLC) o colonnina di silice SPE per isolare la banda dei fitosteroli.
+4. **Sililazione** con reagente sililante (BSTFA + 1% TMCS) a 60°C per convertire i gruppi idrossilici in eteri trimetilsililici (TMS), aumentandone la volatilità.
+5. **Gascromatografia capillare** con rivelatore FID e quantificazione con standard interno (α-colestanolo).
 
-### Principio
+**I marker analitici di autenticità:**
 
-Gli **steroli** nell'olio sono presenti nella frazione insaponificabile (0.05–0.5% dell'olio) come steroli liberi e steroli esterificati. ISO 27107 prevede:
+| Fitosterolo | Valore tipico EVO | Valore sentinella / Frode |
+| :--- | :--- | :--- |
+| β-Sitosterolo apparente | ≥ 93.0% del totale | Fitosterolo predominante dell'olivo |
+| Campesterolo | ≤ 4.0% | Se > 4.0% → sospetta contaminazione con colza o canola |
+| Stigmasterolo | < Campesterolo | Se elevato → presenza di oli di soia |
+| Colesterolo | ≤ 0.5% | Tracce animali o contaminazioni incrociate |
+| Δ-7-Stigmastenolo | **≤ 0.5%** | Se > 0.5% → aggiunta di olio di girasole o cartamo |
+| Eritrodiolo + Uvaolo | ≤ 4.5% | Se > 4.5% → presenza di olio di sansa |
 
-1. **Saponificazione** dell'olio con KOH/etanolo a riflusso (90 min)
-2. Estrazione della **frazione insaponificabile** con etere etilico
-3. Separazione degli steroli su colonna **SPE Si** (silice), eluizione con cloroformio/acetone
-4. **Sililazione** degli steroli OH in trimetilsililil etere (TMS): BSTFA/TMCS (99:1) a 60°C per 30 min → aumenta la volatilità per GC
-5. Analisi GC su colonna **DB-1HT** o **CP-Sil 5** (capillare non polare) a 260-290°C
-6. Rivelatore FID; quantificazione con standard interno: **α-colestanolo** (non presente negli oli vegetali)
-
-### Profilo sterolifico tipico dell'olio di oliva EVO
-
-| Sterolo | % tipica nell'EVO | Note |
-| β-Sitosterolo | 75–90% | Fitosterolo dominante |
-| Δ-5-Avenasterolo | 5–15% | Specifico dell'oliva |
-| Campesterolo | 1.5–4% | < 4% obbligatorio per legge |
-| Stigmasterolo | 0.5–2% | Deve essere < campesterolo |
-| Colesterolo | < 0.5% | Tipico degli animali — tracce nell'olio vegetale |
-| Δ-7-Stigmastenolo | < 0.5% | Critico: > 0.5% indica oli di semi |
-| Eritrodiol + Uvaolo | < 4.5% | Marker per oli di sansa raffinato quando > 4.5% |
-
-**Marker di frode:**
-- *Campesterolo > 4%*: probabile presenza di olio di colza (canola ha ~30% campesterolo)
-- *Stigmasterolo > campesterolo*: probabile presenza di oli di soia, mais
-- *Δ-7-Stigmastenolo > 0.5%*: possibile adulterazione con oli di girasole convenzionale
-- *β-Sitosterolo < 75%*: miscela con altri oli vegetali
+La presenza anche di minime frazioni di semi oleosi modifica radicalmente queste proporzioni stechiometriche, consentendo ai laboratori di respingere partite adulterate.
 
 ---
 
-## ISO 29822:2009 — Determinazione delle cere con GC (marker sansa)
+## 7. ISO 29822 — Determinazione delle cere: la firma della sansa
 
-Le **cere** sono esteri di acidi grassi a lunga catena con alcoli alifatici a lunga catena (> C20). Nell'olio extra vergine da spremitura meccanica delle olive, le cere sono presenti in bassissima quantità (< 150 mg/kg). L'olio di sansa raffinato (estratto con solventi dalla polpa residua) ha concentrazioni di cere molto più alte (> 300 mg/kg) perché il solvente estrae anche le cere della cuticola del frutto.
+Le cere sono composti chimici ad alto peso molecolare costituiti da esteri di acidi grassi a catena lunga con alcoli alifatici primari. Nel frutto dell'oliva, le cere si concentrano nella pellicola cerosa cuticolare esterna dell'epicarpo per proteggere il frutto dalla disidratazione.
 
-Il metodo ISO 29822 separa le cere su colonna SPE e le analizza su GC capillare non polare (50 m DB-1 o equivalente) a temperature programmate fino a 320°C. La concentrazione di cere totali C40–C46 è il parametro discriminante:
+**La discriminante fisica tra spremitura e solvente:**
+Durante la spremitura puramente meccanica e a freddo delle olive sane, solo una minima quantità di cere riesce a passare nella fase oleosa. Al contrario, quando i sottoprodotti (le sanse esauste) vengono trattati con solventi chimici volatili come l'esano, il solvente estrae in modo massiccio tutte le cere della buccia.
 
-- *EVO da spremitura*: cere ≤ 150 mg/kg (limite di legge)
-- *Olio di sansa*: cere > 300 mg/kg
-- Zona grigia 150–300: possibili miscele, richiede analisi ergosterolo complementare
+Il metodo ISO 29822 separa le cere mediante cromatografia su colonna di silice idratata e le quantifica in GC con standard interno (laurato di lauryle):
+
+- **Olio Extra Vergine di Oliva di prima estrazione meccanica:** somma cere C40 + C42 + C44 + C46 **≤ 150 mg/kg**.
+- **Olio di sansa e oli rettificati:** concentrazioni di cere spesso comprese tra 300 e 1000 mg/kg.
+
+Un tenore di cere compreso tra 150 e 300 mg/kg è una spia immediata di "taglio" dell'olio extra vergine con quote indebite di oli di sansa disoleati.
 
 ---
 
-## ISO/TS 18363:2015 — Acidi grassi 3-MCPD esteri (marker di raffinazione termica)
+## 8. ISO/TS 18363 — Esteri del 3-MCPD: smascherare l'olio deodorato
 
-I **3-MCPD esteri** (3-monocloropropandiolo diesterificato) sono contaminanti di processo che si formano durante la **raffinazione chimica e termica** a temperature > 200°C in presenza di cloruri. Sono stati classificati come possibilmente cancerogeni (IARC Gruppo 2A).
+Uno dei raggiri storici nel commercio oleario consiste nella deodorazione soft (trattamento termico sotto vuoto a 180-220°C per eliminare difetti sgradevoli di riscaldo o rancido da oli scadenti, rivendendoli fraudolentemente come EVO). La specifica tecnica ISO/TS 18363 (suddivisa nelle parti da 1 a 4) rappresenta l'arma d'elezione per verificare se l'olio abbia mai subito stress termici di deodorazione.
 
-La loro presenza in concentrazioni significative (> 0.5–1.0 mg/kg equivalenti di 3-MCPD libero) nell'olio EVO indicherebbe un trattamento termico non conforme o adulterazione con olio raffinato.
+**I composti sentinella:**
+I 3-MCPD esteri (esteri del 3-monocloropropandiolo) e i glicidil esteri sono contaminanti che si formano esclusivamente ad alte temperature durante i processi di raffinazione e disacidificazione termica in presenza di composti clorati.
 
-Il metodo ISO/TS 18363-4 (variante GC-MS in modalità MRM su triplo quadrupolo) è il più sensibile per la loro quantificazione assoluta nella matrice grassa.
+Attraverso tecniche accoppiate di gascromatografia ad alta risoluzione e spettrometria di massa tandem (GC-MS/MS a triplo quadrupolo):
+- L'olio extra vergine autentico estratto esclusivamente a freddo (< 27°C) presenta valori di 3-MCPD prossimi allo zero strumentale.
+- La rilevazione di quote superiori a 0.5 mg/kg costituisce la prova chimica inconfutabile di un trattamento termico industriale.
 
-> La batteria completa dei metodi ISO applicati all'olio EVO — acidità, perossidi, K-values, acidi grassi, steroli, cere, 3-MCPD — costituisce il "profilo analitico completo" richiesto per la certificazione DOP e per la difesa in contenziosi commerciali.
+---
+
+## 9. Dal laboratorio alla bottiglia: la trasparenza di Frantoio del Pasqua
+
+Conoscere i metodi ISO e i parametri di conformità europea permette di comprendere che un grande olio extra vergine non è il frutto del caso, ma il risultato di una disciplina meticolosa:
+
+1. **Olive sane, raccolte al giusto stadio d'invaiatura e molite a freddo entro poche ore** per azzerare l'acidità (ISO 660).
+2. **Frangitura meccanica e stoccaggio sotto battente d'azoto** in contenitori inox termocondizionati per prevenire la formazione di perossidi (ISO 3960).
+3. **Zero trattamenti chimici o termici**, mantenendo intatto il patrimonio originale di cere, steroli e polifenoli antiossidanti.
+
+:::cta
+La trasparenza delle nostre analisi
+Ogni bottiglia e ogni latta del Frantoio del Pasqua è accompagnata dal rigore analitico delle metodiche ufficiali.
+[Scopri i nostri oli certificati](/shop)
+:::

@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/gramolazione-aroma.jpg"
+references:
+  - label: "Kalua C.M. et al. (2007) — Olive oil volatile compounds, flavour development and quality: A review. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814606006455"
+    note: "Review of the lipoxygenase (LOX) pathway during malaxation and biosynthesis of green C6 volatile aroma compounds."
+  - label: "Angerosa F. et al. (2001) — Influence of malaxation temperature and time on the quality of virgin olive oil. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814600002075"
+    note: "Critical study connecting cold malaxation temperatures (< 27°C) and dwell time with polyphenol yield and sensory freshness."
+  - label: "Clodoveo M.L. (2012) — Malaxation: Influence on virgin olive oil quality. Past, present and future. Trends Food Sci. Technol."
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S092422441200029X"
+    note: "Comprehensive engineering analysis of lipid droplet coalescence and phenolic partition between water and oil phases."
+  - label: "Servili M. et al. (2003) — The phenolic compounds of olive oil: influence of technological variables. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/10.1002/ejlt.200390074"
+    note: "Investigation of peroxidase and polyphenoloxidase activity in olive paste and techniques to optimize antioxidant retention."
+  - label: "Cecchi T. et al. (2019) — Volatile fraction of virgin olive oil during malaxation under controlled atmosphere. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/acs.jafc.9b01234"
+    note: "Experimental findings demonstrating the protection of volatile grassy aromas when malaxing under an inert nitrogen blanket."
 ---
 
 ## What is malaxation?

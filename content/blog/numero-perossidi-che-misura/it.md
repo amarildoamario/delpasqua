@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "4 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-e-perossidi.jpg"
+references:
+  - label: "Regolamento (CEE) N. 2568/91 (Allegato III: Determinazione del numero di perossidi)"
+    url: "https://eur-lex.europa.eu/legal-content/IT/TXT/?uri=CELEX:31991R2568"
+    note: "Metodica analitica ufficiale dell'Unione Europea per la determinazione iodometrica dei perossidi lipidici negli oli d'oliva vergini."
+  - label: "Dobarganes C. & Márquez-Ruiz G. (2003) — Oxidative stability of edible oils: primary and secondary oxidation products. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200390021"
+    note: "Analisi della decomposizione degli idroperossidi primari in composti volatili secondari e spiegazione del paradosso dei perossidi."
+  - label: "Pristouri G. et al. (2010) — Effect of packaging material headspace, and storage conditions on quality indicators of extra virgin olive oil. Food Control"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0956713509002606"
+    note: "Studio sperimentale sulla cinetica di incremento dei perossidi in funzione di luce, temperatura e ossigeno nello spazio di testa."
+  - label: "Kamal-Eldin A. (2006) — Effect of fatty acids and tocopherols on the oxidative stability of vegetable oils. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/ejlt.200500290"
+    note: "Meccanismi radicalici di autossidazione dei doppi legami e fattori di resistenza termica e chimica della matrice oleosa."
+  - label: "COI/T.20/Doc. No 35/Rev. 1 (2017) — Determination of peroxide value. International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Protocollo ufficiale del Consiglio Oleicolo Internazionale per l'esecuzione standardizzata del test dei perossidi."
 ---
 
 ## Cos'è un perossido

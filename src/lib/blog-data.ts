@@ -290,7 +290,7 @@ export async function loadMarkdownPost(post: BlogPost, locale: string): Promise<
                 content: content.trim(),
                 title: data.title ?? post.title,
                 excerpt: data.excerpt ?? post.excerpt,
-                category: data.category ?? post.category,
+                category: post.category || data.category,
                 references: data.references ?? post.references,
                 date: data.date ?? post.date,
                 updateDate: data.updateDate ?? post.updateDate,

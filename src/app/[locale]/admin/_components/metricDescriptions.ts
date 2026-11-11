@@ -27,4 +27,9 @@ export const METRIC_DESCRIPTIONS: Record<string, string> = {
   "List CTR": "Click sui prodotti divisi per visualizzazioni delle liste prodotti nel periodo. È un rapporto tra eventi, non la percentuale di persone che cliccano; una lista può produrre più click.",
   "Checkout click rate": "Carrelli misurati che hanno avuto almeno un click sul pagamento, divisi per i carrelli con aggiunte o avvio checkout nel periodo. Click di carrelli non appartenenti a questa popolazione sono esclusi.",
   "Checkout click (eventi)": "Numero di click misurati per andare al pagamento nel periodo. Più tentativi dello stesso carrello producono più eventi; non prova che la sessione Stripe sia stata creata o pagata.",
+  "Revenue per Session (RPS)": "Fatturato incassato diviso per le sessioni uniche misurate nel periodo. Misura il valore economico medio generato per ciascuna sessione di visita al sito.",
+  "Margine Contribuzione Stimato": "Stima del margine lordo di primo livello sulle vendite nette (circa il 60% del subtotale merci, dedotti gli sconti e al netto dell'IVA). Non include costi fissi aziendali.",
+  "Nuovi Acquirenti vs Riacquisti": "Spaccato tra acquirenti al primo acquisto nel periodo e clienti ricorrenti (con due o più ordini). Include i relativi volumi di fatturato.",
+  "CAC e ROAS": "Costo di Acquisizione Cliente (CAC = Spesa Ads / Nuovi clienti) e Ritorno sulla spesa pubblicitaria (ROAS = Fatturato / Spesa Ads), basati sul budget advertising impostato nei Settings.",
+  "Abbandono Funnel": "Tassi di caduta progressivi tra le fasi del percorso d'acquisto: Visite senza carrello, Carrelli senza checkout e Checkout non finalizzati su Stripe.",
 };

@@ -17,6 +17,7 @@ export type SalesOrder = {
   userAgent: string | null;
   totalCents?: number;
   subtotalCents?: number;
+  discountCents?: number;
   email?: string | null;
   items?: SalesOrderItem[];
 };
@@ -188,6 +189,10 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
   const paidRevenueCents = paid.reduce((sum, o) => sum + (o.totalCents ?? 0), 0);
   const realizedRevenueEur = +(paidRevenueCents / 100).toFixed(2);
   const realizedAovEur = paid.length > 0 ? +((paidRevenueCents / 100) / paid.length).toFixed(2) : null;
+  const realizedSubtotalCents = paid.reduce((sum, o) => sum + (o.subtotalCents ?? o.totalCents ?? 0), 0);
+  const realizedDiscountCents = paid.reduce((sum, o) => sum + (o.discountCents ?? 0), 0);
+  const netGoodsRevenueEur = +((realizedSubtotalCents - realizedDiscountCents) / 100).toFixed(2);
+  const estimatedContributionMarginEur = +(netGoodsRevenueEur * 0.60).toFixed(2);
 
   const startedRevenueCents = started.reduce((sum, o) => sum + (o.totalCents ?? 0), 0);
   const potentialCheckoutRevenueEur = +(startedRevenueCents / 100).toFixed(2);
@@ -198,16 +203,26 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
   const potentialAovEur = started.length > 0 ? +((startedRevenueCents / 100) / started.length).toFixed(2) : null;
 
   // Repeat customers (email ordini pagati nel periodo)
-  const paidEmails = new Map<string, number>();
+  const paidEmails = new Map<string, { count: number; totalCents: number }>();
   for (const o of paid) {
     if (o.email) {
       const em = o.email.trim().toLowerCase();
-      if (em) paidEmails.set(em, (paidEmails.get(em) ?? 0) + 1);
+      if (em) {
+        const cur = paidEmails.get(em) ?? { count: 0, totalCents: 0 };
+        cur.count++;
+        cur.totalCents += (o.totalCents ?? 0);
+        paidEmails.set(em, cur);
+      }
     }
   }
   const uniquePayingCustomers = paidEmails.size;
-  const repeatPayingCustomers = [...paidEmails.values()].filter((c) => c >= 2).length;
+  const repeatPayingCustomers = [...paidEmails.values()].filter((c) => c.count >= 2).length;
+  const newPayingCustomers = uniquePayingCustomers - repeatPayingCustomers;
   const repeatCustomerRate = uniquePayingCustomers > 0 ? repeatPayingCustomers / uniquePayingCustomers : 0;
+  const repeatRevenueCents = [...paidEmails.values()].filter((c) => c.count >= 2).reduce((sum, c) => sum + c.totalCents, 0);
+  const newRevenueCents = paidRevenueCents - repeatRevenueCents;
+  const repeatRevenueEur = +(repeatRevenueCents / 100).toFixed(2);
+  const newRevenueEur = +(newRevenueCents / 100).toFixed(2);
 
   // Attach rate Olio + Vino
   let ordersWithBothOlioVino = 0;
@@ -244,6 +259,11 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
     bundleOlioVinoRatePct: bundleOlioVinoRate !== null ? +(bundleOlioVinoRate * 100).toFixed(1) : null,
     uniquePayingCustomers,
     repeatPayingCustomers,
+    newPayingCustomers,
+    newRevenueEur,
+    repeatRevenueEur,
+    netGoodsRevenueEur,
+    estimatedContributionMarginEur,
   };
 }
 
@@ -266,6 +286,7 @@ export async function readSalesMetrics(db: Pick<PrismaClient, "order">, start: D
       userAgent: true,
       totalCents: true,
       subtotalCents: true,
+      discountCents: true,
       email: true,
       items: {
         select: {

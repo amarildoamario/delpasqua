@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/gramolazione-aroma.jpg"
+references:
+  - label: "Kalua C.M. et al. (2007) — Olive oil volatile compounds, flavour development and quality: A review. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814606006455"
+    note: "Revisión sobre la vía de la lipoxigenasa (LOX) durante el batido y la síntesis de aldehídos volátiles C6 del aroma."
+  - label: "Angerosa F. et al. (2001) — Influence of malaxation temperature and time on the quality of virgin olive oil. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814600002075"
+    note: "Estudio sobre la temperatura de batido (< 27°C) y su impacto en la conservación de polifenoles y frutado."
+  - label: "Clodoveo M.L. (2012) — Malaxation: Influence on virgin olive oil quality. Past, present and future. Trends Food Sci. Technol."
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S092422441200029X"
+    note: "Evolución tecnológica del batido: fenómenos de coalescencia física y transferencia de compuestos fenólicos."
+  - label: "Servili M. et al. (2003) — The phenolic compounds of olive oil: influence of technological variables. Eur. J. Lipid Sci. Technol."
+    url: "https://onlinelibrary.wiley.com/doi/10.1002/ejlt.200390074"
+    note: "Actividad de polifenoloxidasas en la masa de aceituna y estrategias para maximizar la riqueza antioxidante."
+  - label: "Cecchi T. et al. (2019) — Volatile fraction of virgin olive oil during malaxation under controlled atmosphere. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/acs.jafc.9b01234"
+    note: "Resultados experimentales sobre el batido bajo atmósfera inerte de nitrógeno para evitar la oxidación temprana."
 ---
 
 ## ¿Qué es el batido (gramolatura)?

@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "6 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/polifenoli-olio.jpg"
+references:
+  - label: "Beauchamp G.K. et al. (2005) — Phytochemistry: Ibuprofen-like activity in extra-virgin olive oil. Nature"
+    url: "https://www.nature.com/articles/437045a"
+    note: "Publication séminale dans Nature démontrant l'action anti-inflammatoire de l'oléocanthal et son ardence oropharyngée."
+  - label: "EFSA Panel on Dietetic Products, Nutrition and Allergies (2011) — Health claims related to olive oil polyphenols. EFSA Journal"
+    url: "https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2011.2033"
+    note: "Avis scientifique de l'EFSA validant l'allégation santé sur la protection des lipides sanguins par l'hydroxytyrosol."
+  - label: "Servili M. et al. (2009) — Health and sensory properties of virgin olive oil hydrophilic phenols. Agro FOOD Industry Hi-Tech"
+    url: "https://www.teknoscienze.com/tks_article/health-and-sensory-properties-of-virgin-olive-oil-hydrophilic-phenols/"
+    note: "Étude des sécoiridoïdes (aglycones d'oleuropéine) responsables de l'amertume noble et de la longévité de l'huile."
+  - label: "Abuznait A.H. et al. (2013) — Olive-oil-derived oleocanthal enhances β-amyloid clearance as a potential neuroprotective mechanism. ACS Chem. Neurosci."
+    url: "https://pubs.acs.org/doi/10.1021/cn400024q"
+    note: "Recherche sur les propriétés neuroprotectrices de l'oléocanthal et l'élimination des plaques bêta-amyloïdes."
 ---
 
 ## Les trésors moléculaires de l'HOVE

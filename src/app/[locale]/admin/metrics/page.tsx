@@ -115,6 +115,18 @@ export default async function AdminMetricsPage({
 
   const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : 0;
 
+  const sessionPageCounts = sessions.map((s) => s._count?.sessionId ?? 1).sort((a, b) => a - b);
+  let medianPagesPerSession: number | null = null;
+  if (sessionPageCounts.length > 0) {
+    const mid = Math.floor(sessionPageCounts.length / 2);
+    medianPagesPerSession = sessionPageCounts.length % 2 !== 0
+      ? sessionPageCounts[mid]
+      : Math.round(((sessionPageCounts[mid - 1] + sessionPageCounts[mid]) / 2) * 10) / 10;
+  }
+  const bounceSessions = sessionPageCounts.filter((c) => c === 1).length;
+  const bounceRate = uniqueSessions > 0 ? bounceSessions / uniqueSessions : null;
+  const revenuePerSessionEur = uniqueSessions > 0 ? +(sales.realizedRevenueEur / uniqueSessions).toFixed(2) : null;
+
   const [pageViewGroups, pageDurationGroups] = await Promise.all([
     prisma.analyticsEvent.groupBy({
       by: ["path"],
@@ -287,6 +299,11 @@ export default async function AdminMetricsPage({
     readCustomerMetrics(prisma),
     readActivityTimeline(prisma, getOne(sp.activity), endISO, includeInternal),
   ]);
+  const adSpendSetting = await (prisma as { setting?: { findUnique: (args: unknown) => Promise<{ value: string } | null> } }).setting?.findUnique?.({ where: { key: "monthlyAdSpendEur" } })?.catch(() => null);
+  const monthlyAdSpendEur = adSpendSetting && !Number.isNaN(Number(adSpendSetting.value)) ? Number(adSpendSetting.value) : 0;
+  const cacEur = monthlyAdSpendEur > 0 && sales.newPayingCustomers > 0 ? +(monthlyAdSpendEur / sales.newPayingCustomers).toFixed(2) : null;
+  const roas = monthlyAdSpendEur > 0 ? +(sales.realizedRevenueEur / monthlyAdSpendEur).toFixed(2) : null;
+
   const activityLinks = ACTIVITY_TIMEFRAMES.map((item) => {
     const query = new URLSearchParams({ start: startISO, end: endISO, activity: item.key });
     if (includeInternal) query.set("internal", "1");
@@ -397,6 +414,29 @@ export default async function AdminMetricsPage({
           subtitle={`${nice(cansUnits)} latte (${cansPct}%) • ${nice(bottlesUnits)} bottiglie (${bottlesPct}%) • ${nice(unknownFormatUnits)} altri`}
         />
       </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <Kpi
+          title="Revenue per Session (RPS)"
+          value={formatEur(revenuePerSessionEur)}
+          subtitle={`Valore per sessione (${nice(uniqueSessions)} visite totali)`}
+        />
+        <Kpi
+          title="Margine Contribuzione Stimato"
+          value={formatEur(sales.estimatedContributionMarginEur)}
+          subtitle={`Stima ~60% su ${formatEur(sales.netGoodsRevenueEur)} netto merci`}
+        />
+        <Kpi
+          title="Nuovi Acquirenti vs Riacquisti"
+          value={`${nice(sales.newPayingCustomers)} / ${nice(sales.repeatPayingCustomers)}`}
+          subtitle={`Nuovi: ${formatEur(sales.newRevenueEur)} • Riordini: ${formatEur(sales.repeatRevenueEur)}`}
+        />
+        <Kpi
+          title="CAC e ROAS"
+          value={monthlyAdSpendEur > 0 ? `${formatEur(cacEur)} / ${roas}x` : "—"}
+          subtitle={monthlyAdSpendEur > 0 ? `Spesa mensile: ${formatEur(monthlyAdSpendEur)}` : "Spesa ads non configurata nei settings"}
+        />
+      </div>
     </div>
 
     {/* 📞 LEAD & CONTATTI DIRETTI */}
@@ -443,8 +483,8 @@ export default async function AdminMetricsPage({
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
       <Kpi title="Visitatori unici" value={nice(uniqueVisitors)} subtitle="(solo sito)" />
       <Kpi title="Sessioni" value={nice(uniqueSessions)} subtitle="(solo sito)" />
-      <Kpi title="Pageviews" value={nice(pageViews)} subtitle={`leave: ${nice(pageLeaves)}`} />
-      <Kpi title="Pagine / sessione" value={round1(avgPagesPerSession)} subtitle="(media)" />
+      <Kpi title="Pageviews" value={nice(pageViews)} subtitle={`leave: ${nice(pageLeaves)} (${pageViews > 0 ? pct(pageLeaves / pageViews) : "—"})`} />
+      <Kpi title="Pagine / sessione" value={round1(avgPagesPerSession)} subtitle={`mediana: ${medianPagesPerSession ?? "—"} • 1 pag: ${pct(bounceRate)}`} />
       <Kpi
         title="Conversione vendite"
         value={pct(conversionAnalytics)}
@@ -481,9 +521,13 @@ export default async function AdminMetricsPage({
       <Kpi
         title="Checkout click rate"
         value={cartTotalN > 0 ? pct(checkoutClickRate) : "—"}
-        subtitle={`${nice(cartsCheckoutClickedN)} carrelli con click su pagamento`}
+        subtitle={`${nice(cartsCheckoutClickedN)} carrelli (${nice(checkoutClicks)} clic)`}
       />
-      <Kpi title="Checkout click (eventi)" value={nice(checkoutClicks)} subtitle="checkout_click" />
+      <Kpi
+        title="Abbandono Funnel"
+        value={pct(sales.unpaidCheckoutRate)}
+        subtitle={`Carrello → Pagamento: ${cartTotalN > 0 ? pct(1 - checkoutClickRate) : "—"} drop-off`}
+      />
     </div>
 
     {/* Device */}

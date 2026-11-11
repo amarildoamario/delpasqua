@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/k232.jpg"
+references:
+  - label: "EWG-Verordnung 2568/91 (Anhang IX: Spektrophotometrische Untersuchung im ultravioletten Bereich)"
+    url: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:31991R2568"
+    note: "Offizielles europäisches UV-spektrophotometrisches Prüfverfahren für K232, K270 und Delta-K."
+  - label: "ISO 3656:2011 — Tierische und pflanzliche Fette und Öle: Bestimmung der UV-Extinktion"
+    url: "https://www.iso.org/standard/53612.html"
+    note: "Internationale ISO-Norm zur Bestimmung konjugierter Diene und Triene in Isooctan."
+  - label: "Perez-Camino M.C. et al. (2008) — Changes in virgin olive oil quality indicators during long-term storage. Eur. Food Res. Technol."
+    url: "https://link.springer.com/article/10.1007/s00217-007-0744-8"
+    note: "Untersuchung des Verlaufs von K232 und K270 als Marker primärer und sekundärer Fettzersetzung."
+  - label: "COI/T.20/Doc. No 19/Rev. 5 (2019) — Spektrophotometrische Untersuchung im UV-Bereich. Internationaler Olivenrat"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Standardmethode des Internationalen Olivenrates zur Erkennung raffinierter und überalterter Öle."
 ---
 
 ## Was sind UV-Extinktionskoeffizienten?

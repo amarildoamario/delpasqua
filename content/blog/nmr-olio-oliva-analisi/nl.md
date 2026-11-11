@@ -8,6 +8,19 @@ updateDate: "2026-03-01"
 readingTime: "12 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/nmr-olio-oliva-analisi.jpg"
+references:
+  - label: "Mannina L. et al. (2001) — Hoge-resolutie 1H-NMR-karakterisering van olijfolie. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf010373a"
+    note: "Baanbrekend onderzoek naar het gebruik van 1H-NMR en chemometrie voor geografische herkomstbepaling."
+  - label: "Vigli G. et al. (2003) — 13C-NMR study of olive oils and its use for the detection of adulteration. J. Agric. Food Chem."
+    url: "https://pubs.acs.org/doi/10.1021/jf0210080"
+    note: "Kwantitatieve 13C-NMR-analyse van stereospecifieke triglyceridestructuren om vermenging op te sporen."
+  - label: "Dais P. & Hatzakis E. (2013) — Quality assessment and authentication of virgin olive oil by NMR spectroscopy. Anal. Chim. Acta"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0003267013000627"
+    note: "Kritisch overzicht van 1H, 13C en 31P-NMR voor simultane kwantificering van vetzuren, diglyceriden en fenolen."
+  - label: "IOC/T.20/Doc. No 30 (2013) — Toepassing van NMR-spectroscopie bij olijfolie-authenticatie. Internationale Olijfraad"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "Officiële richtlijnen van de Internationale Olijfraad voor NMR-spectrale vingerafdrukken."
 ---
 
 ## Een revolutie in olijfolie-analyse

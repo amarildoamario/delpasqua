@@ -348,6 +348,53 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 continue;
             }
 
+            if (block === '---' || block === '***') {
+                elements.push(
+                    <hr key={idx} className="my-10 border-stone-200" />
+                );
+                continue;
+            }
+
+            if (block.includes('|') && block.split('\n').some(l => l.trim().startsWith('|'))) {
+                const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+                const tableLines = lines.filter(l => l.startsWith('|') && l.endsWith('|'));
+                if (tableLines.length >= 2) {
+                    const headerLine = tableLines[0];
+                    const separatorIndex = tableLines.findIndex((l, i) => i > 0 && /^\|[\s\-:|]+\|$/.test(l));
+                    const rowsLines = separatorIndex !== -1 
+                        ? tableLines.filter((_, i) => i !== 0 && i !== separatorIndex) 
+                        : tableLines.slice(1);
+                    
+                    const parseCells = (line: string) => line.slice(1, -1).split('|').map(c => c.trim());
+                    const headers = parseCells(headerLine);
+                    const rows = rowsLines.map(parseCells);
+
+                    elements.push(
+                        <div key={idx} className="my-8 overflow-x-auto rounded-xl border border-stone-200 shadow-sm">
+                            <table className="min-w-full divide-y divide-stone-200 text-left text-sm">
+                                <thead className="bg-[#3D5A3D]/5">
+                                    <tr>
+                                        {headers.map((h, i) => (
+                                            <th key={i} className="px-4 py-3 font-semibold text-zinc-900" dangerouslySetInnerHTML={{ __html: renderInline(h) }} />
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-stone-100 bg-white">
+                                    {rows.map((r, ri) => (
+                                        <tr key={ri} className="hover:bg-stone-50/70 transition-colors">
+                                            {r.map((cell, ci) => (
+                                                <td key={ci} className="px-4 py-3 text-stone-600" dangerouslySetInnerHTML={{ __html: renderInline(cell) }} />
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    );
+                    continue;
+                }
+            }
+
             if (block.startsWith('> ')) {
                 const text = block.replace(/^> /gm, '');
                 elements.push(

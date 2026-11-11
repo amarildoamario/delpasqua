@@ -8,6 +8,22 @@ updateDate: "2026-03-01"
 readingTime: "5 min"
 author: "Frantoio del Pasqua"
 imageUrl: "/blog/acidi-grassi.jpg"
+references:
+  - label: "Commission Implementing Regulation (EU) 2022/2105 (Conformity checks and fatty acid limits)"
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R2105"
+    note: "European regulation establishing mandatory compositional limits for individual fatty acids in authentic olive oils."
+  - label: "Beltrán G. et al. (2004) — Influence of cultivar and environment on olive oil fatty acid composition. Food Chemistry"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0308814603004862"
+    note: "Comprehensive study evaluating genetic cultivar variation and environmental factors influencing oleic acid ratios."
+  - label: "Mensink R.P. et al. (2003) — Effects of dietary fatty acids on the ratio of serum total to HDL cholesterol. Am. J. Clin. Nutr."
+    url: "https://academic.oup.com/ajcn/article/77/5/1146/4689813"
+    note: "Clinical meta-analysis confirming cardiovascular benefits of monounsaturated fats in lowering serum LDL cholesterol."
+  - label: "Boskou D. (2015) — Olive Oil: Chemistry and Technology (2nd Edition, AOCS Press)"
+    url: "https://www.sciencedirect.com/book/9781893997882/olive-oil"
+    note: "Core scientific volume exploring olive oil triglyceride structures, heat tolerance, and oxidative resistance."
+  - label: "IOC Trade Standard COI/T.15/NC No 3/Rev. 19 (2022) — International Olive Council"
+    url: "https://www.internationaloliveoil.org/what-we-do/chemistry-standardisation-unit/standards-and-methods/"
+    note: "International purity standards defining acceptable fatty acid ranges to protect against commercial seed oil blending."
 ---
 
 ## The building blocks of olive oil
