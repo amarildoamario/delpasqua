@@ -14,6 +14,8 @@ export type HeroSlide = {
 
 export default async function HeroCarousel() {
   const t = await getTranslations("HomePage.HeroCarousel");
+  const tTerritory = await getTranslations("HomePage.HomeAboutTerritory");
+  const tFamily = await getTranslations("HomePage.HomeAboutFamily");
 
   const slides: HeroSlide[] = [
     {
@@ -50,7 +52,10 @@ export default async function HeroCarousel() {
       className="relative isolate w-full overflow-hidden bg-[#120f0d]"
       aria-label={t("aria.hero_highlight")}
     >
-      <h1 className="sr-only">{t("sr_title")}</h1>
+      <h1 className="sr-only">Frantoio Del Pasqua</h1>
+      <p className="sr-only">
+        {tTerritory("description")} {tFamily("description")}
+      </p>
 
       <div className="relative hero-container-height min-h-[500px] w-full md:min-h-[560px]">
         <HeroCarouselClient

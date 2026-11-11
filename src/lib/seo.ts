@@ -191,32 +191,32 @@ type LocalizedSeoCopy = {
 const SEO_COPY_BY_PATH: Partial<Record<string, Partial<Record<"de" | "nl" | "da" | "no" | "es" | "fr" | "us", LocalizedSeoCopy>>>> = {
   "/": {
     de: {
-      title: "Frantoio Del Pasqua | Toskanisches Natives Olivenöl Extra",
-      description: "Familien-Ölmühle in Monte San Savino (Arezzo, Toskana). Kaufen Sie handwerkliches 100% italienisches Olivenöl extra vergine direkt vom Erzeuger und buchen Sie Verkostungen.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua in Monte San Savino (Arezzo, Toskana): traditionelle Olivenernte und Verarbeitung innerhalb von 24 Stunden mit Kaltextraktion, kontrollierter Malaxation und Lagerung in Edelstahltanks unter Stickstoff zum Erhalt von Aromen und Polyphenolen. Handwerkliche Produktion und Direktverkauf von 100% italienischem, Bio- und IGP-Toskana-Olivenöl extra vergine, Gutsweinen und geführten Verkostungen in der Ölmühle.",
     },
     nl: {
-      title: "Frantoio Del Pasqua | Toscaanse Extra Vierge Olijfolie",
-      description: "Familie-olijfmolen in Monte San Savino (Arezzo, Toscane). Koop ambachtelijke 100% Italiaanse extra vierge olijfolie rechtstreeks bij de producent en boek proeverijen.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua in Monte San Savino (Arezzo, Toscane): traditionele olijvenoogst en verwerking binnen 24 uur met koude extractie, gecontroleerde kneding en opslag in roestvrij staal onder stikstof om aroma's en polyfenolen te behouden. Ambachtelijke productie en directe verkoop van 100% Italiaanse, biologische en Toscaanse BGA extra vierge olijfolie, landgoedwijnen en rondleidingen met proeverij in de olijfmolen.",
     },
     da: {
-      title: "Frantoio Del Pasqua | Toscansk Ekstra Jomfruolivenolie",
-      description: "Familieoliemølle i Monte San Savino (Arezzo, Toscana). Køb håndværksmæssig 100% italiensk ekstra jomfruolivenolie direkte fra producenten og book olivenoliesmagninger.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua i Monte San Savino (Arezzo, Toscana): traditionel olivenhøst og presning inden for 24 timer med koldpresning, kontrolleret æltning og opbevaring i rustfrit stål under kvælstof for at bevare aromaer og polyfenoler. Håndværksmæssig produktion og direkte salg af 100% italiensk, økologisk og toscansk IGP ekstra jomfruolivenolie, gårdvine og guidede smagninger i oliemøllen.",
     },
     no: {
-      title: "Frantoio Del Pasqua | Toskansk Ekstra Virgin Olivenolje",
-      description: "Familieoljemølle i Monte San Savino (Arezzo, Toscana). Kjøp håndverksmessig 100% italiensk ekstra virgin olivenolje direkte fra produsenten og bestill smakinger.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua i Monte San Savino (Arezzo, Toscana): tradisjonell olivenhøsting og pressing innen 24 timer med kaldpressing, kontrollert elting og lagring på rustfrie ståltanker under nitrogen for å bevare aromaer og polyfenoler. Håndverksmessig produksjon og direktesalg av 100% italiensk, økologisk og toskansk IGP ekstra virgin olivenolje, gårdsviner og guidede smakinger i oljemøllen.",
     },
     es: {
-      title: "Frantoio Del Pasqua | Aceite de Oliva Virgen Extra Toscano",
-      description: "Almazara familiar en Monte San Savino (Arezzo, Toscana). Compra online aceite de oliva virgen extra artesanal 100% italiano directo del productor y reserva catas.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua en Monte San Savino (Arezzo, Toscana): recolección tradicional de la aceituna y molienda en 24 horas con extracción en frío, batido controlado y conservación en acero inoxidable bajo nitrógeno para preservar aromas y polifenoles. Producción artesanal y venta directa de aceite de oliva virgen extra 100% italiano, ecológico e IGP Toscano, vinos de la finca y catas guiadas en la almazara.",
     },
     fr: {
-      title: "Frantoio Del Pasqua | Huile d'Olive Vierge Extra Toscane",
-      description: "Moulin à huile familial à Monte San Savino (Arezzo, Toscane). Achetez en ligne de l'huile d'olive vierge extra artisanale 100% italienne du producteur et réservez des dégustations.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua à Monte San Savino (Arezzo, Toscane) : récolte traditionnelle des olives et trituration dans les 24 heures avec extraction à froid, malaxage contrôlé et conservation en cuves inox sous azote pour préserver arômes et polyphénols. Production artisanale et vente directe d'huile d'olive vierge extra 100% italienne, biologique et IGP Toscano, vins du domaine et dégustations guidées au moulin.",
     },
     us: {
-      title: "Frantoio Del Pasqua | Tuscan Extra Virgin Olive Oil",
-      description: "Family olive mill in Monte San Savino (Arezzo, Tuscany). Buy artisanal 100% Italian extra virgin olive oil directly from the producer and book olive oil tastings.",
+      title: "Frantoio Del Pasqua",
+      description: "Frantoio Del Pasqua in Monte San Savino (Arezzo, Tuscany): traditional olive harvesting and milling within 24 hours with cold extraction, controlled malaxation, and nitrogen-sealed stainless steel storage to preserve aromas and polyphenols. Artisanal production and direct online shop of 100% Italian, organic and Tuscan PGI extra virgin olive oil, estate wines, and guided olive mill tastings.",
     },
   },
   "/storia/": {
@@ -460,7 +460,7 @@ export function pageMetadata({
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: localizedCopy.title,
+    title: normalizedPath === "/" ? { absolute: localizedCopy.title } : localizedCopy.title,
     description: localizedCopy.description,
     ...(index ? {
       alternates: {

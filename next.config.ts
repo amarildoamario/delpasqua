@@ -97,12 +97,55 @@ const nextConfig: any = {
   },
 
   async headers() {
+    const noindexRecoveryPaths = [
+      "/acquista",
+      "/acquista/",
+      "/il-nostro-olio",
+      "/il-nostro-olio/",
+      "/en/buy",
+      "/en/buy/",
+      "/en/olive-oil",
+      "/en/olive-oil/",
+      "/de/kaufen",
+      "/de/kaufen/",
+      "/de/olivenoel",
+      "/de/olivenoel/",
+      "/nl/kopen",
+      "/nl/kopen/",
+      "/nl/olijfolie",
+      "/nl/olijfolie/",
+      "/da/koeb",
+      "/da/koeb/",
+      "/da/olivenolie",
+      "/da/olivenolie/",
+      "/no/kjop",
+      "/no/kjop/",
+      "/no/olivenolje",
+      "/no/olivenolje/",
+      "/es/comprar",
+      "/es/comprar/",
+      "/es/nuestro-aceite",
+      "/es/nuestro-aceite/",
+      "/fr/acheter",
+      "/fr/acheter/",
+      "/fr/notre-huile",
+      "/fr/notre-huile/",
+      "/us/buy",
+      "/us/buy/",
+      "/us/olive-oil",
+      "/us/olive-oil/",
+    ];
+
     return [
       // Applica headers a tutto (pagine + api)
       {
         source: "/:path*",
         headers: [...securityHeaders, ...hstsHeader],
       },
+      ...noindexRecoveryPaths.map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      })),
     ];
   },
 
