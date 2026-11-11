@@ -113,9 +113,7 @@ const REQUIRED_CORE_INTERNAL_PATHS = [
   "/",
   "/storia/",
   "/produzione/",
-  "/il-nostro-olio/",
   "/shop/",
-  "/acquista/",
   "/contatti/",
   "/privacy/",
   "/cookie/",
@@ -193,32 +191,32 @@ type LocalizedSeoCopy = {
 const SEO_COPY_BY_PATH: Partial<Record<string, Partial<Record<"de" | "nl" | "da" | "no" | "es" | "fr" | "us", LocalizedSeoCopy>>>> = {
   "/": {
     de: {
-      title: "Frantoio Del Pasqua",
-      description: "Natives Olivenöl extra, Tradition der toskanischen Ölmühle und ausgewählte Produkte von Del Pasqua.",
+      title: "Frantoio Del Pasqua | Toskanisches Natives Olivenöl Extra",
+      description: "Familien-Ölmühle in Monte San Savino (Arezzo, Toskana). Kaufen Sie handwerkliches 100% italienisches Olivenöl extra vergine direkt vom Erzeuger und buchen Sie Verkostungen.",
     },
     nl: {
-      title: "Frantoio Del Pasqua",
-      description: "Extra vierge olijfolie, traditie van de Toscaanse olijfmolen en geselecteerde producten van Del Pasqua.",
+      title: "Frantoio Del Pasqua | Toscaanse Extra Vierge Olijfolie",
+      description: "Familie-olijfmolen in Monte San Savino (Arezzo, Toscane). Koop ambachtelijke 100% Italiaanse extra vierge olijfolie rechtstreeks bij de producent en boek proeverijen.",
     },
     da: {
-      title: "Frantoio Del Pasqua",
-      description: "Ekstra jomfruolivenolie, toscansk oliemølletradition og udvalgte produkter fra Del Pasqua.",
+      title: "Frantoio Del Pasqua | Toscansk Ekstra Jomfruolivenolie",
+      description: "Familieoliemølle i Monte San Savino (Arezzo, Toscana). Køb håndværksmæssig 100% italiensk ekstra jomfruolivenolie direkte fra producenten og book olivenoliesmagninger.",
     },
     no: {
-      title: "Frantoio Del Pasqua",
-      description: "Ekstra virgin olivenolje, toskansk oljemølletradisjon og utvalgte produkter fra Del Pasqua.",
+      title: "Frantoio Del Pasqua | Toskansk Ekstra Virgin Olivenolje",
+      description: "Familieoljemølle i Monte San Savino (Arezzo, Toscana). Kjøp håndverksmessig 100% italiensk ekstra virgin olivenolje direkte fra produsenten og bestill smakinger.",
     },
     es: {
-      title: "Frantoio Del Pasqua",
-      description: "Aceite de oliva virgen extra, tradición del molino toscano y productos Del Pasqua seleccionados.",
+      title: "Frantoio Del Pasqua | Aceite de Oliva Virgen Extra Toscano",
+      description: "Almazara familiar en Monte San Savino (Arezzo, Toscana). Compra online aceite de oliva virgen extra artesanal 100% italiano directo del productor y reserva catas.",
     },
     fr: {
-      title: "Frantoio Del Pasqua",
-      description: "Huile d'olive vierge extra, tradition du moulin toscan et produits Del Pasqua sélectionnés.",
+      title: "Frantoio Del Pasqua | Huile d'Olive Vierge Extra Toscane",
+      description: "Moulin à huile familial à Monte San Savino (Arezzo, Toscane). Achetez en ligne de l'huile d'olive vierge extra artisanale 100% italienne du producteur et réservez des dégustations.",
     },
     us: {
-      title: "Frantoio Del Pasqua",
-      description: "Extra virgin olive oil, Tuscan mill tradition and selected Del Pasqua products.",
+      title: "Frantoio Del Pasqua | Tuscan Extra Virgin Olive Oil",
+      description: "Family olive mill in Monte San Savino (Arezzo, Tuscany). Buy artisanal 100% Italian extra virgin olive oil directly from the producer and book olive oil tastings.",
     },
   },
   "/storia/": {
@@ -437,6 +435,7 @@ export function pageMetadata({
   path,
   locale,
   index = true,
+  follow = index,
   canonicalPath,
   hreflang = HREFLANG_CORE_PATHS.has(normalizePath(path)),
 }: {
@@ -445,6 +444,7 @@ export function pageMetadata({
   path: string;
   locale: string;
   index?: boolean;
+  follow?: boolean;
   canonicalPath?: string;
   hreflang?: boolean;
 }): Metadata {
@@ -468,15 +468,10 @@ export function pageMetadata({
         ...(languages ? { languages } : {}),
       }
     } : {}),
-    robots: index
-      ? {
-          index: true,
-          follow: true,
-        }
-      : {
-          index: false,
-          follow: false,
-        },
+    robots: {
+      index,
+      follow,
+    },
     openGraph: {
       title: localizedCopy.title,
       description: localizedCopy.description,

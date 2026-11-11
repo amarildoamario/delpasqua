@@ -44,7 +44,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: metadata.description,
     path: "/acquista/",
     locale,
-    hreflang: true,
+    index: false,
+    follow: true,
+    hreflang: false,
   });
 }
 

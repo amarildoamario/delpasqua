@@ -28,11 +28,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
 
   return pageMetadata({
-    title: locale === "en" ? "Frantoio Del Pasqua" : "Frantoio Del Pasqua",
+    title:
+      locale === "en"
+        ? "Frantoio Del Pasqua | Tuscan Extra Virgin Olive Oil"
+        : "Frantoio Del Pasqua | Olio Extravergine di Oliva Toscano",
     description:
       locale === "en"
-        ? "Extra virgin olive oil, Tuscan mill tradition and selected Del Pasqua products."
-        : "Olio extravergine di oliva, tradizione del frantoio toscano e prodotti selezionati Del Pasqua.",
+        ? "Family olive mill in Monte San Savino (Arezzo, Tuscany). Buy artisanal 100% Italian extra virgin olive oil directly from the producer and book olive oil tastings."
+        : "Frantoio di famiglia a Monte San Savino (Arezzo, Toscana). Acquista online olio extravergine di oliva artigianale 100% italiano dal produttore e prenota degustazioni.",
     path: "/",
     locale,
   });

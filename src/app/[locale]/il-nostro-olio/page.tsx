@@ -1,5 +1,4 @@
-import { setRequestLocale } from 'next-intl/server';
-import { getMessages } from 'next-intl/server';
+import { setRequestLocale, getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import IlNostroOlioPageClient from "./IlNostroOlioPageClient";
@@ -16,6 +15,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         : "Scopri gli oli extravergini Del Pasqua, i formati e i profili sensoriali.",
     path: "/il-nostro-olio/",
     locale,
+    index: false,
+    follow: true,
+    hreflang: false,
   });
 }
 
