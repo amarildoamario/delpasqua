@@ -13,6 +13,13 @@
 - Per conoscere le attività da implementare, i task attivi e lo stato dei lavori, fare sempre riferimento alla cartella [docs/](file:///c:/Users/Utente/Desktop/React/delpasqua/docs), la quale contiene i file di to-do specifici per area (es. `to_do_business_logic.md`, `to_do_migration_SEO.md`, ecc.) organizzati tramite emoji chiare (`[✅ RISOLTO]`, `[⚠️ PARZIALE]`, `[⏳ TODO]`). Non utilizzare o creare altri file di to-do sparsi per il progetto.
 - Per decisioni o modifiche security-sensitive, il riferimento principale è `src/lib/server/AGENT.md`.
 
+## Vincolo permanente: database di produzione da locale
+- Su esplicita istruzione utente: da locale sono consentite solo letture del database di produzione. Mai scritture, migrazioni, seed, reset, import, cancellazioni o prove di mutazione, neppure in una transazione da annullare.
+- Non disabilitare o aggirare `src/lib/server/databaseSafety.mjs`, non rimuovere le opzioni read-only dalle connessioni locali e non caricare credenziali di produzione per eseguire scritture manuali.
+- Per prove con salvataggi usare esclusivamente `LOCAL_DATABASE_URL` su localhost/127.0.0.1/::1, database `delpasqua_dev` o `delpasqua_test`, separato dalla produzione.
+- Nei flussi locali usare solo Stripe test: Stripe live potrebbe attivare webhook di produzione anche partendo da dati locali.
+- `NODE_ENV=production` locale non autorizza scritture. Migrazioni produzione solo nell'ambiente remoto di produzione, con autorizzazione specifica.
+
 ## Stack e convenzioni
 - UI: React 19, Next.js App Router, Tailwind 4, `next-intl`.
 - Backend applicativo: route handlers in `src/app/api`, logica server in `src/lib/server`.

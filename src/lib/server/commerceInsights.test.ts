@@ -45,6 +45,27 @@ test("decision history predates selected period and does not require purchase br
   assert.deepEqual(result.decision, { samples: 1, paidOrders: 2, avgDays: 3, avgSessions: 2 });
 });
 
+test("expired and canceled database checkouts count as unpaid exits without a browser return", () => {
+  const closedAt = new Date("2026-11-09T11:00:00Z");
+  const orders = [
+    order({ id: "expired", paidAt: null, status: "SCADUTO", updatedAt: closedAt, events: [{ metaJson: null, type: "ORDER_EXPIRED", createdAt: closedAt, toStatus: "SCADUTO" }] }),
+    order({ id: "canceled", paidAt: null, status: "ANNULLATO", updatedAt: closedAt, events: [] }),
+    order({ id: "pending", paidAt: null, status: "IN_ATTESA", updatedAt: closedAt, events: [] }),
+    order({ id: "test-expired", paidAt: null, isTest: true, status: "SCADUTO", updatedAt: closedAt }),
+    order({ id: "recovered", paidAt: new Date("2026-11-09T12:00:00Z"), events: [{ metaJson: null, type: "STATUS_CHANGED", createdAt: closedAt, toStatus: "ANNULLATO" }] }),
+  ];
+  const result = summarizeCommerceInsights(orders, [event({ type: "checkout_canceled", orderId: "expired" })], [], start, end);
+  assert.deepEqual(result.stripe, { started: 4, paid: 1, canceledUnpaid: 2, recovered: 1, pendingOrUnobserved: 1, exitRate: 2 / 3 });
+});
+
+test("a checkout expiring after the period remains pending in the earlier snapshot", () => {
+  const later = new Date(end.getTime() + 3600000);
+  const result = summarizeCommerceInsights([order({ paidAt: null, status: "SCADUTO", updatedAt: later,
+    events: [{ metaJson: null, type: "ORDER_EXPIRED", createdAt: later, toStatus: "SCADUTO" }] })], [], [], start, end);
+  assert.equal(result.stripe.canceledUnpaid, 0);
+  assert.equal(result.stripe.pendingOrUnobserved, 1);
+});
+
 test("decision can use a legacy purchase link and never blends different visitors or local context", () => {
   const local = order({ events: [{ metaJson: JSON.stringify({ visitorId: "visitor-0001", sessionId: "session-0001", env: "dev" }) }] });
   const rows = [event(), event({ visitorId: "someone-else", createdAt: new Date("2026-01-01") })];

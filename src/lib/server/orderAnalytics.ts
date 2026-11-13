@@ -1,5 +1,8 @@
+import { hasAnalyticsExclusion } from "@/lib/analytics/exclusion";
+
 // Persist only validated anonymous IDs. No tokens, referrer URL or raw fingerprint.
 export function orderAnalyticsContext(req: Request) {
+  if (hasAnalyticsExclusion(req.headers.get("cookie") ?? "")) return null;
   const cookies = new Map((req.headers.get("cookie") ?? "").split(/;\s*/).map((entry) => {
     const index = entry.indexOf("=");
     try { return [entry.slice(0, index), decodeURIComponent(entry.slice(index + 1))] as const; }

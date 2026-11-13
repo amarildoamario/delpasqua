@@ -33,7 +33,12 @@ import type { ContactMessageStatus, ContactNotificationStatus } from "@/generate
    TYPES
 ========================= */
 
+type SerializedReply = {
+  id: string; subject: string; body: string; from: string; emailId: string | null; sentAt: string | null; createdAt: string;
+};
+
 export type SerializedContactMessage = {
+  replies: SerializedReply[];
   id: string;
   status: ContactMessageStatus;
   name: string;
@@ -94,6 +99,22 @@ function fmtDateTime(isoStr: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(d);
+}
+
+function ReplyHistory({ replies }: { replies: SerializedReply[] }) {
+  if (!replies.length) return null;
+  return <div className="space-y-3" aria-label="Risposte al contatto">
+    {replies.map((reply) => <div key={reply.id} className="ml-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4 sm:ml-6">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span className="inline-flex items-center gap-1.5 font-bold text-emerald-900"><Reply className="h-3.5 w-3.5" />La tua risposta</span>
+        <span className="text-neutral-600">{reply.sentAt ? `Inviata ? ${fmtDateTime(reply.sentAt)}` : "Invio da verificare"}</span>
+      </div>
+      <p className="mt-2 break-words text-xs text-neutral-500">Da: {reply.from}</p>
+      <p className="mt-2 break-words text-sm font-bold text-neutral-900">{reply.subject}</p>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-neutral-800">{reply.body}</p>
+      {reply.sentAt && <p className="mt-3 text-xs text-neutral-500">Accettata dal servizio email; consegna e lettura non verificate qui.</p>}
+    </div>)}
+  </div>;
 }
 
 function timeAgo(isoStr: string) {
@@ -301,10 +322,12 @@ export default function MessagesManager({
         throw new Error(result.error || "Impossibile confermare l'invio. Riprova senza cambiare il testo.");
       }
       setReplyReceipt({ emailId: result.emailId, from: result.from });
-      if (result.readAt) {
-        setMessages((prev) => prev.map((m) => m.id === replyModalMessage.id && m.status === "UNREAD"
-          ? { ...m, status: "READ", readAt: result.readAt } : m));
-      }
+      setMessages((prev) => prev.map((m) => m.id === replyModalMessage.id ? {
+        ...m,
+        ...(result.readAt && m.status === "UNREAD" ? { status: "READ" as const, readAt: result.readAt } : {}),
+        replies: result.reply ? [...m.replies.filter((r) => r.id !== result.reply.id), result.reply] : m.replies,
+      } : m));
+      if (result.historySaved === false) setReplyError("Email inviata. Testo salvato, ma conferma nello storico da verificare; non reinviare.");
     } catch (error) {
       setReplyError(error instanceof Error ? error.message : "Impossibile confermare l'invio. Riprova senza cambiare il testo.");
     } finally {
@@ -707,6 +730,8 @@ export default function MessagesManager({
                     {m.message}
                   </div>
 
+                  <ReplyHistory replies={m.replies} />
+
                   {/* Footer Dettagli: Origine, ID, Timestamp lettura */}
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-neutral-100 text-[11px] text-neutral-400 font-mono">
                     <div className="flex flex-wrap items-center gap-3">
@@ -888,6 +913,7 @@ export default function MessagesManager({
                 {activeMessage.message}
               </div>
             </div>
+            <ReplyHistory replies={activeMessage.replies} />
 
             {/* Azioni Rapide del Cassetto */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-neutral-100 pt-4">

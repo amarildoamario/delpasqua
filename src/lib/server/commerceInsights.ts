@@ -9,7 +9,8 @@ type InsightEvent = {
 };
 type InsightOrder = {
   id: string; createdAt: Date; paidAt: Date | null; isTest: boolean; stripeCheckoutSessionId: string | null;
-  events: { metaJson: string | null }[];
+  status?: string; updatedAt?: Date;
+  events: { metaJson: string | null; type?: string; createdAt?: Date; toStatus?: string | null }[];
 };
 const clock = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Rome", weekday: "short", hour: "2-digit", hourCycle: "h23" });
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -37,6 +38,16 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   const paid = uniqueOrders.filter((o) => o.paidAt && inRange(o.paidAt));
   const cohort = uniqueOrders.filter((o) => o.stripeCheckoutSessionId && inRange(o.createdAt));
   const canceledIds = new Set(events.filter((e) => e.type === "checkout_canceled" && e.orderId && inRange(e.createdAt)).map((e) => e.orderId));
+  const closedStatuses = new Set(["ANNULLATO", "SCADUTO", "FALLITO"]);
+  for (const order of cohort) {
+    const observedClosure = order.events.some((event) => event.createdAt &&
+      event.createdAt >= order.createdAt && event.createdAt < endExclusive &&
+      (event.type === "ORDER_EXPIRED" || closedStatuses.has(event.toStatus ?? "")));
+    // Legacy rows may lack a status event. Do not apply a status changed after
+    // the selected period to an earlier cohort snapshot.
+    const legacyClosure = closedStatuses.has(order.status ?? "") && order.updatedAt && order.updatedAt < endExclusive;
+    if (observedClosure || legacyClosure) canceledIds.add(order.id);
+  }
   const cohortPaid = cohort.filter((o) => o.paidAt && o.paidAt < endExclusive);
   const canceledUnpaid = cohort.filter((o) => canceledIds.has(o.id) && (!o.paidAt || o.paidAt >= endExclusive));
   const recovered = cohortPaid.filter((o) => canceledIds.has(o.id));
@@ -152,8 +163,9 @@ export async function readCommerceInsights(db: Pick<PrismaClient, "order" | "ana
   const quality = includeInternal ? {} : { env: "prod", isInternal: false };
   const [orders, events] = await Promise.all([
     db.order.findMany({ where: { isTest: false, OR: [{ createdAt: { gte: start, lt: endExclusive } }, { paidAt: { gte: start, lt: endExclusive } }] },
-      select: { id: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true,
-        events: { where: { type: "ANALYTICS_CONTEXT" }, select: { metaJson: true } } } }),
+      select: { id: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
+        events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED"] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
+          select: { metaJson: true, type: true, createdAt: true, toStatus: true } } } }),
     db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase"] } },
       select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, referrer: true, userAgent: true, data: true } }),
   ]);

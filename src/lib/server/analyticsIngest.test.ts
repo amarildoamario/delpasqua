@@ -95,3 +95,19 @@ test("rate guard rejects excessive batches without touching the database", () =>
   assert.equal(allowAnalyticsRequest("analytics-test-ip", now), false);
   assert.equal(allowAnalyticsRequest("analytics-test-ip", now + 60_001), true);
 });
+
+test("permanently excluded cookies reject every event before database access", async () => {
+  const req = new Request(request(), { headers: { cookie: "analytics_excluded=1", "user-agent": "Mozilla/5.0 Chrome/130" } });
+  const db = { $executeRaw: async () => { assert.fail("excluded browser must not write events"); return 0; } };
+  assert.equal(await saveAnalyticsBatch(db, [event(), event({ type: "purchase", orderId: "paid-order" })], req, now), 0);
+});
+
+test("late batches check the persisted browser exclusion inside the ingestion query", async () => {
+  const db = { $executeRaw: async (sql: TemplateStringsArray) => {
+    assert.match(sql.join("?"), /WHERE NOT EXISTS/);
+    assert.match(sql.join("?"), /excluded\.id = 'ana-excluded-' \|\| e\.env \|\| '-' \|\| e\."visitorId"/);
+    assert.match(sql.join("?"), /excluded\.type = 'analytics_excluded' AND excluded\."isInternal" = true/);
+    return 0;
+  } };
+  assert.equal(await saveAnalyticsBatch(db, [event()], request(), now), 0);
+});

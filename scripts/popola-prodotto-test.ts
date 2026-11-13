@@ -9,11 +9,13 @@ import * as dotenv from "dotenv";
 import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma";
+import { databasePolicy, databaseGuardExtension } from "../src/lib/server/databaseSafety.mjs";
 
 dotenv.config();
 
 async function main() {
-  const connectionString = process.env.DATABASE_URL;
+  const policy = databasePolicy();
+  const connectionString = policy.connectionString;
   if (!connectionString) {
     console.error("❌ ERRORE: DATABASE_URL non configurato.");
     process.exit(1);
@@ -21,7 +23,8 @@ async function main() {
 
   const pool = new pg.Pool({ connectionString });
   const adapter = new PrismaPg(pool);
-  const prisma = new PrismaClient({ adapter });
+  const client = new PrismaClient({ adapter });
+  const prisma = policy.readOnly ? client.$extends(databaseGuardExtension(policy)) : client;
 
   console.log("🔄 Connessione al database e inserimento stock...");
   

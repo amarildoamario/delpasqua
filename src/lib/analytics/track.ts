@@ -3,6 +3,7 @@
 import { getOrCreateCartId } from "./cartId";
 import { ANALYTICS_TYPES, analyticsPath, isAdminPath, type AnalyticsEvent } from "./events";
 import { AnalyticsQueue, ANALYTICS_BATCH_SIZE, ANALYTICS_FLUSH_MS } from "./queue";
+import { browserAnalyticsExcluded } from "./exclusion";
 
 type Track = Partial<Omit<AnalyticsEvent, "type" | "visitorId" | "sessionId">> & { type: string };
 const STORAGE_KEY = "analytics_queue_v2";
@@ -26,6 +27,7 @@ function setCookie(name: string, value: string, seconds: number) {
 
 export function analyticsAllowed() {
   if (typeof window === "undefined") return false;
+  if (browserAnalyticsExcluded()) return false;
   const mode = new URLSearchParams(location.search).get("test_mode");
   if (mode === "1") setCookie("internal", "1", 86400);
   if (mode === "0") setCookie("internal", "", 0);
@@ -60,7 +62,7 @@ function getQueue() {
 
 export async function flushAnalytics(beacon = false) {
   if (!queue) return;
-  if (analyticsCookie("analytics_consent") === "0" || analyticsCookie("internal") === "1") {
+  if (browserAnalyticsExcluded() || analyticsCookie("analytics_consent") === "0" || analyticsCookie("internal") === "1") {
     queue.clear(); persist(); return;
   }
   const batch = queue.batch();

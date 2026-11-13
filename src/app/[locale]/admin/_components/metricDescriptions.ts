@@ -17,7 +17,7 @@ export const METRIC_DESCRIPTIONS: Record<string, string> = {
   "Pageviews": "Numero di visite alle pagine del sito nel periodo. I ricaricamenti sono nuove visualizzazioni. Le uscite misurate (leave) servono a stimare la durata; non tutte le visite producono un'uscita osservabile.",
   "Pagine / sessione": "Visualizzazioni delle pagine del sito divise per le sessioni uniche misurate nello stesso periodo.",
   "Conversione vendite": "Ordini commerciali pagati nel periodo divisi per le sessioni misurate. Gli ordini arrivano dal database, le visite dal tracker: non è un funnel interamente attribuito. Senza sessioni è non disponibile e può superare il 100% se un cliente fa più ordini.",
-  "Ordini (DB)": "Ordini commerciali creati nel periodo, di qualsiasi stato, inclusi checkout non pagati. Il conteggio è distinto dagli ordini con pagamento ricevuto nel periodo.",
+  "Ordini effettuati": "Ordini commerciali con pagamento ricevuto nel periodo. Ogni ordine conta una volta; gli ordini di prova e i checkout non pagati, annullati o scaduti sono esclusi. Un rimborso successivo non cancella il pagamento storico.",
   "Carrelli totali": "Carrelli distinti con almeno un'aggiunta oppure un avvio del checkout nel periodo. Più eventi dello stesso carrello non aumentano il totale.",
   "Session Add-to-Cart": "Percentuale delle sessioni di visita misurate che hanno almeno un'aggiunta al carrello nel periodo. Le aggiunte senza una sessione di visita corrispondente non gonfiano il rapporto. Senza visite la percentuale non è disponibile.",
   "Vendite confermate": "Ordini commerciali con Order.paidAt nel periodo. La conferma deriva dai pagamenti registrati nel database, senza richiedere eventi purchase dal browser. Sono esclusi gli ordini di test.",

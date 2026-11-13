@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/server/prisma";
+import { prisma, databaseReadOnly } from "@/lib/server/prisma";
+import { databasePolicy } from "@/lib/server/databaseSafety.mjs";
 import { requireAdminPage } from "@/lib/server/adminAuth";
 import AdminSidebar from "./_components/AdminSidebar";
 
@@ -76,6 +77,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <main className="flex-1 min-w-0 h-full flex flex-col bg-neutral-50 overflow-hidden">
         {/* Scrollable inner content box */}
         <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-6 py-6 pb-16">
+          {databaseReadOnly ? (
+            <div role="status" className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <strong>Modalità consultazione.</strong> Il database online è in sola lettura. I salvataggi richiedono un database di sviluppo separato.
+            </div>
+          ) : databasePolicy().mode === "local-development" ? (
+            <div role="status" className="mb-5 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+              <strong>Ambiente di sviluppo locale.</strong> I dati salvati qui sono separati da quelli del sito online.
+            </div>
+          ) : null}
           {children}
         </div>
       </main>

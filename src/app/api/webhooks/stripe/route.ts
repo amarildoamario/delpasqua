@@ -44,7 +44,15 @@ function getSessionIds(session: Stripe.Checkout.Session) {
   return { sessionId, paymentIntentId };
 }
 
-function getCustomerFromSession(session: Stripe.Checkout.Session) {
+function getCustomerFromSession(session: Stripe.Checkout.Session, order?: {
+  quoteId: string | null; fullName: string; email: string; phone: string | null;
+  addressLine1: string; addressLine2: string | null; city: string; postalCode: string; province: string; countryCode: string;
+} | null) {
+  // A quote's accepted shipping address is immutable. Stripe billing may be different.
+  if (order?.quoteId) return {
+    email: order.email, name: order.fullName, phone: order.phone,
+    addr: { line1: order.addressLine1, line2: order.addressLine2, city: order.city, postal_code: order.postalCode, state: order.province, country: order.countryCode } as Stripe.Address,
+  };
   const cd = session.customer_details;
 
   const email = (cd?.email ?? session.customer_email ?? "").trim();
@@ -345,9 +353,8 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         const { sessionId, paymentIntentId } = getSessionIds(session);
-        const { email, name, phone, addr } = getCustomerFromSession(session);
-
         const order = await loadOrderForSession(session);
+        const { email, name, phone, addr } = getCustomerFromSession(session, order);
 
         if (!order) {
           // Check if it matches a TastingBooking!
@@ -631,9 +638,8 @@ export async function POST(req: NextRequest) {
       case "checkout.session.async_payment_succeeded": {
         const session = event.data.object as Stripe.Checkout.Session;
         const { sessionId, paymentIntentId } = getSessionIds(session);
-        const { email, name, phone, addr } = getCustomerFromSession(session);
-
         const order = await loadOrderForSession(session);
+        const { email, name, phone, addr } = getCustomerFromSession(session, order);
 
         if (!order) {
           await prisma.stripeWebhookEvent.update({

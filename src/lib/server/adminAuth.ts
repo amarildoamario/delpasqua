@@ -2,7 +2,7 @@ import crypto from "crypto";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/server/prisma";
+import { prisma, databaseReadOnly } from "@/lib/server/prisma";
 import type { AdminSession } from "@/generated/prisma";
 
 // ─── Session cache (in-memory, TTL 30s) ──────────────────────────────────────
@@ -155,6 +155,9 @@ export async function validateAdminSessionByToken(rawToken: string) {
 }
 
 async function rotateSessionIfNeeded(session: AdminSession) {
+  // Reading production locally must not rotate or extend the stored session.
+  // Keep validating its original expiry and revocation on every lookup.
+  if (databaseReadOnly) return null;
   const now = new Date();
   const rotatedAt = session.rotatedAt ?? session.createdAt;
   const ageSeconds = Math.floor((now.getTime() - rotatedAt.getTime()) / 1000);
@@ -237,6 +240,13 @@ export async function requireAdminApi(req: Request, opts?: { csrf?: boolean }) {
     return {
       ok: false as const,
       response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+
+  if (databaseReadOnly && !["GET", "HEAD", "OPTIONS"].includes(req.method.toUpperCase())) {
+    return {
+      ok: false as const,
+      response: NextResponse.json({ error: "Modalità consultazione: i salvataggi e le operazioni sul sito online sono disabilitati da locale. Usa il database di sviluppo." }, { status: 409 }),
     };
   }
 

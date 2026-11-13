@@ -15,12 +15,26 @@ test("contact reply API protects sending, reports rejection, and preserves accep
   let failUpdate = false;
   let missing = false;
   let rateCount = 1;
+  let failSave = false;
+  let failReceipt = false;
+  let stored: Record<string, unknown> | null = null;
   const keys: string[] = [];
   const csrf = "contact-reply-test-csrf";
   globalState.prismaPostgres = {
     adminSession: { findFirst: async () => ({ id: "test-admin", csrfHash: createHash("sha256").update(csrf).digest("hex"), createdAt: new Date(), rotatedAt: new Date() }) },
     $queryRaw: async () => [{ count: rateCount }],
     $executeRaw: async () => 0,
+    contactReply: {
+      upsert: async ({ create }: { create: Record<string, unknown> }) => {
+        if (failSave) throw new Error("database unavailable");
+        stored ??= { ...create, id: "reply-test", emailId: null, sentAt: null, createdAt: new Date() };
+        return stored;
+      },
+      update: async ({ data }: { data: Record<string, unknown> }) => {
+        if (failReceipt) throw new Error("database unavailable");
+        stored = { ...stored, ...data }; return stored;
+      },
+    },
     contactMessage: {
       findUnique: async () => { reads++; return missing ? null : { id: "contact-test", email: "customer@example.com" }; },
       updateMany: async () => { updates++; if (failUpdate) throw new Error("database unavailable"); return { count: 1 }; },
@@ -59,18 +73,42 @@ test("contact reply API protects sending, reports rejection, and preserves accep
     assert.equal((await POST(request(), ctx)).status, 404);
     assert.equal(sends, 0);
     missing = false;
+    failSave = true;
+    assert.equal((await POST(request(), ctx)).status, 502);
+    assert.equal(sends, 0, "never send if saving the text fails");
+    failSave = false;
     reject = true;
     assert.equal((await POST(request(), ctx)).status, 502);
     assert.equal(updates, 0, "a failed send must not mark the message read");
     reject = false;
     const accepted = await POST(request(), ctx);
     assert.equal(accepted.status, 200);
-    assert.equal((await accepted.json()).emailId, "email-test-id");
+    const receipt = await accepted.json();
+    assert.equal(receipt.emailId, "email-test-id");
+    assert.equal(receipt.reply.body, data.body);
+    assert.ok(receipt.reply.sentAt);
+    const beforeRetry = sends;
+    assert.equal((await POST(request(), ctx)).status, 200);
+    assert.equal(sends, beforeRetry, "saved acceptance must prevent another provider request");
+    stored = null;
     assert.equal(updates, 1);
     failUpdate = true;
     const acceptedWithoutRead = await POST(request(), ctx);
     assert.equal(acceptedWithoutRead.status, 200);
     assert.equal((await acceptedWithoutRead.json()).ok, true);
+    stored = null;
+    failReceipt = true;
+    const unsavedReceipt = await POST(request(), ctx);
+    assert.equal(unsavedReceipt.status, 200);
+    const warning = await unsavedReceipt.json();
+    assert.equal(warning.ok, true);
+    assert.equal(warning.historySaved, false);
+    assert.equal(warning.reply.body, data.body);
+    failReceipt = false;
+    stored = { ...(stored as unknown as Record<string, unknown>), createdAt: new Date(Date.now() - 25 * 3600000) };
+    const beforeExpiredRetry = sends;
+    assert.equal((await POST(request(), ctx)).status, 409);
+    assert.equal(sends, beforeExpiredRetry);
     assert.equal(new Set(keys).size, 1, "retry requests must use the same provider idempotency key");
     rateCount = 11;
     const before = sends;

@@ -11,13 +11,15 @@ const { PrismaClient } = require('../src/generated/prisma/index.js');
 const { PrismaPg } = require('@prisma/adapter-pg');
 import Database from 'better-sqlite3';
 import * as dotenv from 'dotenv';
+import { databasePolicy, databaseGuardExtension } from '../src/lib/server/databaseSafety.mjs';
 dotenv.config();
 
 // ---------------------------------------------------------
 // CONFIG & SETUP
 // ---------------------------------------------------------
 
-const TARGET_DB_URL = process.env.DATABASE_URL || process.env.POSTGRES_DATABASE_URL;
+const policy = databasePolicy({ ...process.env, DATABASE_URL: process.env.DATABASE_URL || process.env.POSTGRES_DATABASE_URL });
+const TARGET_DB_URL = policy.connectionString;
 const SOURCE_DB_URL = process.env.SQLITE_URL || process.env.SQLITE_DATABASE_URL || './dev.db';
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
@@ -28,7 +30,8 @@ if (!TARGET_DB_URL) {
 
 // Prisma Client configurato per leggere dal nuovo DB Postgres (Target)
 const adapter = new PrismaPg({ connectionString: TARGET_DB_URL });
-const prisma = new PrismaClient({ adapter });
+const client = new PrismaClient({ adapter });
+const prisma = policy.readOnly ? client.$extends(databaseGuardExtension(policy)) : client;
 
 // SQLite connettore via modulo better-sqlite3 per leggere dal vecchio DB (Source)
 let sqliteDb = null;

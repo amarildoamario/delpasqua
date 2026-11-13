@@ -4,6 +4,7 @@ import { analyticsPath, isAdminPath } from "@/lib/analytics/events";
 import type { AnalyticsEventSchema } from "@/lib/server/schemas";
 import { normalizeTrafficCountry } from "@/lib/server/trafficGeography";
 import { acquisitionSource } from "@/lib/analytics/acquisition";
+import { hasAnalyticsExclusion } from "@/lib/analytics/exclusion";
 
 type IncomingEvent = z.infer<typeof AnalyticsEventSchema>;
 type Writer = { $executeRaw: (sql: TemplateStringsArray, ...values: unknown[]) => Promise<number> };
@@ -31,6 +32,7 @@ function deviceFromUA(ua: string) {
 }
 
 export function prepareAnalyticsEvents(events: IncomingEvent[], req: Request, now = Date.now()) {
+  if (hasAnalyticsExclusion(req.headers.get("cookie") ?? "")) return [];
   const ua = req.headers.get("user-agent") ?? "";
   const device = deviceFromUA(ua);
   if (device === "bot") return [];
@@ -94,9 +96,13 @@ export async function saveAnalyticsBatch(db: Writer, events: IncomingEvent[], re
       e.device, e.env, e."isInternal", e.data
     FROM incoming e
     LEFT JOIN "Order" o ON e.type IN ('purchase', 'checkout_canceled') AND o.id = e."orderId"
-    WHERE (e.type NOT IN ('purchase', 'checkout_canceled'))
+    WHERE NOT EXISTS (
+      SELECT 1 FROM "AnalyticsEvent" excluded
+      WHERE excluded.id = 'ana-excluded-' || e.env || '-' || e."visitorId"
+        AND excluded.type = 'analytics_excluded' AND excluded."isInternal" = true
+    ) AND ((e.type NOT IN ('purchase', 'checkout_canceled'))
       OR (e.type = 'purchase' AND o."isTest" = false AND o."paidAt" IS NOT NULL)
-      OR (e.type = 'checkout_canceled' AND o."isTest" = false AND o."stripeSessionId" IS NOT NULL)
+      OR (e.type = 'checkout_canceled' AND o."isTest" = false AND o."stripeSessionId" IS NOT NULL))
     ON CONFLICT (id) DO UPDATE SET "durationMs" = GREATEST(existing."durationMs", EXCLUDED."durationMs")
     WHERE existing.type = 'page_leave' AND EXCLUDED.type = 'page_leave'
       AND existing."visitorId" = EXCLUDED."visitorId" AND existing."pageId" = EXCLUDED."pageId"

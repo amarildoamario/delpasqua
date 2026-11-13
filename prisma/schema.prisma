@@ -9,6 +9,8 @@ datasource db {
 }
 
 model Order {
+  quoteId String?
+  quote Quote? @relation(fields: [quoteId], references: [id])
   id             String @id @default(cuid())
   idempotencyKey String @unique
 
@@ -83,6 +85,7 @@ model Order {
   promotionCode String?
 
   @@index([promotionCode, status])
+  @@index([quoteId])
   @@index([isTest, createdAt])
 }
 
@@ -237,7 +240,23 @@ model OutboxEvent {
   @@index([status, runAt])
 }
 
+model ContactReply {
+  id String @id @default(cuid())
+  messageId String
+  message ContactMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  idempotencyKey String @unique
+  subject String
+  body String
+  from String
+  emailId String? @unique
+  sentAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([messageId, createdAt])
+}
+
 model ContactMessage {
+  replies ContactReply[]
   id String @id @default(cuid())
 
   status ContactMessageStatus @default(UNREAD)
@@ -502,4 +521,75 @@ model TastingBooking {
 
   @@index([slotStart])
   @@index([status, slotStart])
+}
+
+model Quote {
+  emails QuoteEmail[]
+  id String @id @default(cuid())
+  sequence Int @unique @default(autoincrement())
+  requestId String @unique
+  payloadHash String
+  fullName String
+  email String
+  phone String
+  addressLine1 String
+  addressLine2 String
+  city String
+  postalCode String
+  province String
+  countryCode String
+  paymentTerms String
+  shippingTerms String @default("Spedizione all'indirizzo indicato nel preventivo, ai costi concordati.")
+  paymentToken String? @unique
+  stripeCustomerId String?
+  stripeSessionId String? @unique
+  checkoutOrderId String?
+  paidAt DateTime?
+  orders Order[]
+  notes String
+  validUntil DateTime
+  items Json
+  subtotalCents Int
+  discountCents Int
+  shippingCents Int
+  vatCents Int
+  vatRate Float
+  totalCents Int
+  createdAt DateTime @default(now())
+  events QuoteEvent[]
+
+  @@index([createdAt])
+}
+
+model QuoteEvent {
+  id String @id @default(cuid())
+  quoteId String
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  type String
+  createdAt DateTime @default(now())
+
+  @@index([quoteId, createdAt])
+}
+
+model QuoteEmail {
+  id String @id @default(cuid())
+  quoteId String
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Restrict)
+  idempotencyKey String @unique
+  recipient String
+  recipientName String
+  quoteNumber String
+  subject String
+  body String
+  from String
+  replyTo String?
+  filename String
+  pdf Bytes
+  emailId String? @unique
+  sentAt DateTime?
+  lastError String?
+  createdAt DateTime @default(now())
+
+  @@index([quoteId, createdAt])
+  @@index([createdAt])
 }

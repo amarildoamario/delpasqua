@@ -88,10 +88,9 @@ export default async function AdminMetricsPage({
       ])
     : [0, 0, 0, 0];
 
-  const [pageViews, pageLeaves, ordersCount] = await Promise.all([
+  const [pageViews, pageLeaves] = await Promise.all([
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER } }),
     prisma.analyticsEvent.count({ where: { ...rangeWhere, type: "page_leave", ...SITE_ONLY, ...QUALITY_FILTER } }),
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, isTest: false } }),
   ]);
 
   const [sessions, visitors] = await Promise.all([
@@ -490,7 +489,7 @@ export default async function AdminMetricsPage({
         value={pct(conversionAnalytics)}
         subtitle={`${nice(sales.paidOrders)} ordini pagati / ${nice(uniqueSessions)} visite`}
       />
-      <Kpi title="Ordini (DB)" value={nice(ordersCount)} subtitle="(conteggio raw)" />
+      <Kpi title="Ordini effettuati" value={nice(sales.paidOrders)} subtitle="pagati nel periodo · test esclusi" />
     </div>
 
     {/* Funnel + tempo pagamento */}

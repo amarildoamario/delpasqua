@@ -56,6 +56,10 @@ export async function applyPaidOrderInvariantsTx(
   });
 
   const customer = args.customer;
+  if (order.quoteId) {
+    await tx.quote.update({ where: { id: order.quoteId }, data: { paidAt: new Date() } });
+    await tx.quoteEvent.create({ data: { quoteId: order.quoteId, type: "PAID" } });
+  }
   const updated = await tx.order.update({
     where: { id: order.id },
     data: {

@@ -3,6 +3,7 @@ export const runtime = "nodejs";
 
 import { randomUUID } from "crypto";
 import Stripe from "stripe";
+import { localStripeTestError } from "@/lib/server/stripeEnvironment";
 import { prisma } from "@/lib/server/prisma";
 import { checkoutLocalePrefix } from "@/lib/checkoutLocale";
 import { CreateOrderSchema } from "@/lib/server/schemas";
@@ -106,6 +107,8 @@ async function expireStripeSessionBestEffort(sessionId: string) {
 
 export async function POST(req: Request) {
   try {
+    const environmentError = localStripeTestError();
+    if (environmentError) return Response.json({ error: "LOCAL_STRIPE_TEST_REQUIRED", message: environmentError }, { status: 503 });
     // basic hardening
     enforceBodyLimit(req, 80_000);
     rateLimitOrThrow({ key: `order:${getIP(req)}`, limit: 10, windowSeconds: 60 });

@@ -9,8 +9,8 @@ export type StockLine = {
 
 function clampQty(qty: number) {
   const n = Math.trunc(qty);
-  if (!Number.isFinite(n) || n <= 0) return 0;
-  return Math.min(99, n);
+  if (!Number.isSafeInteger(n) || n <= 0) return 0;
+  return n;
 }
 
 function normalizeLines(lines: StockLine[]) {

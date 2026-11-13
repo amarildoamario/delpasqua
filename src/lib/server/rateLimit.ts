@@ -169,6 +169,9 @@ export async function rateLimit(params: {
   const now = Date.now();
   const { windowStart, resetAt } = computeWindow(now, params.windowSeconds);
 
+  // Local development must not update production Redis or database counters.
+  if (process.env.NODE_ENV === "development") return devMemoryRateLimit(params);
+
   try {
     const upstashResult = await rateLimitWithUpstash(params);
     if (upstashResult) return upstashResult;

@@ -14,6 +14,11 @@ export async function buildOrderPdfAttachment(order: OrderWithItems): Promise<Or
     [{ ...order, previousPrintCount: 0, lastPrintedAt: null }],
     `data:image/png;base64,${logo.toString("base64")}`,
   );
+  const reference = (order.orderNumber || order.id).replace(/[^a-zA-Z0-9_-]/g, "_");
+  return buildPrintPdfAttachment(html, `ordine-${reference}.pdf`);
+}
+
+export async function buildPrintPdfAttachment(html: string, filename: string): Promise<OrderPdfAttachment> {
   const puppeteer = await import("puppeteer-core");
   let executablePath: string;
   let args: string[] = [];
@@ -37,8 +42,7 @@ export async function buildOrderPdfAttachment(order: OrderWithItems): Promise<Or
     await page.setContent(html, { waitUntil: "load", timeout: 20_000 });
     await page.emulateMediaType("print");
     const pdf = await page.pdf({ format: "A4", preferCSSPageSize: true, printBackground: true });
-    const reference = (order.orderNumber || order.id).replace(/[^a-zA-Z0-9_-]/g, "_");
-    return { filename: `ordine-${reference}.pdf`, content: Buffer.from(pdf), contentType: "application/pdf" };
+    return { filename, content: Buffer.from(pdf), contentType: "application/pdf" };
   } finally {
     await browser.close();
   }

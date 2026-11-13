@@ -81,6 +81,13 @@ Implementata il 9 novembre 2026, mantenendo le modifiche già presenti nel worki
 
 Il database configurato al momento del controllo contiene 36 visite misurate e una coorte Stripe di un checkout; nessun cliente o ordine commerciale pagato disponibile. Totali vendite/LTV a zero riconciliati con il database; i casi non vuoti sono verificati tramite fixture. Il collaudo di un pagamento reale sul dominio pubblicato resta successivo al deploy. Screenshot di prova in `scratch/gestionale-risultati/metrics-1440.png` e `metrics-390.png`.
 
+## Ordini effettuati e checkout chiusi - 12 novembre 2026
+
+- Su richiesta del proprietario, sostituito il riquadro `Ordini (DB)` / `conteggio raw` con `Ordini effettuati`: usa la stessa fonte `sales.paidOrders` delle vendite e della conversione, con pagamento nel periodo e test esclusi. Rimossa la query che contava anche i record non pagati.
+- La coorte Stripe include tra i checkout chiusi senza pagamento anche annullamenti, scadenze e fallimenti registrati nel database, senza dipendere dal ritorno del browser. Deduplica per ordine, pagamenti recuperati distinti, chiusure successive al periodo escluse dalla fotografia storica. Fallback per righe legacy senza evento solo quando lo stato risulta aggiornato entro fine periodo.
+- Verifiche: 101 test server PASS, incluso checkout scaduto senza ritorno, deduplica ritorno + stato DB, ordine test, recupero e scadenza dopo il periodo. TypeScript e lint PASS. Controllo READ ONLY novembre 2026: 0 ordini effettuati, 1 checkout non pagato chiuso, 1 checkout commerciale avviato. Nessun ordine o pagamento modificato.
+- Rilascio production: `dpl_F5HwHYUqzWsuuJM6ZPZ862Ub9JbV`, build remota PASS, stato READY, fra1. Sorgente CLI dal working tree su HEAD `7d89055574e3b2f7f386cd147286ffc617aa8132` con modifiche locali; il solo SHA non identifica tutto il sorgente distribuito.
+
 ## Rifiniture richieste e filtri temporali — 9 novembre 2026
 
 - Rimosso l'intero blocco duplicato dalla dashboard e dal suo report; Metriche conserva acquisizione, Stripe, decisione, LTV, segmenti e istogrammi.

@@ -8,6 +8,7 @@
 import { createRequire } from "module";
 import crypto from "crypto";
 import * as dotenv from "dotenv";
+import { databasePolicy, databaseGuardExtension } from "../../src/lib/server/databaseSafety.mjs";
 
 dotenv.config();
 
@@ -17,7 +18,8 @@ const { PrismaPg } = require("@prisma/adapter-pg");
 const pg = require("pg");
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
-const DATABASE_URL = process.env.DATABASE_URL;
+const policy = databasePolicy();
+const DATABASE_URL = policy.connectionString;
 
 if (!DATABASE_URL) {
   console.error("❌ ERROR: DATABASE_URL not set in environment.");
@@ -33,7 +35,8 @@ export function getPrisma() {
   if (!prisma) {
     pool = new pg.Pool({ connectionString: DATABASE_URL });
     adapter = new PrismaPg(pool);
-    prisma = new PrismaClient({ adapter });
+    const client = new PrismaClient({ adapter });
+    prisma = policy.readOnly ? client.$extends(databaseGuardExtension(policy)) : client;
   }
   return prisma;
 }

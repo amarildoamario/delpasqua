@@ -172,6 +172,7 @@ export default function AdminSidebar({
           badgePulse: counts.toShip > 0,
           icon: ClipboardList,
         },
+        { href: "/admin/quotes", label: "Preventivi", icon: ClipboardList },
         {
           href: "/admin/degustazioni",
           label: "Degustazioni",

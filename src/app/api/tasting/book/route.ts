@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import Stripe from "stripe";
+import { localStripeTestError } from "@/lib/server/stripeEnvironment";
 import { prisma } from "@/lib/server/prisma";
 import { getTastingTypes } from "@/lib/tasting/slots";
 import { sendTastingBookingAdminEmail } from "@/lib/server/tastingEmail";
@@ -64,6 +65,8 @@ function resolveAppUrl(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const environmentError = localStripeTestError();
+    if (environmentError) return NextResponse.json({ error: environmentError }, { status: 503 });
     enforceBodyLimit(req, 8_000);
     rateLimitOrThrow({ key: `tasting-book:${getIP(req)}`, limit: 10, windowSeconds: 60 });
 

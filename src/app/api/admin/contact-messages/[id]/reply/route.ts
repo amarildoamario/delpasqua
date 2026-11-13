@@ -53,10 +53,32 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       from: process.env.EMAIL_FROM,
       replyTo: process.env.EMAIL_REPLY_TO || undefined,
     });
+    // Persist the text before any external side effect; never lose an accepted email's body.
+    const saved = await prisma.contactReply.upsert({
+      where: { idempotencyKey }, update: {},
+      create: { messageId: id, idempotencyKey, subject: payload.subject, body: payload.text, from: payload.from },
+    });
+    const serializeReply = (r: typeof saved) => ({
+      id: r.id, subject: r.subject, body: r.body, from: r.from, emailId: r.emailId,
+      sentAt: r.sentAt?.toISOString() ?? null, createdAt: r.createdAt.toISOString(),
+    });
+    if (saved.emailId) return respond({ ok: true, emailId: saved.emailId, from: saved.from, reply: serializeReply(saved) });
+    // Provider deduplication expires after 24h; an old ambiguous attempt needs reconciliation.
+    if (Date.now() - saved.createdAt.getTime() > 23 * 60 * 60 * 1000) {
+      return respond({ error: "Invio precedente da verificare nel servizio email prima di riprovare." }, 409);
+    }
     const result = await new Resend(process.env.RESEND_API_KEY).emails.send(payload, { idempotencyKey });
     if (result.error || !result.data?.id) {
       console.error("[CONTACT_REPLY] provider rejected", { messageId: id, code: result.error?.name });
       return respond({ error: "Invio non riuscito. La risposta resta aperta: riprova tra poco." }, 502);
+    }
+    let storedReply: typeof saved = { ...saved, emailId: result.data.id, sentAt: new Date() };
+    let historySaved = true;
+    try {
+      storedReply = await prisma.contactReply.update({ where: { id: saved.id }, data: { emailId: result.data.id, sentAt: storedReply.sentAt } });
+    } catch {
+      historySaved = false;
+      console.error("[CONTACT_REPLY] receipt persistence failed", { messageId: id, emailId: result.data.id });
     }
     // A database failure after acceptance must never appear as a send failure.
     let readAt: string | null = null;
@@ -68,7 +90,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       console.error("[CONTACT_REPLY] read status update failed", { messageId: id, emailId: result.data.id });
     }
     console.info("[CONTACT_REPLY] accepted", { messageId: id, emailId: result.data.id });
-    return respond({ ok: true, emailId: result.data.id, from: payload.from, readAt });
+    return respond({ ok: true, emailId: result.data.id, from: payload.from, readAt, reply: serializeReply(storedReply), historySaved });
   } catch {
     console.error("[CONTACT_REPLY] request failed", { messageId: id });
     return respond({ error: "Impossibile confermare l'invio. Riprova senza cambiare il testo per evitare duplicati." }, 502);
