@@ -1,3 +1,4 @@
+import { closedCheckoutWhere } from "@/lib/server/checkoutMetrics";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -73,7 +74,7 @@ export async function GET(req: Request) {
     }),
     prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "IN_ATTESA", orderNumber: { not: null }, isTest: false } }),
     prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: { not: null }, isTest: false } }),
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: null, isTest: false } }),
+    prisma.order.count({ where: closedCheckoutWhere(start, endExclusive) }),
     // 1. Eventi analitici per calcoli geografici e visite/sessioni/views prodotti
     prisma.analyticsEvent.findMany({
       where: {
@@ -163,12 +164,7 @@ export async function GET(req: Request) {
     // 8. Checkout annullati per nazione
     prisma.order.groupBy({
       by: ["countryCode"],
-      where: {
-        createdAt: { gte: start, lt: endExclusive },
-        status: "ANNULLATO",
-        orderNumber: null,
-        isTest: false,
-      },
+      where: closedCheckoutWhere(start, endExclusive),
       _count: { id: true },
     }),
   ]);

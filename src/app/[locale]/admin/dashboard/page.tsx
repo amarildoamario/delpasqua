@@ -1,3 +1,4 @@
+import { closedCheckoutWhere } from "@/lib/server/checkoutMetrics";
 import Link from "next/link";
 import CountryFlag from "@/components/CountryFlag";
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
@@ -328,7 +329,7 @@ export default async function AdminDashboard({
 
     prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: { not: null }, isTest: false } }),
 
-    prisma.order.count({ where: { createdAt: { gte: start, lt: endExclusive }, status: "ANNULLATO", orderNumber: null, isTest: false } }),
+    prisma.order.count({ where: closedCheckoutWhere(start, endExclusive) }),
 
     // 1. Eventi analitici per calcoli geografici e visite/sessioni/views prodotti
 
@@ -503,16 +504,7 @@ export default async function AdminDashboard({
 
       by: ["countryCode"],
 
-      where: {
-
-        createdAt: { gte: start, lt: endExclusive },
-
-        status: "ANNULLATO",
-
-        orderNumber: null,
-        isTest: false,
-
-      },
+      where: closedCheckoutWhere(start, endExclusive),
 
       _count: { id: true },
 
@@ -1651,11 +1643,11 @@ export default async function AdminDashboard({
 
               title="Annullati al checkout"
 
-              hint="In fase di pagamento"
+              hint="Annullati, scaduti o falliti"
 
               value={String(checkoutCanceled)}
 
-              tooltip="Ordini avviati ma in cui l'utente ha interrotto il pagamento durante la sessione di checkout Stripe."
+              tooltip="Checkout Stripe creati nel periodo e chiusi senza pagamento: annullati, scaduti o falliti. Un annullamento resta contato anche dopo la scadenza della sessione. Ogni checkout conta una volta; prove e checkout ancora in attesa sono esclusi."
 
             />
 

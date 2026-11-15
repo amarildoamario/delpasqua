@@ -339,3 +339,10 @@ Richiesta utente del 2026-11-08: conversioni calcolate dalle visite in rapporto 
 - Banner nel gestionale distingue dati di sviluppo locali e consultazione remota. Rate limit di next dev in memoria, senza scrivere contatori Redis o Postgres di produzione.
 - Rilevata configurazione Stripe live locale: flussi checkout ordine, degustazione e preventivo ora richiedono chiave Stripe test fuori dal deployment production. PDF con checkout non generabile finché non viene configurato Stripe test, per evitare webhook verso produzione. Nessuna chiamata Stripe reale effettuata.
 - Verifiche: 118 test server superati; test specifici per lettura sessione senza UPDATE, blocco POST admin in sola lettura, rate limit dev e Stripe test. Prova browser reale http://localhost:3000: login → pagina Preventivi con banner locale → salvataggio → SELECT nel DB locale (totale 4490 centesimi) → riapertura del dettaglio. Nessun errore JS; preventivo e sessione fittizi rimossi solo dal DB locale dopo la prova. Immagine scratch/local-quote-smoke.png. Nessun deploy.
+
+
+## [CORREZIONE VERIFICATA] Dashboard: annullati al checkout conservati dopo la scadenza
+
+- Corretto il filtro condiviso tra Dashboard e report JSON: include checkout Stripe non pagati, non numerati e non di prova, annullati/scaduti/falliti entro la fine del periodo. Lo storico ORDER_CANCELED conserva un annullamento anche quando Stripe cambia successivamente lo stato in EXPIRED. Ogni ordine conta una volta; conteggio e grafico per nazione usano lo stesso filtro.
+- Aggiornati spiegazione e sottotitolo della scheda. Checkout ancora in attesa e i quattro checkout esclusi su richiesta utente restano esclusi. Nessuna modifica a stati ordine, pagamenti, inventario o webhook.
+- Verifica produzione in sola lettura sul 15 novembre: filtro precedente 0, corretto 1. Regressione su Postgres locale con fixture in transazione e rollback: annullamento seguito da scadenza resta contato, nazioni coerenti, esclusi prove/pagati/pending/senza Stripe/numerati/chiusure future. Suite commerceInsights: 15 test superati; lint e typecheck superati. Pubblicazione in produzione autorizzata dall?utente il 16 novembre 2026.
