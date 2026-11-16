@@ -532,7 +532,10 @@ export default function CartPageClient({
                               type="button"
                               onClick={async () => {
                                 if (!firstVariant) return;
-                                const result = await cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                                const result = await cart.add(
+                                  { productId: prod.id, variantId: firstVariant.id, qty: 1 },
+                                  { title: prod.title, variantLabel: firstVariant.label }
+                                );
                                 const title = [prod.title, firstVariant.label].filter(Boolean).join(" - ");
                                 if (result.status === "rejected") {
                                   setCartToast(statusText.addRejected(title));
@@ -551,10 +554,6 @@ export default function CartPageClient({
                                   },
                                   cartId: null,
                                 });
-                                if (result.status === "adjusted") {
-                                  setCartToast(statusText.addAdjusted(title, result.addedQty, result.availableQty));
-                                  setCartToastOpen(true);
-                                }
                               }}
                               className="mt-3 w-full inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-[11px] font-semibold text-white hover:bg-emerald-700 transition-colors active:scale-95 cursor-pointer shadow-sm"
                             >
@@ -1077,7 +1076,10 @@ export default function CartPageClient({
                               type="button"
                               onClick={async () => {
                                 if (!firstVariant) return;
-                                const result = await cart.add({ productId: prod.id, variantId: firstVariant.id, qty: 1 });
+                                const result = await cart.add(
+                                  { productId: prod.id, variantId: firstVariant.id, qty: 1 },
+                                  { title: prod.title, variantLabel: firstVariant.label }
+                                );
                                 const title = [prod.title, firstVariant.label].filter(Boolean).join(" - ");
                                 if (result.status === "rejected") {
                                   setCartToast(statusText.addRejected(title));
@@ -1095,10 +1097,6 @@ export default function CartPageClient({
                                     slug: prod.slug,
                                   },
                                 });
-                                if (result.status === "adjusted") {
-                                  setCartToast(statusText.addAdjusted(title, result.addedQty, result.availableQty));
-                                  setCartToastOpen(true);
-                                }
                               }}
                               className="mt-3 inline-flex h-8 items-center justify-center rounded-[5px] bg-emerald-600 px-3 text-xs font-medium tracking-wide text-white transition-colors hover:bg-emerald-700 active:scale-95 cursor-pointer"
                             >

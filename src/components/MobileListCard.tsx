@@ -100,11 +100,17 @@ export default function MobileListCard({
 
     if (!product.defaultVariantId) return;
 
-    const result = await add({
-      productId: product.id,
-      variantId: product.defaultVariantId,
-      qty: 1,
-    });
+    const result = await add(
+      {
+        productId: product.id,
+        variantId: product.defaultVariantId,
+        qty: 1,
+      },
+      {
+        title: product.title,
+        variantLabel: product.variantLabel,
+      }
+    );
 
     if (result.status === "rejected") {
       setToastMsg(locale === "it" ? "Prodotto esaurito." : "Product out of stock.");
@@ -123,20 +129,6 @@ export default function MobileListCard({
         slug: product.slug,
       },
     });
-
-    if (result.status === "adjusted") {
-      setToastMsg(
-        locale === "it"
-          ? `Disponibili solo ${result.availableQty} pezzi. Carrello aggiornato.`
-          : `Only ${result.availableQty} items available. Cart updated.`
-      );
-      setToastOpen(true);
-      return;
-    }
-
-    const toastTitle = product.variantLabel ? `${product.title} ${product.variantLabel}` : product.title;
-    setToastMsg(locale === "it" ? `${toastTitle} aggiunto al carrello` : `${toastTitle} added to cart`);
-    setToastOpen(true);
   };
 
   const hrefBase = { pathname: `/shop/${product.slug}` as const };
@@ -208,7 +200,7 @@ export default function MobileListCard({
   return (
     <>
       <ToggleMessage open={toastOpen} message={toastMsg} onClose={() => setToastOpen(false)} />
-      <div className="relative flex flex-col bg-white border border-[#ede8e0] rounded-[5px] p-3 shadow-[0_1px_4px_rgba(0,0,0,0.05)] text-[#1f1a17] transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+      <div className="relative flex flex-col bg-white border border-[#ede8e0] rounded-[5px] p-2.5 sm:p-3 shadow-[0_1px_4px_rgba(0,0,0,0.05)] text-[#1f1a17] transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
         <Link
           href={href}
           prefetch={false}
@@ -220,33 +212,37 @@ export default function MobileListCard({
         {/* Parte Superiore: Foto (Sinistra) e Dettagli (Destra) */}
         <div className="flex items-stretch gap-3">
           {/* Foto Prodotto Ingrandita */}
-          <div className="relative w-[145px] min-w-[145px] h-[175px] bg-[#fdfaf7] rounded-[5px] overflow-hidden shrink-0 border border-[#f0eae0]/30 flex items-center justify-center">
+          <div className="relative w-[47%] min-w-[158px] max-w-[205px] h-[214px] bg-[#fdfaf7] rounded-[5px] overflow-hidden shrink-0 border border-[#f0eae0]/30 flex items-center justify-center">
             <ProductCardImage
               src={product.imageSrc}
               alt={product.imageAlt || product.title}
-              sizes="145px"
+              sizes="205px"
             />
-            {product.badge && (
-              <span className="absolute top-1.5 left-1.5 bg-[#bda589] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-[3px] uppercase tracking-wider z-20">
-                {product.badge}
-              </span>
-            )}
-            {product.merchBadge && (
-              <span className="absolute top-1.5 right-1.5 border border-[#ddd7ce] bg-white/92 text-[#1f1a17] text-[8px] font-bold px-1.5 py-0.5 rounded-[3px] uppercase tracking-wider z-20 shadow-sm backdrop-blur-sm">
-                {(() => {
-                  const raw = product.merchBadge || "";
-                  const upper = raw.toUpperCase();
-                  return MERCH_BADGES[upper]
-                    ? (MERCH_BADGES[upper][locale] ?? MERCH_BADGES[upper].it)
-                    : raw;
-                })()}
-              </span>
-            )}
           </div>
 
           {/* Dettagli Prodotto */}
           <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
             <div>
+              {(product.badge || product.merchBadge) ? (
+                <div className="mb-1.5 flex flex-wrap items-center gap-1">
+                  {product.badge && (
+                    <span className="bg-[#bda589] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-[3px] uppercase tracking-wider">
+                      {product.badge}
+                    </span>
+                  )}
+                  {product.merchBadge && (
+                    <span className="border border-[#ddd7ce] bg-[#fcf9f5] text-[#1f1a17] text-[8px] font-bold px-1.5 py-0.5 rounded-[3px] uppercase tracking-wider">
+                      {(() => {
+                        const raw = product.merchBadge || "";
+                        const upper = raw.toUpperCase();
+                        return MERCH_BADGES[upper]
+                          ? (MERCH_BADGES[upper][locale] ?? MERCH_BADGES[upper].it)
+                          : raw;
+                      })()}
+                    </span>
+                  )}
+                </div>
+              ) : null}
               <div className="text-[8px] xs:text-[9px] font-semibold text-neutral-400 tracking-wider uppercase leading-none">
                 {categoryLabel}
               </div>

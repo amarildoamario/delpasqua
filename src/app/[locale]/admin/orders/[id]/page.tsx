@@ -64,13 +64,13 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <div className="text-xs text-neutral-500 print-hidden flex items-center gap-1.5">
-          <Link href="/admin/orders" className="hover:text-neutral-900 transition flex items-center gap-0.5 font-medium">
+        <div className="text-xs text-neutral-500 print-hidden flex flex-wrap items-center gap-1.5">
+          <Link href="/admin/orders" className="hover:text-neutral-900 transition flex items-center gap-0.5 font-medium shrink-0">
             <ChevronLeft className="h-3.5 w-3.5" />
             Torna agli ordini
           </Link>
           <span className="text-neutral-300">|</span>
-          <span className="text-neutral-400">id: {order.id}</span>
+          <span className="text-neutral-400 truncate max-w-[200px] sm:max-w-none">id: {order.id}</span>
         </div>
 
         <PageHeader
@@ -94,7 +94,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </div>
           }
           actions={
-            <div className="flex items-center gap-2 print-hidden">
+            <div className="flex w-full sm:w-auto flex-wrap items-center gap-2 print-hidden">
               <PrintButton orderId={order.id} />
               <ShipToggleButton orderId={order.id} shipped={!!order.shippedAt} status={order.status} />
             </div>
@@ -133,7 +133,37 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               </h3>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Mobile Items List (< sm) */}
+            <div className="sm:hidden divide-y divide-neutral-100">
+              {order.items.map((it: Item) => (
+                <div key={it.id} className="p-4 space-y-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-bold text-neutral-900 leading-tight text-sm">{it.title}</div>
+                      {it.variantLabel ? (
+                        <div className="text-xs text-neutral-600 font-medium mt-0.5">{it.variantLabel}</div>
+                      ) : null}
+                      <div className="text-[10px] text-neutral-400 mt-1 font-mono">
+                        PID: {it.productId.slice(0, 8)}… · VID: {it.variantId?.slice(0, 8) ?? "—"}
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-bold text-neutral-900 text-sm">{euro(it.lineTotalCents)}</div>
+                      <div className="text-xs text-neutral-500 mt-0.5">
+                        {it.qty} × {euro(it.unitPriceCents)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {order.items.length === 0 ? (
+                <div className="px-4 py-6 text-center text-sm text-neutral-500">
+                  Nessun articolo associato a questo ordine.
+                </div>
+              ) : null}
+            </div>
+
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left text-sm min-w-[500px]">
                 <thead className="bg-neutral-50 text-[10px] uppercase tracking-wider text-neutral-500 border-b border-neutral-100">
                   <tr>

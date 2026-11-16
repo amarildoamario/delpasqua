@@ -21,7 +21,7 @@ export default function PageRankings({ rows }: { rows: PageRanking[] }) {
       {choices.map((choice) => <button key={choice.key} type="button" aria-pressed={sort === choice.key} onClick={() => setSort(choice.key)} className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${sort === choice.key ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"}`}>{choice.label}</button>)}
     </div>
     <div className="mt-3 flex flex-wrap gap-2">
-      <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Cerca pagina" placeholder="Cerca pagina…" className="min-w-0 flex-1 rounded-lg border border-neutral-200 px-3 py-2 text-sm" />
+      <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Cerca pagina" placeholder="Cerca pagina…" className="min-w-0 flex-1 rounded-lg border border-neutral-200 px-3 py-2 text-base sm:text-sm" />
       <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} aria-label="Numero di pagine" className="rounded-lg border border-neutral-200 px-2 py-2 text-xs"><option value={20}>Prime 20</option><option value={50}>Prime 50</option><option value={0}>Tutte</option></select>
     </div>
     <p className="mt-3 text-xs text-neutral-500">Ordine decrescente. La media usa solo le visite con durata rilevata. Il tracciamento attuale registra fino a 20 minuti per permanenza; “—” indica durata non misurata.</p>

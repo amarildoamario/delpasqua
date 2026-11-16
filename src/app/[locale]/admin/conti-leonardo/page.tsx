@@ -454,8 +454,8 @@ export default function ContiLeonardoPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
             <h3 className="flex items-center gap-2 text-base font-bold text-neutral-900">
               <Upload className="h-5 w-5 text-neutral-500" />
@@ -467,7 +467,7 @@ export default function ContiLeonardoPage() {
             </p>
           </div>
 
-          <label className="relative flex max-w-sm cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 p-4 transition-colors hover:border-neutral-400 hover:bg-neutral-100">
+          <label className="relative flex w-full lg:max-w-sm cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 p-4 transition-colors hover:border-neutral-400 hover:bg-neutral-100">
             <input
               type="file"
               accept="application/pdf"
@@ -554,14 +554,14 @@ export default function ContiLeonardoPage() {
               </div>
 
               <div className="flex flex-col gap-3 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                   <label className="text-xs font-semibold text-neutral-400">
                     Applica questo costo al mese:
                   </label>
                   <select
                     value={targetGlsMonth}
                     onChange={(event) => setTargetGlsMonth(event.target.value)}
-                    className="rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-bold text-white"
+                    className="w-full sm:w-auto rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 sm:py-1.5 text-sm sm:text-xs font-bold text-white"
                   >
                     {filteredMonths.map((month) => (
                       <option key={month} value={month}>
@@ -573,7 +573,7 @@ export default function ContiLeonardoPage() {
 
                 <button
                   onClick={applyGlsToMonth}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-extrabold text-neutral-900 transition-colors hover:bg-amber-400"
+                  className="flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2.5 sm:py-2 text-xs font-extrabold text-neutral-900 transition-colors hover:bg-amber-400"
                 >
                   <span>Applica Spesa GLS</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -645,12 +645,12 @@ export default function ContiLeonardoPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-emerald-500 bg-gradient-to-br from-emerald-600 to-teal-800 p-6 text-white shadow-lg shadow-emerald-950/20">
+        <div className="rounded-xl border border-emerald-500 bg-gradient-to-br from-emerald-600 to-teal-800 p-5 sm:p-6 text-white shadow-lg shadow-emerald-950/20 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-emerald-100">
             <span>Quota Leonardo</span>
             <Coins className="h-4 w-4" />
           </div>
-          <div className="mt-4 text-4xl font-black tracking-tight text-white">
+          <div className="mt-3 sm:mt-4 text-3xl sm:text-4xl font-black tracking-tight text-white">
             {euro(totals.leonardoShare)}
           </div>
           <div className="mt-3 border-t border-white/10 pt-2.5 text-xs font-extrabold tracking-wide text-emerald-100">
@@ -659,8 +659,8 @@ export default function ContiLeonardoPage() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 pb-4">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm">
+        <div className="mb-5 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border-b border-neutral-200 pb-4">
           <div className="space-y-1">
             <h3 className="text-base font-extrabold text-neutral-950">
               Registro Mensile Contabilita
@@ -670,14 +670,14 @@ export default function ContiLeonardoPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between sm:justify-end gap-2">
             <label className="text-xs font-bold uppercase text-neutral-700">
               Filtra per Anno:
             </label>
             <select
               value={selectedYear}
               onChange={(event) => setSelectedYear(event.target.value)}
-              className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-xs font-extrabold text-neutral-950 shadow-sm focus:border-neutral-950 focus:outline-none"
+              className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-sm sm:text-xs font-extrabold text-neutral-950 shadow-sm focus:border-neutral-950 focus:outline-none"
             >
               <option value="all">Tutti gli anni</option>
               {availableYears.map((year) => (
@@ -701,7 +701,158 @@ export default function ContiLeonardoPage() {
             Nessun dato registrato nel periodo selezionato.
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Mobile Card View (< lg) */}
+          <div className="lg:hidden space-y-3">
+            {financialDetails.map((detail) => (
+              <div
+                key={detail.month}
+                className="rounded-2xl border border-neutral-200 bg-neutral-50/50 p-3.5 space-y-3"
+              >
+                <div className="flex items-center justify-between gap-2 border-b border-neutral-200 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 shrink-0 text-neutral-900" />
+                    <span className="text-base font-black text-neutral-950">{detail.month}</span>
+                    <span className="rounded-full bg-neutral-200/80 px-2 py-0.5 text-[11px] font-bold text-neutral-800">
+                      {detail.orderCount} ordini
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                      Leonardo 10%
+                    </div>
+                    <div className="text-base font-black text-emerald-700">
+                      {euro(detail.leonardoShareCents)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block space-y-1">
+                    <span className="block text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      Fatturato
+                    </span>
+                    <span className="block text-[10px] font-semibold text-neutral-500">
+                      Auto {euro(detail.autoGrossCents)}
+                    </span>
+                    <input
+                      key={`${detail.month}-mobile-gross-${detail.actualGrossCents}`}
+                      type="text"
+                      inputMode="decimal"
+                      defaultValue={centsToInputValue(detail.actualGrossCents)}
+                      onBlur={(event) =>
+                        handleOverrideChange(
+                          detail.month,
+                          "manualGrossCents",
+                          event.target.value
+                        )
+                      }
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                        detail.isGrossOverridden
+                          ? "border-amber-500 bg-amber-50 text-amber-950"
+                          : ""
+                      }`}
+                    />
+                  </label>
+
+                  <label className="block space-y-1">
+                    <span className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      <span>Spedizioni</span>
+                      {detail.pdfGlsFileName ? (
+                        <span
+                          className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-800"
+                          title={`Caricata fattura GLS: ${detail.pdfGlsFileName}`}
+                        >
+                          PDF
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="block text-[10px] font-semibold text-neutral-500">
+                      Auto {euro(detail.autoShippingCents)}
+                    </span>
+                    <input
+                      key={`${detail.month}-mobile-shipping-${detail.actualShippingCents}`}
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="0.00"
+                      defaultValue={centsToInputValue(detail.actualShippingCents, true)}
+                      onBlur={(event) =>
+                        handleOverrideChange(
+                          detail.month,
+                          "manualGlsCents",
+                          event.target.value
+                        )
+                      }
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                        detail.pdfGlsFileName
+                          ? "border-emerald-500 bg-emerald-50 text-emerald-950"
+                          : detail.isShippingOverridden
+                            ? "border-amber-500 bg-amber-50 text-amber-950"
+                            : ""
+                      }`}
+                    />
+                  </label>
+
+                  <label className="block space-y-1">
+                    <span className="block text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      IVA
+                    </span>
+                    <span className="block text-[10px] font-semibold text-neutral-500">
+                      Auto {euro(detail.autoVatCents)}
+                    </span>
+                    <input
+                      key={`${detail.month}-mobile-vat-${detail.actualVatCents}`}
+                      type="text"
+                      inputMode="decimal"
+                      defaultValue={centsToInputValue(detail.actualVatCents)}
+                      onBlur={(event) =>
+                        handleOverrideChange(
+                          detail.month,
+                          "manualVatCents",
+                          event.target.value
+                        )
+                      }
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                        detail.isVatOverridden
+                          ? "border-amber-500 bg-amber-50 text-amber-950"
+                          : ""
+                      }`}
+                    />
+                  </label>
+
+                  <label className="block space-y-1">
+                    <span className="block text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      Stripe
+                    </span>
+                    <span className="block text-[10px] font-semibold text-neutral-500">
+                      Auto {euro(detail.autoStripeCents)}
+                    </span>
+                    <input
+                      key={`${detail.month}-mobile-stripe-${detail.actualStripeCents}`}
+                      type="text"
+                      inputMode="decimal"
+                      defaultValue={centsToInputValue(detail.actualStripeCents)}
+                      onBlur={(event) =>
+                        handleOverrideChange(
+                          detail.month,
+                          "manualStripeFeeCents",
+                          event.target.value
+                        )
+                      }
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                        detail.isStripeOverridden
+                          ? "border-amber-500 bg-amber-50 text-amber-950"
+                          : ""
+                      }`}
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View (lg+) */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full whitespace-nowrap text-left text-sm">
               <thead>
                 <tr className="border-b border-neutral-300 text-xs font-extrabold uppercase tracking-wider text-neutral-950">
@@ -875,6 +1026,7 @@ export default function ContiLeonardoPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 

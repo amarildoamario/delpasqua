@@ -29,11 +29,25 @@ export type CartAddResult = {
   finalQty: number;
   availableQty: number | null;
 };
+export type CartAddMeta = {
+  title?: string;
+  variantLabel?: string | null;
+};
+export type CartAddToast = {
+  id: number;
+  status: "added" | "adjusted";
+  productId: string;
+  variantId: string;
+  productTitle: string;
+  variantLabel?: string;
+  addedQty: number;
+  availableQty: number | null;
+};
 export type { CartAvailabilityNotice } from "@/lib/cartNormalization";
 
 type CartState = {
   lines: CartLine[];
-  add: (line: CartLine) => Promise<CartAddResult>;
+  add: (line: CartLine, meta?: CartAddMeta) => Promise<CartAddResult>;
   remove: (productId: string, variantId: string) => void;
   setQty: (productId: string, variantId: string, qty: number) => void;
   clear: () => void;
@@ -44,6 +58,8 @@ type CartState = {
   catalog: Product[];
   lastAvailabilityNotice: CartAvailabilityNotice | null;
   clearAvailabilityNotice: () => void;
+  lastCartToast: CartAddToast | null;
+  clearCartToast: () => void;
 };
 
 const CartContext = createContext<CartState | null>(null);
@@ -73,10 +89,12 @@ export function CartProvider({
   const [availabilityBySku, setAvailabilityBySku] = useState<AvailabilityMap>({});
   const [catalog, setCatalog] = useState<Product[]>(initialCatalog as Product[]);
   const [lastAvailabilityNotice, setLastAvailabilityNotice] = useState<CartAvailabilityNotice | null>(null);
+  const [lastCartToast, setLastCartToast] = useState<CartAddToast | null>(null);
 
   const linesRef = useRef<CartLine[]>([]);
   const availabilityRef = useRef<AvailabilityMap>({});
   const noticeSeqRef = useRef(0);
+  const toastSeqRef = useRef(0);
 
   const catalogRef = useRef<Product[]>(initialCatalog as Product[]);
 
@@ -311,7 +329,7 @@ export function CartProvider({
   );
 
   const add = useCallback(
-    async (line: CartLine) => {
+    async (line: CartLine, meta?: CartAddMeta) => {
       let currentCatalog = catalogRef.current;
       let currentVariantLocationByKey = variantLocationByKey;
       if (currentCatalog.length === 0) {
@@ -350,13 +368,36 @@ export function CartProvider({
       linesRef.current = next;
       setLines(next);
 
-      return buildAddResult({
+      const result = buildAddResult({
         prevLines: prev,
         nextLines: next,
         line,
         availability: mergedAvailability,
         variantLocationByKey: currentVariantLocationByKey,
       });
+
+      if (result.status !== "rejected" && result.addedQty > 0) {
+        const catalogProduct = currentCatalog.find((p) => p.id === line.productId);
+        const catalogVariant = catalogProduct?.variants?.find((v) => v.id === line.variantId);
+        const productTitle = meta?.title?.trim() || catalogProduct?.title || line.productId;
+        const variantLabel =
+          meta?.variantLabel !== undefined
+            ? meta.variantLabel || undefined
+            : catalogVariant?.label || undefined;
+
+        setLastCartToast({
+          id: ++toastSeqRef.current,
+          status: result.status,
+          productId: line.productId,
+          variantId: line.variantId,
+          productTitle,
+          variantLabel,
+          addedQty: result.addedQty,
+          availableQty: result.availableQty,
+        });
+      }
+
+      return result;
     },
     [buildAddResult, fetchAvailabilityForSkus, fetchCatalog, mergeAvailability, variantLocationByKey]
   );
@@ -390,6 +431,7 @@ export function CartProvider({
     setLines([]);
     setAvailabilityBySku({});
     setLastAvailabilityNotice(null);
+    setLastCartToast(null);
     try {
       localStorage.removeItem(LS_KEY);
     } catch {}
@@ -397,6 +439,10 @@ export function CartProvider({
 
   const clearAvailabilityNotice = useCallback(() => {
     setLastAvailabilityNotice(null);
+  }, []);
+
+  const clearCartToast = useCallback(() => {
+    setLastCartToast(null);
   }, []);
 
   const count = useMemo(
@@ -418,17 +464,21 @@ export function CartProvider({
       catalog,
       lastAvailabilityNotice,
       clearAvailabilityNotice,
+      lastCartToast,
+      clearCartToast,
     }),
     [
       add,
       catalog,
       clear,
       clearAvailabilityNotice,
+      clearCartToast,
       count,
       getAvailableQty,
       getLineQty,
       hydrated,
       lastAvailabilityNotice,
+      lastCartToast,
       lines,
       refreshAvailability,
       remove,

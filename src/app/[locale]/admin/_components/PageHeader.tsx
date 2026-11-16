@@ -14,7 +14,7 @@ export default function PageHeader({
   return (
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
-        <h1 className="text-2xl font-extrabold tracking-tight text-neutral-900">
+        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-neutral-900">
           {title}
         </h1>
 
@@ -32,7 +32,7 @@ export default function PageHeader({
       </div>
 
       {actions ? (
-        <div className="flex flex-wrap items-center gap-2">{actions}</div>
+        <div className="flex w-full sm:w-auto flex-wrap items-center gap-2">{actions}</div>
       ) : null}
     </div>
   );

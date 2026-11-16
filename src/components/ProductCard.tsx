@@ -358,7 +358,10 @@ export default function ProductCard({
         return
       }
 
-      const result = await add({ productId: product.id, variantId: variantIdToAdd, qty: 1 })
+      const result = await add(
+        { productId: product.id, variantId: variantIdToAdd, qty: 1 },
+        { title: product.title, variantLabel: product.variantLabel }
+      )
 
 
       if (result.status === "rejected") {
@@ -377,14 +380,6 @@ export default function ProductCard({
           slug: product.slug,
         },
       })
-
-      if (result.status === "adjusted") {
-        showToast(text.adjusted(result.availableQty))
-        return
-      }
-
-      const toastTitle = product.variantLabel ? `${product.title} ${product.variantLabel}` : product.title
-      showToast(text.added(toastTitle))
     },
     [add, activeVariantId, product.id, product.priceCents, product.slug, product.title, product.variantLabel, showToast, text]
   )

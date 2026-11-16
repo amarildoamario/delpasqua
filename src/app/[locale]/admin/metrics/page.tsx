@@ -322,7 +322,7 @@ export default async function AdminMetricsPage({
   actions={
     <a
       href={`/admin/metrics/export?start=${startISO}&end=${endISO}${includeInternal ? "&internal=1" : ""}`}
-      className="shrink-0 inline-flex items-center justify-center rounded-2xl border border-neutral-200 bg-white px-4 py-2 text-sm font-extrabold text-neutral-900 shadow-sm hover:bg-neutral-50"
+      className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center rounded-2xl border border-neutral-200 bg-white px-4 py-2.5 sm:py-2 text-sm font-extrabold text-neutral-900 shadow-sm hover:bg-neutral-50"
     >
       Scarica report (.json)
     </a>
@@ -358,17 +358,17 @@ export default async function AdminMetricsPage({
     ) : null}
 
     {/* 💼 INTELLIGENCE COMMERCIALE & FATTURATO */}
-    <div className="space-y-3">
-      <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-        <h2 className="text-base font-extrabold text-neutral-900">
+    <div className="space-y-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 border-b border-neutral-200 pb-1.5">
+        <h2 className="text-sm sm:text-base font-extrabold text-neutral-900">
           Commerciale & Valore Economico
         </h2>
-        <span className="text-xs font-semibold text-neutral-500">
+        <span className="text-[11px] sm:text-xs font-semibold text-neutral-500">
           Incassato, ordini, scontrino medio e valore carrelli
         </span>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <Kpi
           title="Fatturato Incassato"
           value={formatEur(sales.realizedRevenueEur)}
@@ -382,16 +382,13 @@ export default async function AdminMetricsPage({
         <Kpi
           title="Valore Prodotti Aggiunti"
           value={formatEur(potentialCartRevenueEur)}
-          subtitle={`Media aggiunte: ${formatEur(avgCartValueEur)} (${nice(cartsWithAdditions)} carrelli; ${nice(unpricedUnits)} unità senza prezzo)`}
+          subtitle={`Media: ${formatEur(avgCartValueEur)} (${nice(cartsWithAdditions)} carrelli; ${nice(unpricedUnits)} n/d)`}
         />
         <Kpi
           title="Valore Checkout Non Pagati"
           value={formatEur(sales.lostCheckoutRevenueEur)}
-          subtitle={`${nice(sales.unpaidCheckouts)} checkout non pagati, inclusi quelli in corso`}
+          subtitle={`${nice(sales.unpaidCheckouts)} non pagati (inclusi in corso)`}
         />
-      </div>
-
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <Kpi
           title="Attach Rate Olio + Vino"
           value={pct(sales.bundleOlioVinoRate)}
@@ -405,51 +402,48 @@ export default async function AdminMetricsPage({
         <Kpi
           title="Litri Richiesti a Carrello"
           value={`${round1(litersDemandedTotal)} L`}
-          subtitle={`Olio: ${round1(litersOilDemanded)}L • Vino: ${round1(litersWineDemanded)}L`}
+          subtitle={`Olio: ${round1(litersOilDemanded)}L · Vino: ${round1(litersWineDemanded)}L`}
         />
         <Kpi
           title="Formato: Latte vs Bottiglie"
           value={`${cansPct}% / ${bottlesPct}%`}
-          subtitle={`${nice(cansUnits)} latte (${cansPct}%) • ${nice(bottlesUnits)} bottiglie (${bottlesPct}%) • ${nice(unknownFormatUnits)} altri`}
+          subtitle={`${nice(cansUnits)} latte · ${nice(bottlesUnits)} bott. · ${nice(unknownFormatUnits)} altri`}
         />
-      </div>
-
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <Kpi
           title="Revenue per Session (RPS)"
           value={formatEur(revenuePerSessionEur)}
-          subtitle={`Valore per sessione (${nice(uniqueSessions)} visite totali)`}
+          subtitle={`${nice(uniqueSessions)} visite totali`}
         />
         <Kpi
           title="Margine Contribuzione Stimato"
           value={formatEur(sales.estimatedContributionMarginEur)}
-          subtitle={`Stima ~60% su ${formatEur(sales.netGoodsRevenueEur)} netto merci`}
+          subtitle={`~60% su ${formatEur(sales.netGoodsRevenueEur)} netto`}
         />
         <Kpi
           title="Nuovi Acquirenti vs Riacquisti"
           value={`${nice(sales.newPayingCustomers)} / ${nice(sales.repeatPayingCustomers)}`}
-          subtitle={`Nuovi: ${formatEur(sales.newRevenueEur)} • Riordini: ${formatEur(sales.repeatRevenueEur)}`}
+          subtitle={`Nuovi: ${formatEur(sales.newRevenueEur)} · Riord.: ${formatEur(sales.repeatRevenueEur)}`}
         />
         <Kpi
           title="CAC e ROAS"
           value={monthlyAdSpendEur > 0 ? `${formatEur(cacEur)} / ${roas}x` : "—"}
-          subtitle={monthlyAdSpendEur > 0 ? `Spesa mensile: ${formatEur(monthlyAdSpendEur)}` : "Spesa ads non configurata nei settings"}
+          subtitle={monthlyAdSpendEur > 0 ? `Ads: ${formatEur(monthlyAdSpendEur)}/mese` : "Ads non configurate"}
         />
       </div>
     </div>
 
     {/* 📞 LEAD & CONTATTI DIRETTI */}
-    <div className="space-y-3">
-      <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-        <h2 className="text-base font-extrabold text-neutral-900">
+    <div className="space-y-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 border-b border-neutral-200 pb-1.5">
+        <h2 className="text-sm sm:text-base font-extrabold text-neutral-900">
           Lead & Conversioni Dirette (B2B / Off-line)
         </h2>
-        <span className="text-xs font-semibold text-neutral-500">
+        <span className="text-[11px] sm:text-xs font-semibold text-neutral-500">
           Contatti, messaggi e visite in frantoio fuori dal carrello
         </span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
         <Kpi
           title="Click WhatsApp"
           value={nice(contactMap.get("whatsapp") ?? 0)}
@@ -479,44 +473,44 @@ export default async function AdminMetricsPage({
     </div>
 
     {/* KPI (v2) */}
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3">
       <Kpi title="Visitatori unici" value={nice(uniqueVisitors)} subtitle="(solo sito)" />
       <Kpi title="Sessioni" value={nice(uniqueSessions)} subtitle="(solo sito)" />
       <Kpi title="Pageviews" value={nice(pageViews)} subtitle={`leave: ${nice(pageLeaves)} (${pageViews > 0 ? pct(pageLeaves / pageViews) : "—"})`} />
-      <Kpi title="Pagine / sessione" value={round1(avgPagesPerSession)} subtitle={`mediana: ${medianPagesPerSession ?? "—"} • 1 pag: ${pct(bounceRate)}`} />
+      <Kpi title="Pagine / sessione" value={round1(avgPagesPerSession)} subtitle={`med: ${medianPagesPerSession ?? "—"} · 1p: ${pct(bounceRate)}`} />
       <Kpi
         title="Conversione vendite"
         value={pct(conversionAnalytics)}
-        subtitle={`${nice(sales.paidOrders)} ordini pagati / ${nice(uniqueSessions)} visite`}
+        subtitle={`${nice(sales.paidOrders)} / ${nice(uniqueSessions)} visite`}
       />
-      <Kpi title="Ordini effettuati" value={nice(sales.paidOrders)} subtitle="pagati nel periodo · test esclusi" />
+      <Kpi title="Ordini effettuati" value={nice(sales.paidOrders)} subtitle="pagati · test esclusi" />
     </div>
 
     {/* Funnel + tempo pagamento */}
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-      <Kpi title="Carrelli totali" value={nice(cartTotalN)} subtitle="add_to_cart / begin_checkout" />
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-3">
+      <Kpi title="Carrelli totali" value={nice(cartTotalN)} subtitle="add_to_cart / checkout" />
       <Kpi
         title="Session Add-to-Cart"
         value={pct(sessionAddToCartRate)}
-        subtitle={`${nice(sessionsWithAddToCartN)} sessioni con aggiunta su ${nice(uniqueSessions)}`}
+        subtitle={`${nice(sessionsWithAddToCartN)} / ${nice(uniqueSessions)} sess.`}
       />
-      <Kpi title="Vendite confermate" value={nice(sales.paidOrders)} subtitle="ordini commerciali pagati nel periodo" />
+      <Kpi title="Vendite confermate" value={nice(sales.paidOrders)} subtitle="ordini commerciali" />
       <Kpi
         title="Checkout non pagati"
         value={pct(sales.unpaidCheckoutRate)}
-        subtitle={`${nice(sales.unpaidCheckouts)} ancora non pagati su ${nice(sales.startedCheckouts)} checkout creati`}
+        subtitle={`${nice(sales.unpaidCheckouts)} / ${nice(sales.startedCheckouts)} creati`}
       />
       <Kpi
         title="Tempo medio pagamento"
         value={msToNice(avgPayMs)}
-        subtitle={`${nice(sales.paymentSamples)} ordini: creazione - pagamento`}
+        subtitle={`${nice(sales.paymentSamples)} campioni`}
       />
     </div>
 
     {/* Step Funnel & List CTR */}
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      <Kpi title="Carrelli visti (view_cart)" value={nice(viewCartCount)} subtitle="Aperture pagina carrello" />
-      <Kpi title="List CTR" value={pct(listCtr)} subtitle={`${nice(productClicks)} click / ${nice(listViews)} liste`} />
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+      <Kpi title="Carrelli visti (view_cart)" value={nice(viewCartCount)} subtitle="Aperture carrello" />
+      <Kpi title="List CTR" value={pct(listCtr)} subtitle={`${nice(productClicks)} / ${nice(listViews)} liste`} />
       <Kpi
         title="Checkout click rate"
         value={cartTotalN > 0 ? pct(checkoutClickRate) : "—"}
@@ -525,17 +519,17 @@ export default async function AdminMetricsPage({
       <Kpi
         title="Abbandono Funnel"
         value={pct(sales.unpaidCheckoutRate)}
-        subtitle={`Carrello → Pagamento: ${cartTotalN > 0 ? pct(1 - checkoutClickRate) : "—"} drop-off`}
+        subtitle={`Drop-off: ${cartTotalN > 0 ? pct(1 - checkoutClickRate) : "—"}`}
       />
     </div>
 
     {/* Device */}
-    <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <div className="text-sm font-extrabold text-neutral-900">
+    <div className="rounded-2xl sm:rounded-3xl border border-neutral-200 bg-white p-3.5 sm:p-4 shadow-sm">
+      <div className="text-xs sm:text-sm font-extrabold text-neutral-900">
         Device (pageviews, unici, sessioni, conv, tempo pagamento)
       </div>
 
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-2.5 grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {allDevices.map((dev) => {
           const pv = devicePageviews.get(dev) ?? 0;
           const vs = deviceVisitors.get(dev) ?? 0;
@@ -548,19 +542,19 @@ export default async function AdminMetricsPage({
           return (
             <div
               key={dev}
-              className="rounded-2xl border border-neutral-200 bg-neutral-50 p-3"
+              className="rounded-2xl border border-neutral-200 bg-neutral-50 p-2.5 sm:p-3"
             >
-              <div className="text-xs font-bold uppercase tracking-wide text-neutral-500">
+              <div className="text-[11px] font-black uppercase tracking-wide text-neutral-600 border-b border-neutral-200/80 pb-1">
                 {dev}
               </div>
-              <div className="mt-2 space-y-1 text-sm">
-                <Row label="Pageviews" value={nice(pv)} />
-                <Row label="Visitatori unici" value={nice(vs)} />
+              <div className="mt-1.5 space-y-0.5 text-[11px] sm:text-xs tabular-nums">
+                <Row label="PV" value={nice(pv)} />
+                <Row label="Unici" value={nice(vs)} />
                 <Row label="Sessioni" value={nice(ss)} />
-                <Row label="Pagine / sessione" value={String(round1(pps))} />
-                <Row label="Ordini pagati" value={nice(purchases)} />
-                <Row label="Vendite / visite" value={pct(convDev)} />
-                <Row label="Tempo pagamento" value={msToNice(avgPayDev)} />
+                <Row label="Pag/sess" value={String(round1(pps))} />
+                <Row label="Ordini" value={nice(purchases)} />
+                <Row label="Conv" value={pct(convDev)} />
+                <Row label="T. pag." value={msToNice(avgPayDev)} />
               </div>
             </div>
           );
@@ -590,13 +584,13 @@ export default async function AdminMetricsPage({
           </div>
         </div>
 
-        <div className="mt-3 overflow-hidden rounded-2xl border border-neutral-200">
+        <div className="mt-3 overflow-x-auto rounded-2xl border border-neutral-200">
           <table className="w-full text-left text-sm">
             <thead className="bg-neutral-50 text-xs font-bold uppercase tracking-wide text-neutral-500">
               <tr>
                 <th className="px-3 py-2">Product</th>
                 <th className="px-3 py-2">Variant</th>
-                <th className="px-3 py-2 text-right">Views</th>
+                <th className="px-3 py-2 text-right whitespace-nowrap">Views</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
@@ -605,9 +599,9 @@ export default async function AdminMetricsPage({
                   key={`${c.productKey ?? "x"}-${c.variantKey ?? "y"}-${i}`}
                   className="hover:bg-neutral-50"
                 >
-                  <td className="px-3 py-2 font-semibold text-neutral-900">{c.productKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-neutral-600">{c.variantKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-right font-extrabold">{nice(c._count.productKey)}</td>
+                  <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{c.productKey ?? "—"}</td>
+                  <td className="px-3 py-2 text-neutral-600 break-words">{c.variantKey ?? "—"}</td>
+                  <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">{nice(c._count.productKey)}</td>
                 </tr>
               ))}
               {!topVariantViews.length ? (
@@ -627,13 +621,13 @@ export default async function AdminMetricsPage({
     <div className="grid gap-4 xl:grid-cols-2">
       <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
         <div className="text-sm font-extrabold text-neutral-900">Add to cart (per variante)</div>
-        <div className="mt-3 overflow-hidden rounded-2xl border border-neutral-200">
+        <div className="mt-3 overflow-x-auto rounded-2xl border border-neutral-200">
           <table className="w-full text-left text-sm">
             <thead className="bg-neutral-50 text-xs font-bold uppercase tracking-wide text-neutral-500">
               <tr>
                 <th className="px-3 py-2">Product</th>
                 <th className="px-3 py-2">Variant</th>
-                <th className="px-3 py-2 text-right">Adds</th>
+                <th className="px-3 py-2 text-right whitespace-nowrap">Adds</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
@@ -642,9 +636,9 @@ export default async function AdminMetricsPage({
                   key={`${r.productKey ?? "x"}-${r.variantKey ?? "y"}-${i}`}
                   className="hover:bg-neutral-50"
                 >
-                  <td className="px-3 py-2 font-semibold text-neutral-900">{r.productKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-neutral-600">{r.variantKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-right font-extrabold">{nice(r._count.productKey)}</td>
+                  <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{r.productKey ?? "—"}</td>
+                  <td className="px-3 py-2 text-neutral-600 break-words">{r.variantKey ?? "—"}</td>
+                  <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">{nice(r._count.productKey)}</td>
                 </tr>
               ))}
               {!addToCartByVariant.length ? (
@@ -661,13 +655,13 @@ export default async function AdminMetricsPage({
 
       <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
         <div className="text-sm font-extrabold text-neutral-900">Select variant (per variante)</div>
-        <div className="mt-3 overflow-hidden rounded-2xl border border-neutral-200">
+        <div className="mt-3 overflow-x-auto rounded-2xl border border-neutral-200">
           <table className="w-full text-left text-sm">
             <thead className="bg-neutral-50 text-xs font-bold uppercase tracking-wide text-neutral-500">
               <tr>
                 <th className="px-3 py-2">Product</th>
                 <th className="px-3 py-2">Variant</th>
-                <th className="px-3 py-2 text-right">Selections</th>
+                <th className="px-3 py-2 text-right whitespace-nowrap">Selections</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
@@ -676,9 +670,9 @@ export default async function AdminMetricsPage({
                   key={`${r.productKey ?? "x"}-${r.variantKey ?? "y"}-${i}`}
                   className="hover:bg-neutral-50"
                 >
-                  <td className="px-3 py-2 font-semibold text-neutral-900">{r.productKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-neutral-600">{r.variantKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-right font-extrabold">{nice(r._count.productKey)}</td>
+                  <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{r.productKey ?? "—"}</td>
+                  <td className="px-3 py-2 text-neutral-600 break-words">{r.variantKey ?? "—"}</td>
+                  <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">{nice(r._count.productKey)}</td>
                 </tr>
               ))}
               {!variantSelections.length ? (
@@ -694,7 +688,7 @@ export default async function AdminMetricsPage({
       </div>
 
       <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm xl:col-span-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
           <div className="text-sm font-extrabold text-neutral-900">
             Cart-to-Detail Rate per Prodotto (Conversione Scheda)
           </div>
@@ -702,14 +696,14 @@ export default async function AdminMetricsPage({
             Aggiunte a carrello / Visualizzazioni scheda prodotto
           </span>
         </div>
-        <div className="mt-3 overflow-hidden rounded-2xl border border-neutral-200">
+        <div className="mt-3 overflow-x-auto rounded-2xl border border-neutral-200">
           <table className="w-full text-left text-sm">
             <thead className="bg-neutral-50 text-xs font-bold uppercase tracking-wide text-neutral-500">
               <tr>
                 <th className="px-3 py-2">Prodotto</th>
-                <th className="px-3 py-2 text-right">Views Totali</th>
-                <th className="px-3 py-2 text-right">Aggiunte a Carrello</th>
-                <th className="px-3 py-2 text-right">Cart-to-Detail Rate</th>
+                <th className="px-3 py-2 text-right whitespace-nowrap">Views Totali</th>
+                <th className="px-3 py-2 text-right whitespace-nowrap">Aggiunte a Carrello</th>
+                <th className="px-3 py-2 text-right whitespace-nowrap">Cart-to-Detail Rate</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
@@ -719,10 +713,10 @@ export default async function AdminMetricsPage({
                 const rate = views > 0 ? adds / views : 0;
                 return (
                   <tr key={p.productKey ?? "x"} className="hover:bg-neutral-50">
-                    <td className="px-3 py-2 font-semibold text-neutral-900">{p.productKey ?? "—"}</td>
-                    <td className="px-3 py-2 text-right">{nice(views)}</td>
-                    <td className="px-3 py-2 text-right font-extrabold">{nice(adds)}</td>
-                    <td className="px-3 py-2 text-right font-extrabold text-emerald-700">{pct(rate)}</td>
+                    <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{p.productKey ?? "—"}</td>
+                    <td className="px-3 py-2 text-right whitespace-nowrap">{nice(views)}</td>
+                    <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">{nice(adds)}</td>
+                    <td className="px-3 py-2 text-right font-extrabold text-emerald-700 whitespace-nowrap">{pct(rate)}</td>
                   </tr>
                 );
               })}
@@ -752,10 +746,13 @@ function Row({ label, value }: { label: string; value: string }) {
 
 function Kpi({ title, value, subtitle }: { title: string; value: React.ReactNode; subtitle?: string }) {
   return (
-    <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-1 text-xs font-bold uppercase tracking-wide text-neutral-500"><span>{title}</span><InfoTooltip label={title} description={METRIC_DESCRIPTIONS[title] ?? subtitle ?? title} /></div>
-      <div className="mt-1 text-2xl font-extrabold text-neutral-900">{value}</div>
-      {subtitle ? <div className="mt-1 text-xs text-neutral-600">{subtitle}</div> : null}
+    <div className="rounded-2xl border border-neutral-200 bg-white p-2.5 sm:p-3.5 shadow-xs flex flex-col justify-between min-w-0">
+      <div className="flex items-start justify-between gap-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-neutral-500 leading-tight">
+        <span className="line-clamp-2">{title}</span>
+        <InfoTooltip label={title} description={METRIC_DESCRIPTIONS[title] ?? subtitle ?? title} />
+      </div>
+      <div className="mt-1 text-base sm:text-xl font-extrabold text-neutral-900 tabular-nums truncate">{value}</div>
+      {subtitle ? <div className="mt-0.5 text-[10px] sm:text-[11px] text-neutral-500 leading-tight line-clamp-2">{subtitle}</div> : null}
     </div>
   );
 }

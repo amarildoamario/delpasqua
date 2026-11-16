@@ -200,7 +200,7 @@ export default function OrderStatusActions({
   return (
     <div className="space-y-6">
       {/* ─── VISUAL PROGRESS STEPPER ─── */}
-      <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 sm:p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-100 pb-4">
           <div>
             <h3 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
@@ -232,26 +232,26 @@ export default function OrderStatusActions({
         </div>
 
         {/* Stepper Steps UI */}
-        <div className="relative my-6 px-2">
+        <div className="relative my-5 sm:my-6 px-1 sm:px-2">
             {/* Connecting progress lines */}
-            <div className="absolute top-4 left-0 right-0 h-0.5 bg-neutral-100 -z-10" />
+            <div className="absolute top-4 sm:top-[19px] left-0 right-0 h-0.5 bg-neutral-100 -z-10" />
             <div
-              className="absolute top-4 left-0 h-0.5 bg-emerald-300 transition-all duration-500 -z-10"
+              className="absolute top-4 sm:top-[19px] left-0 h-0.5 bg-emerald-300 transition-all duration-500 -z-10"
               style={{
                 width: `${(progressStepIndex / (STEPS.length - 1)) * 100}%`,
               }}
             />
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-1">
               {STEPS.map((step, idx) => {
                 const Icon = step.icon;
                 const isCompleted = isAltState ? passedStatuses.includes(step.id) : idx < activeStepIndex;
                 const isActive = !isAltState && idx === activeStepIndex;
                 return (
-                  <div key={step.id} className="flex flex-col items-center group relative">
+                  <div key={step.id} className="flex flex-1 flex-col items-center group relative min-w-0">
                     <div
                       className={[
-                        "flex h-9.5 w-9.5 items-center justify-center rounded-full border-2 transition-all duration-300 bg-white",
+                        "flex h-8 w-8 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full border-2 transition-all duration-300 bg-white shrink-0",
                         isCompleted
                           ? "border-emerald-300 bg-emerald-100 text-emerald-700 shadow-sm shadow-emerald-100"
                           : isActive
@@ -259,11 +259,11 @@ export default function OrderStatusActions({
                             : "border-neutral-200 text-neutral-400 group-hover:border-neutral-300",
                       ].join(" ")}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                     <span
                       className={[
-                        "mt-2 text-[10px] font-bold tracking-wide uppercase whitespace-nowrap text-center transition-colors",
+                        "mt-1.5 sm:mt-2 text-[9px] sm:text-[10px] font-bold tracking-tight sm:tracking-wide uppercase leading-tight whitespace-normal sm:whitespace-nowrap text-center transition-colors px-0.5 break-words",
                         isActive ? "text-neutral-900 font-extrabold" : "text-neutral-500",
                       ].join(" ")}
                     >
@@ -305,7 +305,7 @@ export default function OrderStatusActions({
               value={msg}
               onChange={(e) => setMsg(e.target.value)}
               placeholder="Es: 'Ordine pronto, avviso inviato al cliente' o 'Pacco imballato'"
-              className="w-full rounded-xl border border-neutral-200 bg-neutral-50/50 px-3 py-2 text-sm text-neutral-900 outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-300 transition-all"
+              className="w-full rounded-xl border border-neutral-200 bg-neutral-50/50 px-3 py-2 text-base sm:text-sm text-neutral-900 outline-none focus:ring-2 focus:ring-neutral-950/10 focus:border-neutral-300 transition-all"
               disabled={loading}
             />
           </div>
@@ -339,13 +339,13 @@ export default function OrderStatusActions({
             {localStatus === "ANNULLATO" ? "Ripristinando l'ordine tornerà a PAGATO." : "Cancella l'ordine se non è completabile."}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex w-full sm:w-auto flex-wrap items-center gap-2">
             {canRefundWithStripe ? (
               <button
                 type="button"
                 disabled={loading}
                 onClick={() => setConfirmRefundOpen(true)}
-                className="flex items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition disabled:opacity-60"
+                className="flex flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 sm:py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition disabled:opacity-60"
               >
                 Rimborsa con Stripe
               </button>
@@ -355,7 +355,7 @@ export default function OrderStatusActions({
                 type="button"
                 disabled={loading}
                 onClick={() => patch({ restore: true, message: eventMessage }, "PAGATO")}
-                className="flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition disabled:opacity-60"
+                className="flex flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2.5 sm:py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition disabled:opacity-60"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 Ripristina Ordine
@@ -365,7 +365,7 @@ export default function OrderStatusActions({
                 type="button"
                 disabled={!can("ANNULLATO") || loading}
                 onClick={() => setConfirmCancelOpen(true)}
-                className="flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-bold text-red-800 hover:bg-red-100 transition disabled:opacity-60"
+                className="flex flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 sm:py-2 text-xs font-bold text-red-800 hover:bg-red-100 transition disabled:opacity-60"
               >
                 <XCircle className="h-3.5 w-3.5" />
                 Cancella Ordine

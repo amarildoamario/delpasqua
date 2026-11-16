@@ -457,11 +457,17 @@ export default function ProductDetailsClient({
     await new Promise((r) => setTimeout(r, 450));
 
     try {
-      const result = await add({
-        productId: currentProduct.id,
-        variantId: selectedVariant.id,
-        qty: safeQty,
-      });
+      const result = await add(
+        {
+          productId: currentProduct.id,
+          variantId: selectedVariant.id,
+          qty: safeQty,
+        },
+        {
+          title: currentProduct.title,
+          variantLabel: selectedVariant.label,
+        }
+      );
       if (result.status === "rejected") {
         setErrorMessage(text.outOfStock);
         return;

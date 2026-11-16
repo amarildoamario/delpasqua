@@ -309,7 +309,7 @@ export default function ShopPageClient({
   return (
     <>
       <section className="min-h-screen bg-[#fdfaf7]">
-        <div className="mx-auto max-w-[1440px] px-6 py-12 lg:py-16">
+        <div className="mx-auto max-w-[1440px] px-3.5 sm:px-6 py-8 sm:py-12 lg:py-16">
           <nav className="mb-8 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
             <Link href="/" className="hover:text-[#3D5A3D] transition-colors">Home</Link>
             <span className="text-[#D6D3D1]">/</span>
@@ -362,7 +362,7 @@ export default function ShopPageClient({
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
+            <div className="-mx-3.5 flex gap-2 overflow-x-auto px-3.5 py-2 -my-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:py-0 sm:my-0 [&::-webkit-scrollbar]:hidden">
               {CATEGORIES.map((cat) => (
                 <FilterPill
                   key={cat.id}
@@ -374,7 +374,7 @@ export default function ShopPageClient({
               ))}
             </div>
 
-            <div ref={sortRef} className="relative z-20 w-full sm:w-auto sm:min-w-[220px]">
+            <div ref={sortRef} className="relative z-30 w-full sm:w-auto sm:min-w-[220px]">
               <button
                 onClick={() => setIsSortOpen(!isSortOpen)}
                 className="relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-[5px] border border-[#d7cbbb] bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_58%,#f8f2ea_100%)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#4f463d] shadow-[0_10px_24px_rgba(31,26,23,0.07),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all duration-200 before:absolute before:inset-x-3 before:top-0 before:h-px before:bg-white/90 hover:-translate-y-0.5 hover:border-[#8b7355]/60 hover:text-[#132c1c] hover:shadow-[0_14px_30px_rgba(31,26,23,0.1),inset_0_1px_0_rgba(255,255,255,0.95)] active:translate-y-0"
@@ -436,7 +436,7 @@ export default function ShopPageClient({
           </div>
 
           {/* Griglia Mobile (List o Grid) */}
-          <div className="sm:hidden mt-6 flex flex-col gap-4">
+          <div className="sm:hidden mt-5 flex flex-col gap-4">
             {viewMode === "list" ? (
               filteredProducts.map((product) => (
                 <MobileListCard
@@ -448,7 +448,7 @@ export default function ShopPageClient({
                 />
               ))
             ) : (
-              <div className="grid gap-6 grid-cols-1">
+              <div className="grid gap-5 grid-cols-1">
                 {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.cardKey}

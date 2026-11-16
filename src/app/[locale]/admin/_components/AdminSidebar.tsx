@@ -241,6 +241,24 @@ export default function AdminSidebar({
     return false;
   };
 
+  const activeNavItem = sections
+    .flatMap((s) => s.items)
+    .find((item) => isItemActive(item.href));
+
+  const mobileQuickLinks: NavItemConfig[] = [
+    { href: "/admin/ops", label: "Operatività", icon: Activity },
+    {
+      href: "/admin/orders",
+      label: "Ordini",
+      badge: counts.toShip,
+      icon: ClipboardList,
+    },
+    { href: "/admin/quotes", label: "Preventivi", icon: ClipboardList },
+    { href: "/admin/metrics", label: "Metriche", icon: BarChart3 },
+    { href: "/admin/conti-leonardo", label: "Conti", icon: Coins },
+    { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  ];
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
@@ -361,27 +379,41 @@ export default function AdminSidebar({
       </aside>
 
       {/* ─── MOBILE STICKY TOPBAR (< lg) ─── */}
-      <header className="lg:hidden z-30 border-b border-[#333333] bg-[#252526] px-4 py-3 shadow-xs shrink-0 text-white">
-        <div className="flex items-center justify-between">
+      <header className="lg:hidden z-30 border-b border-white/10 bg-[#1f1f23]/95 backdrop-blur-md shadow-sm shrink-0 text-white">
+        <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
           <Link
             href="/admin/dashboard"
-            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white"
+            className="flex items-center gap-2.5 min-w-0"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#007acc] text-white">
-              <Shield className="h-3.5 w-3.5" />
+            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0ea5e9] to-[#007acc] text-white shadow-sm ring-1 ring-white/15">
+              <Shield className="h-4 w-4" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-[#1f1f23]" />
             </div>
-            <span>Del Pasqua Admin</span>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-wider text-white truncate">
+                  Del Pasqua
+                </span>
+                <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-300">
+                  Admin
+                </span>
+              </div>
+              <span className="text-[11px] font-medium text-neutral-400 truncate">
+                {activeNavItem ? activeNavItem.label : "Gestionale"}
+              </span>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Quick Pending Counter Badge if any pending */}
             {totalPendingNotifications > 0 && (
               <Link
                 href="/admin/ops"
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f97316] text-white text-[10px] font-black shadow-xs animate-pulse"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-black shadow-sm ring-1 ring-orange-300/40"
               >
+                <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
                 <span>{totalPendingNotifications}</span>
-                <span className="text-[9px] font-bold">avvisi</span>
+                <span className="text-[10px] font-bold">avvisi</span>
               </Link>
             )}
 
@@ -390,12 +422,42 @@ export default function AdminSidebar({
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
               aria-label="Apri menu"
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1e1e1e] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d2e] transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-neutral-200 hover:text-white hover:bg-white/10 transition-colors"
             >
               {mobileOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
             </button>
           </div>
         </div>
+
+        {/* Quick-Jump Horizontal Strip */}
+        <nav
+          aria-label="Accesso rapido gestionale"
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3.5 pb-2.5 pt-0.5"
+        >
+          {mobileQuickLinks.map((qItem) => {
+            const QIcon = qItem.icon;
+            const active = isItemActive(qItem.href);
+            return (
+              <Link
+                key={qItem.href}
+                href={qItem.href}
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-all ${
+                  active
+                    ? "bg-[#007acc] text-white shadow-xs ring-1 ring-sky-400/40"
+                    : "bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5"
+                }`}
+              >
+                <QIcon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-neutral-400"}`} />
+                <span>{qItem.label}</span>
+                {typeof qItem.badge === "number" && qItem.badge > 0 ? (
+                  <span className="ml-0.5 inline-flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-orange-500 px-1 text-[9px] font-black text-white">
+                    {qItem.badge > 99 ? "99+" : qItem.badge}
+                  </span>
+                ) : null}
+              </Link>
+            );
+          })}
+        </nav>
       </header>
 
       {/* ─── MOBILE SLIDE-OVER DRAWER (< lg) ─── */}
