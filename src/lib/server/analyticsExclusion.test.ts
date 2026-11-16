@@ -41,7 +41,8 @@ test("history exclusion is atomic, scoped to one browser/environment and idempot
         const count = activeHistory; activeHistory = 0;
         return { count };
       },
-    } }),
+      findMany: async () => [],
+    }, orderEvent: { findMany: async () => [] } }),
   } as unknown as Pick<PrismaClient, "$transaction">;
   assert.equal(await excludeBrowserHistory(db, req()), 12);
   assert.equal(await excludeBrowserHistory(db, req()), 0);

@@ -76,6 +76,7 @@ const db = new MockDb();
 db.reset();
 
 const mockPrisma = {
+  analyticsEvent: { findUnique: async () => null },
   order: {
     findUnique: async ({ where }: any) => {
       console.log("Mock prisma.order.findUnique called with where:", where);
@@ -104,6 +105,7 @@ const mockPrisma = {
         discountCents: data.discountCents || 0,
         shippingCents: data.shippingCents || 0,
         promotionCode: data.promotionCode || null,
+        isTest: data.isTest,
         email: data.email || "",
         items: items.map((it: any) => ({
           id: "item_" + Math.random().toString(36).substring(2, 11),
@@ -114,7 +116,10 @@ const mockPrisma = {
         stripeCheckoutSessionId: data.stripeCheckoutSessionId || null,
         notes: data.notes || null,
       };
-      if (data.events?.create) db.orderEvents.push({ ...data.events.create, orderId: id });
+      if (data.events?.create) {
+        const nested = Array.isArray(data.events.create) ? data.events.create : [data.events.create];
+        db.orderEvents.push(...nested.map((event: any) => ({ ...event, orderId: id })));
+      }
       db.orders.set(id, order);
       console.log("Mock prisma.order.create: Saved order with ID:", id, "Total orders in DB:", db.orders.size);
       return order;
@@ -303,6 +308,26 @@ test("successful checkout session creation reserves stock and persists session",
   const item = db.inventory.get("EVO-B-500ML");
   assert.equal(item?.reserved, 2);
   assert.equal(db.reservations.size, 1);
+});
+
+test("an excluded owner's regular checkout keeps commercial order behavior but opts out of the checkout funnel", async (t) => {
+  const { POST } = await import("../../app/api/order/route");
+  db.reset();
+  t.mock.method((Stripe as any).StripeResource.prototype, "_makeRequest", async (_args: any, spec: any) => {
+    if (spec.fullPath === "/v1/checkout/sessions") return { id: "cs_test_owner", url: "https://checkout.stripe.com/pay/cs_test_owner" };
+    throw Error("Unexpected Stripe call");
+  });
+  const response = await POST(new Request("http://localhost:3000/api/order", {
+    method: "POST", headers: { "Idempotency-Key": "owner-key-1", "Content-Type": "application/json",
+      Cookie: "analytics_excluded=1; v_id=owner-phone; s_id=owner-session" },
+    body: JSON.stringify({ items: [{ productId: "evo", variantId: "500ml", qty: 1 }], locale: "it", countryCode: "IT" }),
+  }));
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(db.orders.get(body.orderId).isTest, false, "browser exclusion must not switch order/payment mode");
+  assert(db.orderEvents.some((event) => event.type === "CHECKOUT_INTERNAL_BROWSER"));
+  assert(!db.orderEvents.some((event) => event.type === "ANALYTICS_CONTEXT"));
+  assert.equal(db.inventory.get("EVO-B-500ML")?.reserved, 1);
 });
 
 test("Stripe checkout session creation failure transitions order to FAILED and releases stock", async (t) => {

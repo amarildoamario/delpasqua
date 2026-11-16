@@ -1,4 +1,5 @@
 import type { Prisma } from "@/generated/prisma";
+import { COMMERCIAL_CHECKOUT_FILTER } from "./checkoutAudience";
 
 // A cancellation remains an observed checkout exit after Stripe expires the
 // session. Use the order history as well as the latest status, once per order.
@@ -9,6 +10,7 @@ export function closedCheckoutWhere(start: Date, endExclusive: Date): Prisma.Ord
     orderNumber: null,
     stripeCheckoutSessionId: { not: null },
     paidAt: null,
+    AND: [COMMERCIAL_CHECKOUT_FILTER],
     OR: [
       {
         status: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] },

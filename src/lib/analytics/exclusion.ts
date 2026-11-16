@@ -4,6 +4,11 @@ export const ANALYTICS_EXCLUSION_COOKIE = "analytics_excluded";
 export const ANALYTICS_EXCLUSION_STORAGE = "analytics_excluded_v1";
 export const ANALYTICS_EXCLUSION_MAX_AGE = 400 * 86400;
 
+export function analyticsVisitorCookie(cookieHeader: string) {
+  const value = cookieHeader.split(/;\s*/).find((part) => part.startsWith("v_id="))?.slice(5);
+  return value && /^[a-zA-Z0-9_-]{6,128}$/.test(value) ? value : null;
+}
+
 export function hasAnalyticsExclusion(cookieHeader: string) {
   return cookieHeader.split(/;\s*/).some((part) => part === `${ANALYTICS_EXCLUSION_COOKIE}=1`);
 }

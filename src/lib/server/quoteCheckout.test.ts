@@ -28,6 +28,7 @@ test("PDF preparation creates prefilled Stripe checkout; acceptance creates exac
   const sessions = new Map<string, Record<string, unknown>>();
   const reservations = new Map<string, number>();
   const events: string[] = [];
+  const audience = new Map<string, { orderId: string; type: string }>();
   let creates = 0, customers = 0, expires = 0;
   let stock = 1000;
   let customerPayload: Record<string, unknown> = {};
@@ -48,7 +49,10 @@ test("PDF preparation creates prefilled Stripe checkout; acceptance creates exac
     },
     inventoryReservation: { findMany: async ({ where }: { where: { orderId: string } }) => orders.get(where.orderId)?.status === "IN_ATTESA" && reservations.has("EVO") ? [{ sku: "EVO", qty: reservations.get("EVO") }] : [], upsert: async () => ({}), deleteMany: async () => { reservations.clear(); } },
     inventoryItem: { findMany: async () => [{ sku: "EVO", stock, reserved: 0 }] },
-    orderEvent: { create: async () => ({}) },
+    orderEvent: { create: async () => ({}), createMany: async ({ data }: { data: { id: string; orderId: string; type: string }[] }) => {
+      for (const row of data) audience.set(row.id, row);
+      return { count: data.length };
+    } },
   };
   globalState.prismaPostgres = { $transaction: async (fn: (client: typeof tx) => Promise<unknown>) => {
     const run = serial.then(() => fn(tx)); serial = run.then(() => undefined, () => undefined); return run;
@@ -72,12 +76,20 @@ test("PDF preparation creates prefilled Stripe checkout; acceptance creates exac
     assert.equal(customerPayload.email, input.email); assert.deepEqual((customerPayload.shipping as { address: unknown }).address, { line1: input.addressLine1, line2: undefined, city: input.city, postal_code: input.postalCode, state: input.province, country: "IT" });
     assert.ok(Number(sessionPayload.expires_at) <= Math.floor(Date.now() / 1000) + 3600);
     assert.ok(sessionPayload.discounts); assert.equal(events.filter((e) => e === "PAYMENT_PREPARED").length, 1);
-    await Promise.all([prepareQuoteCheckout({ ...args, accept: true }, stripe), prepareQuoteCheckout({ ...args, accept: true }, stripe)]);
+    await Promise.all([prepareQuoteCheckout({ ...args, accept: true, analyticsExcluded: true }, stripe), prepareQuoteCheckout({ ...args, accept: true, analyticsExcluded: true }, stripe)]);
     assert.equal(orders.size, 1); assert.equal(reservations.get("EVO"), 120, "B2B quantities must never be silently capped at 99");
     assert.equal(events.filter((e) => e === "ACCEPTED").length, 1);
     assert.equal((sessions.get("cs-1")!.metadata as { orderId: string }).orderId, "order-1");
     assert.equal(orders.get("order-1")!.totalCents, 12400);
     assert.equal(orders.get("order-1")!.addressLine1, input.addressLine1);
+    assert.equal([...audience.values()].filter((row) => row.type === "CHECKOUT_INTERNAL_BROWSER").length, 1);
+    assert.equal([...audience.values()].filter((row) => row.type === "CHECKOUT_CUSTOMER_BROWSER").length, 0);
+    // The customer's own browser reuses the quote without inheriting the
+    // owner's exclusion or creating another order/session/reservation.
+    await prepareQuoteCheckout({ ...args, accept: true, analyticsExcluded: false }, stripe);
+    assert.equal(orders.size, 1);
+    assert.equal(creates, 1);
+    assert.equal([...audience.values()].filter((row) => row.type === "CHECKOUT_CUSTOMER_BROWSER").length, 1);
     sessions.get("cs-1")!.status = "complete";
     await assert.rejects(prepareQuoteCheckout(args, stripe), /Pagamento ricevuto/);
     sessions.get("cs-1")!.status = "expired";

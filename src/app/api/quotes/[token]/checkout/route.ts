@@ -3,6 +3,7 @@ import { prisma } from "@/lib/server/prisma";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { prepareQuoteCheckout, quoteAppOrigin, QuoteCheckoutError } from "@/lib/server/quoteCheckout";
 import { orderAnalyticsContext } from "@/lib/server/orderAnalytics";
+import { requestCheckoutExcluded } from "@/lib/server/checkoutAudience";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -45,7 +46,9 @@ async function startCheckout(req: Request, token: string) {
   try {
     const quote = await prisma.quote.findUnique({ where: { paymentToken: token }, select: { id: true } });
     if (!quote) return NextResponse.json({ error: "Preventivo non disponibile." }, { status: 404, headers });
-    const result = await prepareQuoteCheckout({ quoteId: quote.id, origin: quoteAppOrigin(req), accept: true, analytics: orderAnalyticsContext(req) });
+    const analyticsExcluded = await requestCheckoutExcluded(prisma, req);
+    const result = await prepareQuoteCheckout({ quoteId: quote.id, origin: quoteAppOrigin(req), accept: true,
+      analytics: analyticsExcluded ? null : orderAnalyticsContext(req), analyticsExcluded });
     return new NextResponse(null, { status: 303, headers: { ...headers, Location: result.checkoutUrl } });
   } catch (error) {
     const code = error instanceof QuoteCheckoutError ? error.code : "unavailable";

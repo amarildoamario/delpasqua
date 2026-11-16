@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import type { PrismaClient } from "@/generated/prisma";
+import { analyticsVisitorCookie } from "@/lib/analytics/exclusion";
+import { excludeCheckoutHistory } from "./checkoutAudience";
 
 export function exclusionVisitor(req: Request) {
-  const value = (req.headers.get("cookie") ?? "").split(/;\s*/).find((part) => part.startsWith("v_id="))?.slice(5);
   // Only the anonymous identity already held by this browser, never an ID in
   // the URL/body, an IP, a country or a device model.
-  return value && /^[a-zA-Z0-9_-]{6,128}$/.test(value) ? value : null;
+  return analyticsVisitorCookie(req.headers.get("cookie") ?? "");
 }
 
 export function exclusionRequestAllowed(req: Request) {
@@ -32,6 +33,7 @@ export async function excludeBrowserHistory(db: Pick<PrismaClient, "$transaction
       where: { visitorId, env, isInternal: false },
       data: { isInternal: true },
     });
+    await excludeCheckoutHistory(tx, visitorId, env);
     return result.count;
   });
 }

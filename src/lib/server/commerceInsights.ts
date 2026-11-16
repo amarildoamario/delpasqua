@@ -1,6 +1,7 @@
 import type { PrismaClient } from "@/generated/prisma";
 import { acquisitionSource, ACQUISITION_LABELS, isSitePage } from "@/lib/analytics/acquisition";
 import { metricsPeriod } from "./salesMetrics";
+import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
 
 type InsightEvent = {
   type: string; createdAt: Date; visitorId: string; sessionId: string;
@@ -36,7 +37,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   const inDay = (date: Date) => inRange(date) && date >= dailyPeriod.start && date < dailyPeriod.endExclusive;
   const uniqueOrders = [...new Map(orders.filter((o) => !o.isTest).map((o) => [o.id, o])).values()];
   const paid = uniqueOrders.filter((o) => o.paidAt && inRange(o.paidAt));
-  const cohort = uniqueOrders.filter((o) => o.stripeCheckoutSessionId && inRange(o.createdAt));
+  const cohort = uniqueOrders.filter((o) => o.stripeCheckoutSessionId && inRange(o.createdAt) && !excludedCheckout(o));
   const canceledIds = new Set(events.filter((e) => e.type === "checkout_canceled" && e.orderId && inRange(e.createdAt)).map((e) => e.orderId));
   const closedStatuses = new Set(["ANNULLATO", "SCADUTO", "FALLITO"]);
   for (const order of cohort) {
@@ -164,7 +165,7 @@ export async function readCommerceInsights(db: Pick<PrismaClient, "order" | "ana
   const [orders, events] = await Promise.all([
     db.order.findMany({ where: { isTest: false, OR: [{ createdAt: { gte: start, lt: endExclusive } }, { paidAt: { gte: start, lt: endExclusive } }] },
       select: { id: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
-        events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED"] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
+        events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED", ...CHECKOUT_AUDIENCE_TYPES] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
           select: { metaJson: true, type: true, createdAt: true, toStatus: true } } } }),
     db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase"] } },
       select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, referrer: true, userAgent: true, data: true } }),

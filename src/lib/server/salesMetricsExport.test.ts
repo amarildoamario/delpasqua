@@ -5,10 +5,10 @@ test("metrics export counts two paid orders without any browser purchase events,
   let orderReads = 0;
   const findMany = async (args: unknown) => {
     orderReads++;
-    const query = args as { where: { isTest: boolean; OR?: unknown[]; paidAt?: { gte: Date; lt: Date } }; select: { events?: unknown; fullName?: unknown } };
+    const query = args as { where: { isTest: boolean; OR?: unknown[]; paidAt?: { gte: Date; lt: Date } }; select: { events?: unknown; fullName?: unknown; items?: unknown } };
     assert.equal(query.where.isTest, false);
     if (query.select.fullName) return [];
-    if (query.select.events) return [];
+    if (query.select.events && !query.select.items) return [];
     if (query.where.paidAt) return [
       { id: "paid-without-return-1", isTest: false, paidAt: new Date("2026-11-08T10:05:00Z") },
       { id: "paid-without-return-2", isTest: false, paidAt: new Date("2026-11-08T10:05:00Z") },

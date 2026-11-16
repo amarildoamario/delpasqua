@@ -6,6 +6,7 @@ import { QuoteStoredLinesSchema, quoteNumber } from "./quotes";
 import { reserveStockOrThrow, releaseReserved, OutOfStockError } from "./inventory";
 import type { orderAnalyticsContext } from "./orderAnalytics";
 import { ORDER_PENDING_TTL_MINUTES } from "@/lib/constants";
+import { recordCheckoutAudience } from "./checkoutAudience";
 
 export class QuoteCheckoutError extends Error {
   constructor(public code: "expired" | "paid" | "unavailable" | "stock", message: string) { super(message); }
@@ -21,6 +22,7 @@ export function quoteAppOrigin(req: Request) {
 export async function prepareQuoteCheckout(args: {
   quoteId: string; origin: string; accept?: boolean;
   analytics?: ReturnType<typeof orderAnalyticsContext>;
+  analyticsExcluded?: boolean;
 }, client?: Stripe) {
   const environmentError = client ? null : localStripeTestError();
   if (environmentError) throw new QuoteCheckoutError("unavailable", environmentError);
@@ -98,7 +100,6 @@ export async function prepareQuoteCheckout(args: {
           items: { create: items.map((item) => ({ ...item, lineTaxCents: 0, productSnapshot: { productId: item.productId, variantId: item.variantId, title: item.title, variantLabel: item.variantLabel }, pricingSnapshot: { source: "quote", quoteId: snapshot.id, vatRate: snapshot.vatRate } })) },
           events: { create: [
             { type: "ORDER_CREATED", actor: "customer", message: `Accettato preventivo ${quoteNumber(quote)}` },
-            ...(args.analytics ? [{ type: "ANALYTICS_CONTEXT", metaJson: JSON.stringify(args.analytics) }] : []),
           ] },
         }, include: { items: true } });
         await reserveStockOrThrow(tx, { orderId: order.id, lines: order.items });
@@ -111,6 +112,7 @@ export async function prepareQuoteCheckout(args: {
         if (!order || order.status !== "IN_ATTESA") throw new QuoteCheckoutError("paid", "Ordine già elaborato. Non ripetere il pagamento.");
       }
       if (args.accept && quote.checkoutOrderId) {
+        await recordCheckoutAudience(tx, quote.checkoutOrderId, args.analyticsExcluded === true, args.analytics);
         await tx.order.update({ where: { id: quote.checkoutOrderId }, data: { stripeCheckoutSessionId: session.id } });
       }
       return { quote, paymentUrl: `${args.origin}/preventivo/${quote.paymentToken}/`, checkoutUrl: session.url };

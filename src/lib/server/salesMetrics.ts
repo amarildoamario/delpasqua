@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@/generated/prisma";
+import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
 
 export type SalesOrderItem = {
   productId?: string;
@@ -20,6 +21,7 @@ export type SalesOrder = {
   discountCents?: number;
   email?: string | null;
   items?: SalesOrderItem[];
+  events?: { type: string }[];
 };
 
 // Product IDs are stable order snapshots; SKU prefixes cover legacy orders.
@@ -171,7 +173,7 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
   const inPeriod = (date: Date | null) => date !== null && date >= start && date < endExclusive;
   const unique = [...new Map(orders.filter((order) => !order.isTest).map((order) => [order.id, order])).values()];
   const paid = unique.filter((order) => inPeriod(order.paidAt));
-  const started = unique.filter((order) => inPeriod(order.createdAt));
+  const started = unique.filter((order) => inPeriod(order.createdAt) && !excludedCheckout(order));
   const unpaidCheckouts = started.filter((order) => order.paidAt === null).length;
   const durations: number[] = [];
   const devices = new Map<string, { purchases: number; durations: number[] }>();
@@ -288,6 +290,7 @@ export async function readSalesMetrics(db: Pick<PrismaClient, "order">, start: D
       subtotalCents: true,
       discountCents: true,
       email: true,
+      events: { where: { type: { in: CHECKOUT_AUDIENCE_TYPES } }, select: { type: true } },
       items: {
         select: {
           productId: true,
