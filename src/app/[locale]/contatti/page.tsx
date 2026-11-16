@@ -11,7 +11,7 @@ import { getTranslations } from "next-intl/server";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
 
-const WHATSAPP_PHONE = "393388110356";
+const WHATSAPP_PHONE = "393315263830";
 const WHATSAPP_CONFIG: Record<string, { label: string; sublabel: string; text: string }> = {
   it: {
     label: "Scrivici su WhatsApp",
