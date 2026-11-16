@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { motion } from "motion/react";
 import { ArrowRight, Leaf, ShieldCheck, ShoppingBag, Droplet, CheckCircle2, Award, Wine, Info } from "lucide-react";
+import { olio5LitriUi } from "./olio5LitriUi";
 import Footer from "@/components/Footer";
 
 export type LandingPageContent = {
@@ -130,6 +131,7 @@ const renderComparisonCell = (val: string, isTin: boolean) => {
 };
 
 export default function Olio5LitriClient({ locale, content, products }: Props) {
+  const text = (key: string) => olio5LitriUi[key][locale] ?? olio5LitriUi[key].en;
   const renderedIcon = (iconName: string) => {
     switch (iconName) {
       case "leaf":
@@ -223,7 +225,7 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
             {/* Left Column: Narrative Content */}
             <div className="lg:col-span-7 space-y-6">
               <span className="text-[11px] font-semibold tracking-[0.2em] text-[#D5B27F] uppercase">
-                {locale === "it" ? "IL FORMATO CONVENIENZA" : "THE FAMILY SIZE"}
+                {text("formatLabel")}
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-[#D5B27F] tracking-tight leading-[1.2]">
                 {content.introTitle}
@@ -302,15 +304,13 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
           
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-[11px] font-semibold tracking-[0.2em] text-[#D5B27F] uppercase">
-              {locale === "it" ? "LE IMMAGINI DEL NOSTRO LAVORO" : "THE STEPS IN PHOTOS"}
+              {text("photosLabel")}
             </span>
             <h2 className="mt-3 font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-[#D5B27F] tracking-tight">
-              {locale === "it" ? "Conservazione e Confezionamento" : "Storage & Tin Filling"}
+              {text("storageTitle")}
             </h2>
             <p className="mt-4 text-xs sm:text-sm text-[#D6D3D1] font-light leading-relaxed">
-              {locale === "it" 
-                ? "Dalla conservazione sotto azoto nelle cisterne di acciaio inox fino all'imbottigliamento e alla sigillatura della latta."
-                : "From nitrogen-controlled steel tanks to bottling and sealing the protective tin."
+              {text("storageIntro")
               }
             </p>
           </div>
@@ -327,18 +327,16 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
                 <div className="relative aspect-[16/10] overflow-hidden rounded-[5px]">
                   <Image
                     src="/frantoio/conservazione.jpg"
-                    alt="Cisterne stoccaggio olio frantoio"
+                    alt={text("storageAlt")}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-103 opacity-90 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E0B]/80 via-[#0A0E0B]/30 to-transparent flex flex-col justify-end p-6">
-                    <span className="text-[10px] font-bold text-[#D5B27F] uppercase tracking-wider mb-1">Stoccaggio Ottimale</span>
-                    <h3 className="text-sm font-semibold text-[#F5F5F4]">Cisterne Inox sotto Azoto</h3>
+                    <span className="text-[10px] font-bold text-[#D5B27F] uppercase tracking-wider mb-1">{text("storageLabel")}</span>
+                    <h3 className="text-sm font-semibold text-[#F5F5F4]">{text("tankTitle")}</h3>
                     <p className="text-[11px] text-[#A8A29E] mt-1 font-light leading-relaxed">
-                      {locale === "it" 
-                        ? "L'olio viene conservato a temperatura controllata e sotto azoto per eliminare l'ossigeno ed evitare qualsiasi ossidazione."
-                        : "Oil is stored under nitrogen gas in temperature-controlled tanks to exclude oxygen and prevent oxidation."
+                      {text("storageDescription")
                       }
                     </p>
                   </div>
@@ -357,18 +355,16 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
                 <div className="relative aspect-[16/10] overflow-hidden rounded-[5px]">
                   <Image
                     src="/frantoio/confezionamento.jpg"
-                    alt="Linea confezionamento olio in latta"
+                    alt={text("fillingAlt")}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-103 opacity-90 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E0B]/80 via-[#0A0E0B]/30 to-transparent flex flex-col justify-end p-6">
-                    <span className="text-[10px] font-bold text-[#D5B27F] uppercase tracking-wider mb-1">Confezionamento Diretto</span>
-                    <h3 className="text-sm font-semibold text-[#F5F5F4]">Riempimento e Sigillatura Ermetica</h3>
+                    <span className="text-[10px] font-bold text-[#D5B27F] uppercase tracking-wider mb-1">{text("fillingLabel")}</span>
+                    <h3 className="text-sm font-semibold text-[#F5F5F4]">{text("fillingTitle")}</h3>
                     <p className="text-[11px] text-[#A8A29E] mt-1 font-light leading-relaxed">
-                      {locale === "it" 
-                        ? "Le latte vengono riempite e sigillate ermeticamente direttamente prima della spedizione per garantire la massima freschezza."
-                        : "Tins are filled and hermetically sealed directly before shipping to guarantee maximum freshness."
+                      {text("fillingDescription")
                       }
                     </p>
                   </div>
@@ -386,7 +382,7 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center max-w-xl mx-auto mb-16">
               <span className="text-[11px] font-semibold tracking-[0.2em] text-[#D5B27F] uppercase">
-                {locale === "it" ? "CONFRONTO IN DETTAGLIO" : "COMPARISON TABLE"}
+                {text("comparisonLabel")}
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-[#D5B27F] tracking-tight mt-3">
                 {content.comparisonTable.title}
@@ -448,10 +444,10 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center max-w-xl mx-auto mb-16">
               <span className="text-[11px] font-semibold tracking-[0.2em] text-[#D5B27F] uppercase">
-                {locale === "it" ? "UTILIZZO IN CUCINA" : "KITCHEN PAIRINGS"}
+                {text("pairingsLabel")}
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-[#D5B27F] mt-3">
-                {locale === "it" ? "Come utilizzare la scorta di olio" : "Suggested culinary uses"}
+                {text("pairingsTitle")}
               </h2>
             </div>
 
@@ -485,10 +481,10 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
           <div className="mx-auto max-w-7xl px-6">
             <div className="text-center max-w-xl mx-auto mb-16">
               <span className="text-[11px] font-semibold tracking-[0.2em] text-[#D5B27F] uppercase">
-                {locale === "it" ? "ACQUISTA ORA" : "BUY ONLINE"}
+                {text("buyLabel")}
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight text-[#D5B27F] mt-3">
-                {locale === "it" ? "Le latte convenienza da 5 litri" : "Our 5-liter tins selection"}
+                {text("selectionTitle")}
               </h2>
             </div>
 
@@ -525,10 +521,10 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
                     
                     <div className="mt-6">
                       <Link
-                        href={{ pathname: `/shop/${product.slug}` }}
+                        href={{ pathname: "/shop/[prodotto]", params: { prodotto: product.slug } } as never}
                         className="w-full py-3 bg-[#3D5A3D] hover:bg-[#2C412C] text-[#F5F5F4] rounded-[5px] flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm border border-[#2D3E30]/35"
                       >
-                        <span>{locale === "it" ? "Acquista ora" : "Buy now"}</span>
+                        <span>{text("buyButton")}</span>
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </div>

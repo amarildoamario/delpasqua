@@ -955,6 +955,9 @@
             "social_label": "Sociale media"
         },
         "form": {
+            "phone_label": "Telefoon",
+            "phone_country_label": "Land en landcode",
+            "phone_placeholder": "Telefoonnummer",
             "label": "Schrijf ons",
             "title": "Stuur een bericht",
             "subtitle": "Vul het formulier in: we antwoorden zo snel mogelijk.",

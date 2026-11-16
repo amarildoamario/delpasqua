@@ -263,6 +263,7 @@ model ContactMessage {
 
   name    String
   email   String
+  phone   String?
   subject String
   message String
   consent Boolean @default(true)

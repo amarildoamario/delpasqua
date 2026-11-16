@@ -970,6 +970,9 @@
             "social_label": "Social"
         },
         "form": {
+            "phone_label": "Telefono",
+            "phone_country_label": "Paese e prefisso telefonico",
+            "phone_placeholder": "Numero di telefono",
             "label": "Scrivici",
             "title": "Invia un messaggio",
             "subtitle": "Compila il form: ti rispondiamo il prima possibile.",

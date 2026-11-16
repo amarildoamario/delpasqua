@@ -15,7 +15,7 @@ import {
   Instagram
 } from "lucide-react";
 
-export default function Footer() {
+export default function Footer({ linkPhone = true }: { linkPhone?: boolean } = {}) {
   const t = useTranslations("Common.footer");
   const tNav = useTranslations("Common.navbar");
   const locale = useLocale();
@@ -157,14 +157,14 @@ export default function Footer() {
                 <div className="p-1.5 rounded-lg bg-stone-900 border border-stone-800 text-emerald-500 group-hover:border-emerald-500/30 transition-colors">
                   <Phone className="h-4 w-4" />
                 </div>
-                <a
+                {linkPhone ? <a
                   className="text-stone-400 hover:text-emerald-400 transition-colors font-sans"
                   href="tel:+390575810065"
                   aria-label="Chiama"
                   onClick={() => track({ type: "contact_click", productKey: "phone", variantKey: "footer" })}
                 >
                   +39 0575 810065
-                </a>
+                </a> : <span className="text-stone-400 font-sans">+39 0575 810065</span>}
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="p-1.5 rounded-lg bg-stone-900 border border-stone-800 text-emerald-500 group-hover:border-emerald-500/30 transition-colors">

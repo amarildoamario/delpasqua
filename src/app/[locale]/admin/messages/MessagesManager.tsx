@@ -43,6 +43,7 @@ export type SerializedContactMessage = {
   status: ContactMessageStatus;
   name: string;
   email: string;
+  phone?: string | null;
   subject: string;
   message: string;
   consent: boolean;
@@ -515,7 +516,7 @@ export default function MessagesManager({
           {filtered.map((m) => {
             const isUnread = m.status === "UNREAD";
             const source = compactSource(m.sourcePath);
-            const phone = detectPhoneNumber(m.message);
+            const phone = m.phone || detectPhoneNumber(m.message);
             const topic = detectTopicTag(m.message, m.subject);
 
             return (

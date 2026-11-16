@@ -1,4 +1,6 @@
 import ContactLink from "@/components/ContactLink";
+import { headers } from "next/headers";
+import { contactCountry } from "@/lib/contactPhone";
 import { setRequestLocale } from 'next-intl/server';
 import { getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
@@ -63,7 +65,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return pageMetadata({
+  return { ...pageMetadata({
     title: locale === "en" ? "Contact" : "Contatti",
     description:
       locale === "en"
@@ -71,7 +73,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         : "Contatta il Frantoio Del Pasqua a Monte San Savino per prodotti, ordini e richieste commerciali.",
     path: "/contatti/",
     locale,
-  });
+  }), formatDetection: { telephone: false } };
 }
 
 async function ContattiPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -81,6 +83,7 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
   const tFooter = await getTranslations({ locale, namespace: "Common.footer.bottom" });
 
   const wa = WHATSAPP_CONFIG[locale] || WHATSAPP_CONFIG.it;
+  const initialPhoneCountry = contactCountry((await headers()).get("x-vercel-ip-country"));
   const waUrl = `https://wa.me/${ORDERS_PHONE}?text=${encodeURIComponent(wa.text)}`;
 
   const breadcrumbJsonLd = {
@@ -152,11 +155,11 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                 <div className="relative overflow-hidden rounded-[5px] border border-[#E7E5E4] bg-[#F5F5F4]">
                   <div className="relative aspect-[16/10] w-full">
                     <Image
-                      src="/contatti/frantoio.jpg"
+                      src="/contatti/frantoio-notte.jpg"
                       alt="Frantoio"
                       fill
                       priority
-                      className="object-cover"
+                      className="object-cover object-[50%_54%]"
                       sizes="(max-width: 1024px) 100vw, 40vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/10 to-transparent" />
@@ -186,13 +189,18 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                     {companyInfo.postalAddress.addressLocality} - {companyInfo.postalAddress.postalCode} ({companyInfo.postalAddress.addressRegion})
                   </InfoRow>
 
-                  <InfoRow label={t("info.mill_phone_label")}>
-                    <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="tel:+390575810065">
-                      +39 0575 810065
-                    </ContactLink>
+                  <InfoRow label={t("info.mill_phone_label")} darkLabel>
+                    <div className="space-y-1 text-[#3D5A3D]">
+                      <div>+39 0575 810065</div>
+                      <div>+39 338 811 0356</div>
+                      <ContactLink channel="email" source="contatti_frantoio" className="inline-block hover:underline" href="mailto:info@delpasqua.com">
+                        info@delpasqua.com
+                      </ContactLink>
+                    </div>
                   </InfoRow>
 
-                  <InfoRow label={t("info.orders_phone_label")}>
+                  <InfoRow label={t("info.orders_phone_label")} darkLabel>
+                    <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-3">
                       <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href={`tel:+${ORDERS_PHONE}`}>
                         +39 331 526 3830
@@ -207,12 +215,10 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                         WhatsApp
                       </ContactLink>
                     </div>
-                  </InfoRow>
-
-                  <InfoRow label={t("info.email_label")}>
-                    <ContactLink channel="email" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="mailto:info@delpasqua.com">
-                      info@delpasqua.com
+                    <ContactLink channel="email" source="contatti_ordini" className="inline-block text-[#3D5A3D] hover:underline" href="mailto:ordini@delpasqua.com">
+                      ordini@delpasqua.com
                     </ContactLink>
+                    </div>
                   </InfoRow>
                 </div>
 
@@ -273,7 +279,7 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                 {t("form.subtitle")}
               </p>
 
-              <ContactForm />
+              <ContactForm initialCountry={initialPhoneCountry} />
             </div>
           </div>
 
@@ -313,7 +319,7 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
         </div>
       </section>
 
-      <Footer />
+      <Footer linkPhone={false} />
     </>
   );
 }
@@ -326,10 +332,10 @@ function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
-function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
+function InfoRow({ label, children, darkLabel = false }: { label: string; children: React.ReactNode; darkLabel?: boolean }) {
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-      <div className="w-24 text-[10px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
+      <div className={`w-24 text-[10px] tracking-[0.2em] uppercase ${darkLabel ? "font-bold text-[#1C1917]" : "font-medium text-[#8B7355]"}`}>
         {label}
       </div>
       <div className="flex-1 text-sm text-[#1C1917]">{children}</div>

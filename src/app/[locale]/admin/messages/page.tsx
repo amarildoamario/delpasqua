@@ -26,6 +26,7 @@ export default async function AdminMessagesPage() {
     status: m.status,
     name: m.name,
     email: m.email,
+    phone: m.phone,
     subject: m.subject,
     message: m.message,
     consent: m.consent,

@@ -43,7 +43,7 @@ Stato attuale:
 Nota:
 - La sitemap index usa ancora un `lastmod` dinamico per `sitemap-pages.xml`; non e` un blocco go-live, ma se si vuole massima pulizia SEO si puo rimuovere o sostituire con una data reale di contenuto.
 
-### [RISOLTO] Canonical e hreflang
+### [PARZIALE] Canonical e hreflang - correzione locale 16/11/2026, deploy da verificare
 
 Stato attuale:
 - `src/lib/seo.ts` centralizza `SITE_URL`, canonical, metadata e hreflang.
@@ -51,7 +51,20 @@ Stato attuale:
 - Le sitemap generano link `xhtml:link` alternate; `sitemap-pages.xml` include anche `x-default` verso italiano.
 - Le pagine prodotto e blog generano alternate URL dedicate in base a slug tradotti.
 
-Non resta lavoro SEO locale qui, salvo controllare in production che `NEXT_PUBLIC_SITE_URL` / `SITE_URL` puntino al dominio finale.
+Verifica Search Console del 16/11/2026:
+- Gli header Link automatici di next-intl replicavano gli slug dinamici senza tradurli, generando URL inesistenti e `hreflang=us` incoerente con `en-US` nell'HTML.
+- Correzione locale: `alternateLinks: false`; gli hreflang restano nei metadata HTML e nelle sitemap, che conoscono gli slug tradotti.
+- `localeDetection: false`: URL italiani stabili anche con browser/cookie in un'altra lingua; selettore lingua tramite URL espliciti.
+- `seoRouteAliases.ts` recupera con 301 gli alias conosciuti di prodotti, articoli e categorie verso la lingua richiesta, senza inventare destinazioni per URL sconosciuti.
+- Sul report fornito: 251/257 URL riconosciuti; tutte le destinazioni presenti nelle sitemap live. Gli altri 6 includono 2 route legacy gia mappate, 2 feed e 2 URL non validi.
+- Canonical PDP USA allineata alla chiave `en-US`.
+- Landing 5 litri: contenuti francesi/spagnoli dedicati e link prodotto localizzati; eliminato il fallback inglese per queste due lingue.
+
+Da completare dopo pubblicazione:
+- Verificare 301 degli alias, assenza di hreflang negli header HTTP e coerenza degli alternate HTML/sitemap.
+- Controllare in Search Console URL italiani principali e ultima scansione degli alias; richiedere indicizzazione delle pagine utili dopo il test live.
+- Non richiedere indicizzazione di JS/CSS, feed o endpoint WordPress del report; non usare redirect indiscriminati alla home.
+- La correzione non garantisce tempi o scelta dei sitelink di Google.
 
 ### [RISOLTO] Preview e host non finali noindex
 

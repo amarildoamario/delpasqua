@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
+import { getSeoAliasRedirect } from './lib/seoRouteAliases';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -70,6 +71,12 @@ function normalizeLegacyPath(pathname: string) {
 }
 
 export async function proxy(request: NextRequest) {
+    const aliasDestination = getSeoAliasRedirect(request.nextUrl.pathname);
+    if (aliasDestination) {
+        const url = request.nextUrl.clone();
+        url.pathname = aliasDestination;
+        return NextResponse.redirect(url, 301);
+    }
     const { locale, cleanPath } = extractLocaleAndPath(request.nextUrl.pathname);
     const normalizedPath = normalizeLegacyPath(cleanPath);
     const legacyDestination = LEGACY_301_REDIRECTS.get(normalizedPath);

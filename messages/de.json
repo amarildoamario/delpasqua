@@ -955,6 +955,9 @@
             "social_label": "Soziale Medien"
         },
         "form": {
+            "phone_label": "Telefon",
+            "phone_country_label": "Land und Vorwahl",
+            "phone_placeholder": "Telefonnummer",
             "label": "Schreiben Sie uns",
             "title": "Nachricht senden",
             "subtitle": "Füllen Sie das Formular aus: wir antworten so schnell wie möglich.",

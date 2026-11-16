@@ -1,19 +1,12 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { z } from "zod";
+import { ContactSchema } from "@/lib/server/contactInput";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { prisma } from "@/lib/server/prisma";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 
 export const runtime = "nodejs";
 
-const ContactSchema = z.object({
-  name: z.string().trim().min(2, "Nome troppo corto").max(120, "Nome troppo lungo"),
-  email: z.string().trim().email("Email non valida").max(200, "Email troppo lunga"),
-  subject: z.string().trim().min(2, "Oggetto troppo corto").max(200, "Oggetto troppo lungo"),
-  message: z.string().trim().min(5, "Messaggio troppo corto").max(5000, "Messaggio troppo lungo"),
-  consent: z.boolean(),
-});
 
 function getClientIp(req: Request) {
   const xf = req.headers.get("x-forwarded-for");
@@ -38,7 +31,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, subject, message, consent } = parsed.data;
+    const { name, email, phone, subject, message, consent } = parsed.data;
 
     if (!consent) {
       return NextResponse.json(
@@ -51,6 +44,7 @@ export async function POST(req: Request) {
       data: {
         name,
         email,
+        phone,
         subject,
         message,
         consent,
@@ -89,6 +83,7 @@ export async function POST(req: Request) {
 
 Nome: ${name}
 Email: ${email}
+Telefono: ${phone}
 Oggetto: ${subject}
 
 Messaggio:
@@ -104,6 +99,7 @@ Messaggio gestionale: ${contactMessage.id}
         <h2 style="margin:0 0 12px 0;">Nuovo messaggio dal form Contatti</h2>
         <p style="margin:0 0 6px 0;"><b>Nome:</b> ${escapeHtml(name)}</p>
         <p style="margin:0 0 6px 0;"><b>Email:</b> ${escapeHtml(email)}</p>
+        <p style="margin:0 0 6px 0;"><b>Telefono:</b> ${escapeHtml(phone)}</p>
         <p style="margin:0 0 14px 0;"><b>Oggetto:</b> ${escapeHtml(subject)}</p>
 
         <div style="padding:12px 14px; background:#f6f6f6; border-radius:12px; white-space:pre-wrap">

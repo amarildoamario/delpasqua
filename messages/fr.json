@@ -950,6 +950,9 @@
             "social_label": "Réseaux sociaux"
         },
         "form": {
+            "phone_label": "T?l?phone",
+            "phone_country_label": "Pays et indicatif t?l?phonique",
+            "phone_placeholder": "Num?ro de t?l?phone",
             "label": "Écrivez-nous",
             "title": "Envoyer un message",
             "subtitle": "Remplissez le formulaire : nous vous répondrons dans les plus brefs délais.",

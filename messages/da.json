@@ -958,6 +958,9 @@
             "social_label": "Sociale medier"
         },
         "form": {
+            "phone_label": "Telefon",
+            "phone_country_label": "Land og landekode",
+            "phone_placeholder": "Telefonnummer",
             "label": "Skriv til os",
             "title": "Send en besked",
             "subtitle": "Udfyld formularen: vi svarer så hurtigt som muligt.",

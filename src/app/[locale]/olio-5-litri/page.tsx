@@ -4,9 +4,11 @@ import { readPublicCatalog } from "@/lib/server/catalog";
 import Olio5LitriClient, { type LandingPageContent } from "./Olio5LitriClient";
 import { pageMetadata } from "@/lib/seo";
 import { getTranslations } from "next-intl/server";
-import { translateVariantTitle } from "@/lib/productSlugs";
+import { olio5LitriTranslations } from "./olio5LitriTranslations";
+import { getLocalizedProductSlug, translateVariantTitle } from "@/lib/productSlugs";
 
-const pageContent: Record<Exclude<Locale, "es" | "fr" | "us">, LandingPageContent> = {
+const pageContent: Record<Exclude<Locale, "us">, LandingPageContent> = {
+  ...olio5LitriTranslations,
   it: {
     kicker: "Convenienza",
     title: "Olio Extravergine 5 Litri",
@@ -215,7 +217,7 @@ async function Olio5LitriPage({ params }: { params: Promise<{ locale: string }> 
   const { locale } = await params;
   setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const displayLocale = (activeLocale === "us" ? "en" : activeLocale);
   const content = pageContent[displayLocale];
 
   const tp = await getTranslations({ locale: activeLocale, namespace: "Products" });
@@ -229,7 +231,7 @@ async function Olio5LitriPage({ params }: { params: Promise<{ locale: string }> 
       // Find the 5lt variant specifically
       const targetVariant = product.variants?.find((v) => v.id === "5lt") ?? product.variants?.[0];
       const priceCents = targetVariant?.priceCents ?? 0;
-      const priceLabel = new Intl.NumberFormat(activeLocale === "it" ? "it-IT" : "en-US", {
+      const priceLabel = new Intl.NumberFormat(activeLocale === "us" ? "en-US" : activeLocale, {
         style: "currency",
         currency: "EUR",
       }).format(priceCents / 100);
@@ -249,7 +251,7 @@ async function Olio5LitriPage({ params }: { params: Promise<{ locale: string }> 
         title,
         priceLabel,
         imageSrc: targetVariant?.imageSrc ?? product.imageSrc ?? "",
-        slug: product.slug ?? product.id,
+        slug: getLocalizedProductSlug(product, activeLocale),
       };
     });
 
@@ -260,7 +262,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
   const activeLocale = locales.includes(locale as Locale) ? (locale as Locale) : "it";
-  const displayLocale = (activeLocale === "es" || activeLocale === "fr" || activeLocale === "us" ? "en" : activeLocale) as Exclude<Locale, "es" | "fr" | "us">;
+  const displayLocale = (activeLocale === "us" ? "en" : activeLocale);
   const content = pageContent[displayLocale];
 
   return pageMetadata({

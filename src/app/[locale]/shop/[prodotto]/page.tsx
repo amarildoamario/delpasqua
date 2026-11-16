@@ -119,7 +119,7 @@ export async function generateMetadata({
     : product.description;
 
   const languages = getProductAlternateUrls(product);
-  const canonical = languages[locale];
+  const canonical = languages[getSeoLocale(locale)];
 
   if (product.excludeFromSeo === true) {
     return {

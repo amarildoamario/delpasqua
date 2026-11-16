@@ -6,6 +6,10 @@ export const routing = defineRouting({
     locales,
     defaultLocale: 'it',
     localePrefix: 'as-needed',
+    // Page metadata and sitemaps know translated dynamic slugs; middleware does not.
+    alternateLinks: false,
+    // An explicit URL keeps its language, regardless of browser settings or cookies.
+    localeDetection: false,
     pathnames: localizedPathnames,
 });
 

@@ -950,6 +950,9 @@
             "social_label": "Social"
         },
         "form": {
+            "phone_label": "Phone",
+            "phone_country_label": "Country and calling code",
+            "phone_placeholder": "Phone number",
             "label": "Write to us",
             "title": "Send a message",
             "subtitle": "Fill out the form: we will respond as soon as possible.",

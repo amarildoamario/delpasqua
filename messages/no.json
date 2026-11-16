@@ -951,6 +951,9 @@
             "social_label": "Sosialt"
         },
         "form": {
+            "phone_label": "Telefon",
+            "phone_country_label": "Land og landskode",
+            "phone_placeholder": "Telefonnummer",
             "label": "Skriv til oss",
             "title": "Send en melding",
             "subtitle": "Fyll ut skjemaet: vi svarer så raskt som mulig.",

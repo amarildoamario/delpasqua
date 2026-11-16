@@ -950,6 +950,9 @@
             "social_label": "Redes sociales"
         },
         "form": {
+            "phone_label": "Tel?fono",
+            "phone_country_label": "Pa?s y prefijo telef?nico",
+            "phone_placeholder": "N?mero de tel?fono",
             "label": "Escríbanos",
             "title": "Enviar un mensaje",
             "subtitle": "Complete el formulario: responderemos lo antes posible.",
