@@ -11,7 +11,7 @@ import { getTranslations } from "next-intl/server";
 import { pageMetadata, absoluteUrl, localizedPath } from "@/lib/seo";
 import { companyInfo } from "@/lib/companyInfo";
 
-const WHATSAPP_PHONE = "393315263830";
+const ORDERS_PHONE = "393315263830";
 const WHATSAPP_CONFIG: Record<string, { label: string; sublabel: string; text: string }> = {
   it: {
     label: "Scrivici su WhatsApp",
@@ -81,7 +81,7 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
   const tFooter = await getTranslations({ locale, namespace: "Common.footer.bottom" });
 
   const wa = WHATSAPP_CONFIG[locale] || WHATSAPP_CONFIG.it;
-  const waUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(wa.text)}`;
+  const waUrl = `https://wa.me/${ORDERS_PHONE}?text=${encodeURIComponent(wa.text)}`;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -186,16 +186,16 @@ async function ContattiPage({ params }: { params: Promise<{ locale: string }> })
                     {companyInfo.postalAddress.addressLocality} - {companyInfo.postalAddress.postalCode} ({companyInfo.postalAddress.addressRegion})
                   </InfoRow>
 
-                  <InfoRow label={t("info.phone_label")}>
+                  <InfoRow label={t("info.mill_phone_label")}>
                     <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="tel:+390575810065">
                       +39 0575 810065
                     </ContactLink>
                   </InfoRow>
 
-                  <InfoRow label={t("info.mobile_label")}>
+                  <InfoRow label={t("info.orders_phone_label")}>
                     <div className="flex flex-wrap items-center gap-3">
-                      <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href="tel:+393388110356">
-                        +39 338 811 0356
+                      <ContactLink channel="phone" source="contatti_page" className="text-[#3D5A3D] hover:underline" href={`tel:+${ORDERS_PHONE}`}>
+                        +39 331 526 3830
                       </ContactLink>
                       <ContactLink channel="whatsapp" source="contatti_page_inline"
                         href={waUrl}

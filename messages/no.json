@@ -942,8 +942,8 @@
         "info": {
             "company_label": "Firma",
             "address_label": "Adresse",
-            "phone_label": "Telefon",
-            "mobile_label": "Mobil",
+            "mill_phone_label": "Oljem?lle",
+            "orders_phone_label": "Bestillinger",
             "email_label": "E-post",
             "docs_label": "Dokumenter",
             "docs_gender": "Likestillingspolicy",

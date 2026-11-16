@@ -941,8 +941,8 @@
         "info": {
             "company_label": "Empresa",
             "address_label": "Dirección",
-            "phone_label": "Teléfono",
-            "mobile_label": "Móvil",
+            "mill_phone_label": "Almazara",
+            "orders_phone_label": "Pedidos",
             "email_label": "Correo electrónico",
             "docs_label": "Documentos",
             "docs_gender": "Política de Igualdad de Género",

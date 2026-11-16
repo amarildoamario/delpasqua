@@ -946,8 +946,8 @@
         "info": {
             "company_label": "Unternehmen",
             "address_label": "Adresse",
-            "phone_label": "Telefon",
-            "mobile_label": "Mobil",
+            "mill_phone_label": "?lm?hle",
+            "orders_phone_label": "Bestellungen",
             "email_label": "E-Mail",
             "docs_label": "Dokumente",
             "docs_gender": "Gleichstellungspolitik",

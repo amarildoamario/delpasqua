@@ -941,8 +941,8 @@
         "info": {
             "company_label": "Entreprise",
             "address_label": "Adresse",
-            "phone_label": "Téléphone",
-            "mobile_label": "Portable",
+            "mill_phone_label": "Moulin ? huile",
+            "orders_phone_label": "Commandes",
             "email_label": "E-mail",
             "docs_label": "Documents",
             "docs_gender": "Charte sur l'égalité des genres",

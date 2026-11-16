@@ -946,8 +946,8 @@
         "info": {
             "company_label": "Bedrijf",
             "address_label": "Adres",
-            "phone_label": "Telefoon",
-            "mobile_label": "Mobiel",
+            "mill_phone_label": "Olijfoliemolen",
+            "orders_phone_label": "Bestellingen",
             "email_label": "E-mail",
             "docs_label": "Documenten",
             "docs_gender": "Gelijkheidbeleid",

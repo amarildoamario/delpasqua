@@ -961,8 +961,8 @@
         "info": {
             "company_label": "Azienda",
             "address_label": "Indirizzo",
-            "phone_label": "Telefono",
-            "mobile_label": "Mobile",
+            "mill_phone_label": "Frantoio",
+            "orders_phone_label": "Ordini",
             "email_label": "Email",
             "docs_label": "Documenti",
             "docs_gender": "Politica Parità di Genere",

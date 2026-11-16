@@ -78,3 +78,8 @@ Per garantire l'indicizzazione ed il passaggio di autorità alle nuove pagine, s
 
 - Numero WhatsApp aggiornato a +39 3315263830 dopo conferma del prefisso italiano. Pulsante principale e collegamento inline della pagina Contatti usano la stessa destinazione wa.me/393315263830 in tutte le lingue, con messaggi precompilati localizzati e tracciamento click conservati.
 - Verifiche: destinazione condivisa dei due link controllata; lint e typecheck superati. Nessun messaggio WhatsApp inviato.
+
+
+## [RISOLTO] Contatti distinti per Frantoio e Ordini - 2026-11-16
+
+- Pagina Contatti: Frantoio con +39 0575 810065; Ordini con +39 331 526 3830 e collegamento tel cliccabile. Etichette dedicate tradotte nelle otto lingue. Numero Ordini condiviso con i link WhatsApp gi? aggiornati.

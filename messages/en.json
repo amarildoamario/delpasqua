@@ -941,8 +941,8 @@
         "info": {
             "company_label": "Company",
             "address_label": "Address",
-            "phone_label": "Phone",
-            "mobile_label": "Mobile",
+            "mill_phone_label": "Olive mill",
+            "orders_phone_label": "Orders",
             "email_label": "Email",
             "docs_label": "Documents",
             "docs_gender": "Gender Equality Policy",
