@@ -61,7 +61,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const [toShip, outboxIssues, webhookIssues, pendingTastings, unreadMessages] = await fetchAdminDashboardData();
 
   return (
-    <div className="h-[calc(100svh-98px)] md:h-[calc(100svh-118px)] lg:h-[calc(var(--viewport-height,100svh)-118px)] w-full flex flex-col lg:flex-row bg-neutral-50 overflow-hidden admin-panel">
+    <div className="admin-panel fixed inset-x-0 bottom-0 top-[var(--main-navbar-offset,98px)] flex min-w-0 flex-col overflow-hidden bg-neutral-50 md:top-[var(--main-navbar-offset,118px)] lg:static lg:h-[calc(var(--viewport-height,100svh)-118px)] lg:flex-row">
       {/* Modern Executive Sidebar (Desktop aside + Mobile topbar & drawer) */}
       <AdminSidebar
         counts={{
@@ -74,9 +74,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       />
 
       {/* Main Content Side Column */}
-      <main className="flex-1 min-w-0 h-full flex flex-col bg-neutral-50 overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-neutral-50">
         {/* Scrollable inner content box */}
-        <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-3.5 py-4 sm:px-6 sm:py-6 pb-20">
+        <div className="no-scrollbar min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-3.5 py-4 pb-20 sm:px-6 sm:py-6">
           {databaseReadOnly ? (
             <div role="status" className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               <strong>Modalità consultazione.</strong> Il database online è in sola lettura. I salvataggi richiedono un database di sviluppo separato.
@@ -88,7 +88,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           ) : null}
           {children}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

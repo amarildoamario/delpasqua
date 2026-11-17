@@ -15,6 +15,7 @@ import { summarizePageRankings } from "@/lib/pageRankings";
 import { ACTIVITY_TIMEFRAMES, readActivityTimeline } from "@/lib/server/activityTimeline";
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
+import { computeHistoricalCustomerRetention } from "@/lib/server/metricsAnalyticsV6";
 import InfoTooltip from "../_components/InfoTooltip";
 import { METRIC_DESCRIPTIONS } from "../_components/metricDescriptions";
 
@@ -109,10 +110,41 @@ export default async function AdminMetricsPage({
   const uniqueSessions = sessions.length;
   const uniqueVisitors = visitors.length;
 
-  const sales = await readSalesMetrics(prisma, start, endExclusive);
+  const [pageViewsByDevice, visitorsByDevicePairs, sessionsByDevicePairs] =
+    await Promise.all([
+      prisma.analyticsEvent.groupBy({
+        by: ["device"],
+        where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER },
+        _count: { device: true },
+        orderBy: { _count: { device: "desc" } },
+      }),
+      prisma.analyticsEvent.groupBy({
+        by: ["device", "visitorId"],
+        where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, visitorId: { not: "" } },
+        _count: { visitorId: true },
+      }),
+      prisma.analyticsEvent.groupBy({
+        by: ["device", "sessionId"],
+        where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, sessionId: { not: "" } },
+        _count: { sessionId: true },
+      }),
+    ]);
+
+  const seenDeviceSessions = new Set<string>();
+  const sessionDeviceMap = new Map<string, string>();
+  const deviceSessions = new Map<string, number>();
+  for (const row of sessionsByDevicePairs) {
+    if (row.sessionId && seenDeviceSessions.has(row.sessionId)) continue;
+    if (row.sessionId) seenDeviceSessions.add(row.sessionId);
+    const k = row.device ?? "unknown";
+    if (row.sessionId) sessionDeviceMap.set(row.sessionId, k);
+    deviceSessions.set(k, (deviceSessions.get(k) ?? 0) + 1);
+  }
+
+  const sales = await readSalesMetrics(prisma, start, endExclusive, sessionDeviceMap);
   const conversionAnalytics = salesConversion(sales.paidOrders, uniqueSessions);
 
-  const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : 0;
+  const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : null;
 
   const sessionPageCounts = sessions.map((s) => s._count?.sessionId ?? 1).sort((a, b) => a - b);
   let medianPagesPerSession: number | null = null;
@@ -172,39 +204,16 @@ export default async function AdminMetricsPage({
   const cartTotalN = cartsTotal.length;
   const avgPayMs = sales.avgPaymentMs;
 
-  const [pageViewsByDevice, visitorsByDevicePairs, sessionsByDevicePairs] =
-    await Promise.all([
-      prisma.analyticsEvent.groupBy({
-        by: ["device"],
-        where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER },
-        _count: { device: true },
-        orderBy: { _count: { device: "desc" } },
-      }),
-      prisma.analyticsEvent.groupBy({
-        by: ["device", "visitorId"],
-        where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, visitorId: { not: "" } },
-        _count: { visitorId: true },
-      }),
-      prisma.analyticsEvent.groupBy({
-        by: ["device", "sessionId"],
-        where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, sessionId: { not: "" } },
-        _count: { sessionId: true },
-      }),
-    ]);
-
   const devicePageviews = new Map<string, number>();
   for (const d of pageViewsByDevice) devicePageviews.set(d.device ?? "unknown", d._count.device);
 
+  const seenDeviceVisitors = new Set<string>();
   const deviceVisitors = new Map<string, number>();
   for (const row of visitorsByDevicePairs) {
+    if (row.visitorId && seenDeviceVisitors.has(row.visitorId)) continue;
+    if (row.visitorId) seenDeviceVisitors.add(row.visitorId);
     const k = row.device ?? "unknown";
     deviceVisitors.set(k, (deviceVisitors.get(k) ?? 0) + 1);
-  }
-
-  const deviceSessions = new Map<string, number>();
-  for (const row of sessionsByDevicePairs) {
-    const k = row.device ?? "unknown";
-    deviceSessions.set(k, (deviceSessions.get(k) ?? 0) + 1);
   }
 
   const devicePurchases = new Map(sales.devices.map((row) => [row.device, row.purchases]));
@@ -271,10 +280,10 @@ export default async function AdminMetricsPage({
     prisma.tastingBooking.count({ where: rangeWhere }),
   ]);
 
-  const listCtr = listViews > 0 ? productClicks / listViews : 0;
+  const listCtr = listViews > 0 ? productClicks / listViews : null;
   const knownCarts = new Set(cartsTotal.map((row) => row.cartId));
   const cartsCheckoutClickedN = cartsCheckoutClicked.filter((row) => knownCarts.has(row.cartId)).length;
-  const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : 0;
+  const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : null;
 
   const contactMap = new Map<string, number>();
   for (const c of contactClicksGroup) {
@@ -298,6 +307,13 @@ export default async function AdminMetricsPage({
     readCustomerMetrics(prisma),
     readActivityTimeline(prisma, getOne(sp.activity), endISO, includeInternal),
   ]);
+  const historicalRetention = computeHistoricalCustomerRetention(
+    sales.paidOrdersMeta,
+    customers.rows,
+    start,
+  );
+  const prodFunnelByKey = new Map(insights.productFunnel.map((r) => [r.productKey, r]));
+  const varFunnelByKey = new Map(insights.variantFunnel.map((r) => [`${r.productKey}::${r.variantKey}`, r]));
   const adSpendSetting = await (prisma as { setting?: { findUnique: (args: unknown) => Promise<{ value: string } | null> } }).setting?.findUnique?.({ where: { key: "monthlyAdSpendEur" } })?.catch(() => null);
   const monthlyAdSpendEur = adSpendSetting && !Number.isNaN(Number(adSpendSetting.value)) ? Number(adSpendSetting.value) : 0;
   const cacEur = monthlyAdSpendEur > 0 && sales.newPayingCustomers > 0 ? +(monthlyAdSpendEur / sales.newPayingCustomers).toFixed(2) : null;
@@ -309,28 +325,30 @@ export default async function AdminMetricsPage({
     return { key: item.key, label: item.label, href: `?${query.toString()}#activity-timeline` };
   });
 
- return (
-  <div className="space-y-5">
-    <PageHeader
-  title="Metrics"
-  subtitle={
-    <>
-      Periodo: <span className="font-semibold">{startISO}</span> → <span className="font-semibold">{endISO}</span>
-      {includeInternal ? <span className="ml-2 text-xs font-bold text-amber-600">(include internal)</span> : null}
-    </>
-  }
-  actions={
-    <a
-      href={`/admin/metrics/export?start=${startISO}&end=${endISO}${includeInternal ? "&internal=1" : ""}`}
-      className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center rounded-2xl border border-neutral-200 bg-white px-4 py-2.5 sm:py-2 text-sm font-extrabold text-neutral-900 shadow-sm hover:bg-neutral-50"
-    >
-      Scarica report (.json)
-    </a>
-  }
-/>
+  return (
+    <div className="space-y-4 sm:space-y-5 min-w-0 max-w-full">
+      <PageHeader
+        title="Metrics"
+        subtitle={
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs sm:text-sm">
+            <span>Periodo:</span>
+            <span className="font-semibold">{startISO}</span>
+            <span>→</span>
+            <span className="font-semibold">{endISO}</span>
+            {includeInternal ? <span className="font-bold text-amber-600">(include internal)</span> : null}
+          </div>
+        }
+        actions={
+          <a
+            href={`/admin/metrics/export?start=${startISO}&end=${endISO}${includeInternal ? "&internal=1" : ""}`}
+            className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-3.5 py-2 sm:py-2 text-xs sm:text-sm font-extrabold text-neutral-900 shadow-sm hover:bg-neutral-50 transition-colors"
+          >
+            Scarica report (.json)
+          </a>
+        }
+      />
 
-
-    <RangePicker startISO={startISO} endISO={endISO} />
+      <RangePicker startISO={startISO} endISO={endISO} />
     <CommerceInsights insights={insights} customers={customers} activity={activity} activityLinks={activityLinks} />
 
     {/* ✅ DEBUG BOX solo quando internal=1 */}
@@ -397,7 +415,7 @@ export default async function AdminMetricsPage({
         <Kpi
           title="Riordini nel Periodo"
           value={pct(sales.repeatCustomerRate)}
-          subtitle={`${nice(sales.repeatPayingCustomers)} clienti con ≥ 2 ordini`}
+          subtitle={`${nice(sales.repeatPayingCustomers)} nel periodo · ${nice(historicalRetention.historicalReturningCustomers)} ritorno storico`}
         />
         <Kpi
           title="Litri Richiesti a Carrello"
@@ -406,7 +424,7 @@ export default async function AdminMetricsPage({
         />
         <Kpi
           title="Formato: Latte vs Bottiglie"
-          value={`${cansPct}% / ${bottlesPct}%`}
+          value={cansPct !== null && bottlesPct !== null ? `${cansPct}% / ${bottlesPct}%` : "—"}
           subtitle={`${nice(cansUnits)} latte · ${nice(bottlesUnits)} bott. · ${nice(unknownFormatUnits)} altri`}
         />
         <Kpi
@@ -477,13 +495,17 @@ export default async function AdminMetricsPage({
       <Kpi title="Visitatori unici" value={nice(uniqueVisitors)} subtitle="(solo sito)" />
       <Kpi title="Sessioni" value={nice(uniqueSessions)} subtitle="(solo sito)" />
       <Kpi title="Pageviews" value={nice(pageViews)} subtitle={`leave: ${nice(pageLeaves)} (${pageViews > 0 ? pct(pageLeaves / pageViews) : "—"})`} />
-      <Kpi title="Pagine / sessione" value={round1(avgPagesPerSession)} subtitle={`med: ${medianPagesPerSession ?? "—"} · 1p: ${pct(bounceRate)}`} />
+      <Kpi title="Pagine / sessione" value={avgPagesPerSession !== null ? round1(avgPagesPerSession) : "—"} subtitle={`med: ${medianPagesPerSession ?? "—"} · 1p: ${pct(bounceRate)}`} />
       <Kpi
         title="Conversione vendite"
         value={pct(conversionAnalytics)}
         subtitle={`${nice(sales.paidOrders)} / ${nice(uniqueSessions)} visite`}
       />
-      <Kpi title="Ordini effettuati" value={nice(sales.paidOrders)} subtitle="pagati · test esclusi" />
+      <Kpi
+        title="Ordini effettuati"
+        value={nice(sales.paidOrders)}
+        subtitle={sales.quotePaidOrders > 0 ? `${nice(sales.storefrontPaidOrders)} shop · ${nice(sales.quotePaidOrders)} prev.` : "pagati · test esclusi"}
+      />
     </div>
 
     {/* Funnel + tempo pagamento */}
@@ -513,18 +535,18 @@ export default async function AdminMetricsPage({
       <Kpi title="List CTR" value={pct(listCtr)} subtitle={`${nice(productClicks)} / ${nice(listViews)} liste`} />
       <Kpi
         title="Checkout click rate"
-        value={cartTotalN > 0 ? pct(checkoutClickRate) : "—"}
+        value={pct(checkoutClickRate)}
         subtitle={`${nice(cartsCheckoutClickedN)} carrelli (${nice(checkoutClicks)} clic)`}
       />
       <Kpi
         title="Abbandono Funnel"
         value={pct(sales.unpaidCheckoutRate)}
-        subtitle={`Drop-off: ${cartTotalN > 0 ? pct(1 - checkoutClickRate) : "—"}`}
+        subtitle={`Drop-off: ${checkoutClickRate !== null ? pct(1 - checkoutClickRate) : "—"}`}
       />
     </div>
 
     {/* Device */}
-    <div className="rounded-2xl sm:rounded-3xl border border-neutral-200 bg-white p-3.5 sm:p-4 shadow-sm">
+    <div className="rounded-2xl sm:rounded-3xl border border-neutral-200 bg-white p-3.5 sm:p-4 shadow-sm min-w-0 max-w-full overflow-hidden">
       <div className="text-xs sm:text-sm font-extrabold text-neutral-900">
         Device (pageviews, unici, sessioni, conv, tempo pagamento)
       </div>
@@ -535,23 +557,23 @@ export default async function AdminMetricsPage({
           const vs = deviceVisitors.get(dev) ?? 0;
           const ss = deviceSessions.get(dev) ?? 0;
           const purchases = devicePurchases.get(dev) ?? 0;
-          const pps = ss > 0 ? pv / ss : 0;
+          const pps = ss > 0 ? pv / ss : null;
           const convDev = salesConversion(purchases, ss);
           const avgPayDev = deviceAvgPayMs.get(dev) ?? null;
 
           return (
             <div
               key={dev}
-              className="rounded-2xl border border-neutral-200 bg-neutral-50 p-2.5 sm:p-3"
+              className="rounded-2xl border border-neutral-200 bg-neutral-50 p-2.5 sm:p-3 min-w-0 overflow-hidden"
             >
-              <div className="text-[11px] font-black uppercase tracking-wide text-neutral-600 border-b border-neutral-200/80 pb-1">
+              <div className="text-[11px] font-black uppercase tracking-wide text-neutral-600 border-b border-neutral-200/80 pb-1 truncate">
                 {dev}
               </div>
               <div className="mt-1.5 space-y-0.5 text-[11px] sm:text-xs tabular-nums">
                 <Row label="PV" value={nice(pv)} />
                 <Row label="Unici" value={nice(vs)} />
                 <Row label="Sessioni" value={nice(ss)} />
-                <Row label="Pag/sess" value={String(round1(pps))} />
+                <Row label="Pag/sess" value={pps !== null ? String(round1(pps)) : "—"} />
                 <Row label="Ordini" value={nice(purchases)} />
                 <Row label="Conv" value={pct(convDev)} />
                 <Row label="T. pag." value={msToNice(avgPayDev)} />
@@ -564,10 +586,10 @@ export default async function AdminMetricsPage({
     </div>
 
     {/* Tabelle */}
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className="grid gap-4 xl:grid-cols-2 min-w-0 max-w-full">
       <PageRankings rows={pageRankings} />
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm min-w-0 max-w-full overflow-hidden">
         <div className="text-sm font-extrabold text-neutral-900">Prodotti più visti (per variante)</div>
 
         <div className="mt-2 rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
@@ -618,8 +640,8 @@ export default async function AdminMetricsPage({
     </div>
 
     {/* ✅ Tabelle v3 */}
-    <div className="grid gap-4 xl:grid-cols-2">
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+    <div className="grid gap-4 xl:grid-cols-2 min-w-0 max-w-full">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm min-w-0 max-w-full overflow-hidden">
         <div className="text-sm font-extrabold text-neutral-900">Add to cart (per variante)</div>
         <div className="mt-3 overflow-x-auto rounded-2xl border border-neutral-200">
           <table className="w-full text-left text-sm">
@@ -653,7 +675,7 @@ export default async function AdminMetricsPage({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm min-w-0 max-w-full overflow-hidden">
         <div className="text-sm font-extrabold text-neutral-900">Select variant (per variante)</div>
         <div className="mt-3 overflow-x-auto rounded-2xl border border-neutral-200">
           <table className="w-full text-left text-sm">
@@ -665,16 +687,22 @@ export default async function AdminMetricsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
-              {variantSelections.map((r, i) => (
+              {variantSelections.map((r, i) => {
+                const vf = varFunnelByKey.get(`${r.productKey ?? ""}::${r.variantKey ?? "default"}`);
+                return (
                 <tr
                   key={`${r.productKey ?? "x"}-${r.variantKey ?? "y"}-${i}`}
                   className="hover:bg-neutral-50"
                 >
                   <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{r.productKey ?? "—"}</td>
                   <td className="px-3 py-2 text-neutral-600 break-words">{r.variantKey ?? "—"}</td>
-                  <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">{nice(r._count.productKey)}</td>
+                  <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">
+                    {nice(r._count.productKey)}
+                    {vf ? <span className="ml-1 text-xs font-medium text-neutral-500">({nice(vf.selectionSessions)} sess.)</span> : null}
+                  </td>
                 </tr>
-              ))}
+                );
+              })}
               {!variantSelections.length ? (
                 <tr>
                   <td colSpan={3} className="px-3 py-6 text-neutral-600">
@@ -687,7 +715,7 @@ export default async function AdminMetricsPage({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm xl:col-span-2">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm xl:col-span-2 min-w-0 max-w-full overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
           <div className="text-sm font-extrabold text-neutral-900">
             Cart-to-Detail Rate per Prodotto (Conversione Scheda)
@@ -708,15 +736,30 @@ export default async function AdminMetricsPage({
             </thead>
             <tbody className="divide-y divide-neutral-200">
               {topProductViews.map((p) => {
-                const adds = addToCartTotalMap.get(p.productKey ?? "") ?? 0;
+                const pk = p.productKey ?? "";
+                const adds = addToCartTotalMap.get(pk) ?? 0;
                 const views = p._count.productKey;
-                const rate = views > 0 ? adds / views : 0;
+                const rate = views > 0 ? adds / views : null;
+                const pf = prodFunnelByKey.get(pk);
                 return (
-                  <tr key={p.productKey ?? "x"} className="hover:bg-neutral-50">
-                    <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{p.productKey ?? "—"}</td>
-                    <td className="px-3 py-2 text-right whitespace-nowrap">{nice(views)}</td>
-                    <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">{nice(adds)}</td>
-                    <td className="px-3 py-2 text-right font-extrabold text-emerald-700 whitespace-nowrap">{pct(rate)}</td>
+                  <tr key={pk || "x"} className="hover:bg-neutral-50">
+                    <td className="px-3 py-2 font-semibold text-neutral-900 break-words max-w-[160px] sm:max-w-none">{pk || "—"}</td>
+                    <td className="px-3 py-2 text-right whitespace-nowrap">
+                      {nice(views)}
+                      {pf ? <span className="ml-1 text-xs text-neutral-500">({nice(pf.viewSessions)} sess.)</span> : null}
+                    </td>
+                    <td className="px-3 py-2 text-right font-extrabold whitespace-nowrap">
+                      {nice(adds)}
+                      {pf ? <span className="ml-1 text-xs font-medium text-neutral-500">({nice(pf.addSessions)} sess.)</span> : null}
+                    </td>
+                    <td className="px-3 py-2 text-right font-extrabold text-emerald-700 whitespace-nowrap">
+                      {pct(rate)}
+                      {pf && pf.productToCartRate !== null ? (
+                        <span className="ml-1 text-xs font-semibold text-neutral-600">
+                          (sess: {pct(pf.productToCartRate)})
+                        </span>
+                      ) : null}
+                    </td>
                   </tr>
                 );
               })}

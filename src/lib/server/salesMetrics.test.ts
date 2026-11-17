@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { metricsMonthKey, metricsMonthWindow, metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
+import { describePeriodWindow, metricsMonthKey, metricsMonthWindow, metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
 import { parseVariantLiters, isCanFormat, summarizeCartDemand } from "./salesMetrics";
 
 test("volume parsing uses exact units and formats distinguish one-litre bottles from cans", () => {
@@ -30,6 +30,9 @@ test("cart demand rejects malformed quantities and prices and reports incomplete
   assert.equal(summary.unpricedUnits, 1);
   assert.equal(summary.lostCartRevenueEur, null);
   assert.equal(summarizeCartDemand([]).avgCartValueEur, null);
+  assert.equal(summarizeCartDemand([]).cansPct, null);
+  assert.equal(summarizeCartDemand([]).bottlesPct, null);
+  assert.equal(summarizeCartDemand([]).unknownFormatPct, null);
   assert.equal(summarizeCartDemand([{ ...ev, data: { unitPriceCents: 0 } }]).potentialCartRevenueEur, 0);
 });
 
@@ -86,15 +89,41 @@ test("order IDs prevent duplicate counting while repeat orders remain separate s
   assert.equal(sales.paidOrders, 2);
 });
 
-test("device and payment duration use order data including delayed payments", () => {
+test("device and payment duration use order data including delayed payments and session fallback", () => {
   const sales = summarizeSales([
     order(),
     order({ id: "phone", userAgent: "Mozilla/5.0 iPhone", createdAt: new Date("2026-11-07T10:00:00Z") }),
-    order({ id: "unknown", userAgent: null }),
-  ], start, end);
-  assert.equal(sales.paymentSamples, 3);
+    order({ id: "unknown", quoteId: "quote-1", userAgent: null }),
+    order({ id: "from-session", userAgent: null, events: [{ type: "ANALYTICS_CONTEXT", metaJson: JSON.stringify({ sessionId: "s-mob" }) }] }),
+  ], start, end, new Map([["s-mob", "mobile"]]));
+  assert.equal(sales.paymentSamples, 4);
+  assert.equal(sales.quotePaidOrders, 1);
+  assert.equal(sales.storefrontPaidOrders, 3);
   assert(sales.avgPaymentMs! > 2 * 60 * 60_000);
-  assert.deepEqual(sales.devices.map((row) => [row.device, row.purchases]), [["desktop", 1], ["mobile", 1], ["unknown", 1]]);
+  assert.deepEqual(sales.devices.map((row) => [row.device, row.purchases]), [["desktop", 1], ["mobile", 2], ["unknown", 1]]);
+});
+
+test("empty sales return null rates rather than zero when denominators are zero", () => {
+  const empty = summarizeSales([], start, end);
+  assert.equal(empty.repeatCustomerRate, null);
+  assert.equal(empty.repeatCustomerRatePct, null);
+  assert.equal(empty.bundleOlioVinoRate, null);
+  assert.equal(empty.bundleOlioVinoRatePct, null);
+});
+
+test("describePeriodWindow reports partial periods, observedThrough and complete calendar days", () => {
+  const now = new Date("2026-11-17T14:05:07.548Z");
+  const period = metricsPeriod("2026-11-10", "2026-11-17", now);
+  const meta = describePeriodWindow(period, now);
+  assert.equal(meta.startDate, "2026-11-10");
+  assert.equal(meta.endDateInclusive, "2026-11-17");
+  assert.equal(meta.startInclusiveUtc, "2026-11-09T23:00:00.000Z");
+  assert.equal(meta.requestedEndExclusiveUtc, "2026-11-17T23:00:00.000Z");
+  assert.equal(meta.observedThrough, "2026-11-17T14:05:07.548Z");
+  assert.equal(meta.lastCompleteLocalDate, "2026-11-16");
+  assert.equal(meta.completeCalendarDays, 7);
+  assert.equal(meta.totalCalendarDays, 8);
+  assert.equal(meta.isPartial, true);
 });
 
 test("no measured sessions yields unavailable conversion; ratios are never clamped", () => {

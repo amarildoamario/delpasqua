@@ -199,50 +199,50 @@ export default function RangePicker({
   }
 
   return (
-    <div className="rounded-2xl sm:rounded-3xl border border-neutral-200 bg-white p-3.5 sm:p-4 shadow-sm">
-      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-end gap-2.5 sm:gap-3">
-        <div className="flex flex-col min-w-0">
-          <label htmlFor={`${id}-start`} className="text-xs font-semibold text-neutral-500">Da</label>
+    <div className="rounded-2xl sm:rounded-3xl border border-neutral-200 bg-white p-3 sm:p-4 shadow-sm min-w-0 max-w-full overflow-hidden">
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-end gap-2 sm:gap-3 min-w-0 max-w-full">
+        <div className="flex flex-col min-w-0 w-full sm:w-auto">
+          <label htmlFor={`${id}-start`} className="text-[11px] sm:text-xs font-semibold text-neutral-500 mb-0.5">Da</label>
           <input
             id={`${id}-start`}
             type="date"
             value={startISO}
             onChange={(e) => onChangeStart(e.target.value)}
-            className="w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2.5 sm:px-3 py-2 text-sm text-neutral-900"
+            className="w-full min-w-0 max-w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
           />
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <label htmlFor={`${id}-end`} className="text-xs font-semibold text-neutral-500">A</label>
+        <div className="flex flex-col min-w-0 w-full sm:w-auto">
+          <label htmlFor={`${id}-end`} className="text-[11px] sm:text-xs font-semibold text-neutral-500 mb-0.5">A</label>
           <input
             id={`${id}-end`}
             type="date"
             value={endISO}
             onChange={(e) => onChangeEnd(e.target.value)}
-            className="w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2.5 sm:px-3 py-2 text-sm text-neutral-900"
+            className="w-full min-w-0 max-w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
           />
         </div>
 
-        <div className="hidden h-10 w-px bg-neutral-200 sm:block" />
+        <div className="hidden h-10 w-px bg-neutral-200 sm:block shrink-0" />
 
-        <div className="flex flex-col min-w-0">
-          <label htmlFor={`${id}-month`} className="text-xs font-semibold text-neutral-500">Mese</label>
+        <div className="flex flex-col min-w-0 w-full sm:w-auto">
+          <label htmlFor={`${id}-month`} className="text-[11px] sm:text-xs font-semibold text-neutral-500 mb-0.5">Mese</label>
           <input
             id={`${id}-month`}
             type="month"
             value={monthValue}
             onChange={(e) => onSelectMonth(e.target.value)}
-            className="w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2.5 sm:px-3 py-2 text-sm text-neutral-900"
+            className="w-full min-w-0 max-w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
           />
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <label htmlFor={`${id}-year`} className="text-xs font-semibold text-neutral-500">Anno</label>
+        <div className="flex flex-col min-w-0 w-full sm:w-auto">
+          <label htmlFor={`${id}-year`} className="text-[11px] sm:text-xs font-semibold text-neutral-500 mb-0.5">Anno</label>
           <select
             id={`${id}-year`}
             value={String(year)}
             onChange={(e) => onYearChange(e.target.value)}
-            className="w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2.5 sm:px-3 py-2 text-sm text-neutral-900"
+            className="w-full min-w-0 max-w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-neutral-900 truncate focus:outline-none focus:ring-1 focus:ring-neutral-900"
           >
             {years.map((y) => (
               <option key={y} value={String(y)}>
@@ -252,13 +252,13 @@ export default function RangePicker({
           </select>
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <label htmlFor={`${id}-quarter`} className="text-xs font-semibold text-neutral-500">Trimestre</label>
+        <div className="flex flex-col min-w-0 w-full sm:w-auto">
+          <label htmlFor={`${id}-quarter`} className="text-[11px] sm:text-xs font-semibold text-neutral-500 mb-0.5">Trimestre</label>
           <select
             id={`${id}-quarter`}
             value={quarter}
             onChange={(e) => onSelectQuarter(e.target.value)}
-            className="w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2.5 sm:px-3 py-2 text-sm text-neutral-900"
+            className="w-full min-w-0 max-w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-neutral-900 truncate focus:outline-none focus:ring-1 focus:ring-neutral-900"
           >
             <option value="">—</option>
             <option value="Q1">Q1 (Gen–Mar)</option>
@@ -268,13 +268,13 @@ export default function RangePicker({
           </select>
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <label htmlFor={`${id}-semester`} className="text-xs font-semibold text-neutral-500">Semestre</label>
+        <div className="flex flex-col min-w-0 w-full sm:w-auto">
+          <label htmlFor={`${id}-semester`} className="text-[11px] sm:text-xs font-semibold text-neutral-500 mb-0.5">Semestre</label>
           <select
             id={`${id}-semester`}
             value={semester}
             onChange={(e) => onSelectSemester(e.target.value)}
-            className="w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2.5 sm:px-3 py-2 text-sm text-neutral-900"
+            className="w-full min-w-0 max-w-full sm:w-auto rounded-xl border border-neutral-200 bg-white px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-neutral-900 truncate focus:outline-none focus:ring-1 focus:ring-neutral-900"
           >
             <option value="">—</option>
             <option value="H1">H1 (Gen–Giu)</option>
@@ -283,7 +283,7 @@ export default function RangePicker({
         </div>
       </div>
 
-      <div className="mt-3 text-xs text-neutral-500">
+      <div className="mt-2.5 text-[11px] sm:text-xs text-neutral-500">
         Mese / trimestre / semestre aggiornano automaticamente il range delle date.
       </div>
     </div>

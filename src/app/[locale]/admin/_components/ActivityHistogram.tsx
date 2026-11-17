@@ -30,8 +30,8 @@ export default function ActivityHistogram({ title, rows, description, subtitle, 
       <div className="flex flex-wrap gap-2">{totals.map((s) => <span key={s.key} className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-50 px-2.5 py-1.5 text-xs text-neutral-600"><span className={`h-2 w-2 rounded-sm ${s.dot}`} /><span>{s.label}</span><b className="ml-1 text-neutral-900">{format(s.total)}</b></span>)}</div>
     </div>
     {controls}
-    <div className="mt-6 overflow-x-auto pb-2 pt-2" tabIndex={0} role="region" aria-label={`${title}: grafico scorrevole`}>
-      <div style={{ minWidth: hourly ? 680 : 360 }}>
+    <div className="mt-6 w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain pb-2 pt-2 [contain:inline-size]" tabIndex={0} role="region" aria-label={`${title}: grafico scorrevole`}>
+      <div className="w-full" style={hourly ? { minWidth: Math.max(680, rows.length * 12) } : undefined}>
         <div className="flex gap-2" role="img" aria-label={`${title}. Valori esatti nella tabella espandibile sotto il grafico.`}>
           <div className="relative h-60 w-6 shrink-0 text-right text-[10px] tabular-nums text-neutral-400" aria-hidden="true">{ticks.map((tick) => <span key={tick} className="absolute right-0 -translate-y-1/2" style={{ top: `${100 - tick / axisMax * 100}%` }}>{format(tick)}</span>)}</div>
           <div className="relative min-w-0 flex-1">

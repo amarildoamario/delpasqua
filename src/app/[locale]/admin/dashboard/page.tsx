@@ -60,7 +60,7 @@ function Section({
 
   return (
 
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-xs">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-4 shadow-xs min-w-0 max-w-full overflow-hidden">
 
       <div className="mb-2.5">
 
@@ -1343,7 +1343,7 @@ export default async function AdminDashboard({
 
   return (
 
-    <div className="space-y-3.5">
+    <div className="space-y-3.5 min-w-0 max-w-full">
 
       {/* Header */}
 
@@ -1353,13 +1353,17 @@ export default async function AdminDashboard({
 
         subtitle={
 
-          <>
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs sm:text-sm">
 
-            Periodo: <span className="font-semibold">{startISO}</span> →{" "}
+            <span>Periodo:</span>
+
+            <span className="font-semibold">{startISO}</span>
+
+            <span>→</span>
 
             <span className="font-semibold">{endISO}</span>
 
-          </>
+          </div>
 
         }
 
@@ -1369,7 +1373,7 @@ export default async function AdminDashboard({
 
             href={`/api/admin/report/dashboard.json?start=${startISO}&end=${endISO}`}
 
-            className="rounded-xl border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-900 hover:bg-neutral-50 shadow-sm transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-900 hover:bg-neutral-50 shadow-sm transition-all"
 
           >
 

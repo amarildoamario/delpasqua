@@ -15,7 +15,7 @@ export default function PageRankings({ rows }: { rows: PageRanking[] }) {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(20);
   const ranked = rankPages(rows, sort, search);
-  return <section className="min-w-0 rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm" aria-label="Classifica pagine">
+  return <section className="min-w-0 max-w-full overflow-hidden rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm" aria-label="Classifica pagine">
     <h2 className="text-sm font-extrabold text-neutral-900">Classifica pagine</h2>
     <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Ordina pagine per">
       {choices.map((choice) => <button key={choice.key} type="button" aria-pressed={sort === choice.key} onClick={() => setSort(choice.key)} className={`rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${sort === choice.key ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"}`}>{choice.label}</button>)}

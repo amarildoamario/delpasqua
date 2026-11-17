@@ -5,6 +5,11 @@ import { requireAdminApi } from "@/lib/server/adminAuth";
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
 import {
+  canonicalizeSitePath,
+  computeHistoricalCustomerRetention,
+} from "@/lib/server/metricsAnalyticsV6";
+import {
+  describePeriodWindow,
   metricsPeriod,
   readSalesMetrics,
   salesConversion,
@@ -40,7 +45,9 @@ export async function GET(req: Request) {
   const includeInternal = internalRaw === "1" || internalRaw === "true" || internalRaw === "yes" || internalRaw === "on";
 
 
-  const { start, endExclusive, startISO, endISO, endExclusiveISO } = metricsPeriod(startParam, endParam);
+  const period = metricsPeriod(startParam, endParam);
+  const { start, endExclusive, startISO, endISO } = period;
+  const periodMeta = describePeriodWindow(period);
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
@@ -69,17 +76,51 @@ export async function GET(req: Request) {
 
   const uniqueSessions = sessions.length;
   const uniqueVisitors = visitors.length;
-  const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : 0;
+  const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : null;
 
-  // Visits come from the tracker; confirmed sales come exclusively from orders.
-  const [cartsTotal, sales] = await Promise.all([
+  // --- Device metrics (business) ---
+  const [
+    pageViewsByDevice,
+    visitorsByDevicePairs,
+    sessionsByDevicePairs,
+    cartsTotal,
+  ] = await Promise.all([
+    prisma.analyticsEvent.groupBy({
+      by: ["device"],
+      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER },
+      _count: { device: true },
+      orderBy: { _count: { device: "desc" } },
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["device", "visitorId"],
+      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, visitorId: { not: "" } },
+      _count: { visitorId: true },
+    }),
+    prisma.analyticsEvent.groupBy({
+      by: ["device", "sessionId"],
+      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, sessionId: { not: "" } },
+      _count: { sessionId: true },
+    }),
     prisma.analyticsEvent.groupBy({
       by: ["cartId"],
       where: { ...rangeWhere, type: { in: ["add_to_cart", "begin_checkout"] }, ...QUALITY_FILTER, cartId: { not: "" } },
       _count: { cartId: true },
     }),
-    readSalesMetrics(prisma, start, endExclusive),
   ]);
+
+  const seenDeviceSessions = new Set<string>();
+  const sessionDeviceMap = new Map<string, string>();
+  const deviceSessions = new Map<string, number>();
+  for (const row of sessionsByDevicePairs) {
+    if (row.sessionId && seenDeviceSessions.has(row.sessionId)) continue;
+    if (row.sessionId) seenDeviceSessions.add(row.sessionId);
+    const key = row.device ?? "unknown";
+    if (row.sessionId) sessionDeviceMap.set(row.sessionId, key);
+    deviceSessions.set(key, (deviceSessions.get(key) ?? 0) + 1);
+  }
+
+  // Visits come from the tracker; confirmed sales come exclusively from orders.
+  const sales = await readSalesMetrics(prisma, start, endExclusive, sessionDeviceMap);
   const cartTotalN = cartsTotal.length;
   const conversionAnalytics = salesConversion(sales.paidOrders, uniqueSessions);
   const avgPaymentMs = sales.avgPaymentMs;
@@ -204,10 +245,10 @@ export async function GET(req: Request) {
     prisma.tastingBooking.count({ where: rangeWhere }),
   ]);
 
-  const listCtr = listViews > 0 ? productClicks / listViews : 0;
+  const listCtr = listViews > 0 ? productClicks / listViews : null;
   const knownCarts = new Set(cartsTotal.map((row) => row.cartId));
   const cartsCheckoutClickedN = cartsCheckoutClicked.filter((row) => knownCarts.has(row.cartId)).length;
-  const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : 0;
+  const checkoutClickRate = cartTotalN > 0 ? cartsCheckoutClickedN / cartTotalN : null;
 
   const contactMap = new Map<string, number>();
   for (const c of contactClicksGroup) {
@@ -221,49 +262,21 @@ export async function GET(req: Request) {
 
   const {
     litersDemandedTotal, litersOilDemanded, litersWineDemanded,
-    cansUnits, bottlesUnits, cansPct, bottlesPct, unknownFormatUnits,
+    cansUnits, bottlesUnits, cansPct, bottlesPct, unknownFormatPct, unknownFormatUnits,
     potentialCartRevenueEur, avgCartValueEur, lostCartRevenueEur,
     cartsWithAdditions, unpricedUnits, addsByProduct,
   } = summarizeCartDemand(allAddToCartEvents);
 
-
-  // --- Device metrics (business) ---
-  const [
-    pageViewsByDevice,
-    visitorsByDevicePairs,
-    sessionsByDevicePairs,
-  ] = await Promise.all([
-    prisma.analyticsEvent.groupBy({
-      by: ["device"],
-      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER },
-      _count: { device: true },
-      orderBy: { _count: { device: "desc" } },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["device", "visitorId"],
-      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, visitorId: { not: "" } },
-      _count: { visitorId: true },
-    }),
-    prisma.analyticsEvent.groupBy({
-      by: ["device", "sessionId"],
-      where: { ...rangeWhere, type: "page_view", ...SITE_ONLY, ...QUALITY_FILTER, sessionId: { not: "" } },
-      _count: { sessionId: true },
-    }),
-  ]);
-
   const devicePageviews = new Map<string, number>();
   for (const d of pageViewsByDevice) devicePageviews.set(d.device ?? "unknown", d._count.device);
 
+  const seenDeviceVisitors = new Set<string>();
   const deviceVisitors = new Map<string, number>();
   for (const row of visitorsByDevicePairs) {
+    if (row.visitorId && seenDeviceVisitors.has(row.visitorId)) continue;
+    if (row.visitorId) seenDeviceVisitors.add(row.visitorId);
     const key = row.device ?? "unknown";
     deviceVisitors.set(key, (deviceVisitors.get(key) ?? 0) + 1);
-  }
-
-  const deviceSessions = new Map<string, number>();
-  for (const row of sessionsByDevicePairs) {
-    const key = row.device ?? "unknown";
-    deviceSessions.set(key, (deviceSessions.get(key) ?? 0) + 1);
   }
 
   const devicePurchases = new Map(sales.devices.map((row) => [row.device, row.purchases]));
@@ -278,7 +291,7 @@ export async function GET(req: Request) {
     const vs = deviceVisitors.get(dev) ?? 0;
     const ss = deviceSessions.get(dev) ?? 0;
     const purchases = devicePurchases.get(dev) ?? 0;
-    const pagesPerSession = ss > 0 ? +(pv / ss).toFixed(3) : 0;
+    const pagesPerSession = ss > 0 ? +(pv / ss).toFixed(3) : null;
     const conv = salesConversion(purchases, ss);
     return {
       device: dev,
@@ -297,12 +310,61 @@ export async function GET(req: Request) {
   const [insights, customers] = await Promise.all([
     readCommerceInsights(prisma, start, endExclusive, includeInternal), readCustomerMetrics(prisma),
   ]);
+  const historicalRetention = computeHistoricalCustomerRetention(
+    sales.paidOrdersMeta,
+    customers.rows,
+    start,
+  );
+  const canonicalAgg = new Map<string, { canonicalPath: string; pageCategory: string; views: number; durationSum: number; durationSamples: number }>();
+  for (const p of topPages) {
+    const raw = p.path ?? "";
+    const { canonicalPath, pageCategory } = canonicalizeSitePath(raw);
+    const base = normalizeForDuration(raw);
+    const dur = durationAgg.get(base);
+    const cur = canonicalAgg.get(canonicalPath) ?? {
+      canonicalPath,
+      pageCategory,
+      views: 0,
+      durationSum: 0,
+      durationSamples: 0,
+    };
+    cur.views += p._count.path;
+    if (dur) {
+      cur.durationSum += dur.sum;
+      cur.durationSamples += dur.n;
+    }
+    canonicalAgg.set(canonicalPath, cur);
+  }
+  const canonicalPages = [...canonicalAgg.values()]
+    .map((c) => ({
+      canonicalPath: c.canonicalPath,
+      pageCategory: c.pageCategory,
+      views: c.views,
+      avgDurationMs: c.durationSamples > 0 ? Math.round(c.durationSum / c.durationSamples) : null,
+      durationSamples: c.durationSamples,
+    }))
+    .sort((a, b) => b.views - a.views);
+
+  const prodFunnelByKey = new Map(insights.productFunnel.map((r) => [r.productKey, r]));
+  const varFunnelByKey = new Map(insights.variantFunnel.map((r) => [`${r.productKey}::${r.variantKey}`, r]));
+
   const payload = {
     insights,
-    customers,
+    customers: {
+      ...customers,
+      historicalReturningCustomers: historicalRetention.historicalReturningCustomers,
+      historicalFirstTimeCustomers: historicalRetention.historicalFirstTimeCustomers,
+      historicalReturningCustomerRate: historicalRetention.historicalReturningCustomerRate,
+      historicalReturningCustomerRatePct: historicalRetention.historicalReturningCustomerRatePct,
+    },
     meta: {
-      generatedAt: new Date().toISOString(),
-      period: { startISO, endISO, endExclusiveISO },
+      schemaVersion: "metrics-export-v6",
+      version: "metrics-export-v5",
+      timeZone: "Europe/Rome",
+      generatedAt: periodMeta.observedThrough,
+      period: periodMeta,
+      sessionCohort: "sessions_with_site_page_view_in_period",
+      dailySessionAssignment: "local_session_start_date",
       quality: {
         includeInternal,
         filterApplied: includeInternal ? "none" : "env=prod & isInternal=false",
@@ -310,10 +372,95 @@ export async function GET(req: Request) {
       filters: {
         siteOnlyExcludedPrefixes: ["/checkout", "/payment", "/payments", "/stripe", "/api", "/_next", "/admin"],
         shopDurationNormalized: "For /shop/* the duration is aggregated ignoring query string (?v=...)",
+        testOrderPolicy: "excluded_where_isTest_true",
+        quoteOrderPolicy: "included_in_commercial_totals_and_separated_in_quotePaidOrders",
       },
-      version: "metrics-export-v5",
       salesSource: "Order.paidAt",
       conversionDenominator: "uniqueSessions",
+    },
+
+    quality: {
+      paidOrdersWithSession: insights.orderAttribution.ordersWithSession,
+      paidOrdersWithoutSession: insights.orderAttribution.ordersWithoutSession,
+      storefrontPaidOrders: sales.storefrontPaidOrders,
+      quotePaidOrders: sales.quotePaidOrders,
+      sourceAttributionCoverage: insights.orderAttribution.sourceCoverage,
+      deviceAttributionCoverage: insights.orderAttribution.deviceCoverage,
+      unpricedCartUnits: unpricedUnits,
+      isPartialPeriod: periodMeta.isPartial,
+      warnings: [
+        ...(periodMeta.isPartial ? [`Periodo parziale: la data finale ${periodMeta.endDateInclusive} è ancora in corso (osservato fino a ${periodMeta.observedThrough}).`] : []),
+        ...(sales.quotePaidOrders > 0 ? [`Presenti ${sales.quotePaidOrders} ordini pagati da Preventivo PDF (/preventivo/[token]): saltano il carrello dello shop e il redirect diretto a Stripe può non avere sessione browser.`] : []),
+        ...(sales.paidOrders > 0 && sales.paidOrders < 5 ? [`Campione ordini ridotto (${sales.paidOrders}): non interpretare scontrino medio e tassi di conversione come stime stabili.`] : []),
+      ],
+    },
+
+    series: {
+      daily: insights.daily,
+      dailyDefinition: "Sessioni assegnate alla data locale di inizio (Europe/Rome); vendite assegnate alla data locale di Order.paidAt; stato parziale esplicito.",
+    },
+
+    sessionFunnel: insights.sessionFunnel,
+    cartFunnel: insights.cartFunnel,
+    checkoutCohort: insights.checkoutCohort,
+    productFunnel: insights.productFunnel,
+    variantFunnel: insights.variantFunnel,
+    forecasts: insights.forecasts,
+
+    metrics: {
+      sessionPurchaseRate: {
+        value: insights.sessionFunnel.purchaseRate,
+        unit: "ratio",
+        countingEntity: "session",
+        numerator: insights.sessionFunnel.purchasingSessions,
+        denominator: insights.sessionFunnel.sessions,
+        numeratorDefinition: "Sessioni della coorte con almeno un ordine pagato collegato tramite ANALYTICS_CONTEXT o evento purchase",
+        denominatorDefinition: "Sessioni con almeno un page_view sul sito nel periodo",
+        label: "Sessioni con acquisto (coorte)",
+        description: "Percentuale delle sessioni della coorte con un acquisto collegato. Una sessione con più ordini conta una sola volta.",
+        formula: "sessionFunnel.purchasingSessions / sessionFunnel.sessions",
+        source: "session_records_joined_to_server_orders",
+        status: insights.sessionFunnel.sessions === 0
+          ? "zero_denominator"
+          : insights.orderAttribution.ordersWithoutSession > 0
+            ? "incomplete_attribution"
+            : "available",
+      },
+      paidOrdersToObservedSessionsRatio: {
+        value: conversionAnalytics,
+        unit: "orders_per_session",
+        countingEntity: "order_over_session",
+        numerator: sales.paidOrders,
+        denominator: uniqueSessions,
+        label: "Ordini pagati / sessioni osservate",
+        description: "Rapporto commerciale fra ordini pagati nel periodo (inclusi preventivi PDF) e sessioni osservate nel periodo; può includere popolazioni non collegate.",
+        formula: "kpis.paidOrders / kpis.uniqueSessions",
+        source: "server_orders_over_site_sessions",
+        status: uniqueSessions === 0 ? "zero_denominator" : "available",
+      },
+    },
+
+    migrationMap: {
+      "kpis.conversionAnalytics": {
+        retainedForCompatibility: true,
+        clarifiedLabel: "Ordini pagati / sessioni osservate",
+        recommendedCohortMetric: "sessionFunnel.purchaseRate",
+      },
+      "kpis.listCtr": {
+        retainedForCompatibility: true,
+        clarifiedLabel: "Rapporto clic / visualizzazioni lista (eventi)",
+        note: "Rapporto tra eventi product_click e view_item_list; può superare 100%.",
+      },
+      "commercial.avgCartValueEur": {
+        retainedForCompatibility: true,
+        clarifiedLabel: "Valore lordo aggiunte per carrello",
+        note: "Media delle aggiunte lorde su carrelli con add_to_cart; non è il saldo finale del carrello.",
+      },
+      "commercial.repeatCustomerRatePct": {
+        retainedForCompatibility: true,
+        clarifiedLabel: "Clienti con più acquisti nel periodo (%)",
+        recommendedHistoricalMetric: "commercial.historicalReturningCustomerRatePct",
+      },
     },
 
     kpis: {
@@ -323,6 +470,8 @@ export async function GET(req: Request) {
       pageLeaves,
       avgPagesPerSession,
       paidOrders: sales.paidOrders,
+      storefrontPaidOrders: sales.storefrontPaidOrders,
+      quotePaidOrders: sales.quotePaidOrders,
       conversionAnalytics,
       conversionAnalyticsPct: pct(conversionAnalytics),
       listViews,
@@ -358,6 +507,8 @@ export async function GET(req: Request) {
     commercial: {
       realizedRevenueEur: sales.realizedRevenueEur,
       realizedAovEur: sales.realizedAovEur,
+      storefrontPaidOrders: sales.storefrontPaidOrders,
+      quotePaidOrders: sales.quotePaidOrders,
       potentialCheckoutRevenueEur: sales.potentialCheckoutRevenueEur,
       lostCheckoutRevenueEur: sales.lostCheckoutRevenueEur,
       potentialCartRevenueEur,
@@ -374,6 +525,7 @@ export async function GET(req: Request) {
         unknownFormatUnits,
         cansPct,
         bottlesPct,
+        unknownFormatPct,
       },
       bundleOlioVinoRatePct: sales.bundleOlioVinoRatePct,
       repeatCustomerRatePct: sales.repeatCustomerRatePct,
@@ -382,6 +534,12 @@ export async function GET(req: Request) {
       newPayingCustomers: sales.newPayingCustomers,
       newRevenueEur: sales.newRevenueEur,
       repeatRevenueEur: sales.repeatRevenueEur,
+      historicalReturningCustomers: historicalRetention.historicalReturningCustomers,
+      historicalFirstTimeCustomers: historicalRetention.historicalFirstTimeCustomers,
+      historicalReturningCustomerRate: historicalRetention.historicalReturningCustomerRate,
+      historicalReturningCustomerRatePct: historicalRetention.historicalReturningCustomerRatePct,
+      historicalReturningRevenueEur: historicalRetention.historicalReturningRevenueEur,
+      historicalFirstTimeRevenueEur: historicalRetention.historicalFirstTimeRevenueEur,
       netGoodsRevenueEur: sales.netGoodsRevenueEur,
       estimatedContributionMarginEur: sales.estimatedContributionMarginEur,
     },
@@ -391,6 +549,9 @@ export async function GET(req: Request) {
       phoneClicks: contactMap.get("phone") ?? 0,
       emailClicks: contactMap.get("email") ?? 0,
       totalContactClicks: contactClicksTotal,
+      sessionsWithContactClick: insights.contactsSummary.sessionsWithContactClick,
+      contactSessionRate: insights.contactsSummary.contactSessionRate,
+      contactSessionRatePct: pct(insights.contactsSummary.contactSessionRate),
       contactMessagesCount,
       tastingBookingsCount,
     },
@@ -398,47 +559,97 @@ export async function GET(req: Request) {
     devices: { rows: deviceRows },
 
     top: {
-      pages: topPages.map((p) => ({
-        path: p.path ?? "",
-        views: p._count.path,
-        avgDurationMsProductNormalized: avgByPath[normalizeForDuration(p.path ?? "")] ?? null,
-      })),
-      productViewsByVariant: topVariantViews.map((r) => ({
-        productKey: r.productKey ?? "",
-        variantKey: r.variantKey ?? null,
-        views: r._count.productKey,
-      })),
-      productViewsTotal: topProductViews.map((r) => ({
-        productKey: r.productKey ?? "",
-        views: r._count.productKey,
-      })),
+      pages: topPages.map((p) => {
+        const raw = p.path ?? "";
+        const base = normalizeForDuration(raw);
+        const { canonicalPath, locale, pageCategory } = canonicalizeSitePath(raw);
+        return {
+          path: raw,
+          canonicalPath,
+          locale,
+          pageCategory,
+          views: p._count.path,
+          avgDurationMsProductNormalized: avgByPath[base] ?? null,
+          durationSamplesProductNormalized: durationAgg.get(base)?.n ?? 0,
+        };
+      }),
+      canonicalPages,
+      productViewsByVariant: topVariantViews.map((r) => {
+        const pk = r.productKey ?? "";
+        const vk = r.variantKey ?? "default";
+        const vf = varFunnelByKey.get(`${pk}::${vk}`);
+        return {
+          productKey: pk,
+          variantKey: r.variantKey ?? null,
+          views: r._count.productKey,
+          uniqueSessions: vf?.viewSessions ?? null,
+        };
+      }),
+      productViewsTotal: topProductViews.map((r) => {
+        const pk = r.productKey ?? "";
+        const pf = prodFunnelByKey.get(pk);
+        return {
+          productKey: pk,
+          views: r._count.productKey,
+          uniqueSessions: pf?.viewSessions ?? null,
+        };
+      }),
       productCartToDetail: topProductViews.map((r) => {
         const pk = r.productKey ?? "";
         const views = r._count.productKey;
         const adds = addsByProduct.get(pk) ?? 0;
-        const rate = views > 0 ? adds / views : 0;
+        const rate = views > 0 ? +(adds / views).toFixed(4) : null;
+        const pf = prodFunnelByKey.get(pk);
         return {
           productKey: pk,
           views,
           adds,
-          cartToDetailRate: +rate.toFixed(4),
+          addedUnits: pf?.addedUnits ?? null,
+          viewSessions: pf?.viewSessions ?? null,
+          addSessions: pf?.addSessions ?? null,
+          viewThenAddSessions: pf?.viewThenAddSessions ?? null,
+          cartToDetailRate: rate,
           cartToDetailRatePct: pct(rate),
+          sessionProductToCartRate: pf?.productToCartRate ?? null,
+          sessionProductToCartRatePct: pct(pf?.productToCartRate ?? null),
         };
       }),
-      addToCartByVariant: addToCartByVariant.map((r) => ({
-        productKey: r.productKey ?? "",
-        variantKey: r.variantKey ?? null,
-        adds: r._count.productKey,
-      })),
-      addToCartTotal: addToCartTotal.map((r) => ({
-        productKey: r.productKey ?? "",
-        adds: r._count.productKey,
-      })),
-      variantSelections: variantSelections.map((r) => ({
-        productKey: r.productKey ?? "",
-        variantKey: r.variantKey ?? null,
-        selections: r._count.productKey,
-      })),
+      addToCartByVariant: addToCartByVariant.map((r) => {
+        const pk = r.productKey ?? "";
+        const vk = r.variantKey ?? "default";
+        const vf = varFunnelByKey.get(`${pk}::${vk}`);
+        return {
+          productKey: pk,
+          variantKey: r.variantKey ?? null,
+          adds: r._count.productKey,
+          addedUnits: vf?.addedUnits ?? null,
+          uniqueSessions: vf?.addSessions ?? null,
+        };
+      }),
+      addToCartTotal: addToCartTotal.map((r) => {
+        const pk = r.productKey ?? "";
+        const pf = prodFunnelByKey.get(pk);
+        return {
+          productKey: pk,
+          adds: r._count.productKey,
+          addedUnits: pf?.addedUnits ?? null,
+          uniqueSessions: pf?.addSessions ?? null,
+        };
+      }),
+      variantSelections: variantSelections.map((r) => {
+        const pk = r.productKey ?? "";
+        const vk = r.variantKey ?? "default";
+        const vf = varFunnelByKey.get(`${pk}::${vk}`);
+        return {
+          productKey: pk,
+          variantKey: r.variantKey ?? null,
+          selections: r._count.productKey,
+          uniqueSessions: vf?.selectionSessions ?? null,
+          selectionThenAddSessions: vf?.selectionThenAddSessions ?? null,
+          selectionToCartRate: vf?.selectionToCartRate ?? null,
+          selectionToCartRatePct: pct(vf?.selectionToCartRate ?? null),
+        };
+      }),
     },
 
     definitions: {

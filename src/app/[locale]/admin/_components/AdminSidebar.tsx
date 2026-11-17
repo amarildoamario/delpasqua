@@ -357,7 +357,7 @@ export default function AdminSidebar({
       </aside>
 
       {/* ─── MOBILE STICKY TOPBAR (< lg) ─── */}
-      <header className="sticky top-0 lg:hidden z-30 border-b border-white/10 bg-[#1f1f23]/95 backdrop-blur-md shadow-sm shrink-0 text-white">
+      <header className="relative z-30 min-w-0 shrink-0 border-b border-white/10 bg-[#1f1f23] text-white shadow-sm lg:hidden">
         <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
           <Link
             href="/admin/ops"
@@ -385,7 +385,7 @@ export default function AdminSidebar({
         {/* Quick-Jump Horizontal Strip */}
         <nav
           aria-label="Accesso rapido gestionale"
-          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3.5 pb-2.5 pt-0.5"
+          className="no-scrollbar flex w-full min-w-0 items-center gap-1.5 overflow-x-auto overscroll-x-contain px-3.5 pb-2.5 pt-0.5"
         >
           {mobileQuickLinks.map((qItem) => {
             const QIcon = qItem.icon;
@@ -415,10 +415,10 @@ export default function AdminSidebar({
 
       {/* ─── MOBILE SLIDE-OVER DRAWER (< lg) ─── */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
+        <div className="absolute inset-0 z-50 flex lg:hidden">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-2xs transition-opacity animate-in fade-in duration-100"
+            className="absolute inset-0 bg-black/50 backdrop-blur-2xs transition-opacity animate-in fade-in duration-100"
             onClick={() => setMobileOpen(false)}
           />
 

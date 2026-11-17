@@ -41,8 +41,17 @@ test("Stripe exits deduplicate returns, exclude recovered payments and retain un
 test("decision history predates selected period and does not require purchase browser events", () => {
   const first = event({ createdAt: new Date("2026-11-06T10:00:00Z"), sessionId: "session-earlier" });
   const current = event();
-  const result = summarizeCommerceInsights([order(), order({ id: "unmatched", events: [] }), order({ id: "test", isTest: true })], [current, current, event({ createdAt: new Date("2026-11-09T12:00:00Z"), sessionId: "session-after-payment" })], [first], start, end);
+  const result = summarizeCommerceInsights([order(), order({ id: "unmatched", quoteId: "quote-pdf-1", events: [] }), order({ id: "test", isTest: true })], [current, current, event({ createdAt: new Date("2026-11-09T12:00:00Z"), sessionId: "session-after-payment" })], [first], start, end);
   assert.deepEqual(result.decision, { samples: 1, paidOrders: 2, avgDays: 3, avgSessions: 2 });
+  assert.equal(result.acquisition.reduce((sum, row) => sum + row.orders, 0), 2, "Every paid order must reconcile across acquisition classes including unattributed");
+  const unattributed = result.acquisition.find((row) => row.source === "unattributed");
+  assert.ok(unattributed);
+  assert.equal(unattributed.orders, 1);
+  assert.equal(unattributed.sessions, 0);
+  assert.equal(result.orderAttribution.quotePaidOrders, 1);
+  assert.equal(result.orderAttribution.storefrontPaidOrders, 1);
+  assert.equal(result.orderAttribution.unattributedOrders, 1);
+  assert.equal(result.orderAttribution.sourceCoverage, 0.5);
 });
 
 test("expired and canceled database checkouts count as unpaid exits without a browser return", () => {

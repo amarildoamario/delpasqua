@@ -267,7 +267,20 @@ html {
   }
 }
 
-/* ✅ FORCE BORDER RADIUS TO 5PX FOR ALL ADMIN PANEL COMPONENTS, PRESERVING CIRCULAR ELEMENTS */
+/* On mobile, the admin shell owns scrolling below the site header. */
+@media (width < 64rem) {
+  html:has(.admin-panel),
+  body:has(.admin-panel) {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body:has(.admin-panel) {
+    min-height: 0;
+  }
+}
+
+/* Keep 5px corners in the admin panel except on circular elements. */
 .admin-panel .rounded:not(.rounded-full),
 .admin-panel [class*="rounded-"]:not([class*="rounded-full"]) {
   border-radius: 5px !important;

@@ -12,6 +12,7 @@ export type SalesOrderItem = {
 
 export type SalesOrder = {
   id: string;
+  quoteId?: string | null;
   isTest: boolean;
   createdAt: Date;
   paidAt: Date | null;
@@ -21,7 +22,7 @@ export type SalesOrder = {
   discountCents?: number;
   email?: string | null;
   items?: SalesOrderItem[];
-  events?: { type: string }[];
+  events?: { type: string; metaJson?: string | null }[];
 };
 
 // Product IDs are stable order snapshots; SKU prefixes cover legacy orders.
@@ -92,8 +93,9 @@ export function summarizeCartDemand(events: CartDemandEvent[]) {
     litersDemandedTotal: +(litersOilDemanded + litersWineDemanded).toFixed(3),
     litersOilDemanded: +litersOilDemanded.toFixed(3), litersWineDemanded: +litersWineDemanded.toFixed(3),
     cansUnits, bottlesUnits, unknownFormatUnits,
-    cansPct: totalFormatUnits ? +(cansUnits / totalFormatUnits * 100).toFixed(1) : 0,
-    bottlesPct: totalFormatUnits ? +(bottlesUnits / totalFormatUnits * 100).toFixed(1) : 0,
+    cansPct: totalFormatUnits ? +(cansUnits / totalFormatUnits * 100).toFixed(1) : null,
+    bottlesPct: totalFormatUnits ? +(bottlesUnits / totalFormatUnits * 100).toFixed(1) : null,
+    unknownFormatPct: totalFormatUnits ? +(unknownFormatUnits / totalFormatUnits * 100).toFixed(1) : null,
     potentialCartRevenueEur,
     avgCartValueEur: potentialCartRevenueEur !== null && carts.size ? +(potentialCartRevenueEur / carts.size).toFixed(2) : null,
     lostCartRevenueEur: null,
@@ -137,6 +139,53 @@ export function metricsPeriod(startParam?: string, endParam?: string, now = new 
   return { startISO, endISO, endExclusiveISO, start: romeMidnight(startISO), endExclusive: romeMidnight(endExclusiveISO) };
 }
 
+export function describePeriodWindow(
+  period: ReturnType<typeof metricsPeriod>,
+  now = new Date(),
+) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(now);
+  const part = (type: string) => parts.find((value) => value.type === type)!.value;
+  const todayISO = `${part("year")}-${part("month")}-${part("day")}`;
+  const isPartial = now < period.endExclusive;
+  const observedThrough = new Date(Math.min(now.getTime(), period.endExclusive.getTime())).toISOString();
+  const yesterdayISO = shiftDay(todayISO, -1);
+  const lastCompleteLocalDate = period.endISO < todayISO
+    ? period.endISO
+    : yesterdayISO >= period.startISO
+      ? yesterdayISO
+      : null;
+  const totalCalendarDays = Math.max(
+    0,
+    Math.round((Date.parse(`${period.endExclusiveISO}T00:00:00Z`) - Date.parse(`${period.startISO}T00:00:00Z`)) / 86_400_000),
+  );
+  const completeEndISO = period.endISO < todayISO
+    ? period.endExclusiveISO
+    : todayISO > period.startISO
+      ? todayISO
+      : period.startISO;
+  const completeCalendarDays = Math.max(
+    0,
+    Math.round((Date.parse(`${completeEndISO}T00:00:00Z`) - Date.parse(`${period.startISO}T00:00:00Z`)) / 86_400_000),
+  );
+  return {
+    startISO: period.startISO,
+    endISO: period.endISO,
+    endExclusiveISO: period.endExclusiveISO,
+    startDate: period.startISO,
+    endDateInclusive: period.endISO,
+    startInclusiveUtc: period.start.toISOString(),
+    requestedEndExclusiveUtc: period.endExclusive.toISOString(),
+    observedThrough,
+    lastCompleteLocalDate,
+    completeCalendarDays,
+    totalCalendarDays,
+    isPartial,
+    timeZone: "Europe/Rome" as const,
+  };
+}
+
 export function metricsMonthKey(date: Date) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Rome", year: "numeric", month: "2-digit",
@@ -169,17 +218,38 @@ function average(samples: number[]) {
   return samples.length ? Math.round(samples.reduce((sum, value) => sum + value, 0) / samples.length) : null;
 }
 
-export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: Date) {
+function orderSessionId(order: SalesOrder): string | null {
+  for (const ev of order.events ?? []) {
+    if (ev.type && ev.type !== "ANALYTICS_CONTEXT") continue;
+    try {
+      const parsed = JSON.parse(ev.metaJson ?? "null");
+      if (typeof parsed?.sessionId === "string" && parsed.sessionId) return parsed.sessionId;
+    } catch { /* Ignore malformed context. */ }
+  }
+  return null;
+}
+
+export function summarizeSales(
+  orders: SalesOrder[],
+  start: Date,
+  endExclusive: Date,
+  sessionDevices?: ReadonlyMap<string, string>,
+) {
   const inPeriod = (date: Date | null) => date !== null && date >= start && date < endExclusive;
   const unique = [...new Map(orders.filter((order) => !order.isTest).map((order) => [order.id, order])).values()];
   const paid = unique.filter((order) => inPeriod(order.paidAt));
   const started = unique.filter((order) => inPeriod(order.createdAt) && !excludedCheckout(order));
   const unpaidCheckouts = started.filter((order) => order.paidAt === null).length;
+  const quotePaidOrders = paid.filter((order) => Boolean(order.quoteId)).length;
+  const storefrontPaidOrders = paid.length - quotePaidOrders;
   const durations: number[] = [];
   const devices = new Map<string, { purchases: number; durations: number[] }>();
 
   for (const order of paid) {
-    const device = saleDevice(order.userAgent);
+    const sid = orderSessionId(order);
+    const sessionDev = sid ? sessionDevices?.get(sid) : undefined;
+    const uaDev = saleDevice(order.userAgent);
+    const device = sessionDev && sessionDev !== "unknown" ? sessionDev : uaDev;
     const group = devices.get(device) ?? { purchases: 0, durations: [] };
     group.purchases++;
     const ms = order.paidAt!.getTime() - order.createdAt.getTime();
@@ -220,7 +290,7 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
   const uniquePayingCustomers = paidEmails.size;
   const repeatPayingCustomers = [...paidEmails.values()].filter((c) => c.count >= 2).length;
   const newPayingCustomers = uniquePayingCustomers - repeatPayingCustomers;
-  const repeatCustomerRate = uniquePayingCustomers > 0 ? repeatPayingCustomers / uniquePayingCustomers : 0;
+  const repeatCustomerRate = uniquePayingCustomers > 0 ? repeatPayingCustomers / uniquePayingCustomers : null;
   const repeatRevenueCents = [...paidEmails.values()].filter((c) => c.count >= 2).reduce((sum, c) => sum + c.totalCents, 0);
   const newRevenueCents = paidRevenueCents - repeatRevenueCents;
   const repeatRevenueEur = +(repeatRevenueCents / 100).toFixed(2);
@@ -236,10 +306,12 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
     const hasOil = o.items.some((it) => productFamily(it.productId, it.sku) === "oil");
     if (hasWine && hasOil) ordersWithBothOlioVino++;
   }
-  const bundleOlioVinoRate = ordersWithItems > 0 ? ordersWithBothOlioVino / ordersWithItems : 0;
+  const bundleOlioVinoRate = ordersWithItems > 0 ? ordersWithBothOlioVino / ordersWithItems : null;
 
   return {
     paidOrders: paid.length,
+    storefrontPaidOrders,
+    quotePaidOrders,
     startedCheckouts: started.length,
     unpaidCheckouts,
     unpaidCheckoutRate: salesConversion(unpaidCheckouts, started.length),
@@ -266,10 +338,16 @@ export function summarizeSales(orders: SalesOrder[], start: Date, endExclusive: 
     repeatRevenueEur,
     netGoodsRevenueEur,
     estimatedContributionMarginEur,
+    paidOrdersMeta: paid.map((o) => ({ email: o.email, totalCents: o.totalCents, paidAt: o.paidAt })),
   };
 }
 
-export async function readSalesMetrics(db: Pick<PrismaClient, "order">, start: Date, endExclusive: Date) {
+export async function readSalesMetrics(
+  db: Pick<PrismaClient, "order">,
+  start: Date,
+  endExclusive: Date,
+  sessionDevices?: ReadonlyMap<string, string>,
+) {
   // One read replaces the former purchase/cart/device analytics queries. The
   // payment record exists even when no success page, JS or tracking cookie runs.
   const orders = await db.order.findMany({
@@ -282,6 +360,7 @@ export async function readSalesMetrics(db: Pick<PrismaClient, "order">, start: D
     },
     select: {
       id: true,
+      quoteId: true,
       isTest: true,
       createdAt: true,
       paidAt: true,
@@ -290,7 +369,7 @@ export async function readSalesMetrics(db: Pick<PrismaClient, "order">, start: D
       subtotalCents: true,
       discountCents: true,
       email: true,
-      events: { where: { type: { in: CHECKOUT_AUDIENCE_TYPES } }, select: { type: true } },
+      events: { where: { type: { in: ["ANALYTICS_CONTEXT", ...CHECKOUT_AUDIENCE_TYPES] } }, select: { type: true, metaJson: true } },
       items: {
         select: {
           productId: true,
@@ -303,5 +382,5 @@ export async function readSalesMetrics(db: Pick<PrismaClient, "order">, start: D
       },
     },
   });
-  return summarizeSales(orders, start, endExclusive);
+  return summarizeSales(orders, start, endExclusive, sessionDevices);
 }

@@ -2,14 +2,18 @@ import type { PrismaClient } from "@/generated/prisma";
 import { acquisitionSource, ACQUISITION_LABELS, isSitePage } from "@/lib/analytics/acquisition";
 import { metricsPeriod } from "./salesMetrics";
 import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
+import { computeFunnelsAndSeries, toRomeDateISO } from "./metricsAnalyticsV6";
 
 type InsightEvent = {
   type: string; createdAt: Date; visitorId: string; sessionId: string;
   cartId: string | null; orderId: string | null; path: string | null;
+  productKey?: string | null; variantKey?: string | null;
   referrer: string | null; userAgent: string | null; data: unknown;
 };
 type InsightOrder = {
-  id: string; createdAt: Date; paidAt: Date | null; isTest: boolean; stripeCheckoutSessionId: string | null;
+  id: string; quoteId?: string | null; userAgent?: string | null;
+  email?: string | null; totalCents?: number;
+  createdAt: Date; paidAt: Date | null; isTest: boolean; stripeCheckoutSessionId: string | null;
   status?: string; updatedAt?: Date;
   events: { metaJson: string | null; type?: string; createdAt?: Date; toStatus?: string | null }[];
 };
@@ -26,6 +30,13 @@ function context(order: InsightOrder, includeInternal: boolean) {
     } catch { /* Historical orders may have no valid context. */ }
   }
   return null;
+}
+
+function classifyDeviceUA(ua?: string | null) {
+  if (!ua || /bot|spider|crawl|headless|playwright|puppeteer/i.test(ua)) return "unknown";
+  if (/ipad|tablet/i.test(ua)) return "tablet";
+  if (/mobi|android|iphone/i.test(ua)) return "mobile";
+  return "desktop";
 }
 
 export function summarizeCommerceInsights(orders: InsightOrder[], events: InsightEvent[], history: InsightEvent[], start: Date, endExclusive: Date, includeInternal = false) {
@@ -75,14 +86,21 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   const legacyLinks = new Map(events.filter((e) => e.type === "purchase" && e.orderId).map((e) => [e.orderId!, e]));
   const decisionDays: number[] = [], decisionSessions: number[] = [];
   const sourceOrders = new Map<keyof typeof ACQUISITION_LABELS, number>();
+  let unattributedOrders = 0;
+  let ordersWithSession = 0;
+  let ordersWithDevice = 0;
+  let quotePaidOrders = 0;
   for (const order of paid) {
+    if (order.quoteId) quotePaidOrders++;
     const saved = context(order, includeInternal);
     const legacy = legacyLinks.get(order.id);
     const sessionId = saved?.sessionId;
     const visitorId = saved?.visitorId ?? legacy?.visitorId;
     let orderSource: keyof typeof ACQUISITION_LABELS | null = null;
+    let sessionEv: InsightEvent | undefined;
     if (sessionId && sessions.has(sessionId)) {
       const ev = sessions.get(sessionId)!;
+      sessionEv = ev;
       const meta = ev.data && typeof ev.data === "object" ? (ev.data as { meta?: { acquisition?: { source?: string } } }).meta : undefined;
       const stored = meta?.acquisition?.source;
       orderSource = stored && Object.hasOwn(ACQUISITION_LABELS, stored) ? stored as keyof typeof ACQUISITION_LABELS : acquisitionSource(ev.userAgent ?? "", ev.referrer).source;
@@ -90,12 +108,20 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
       const userVisits = visits.get(visitorId) ?? [];
       if (userVisits.length > 0) {
         const first = userVisits[0];
+        sessionEv = first;
         const meta = first.data && typeof first.data === "object" ? (first.data as { meta?: { acquisition?: { source?: string } } }).meta : undefined;
         const stored = meta?.acquisition?.source;
         orderSource = stored && Object.hasOwn(ACQUISITION_LABELS, stored) ? stored as keyof typeof ACQUISITION_LABELS : acquisitionSource(first.userAgent ?? "", first.referrer).source;
       }
     }
+    if (sessionEv) ordersWithSession++;
     if (orderSource) sourceOrders.set(orderSource, (sourceOrders.get(orderSource) ?? 0) + 1);
+    else unattributedOrders++;
+
+    const evMeta = sessionEv?.data && typeof sessionEv.data === "object" ? (sessionEv.data as { meta?: { device?: string } }).meta : undefined;
+    const dev = (evMeta?.device && evMeta.device !== "unknown" ? evMeta.device : null)
+      ?? (classifyDeviceUA(sessionEv?.userAgent) !== "unknown" ? classifyDeviceUA(sessionEv?.userAgent) : classifyDeviceUA(order.userAgent));
+    if (dev !== "unknown") ordersWithDevice++;
 
     if (!visitorId) continue;
     const before = (visits.get(visitorId) ?? []).filter((e) => e.createdAt <= order.paidAt!);
@@ -106,6 +132,8 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     if (saved?.sessionId) measured.add(saved.sessionId);
     decisionSessions.push(measured.size);
   }
+  const ordersWithSource = paid.length - unattributedOrders;
+  const storefrontPaidOrders = paid.length - quotePaidOrders;
 
   const buckets = (count: number) => Array.from({ length: count }, () => ({ visits: new Set<string>(), carts: new Set<string>(), orders: new Set<string>() }));
   const hours = buckets(24), days = buckets(7);
@@ -139,24 +167,70 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   for (const [id, e] of dailyCarts) hours[bucketIndexes(e.createdAt)[0]].carts.add(id);
   for (const o of paid) if (inDay(o.paidAt!)) hours[bucketIndexes(o.paidAt!)[0]].orders.add(o.id);
   const serialize = (bucket: typeof hours[number], label: string) => ({ label, visits: bucket.visits.size, carts: bucket.carts.size, orders: bucket.orders.size });
+  const startISO = toRomeDateISO(start);
+  const v6 = computeFunnelsAndSeries({
+    orders,
+    events,
+    history,
+    start,
+    endExclusive,
+    startISO,
+    endISO: hourlyDay,
+    includeInternal,
+  });
   return {
-    acquisition: Object.entries(ACQUISITION_LABELS).map(([source, label]) => {
-      const s = sourceCounts.get(source as keyof typeof ACQUISITION_LABELS) ?? 0;
-      const o = sourceOrders.get(source as keyof typeof ACQUISITION_LABELS) ?? 0;
-      return {
-        source,
-        label,
-        sessions: s,
-        orders: o,
-        conversionRate: s > 0 ? o / s : null,
-      };
-    }),
+    acquisition: [
+      ...Object.entries(ACQUISITION_LABELS).map(([source, label]) => {
+        const s = sourceCounts.get(source as keyof typeof ACQUISITION_LABELS) ?? 0;
+        const o = sourceOrders.get(source as keyof typeof ACQUISITION_LABELS) ?? 0;
+        return {
+          source,
+          label,
+          sessions: s,
+          orders: o,
+          conversionRate: s > 0 ? o / s : null,
+        };
+      }),
+      ...(unattributedOrders > 0 ? [{
+        source: "unattributed",
+        label: quotePaidOrders > 0 && unattributedOrders === quotePaidOrders
+          ? "Non attribuito (Preventivo PDF)"
+          : "Non attribuito",
+        sessions: 0,
+        orders: unattributedOrders,
+        conversionRate: null,
+      }] : []),
+    ],
+    orderAttribution: {
+      paidOrders: paid.length,
+      storefrontPaidOrders,
+      quotePaidOrders,
+      ordersWithSession,
+      ordersWithoutSession: paid.length - ordersWithSession,
+      ordersWithSource,
+      unattributedOrders,
+      ordersWithDevice,
+      unknownDeviceOrders: paid.length - ordersWithDevice,
+      sessionCoverage: paid.length > 0 ? ordersWithSession / paid.length : null,
+      sourceCoverage: paid.length > 0 ? ordersWithSource / paid.length : null,
+      deviceCoverage: paid.length > 0 ? ordersWithDevice / paid.length : null,
+    },
     stripe: { started: cohort.length, paid: cohortPaid.length, canceledUnpaid: canceledUnpaid.length, recovered: recovered.length,
       pendingOrUnobserved: cohort.length - outcomes, exitRate: outcomes ? canceledUnpaid.length / outcomes : null },
     decision: { samples: decisionDays.length, paidOrders: paid.length, avgDays: avg(decisionDays), avgSessions: avg(decisionSessions) },
     hourlyDay,
     hourly: hours.map((b, i) => serialize(b, `${String(i).padStart(2, "0")}:00`)),
-    weekdays: days.map((b, i) => serialize(b, dayLabels[i])), timeZone: "Europe/Rome",
+    weekdays: days.map((b, i) => serialize(b, dayLabels[i])),
+    weekdayExposure: v6.weekdayExposure,
+    sessionFunnel: v6.sessionFunnel,
+    cartFunnel: v6.cartFunnel,
+    checkoutCohort: v6.checkoutCohort,
+    productFunnel: v6.productFunnel,
+    variantFunnel: v6.variantFunnel,
+    daily: v6.daily,
+    forecasts: v6.forecasts,
+    contactsSummary: v6.contactsSummary,
+    timeZone: "Europe/Rome",
   };
 }
 
@@ -164,11 +238,11 @@ export async function readCommerceInsights(db: Pick<PrismaClient, "order" | "ana
   const quality = includeInternal ? {} : { env: "prod", isInternal: false };
   const [orders, events] = await Promise.all([
     db.order.findMany({ where: { isTest: false, OR: [{ createdAt: { gte: start, lt: endExclusive } }, { paidAt: { gte: start, lt: endExclusive } }] },
-      select: { id: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
-        events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED", ...CHECKOUT_AUDIENCE_TYPES] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
+      select: { id: true, quoteId: true, userAgent: true, email: true, totalCents: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
+        events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED", "ORDER_CANCELED", "STRIPE_SESSION_FAILED", ...CHECKOUT_AUDIENCE_TYPES] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
           select: { metaJson: true, type: true, createdAt: true, toStatus: true } } } }),
-    db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase"] } },
-      select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, referrer: true, userAgent: true, data: true } }),
+    db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase", "product_view", "select_variant", "view_cart", "checkout_click", "begin_checkout", "contact_click"] } },
+      select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, productKey: true, variantKey: true, referrer: true, userAgent: true, data: true } }),
   ]);
   const visitorIds = new Set<string>();
   for (const order of orders) { const value = context(order, includeInternal); if (value) visitorIds.add(value.visitorId); }
