@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -21,6 +21,8 @@ import {
   Sparkles,
   Store,
   LogOut,
+  Menu,
+  X,
   ChevronRight,
 } from "lucide-react";
 import { adminFetch } from "@/lib/client/adminFetch";
@@ -140,7 +142,13 @@ export default function AdminSidebar({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const totalSystemIssues = counts.webhookIssues + counts.outboxIssues;
   const totalPendingNotifications =
@@ -232,6 +240,20 @@ export default function AdminSidebar({
     return false;
   };
 
+  const mobileQuickLinks: NavItemConfig[] = [
+    { href: "/admin/ops", label: "Operatività", icon: Activity },
+    {
+      href: "/admin/orders",
+      label: "Ordini",
+      badge: counts.toShip,
+      icon: ClipboardList,
+    },
+    { href: "/admin/quotes", label: "Preventivi", icon: ClipboardList },
+    { href: "/admin/metrics", label: "Metriche", icon: BarChart3 },
+    { href: "/admin/conti-leonardo", label: "Conti", icon: Coins },
+    { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  ];
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
@@ -244,13 +266,14 @@ export default function AdminSidebar({
     }
   };
 
-  const SidebarContent = () => (
+  const SidebarContent = ({ onItemClick }: { onItemClick?: () => void }) => (
     <div className="flex h-full flex-col justify-between bg-[#252526] text-[#cccccc] border-r border-[#333333] select-none overflow-hidden font-sans">
       {/* Brand & Status Header (Always Pinned) */}
       <div className="shrink-0 px-4 py-3.5 border-b border-[#333333] bg-[#252526]">
         <Link
           href="/admin/ops"
-          aria-label={`${totalPendingNotifications} avvisi - Operativit?`}
+          onClick={onItemClick}
+          aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
           className="inline-flex items-center gap-2 rounded-[5px] bg-orange-500 px-3 py-2 text-xs font-bold text-white hover:bg-orange-600 transition-colors"
         >
           <Activity className="h-4 w-4" />
@@ -272,6 +295,7 @@ export default function AdminSidebar({
                   key={item.href}
                   item={item}
                   active={isItemActive(item.href)}
+                  onClick={onItemClick}
                 />
               ))}
             </div>
@@ -326,11 +350,84 @@ export default function AdminSidebar({
   );
 
   return (
-    <aside
-      aria-label="Navigazione gestionale"
-      className="sticky top-0 z-30 flex h-[45svh] max-h-[45svh] w-full shrink-0 flex-col overflow-hidden border-r border-[#333333] bg-[#252526] lg:h-full lg:max-h-none lg:w-[280px] lg:self-start"
-    >
-      <SidebarContent />
-    </aside>
+    <>
+      {/* ─── DESKTOP SIDEBAR (VISUAL STUDIO DARK GREY) ─── */}
+      <aside className="sticky top-0 self-start hidden lg:flex w-[280px] h-full shrink-0 flex-col bg-[#252526] border-r border-[#333333] z-20 overflow-hidden">
+        <SidebarContent />
+      </aside>
+
+      {/* ─── MOBILE STICKY TOPBAR (< lg) ─── */}
+      <header className="sticky top-0 lg:hidden z-30 border-b border-white/10 bg-[#1f1f23]/95 backdrop-blur-md shadow-sm shrink-0 text-white">
+        <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
+          <Link
+            href="/admin/ops"
+            aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
+            className="inline-flex items-center gap-2 rounded-[5px] bg-orange-500 px-3 py-2 text-xs font-bold text-white hover:bg-orange-600 transition-colors"
+          >
+            <Activity className="h-4 w-4" />
+            <span>{totalPendingNotifications} avvisi</span>
+          </Link>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Mobile Menu Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((prev) => !prev)}
+              aria-label={mobileOpen ? "Chiudi menu" : "Apri menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="admin-mobile-menu"
+              className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-white/5 border border-white/10 text-neutral-200 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              {mobileOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Quick-Jump Horizontal Strip */}
+        <nav
+          aria-label="Accesso rapido gestionale"
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3.5 pb-2.5 pt-0.5"
+        >
+          {mobileQuickLinks.map((qItem) => {
+            const QIcon = qItem.icon;
+            const active = isItemActive(qItem.href);
+            return (
+              <Link
+                key={qItem.href}
+                href={qItem.href}
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-[11px] font-semibold transition-all ${
+                  active
+                    ? "bg-[#007acc] text-white shadow-xs ring-1 ring-sky-400/40"
+                    : "bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5"
+                }`}
+              >
+                <QIcon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-neutral-400"}`} />
+                <span>{qItem.label}</span>
+                {typeof qItem.badge === "number" && qItem.badge > 0 ? (
+                  <span className="ml-0.5 inline-flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-orange-500 px-1 text-[9px] font-black text-white">
+                    {qItem.badge > 99 ? "99+" : qItem.badge}
+                  </span>
+                ) : null}
+              </Link>
+            );
+          })}
+        </nav>
+      </header>
+
+      {/* ─── MOBILE SLIDE-OVER DRAWER (< lg) ─── */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-2xs transition-opacity animate-in fade-in duration-100"
+            onClick={() => setMobileOpen(false)}
+          />
+
+          {/* Drawer Menu */}
+          <div id="admin-mobile-menu" className="relative w-[280px] max-w-[85vw] h-full shadow-2xl z-10 animate-in slide-in-from-left duration-150">
+            <SidebarContent onItemClick={() => setMobileOpen(false)} />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
