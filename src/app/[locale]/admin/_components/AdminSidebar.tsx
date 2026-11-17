@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Activity,
@@ -23,7 +24,6 @@ import {
   LogOut,
   Menu,
   X,
-  Shield,
   ChevronRight,
 } from "lucide-react";
 import { adminFetch } from "@/lib/client/adminFetch";
@@ -108,7 +108,7 @@ function SidebarNavItem({
     <Link
       href={item.href}
       onClick={onClick}
-      className={`group flex items-center gap-3 px-3.5 py-2.5 text-[13.5px] font-medium rounded-lg transition-all duration-150 ${
+      className={`group flex items-center gap-3 px-3.5 py-2.5 text-[13.5px] font-medium rounded-[5px] transition-all duration-150 ${
         active
           ? "bg-[#37373d] text-white font-semibold shadow-xs border-l-[3px] border-[#007acc]"
           : "text-[#cccccc] hover:text-white hover:bg-[#2a2d2e]"
@@ -241,10 +241,6 @@ export default function AdminSidebar({
     return false;
   };
 
-  const activeNavItem = sections
-    .flatMap((s) => s.items)
-    .find((item) => isItemActive(item.href));
-
   const mobileQuickLinks: NavItemConfig[] = [
     { href: "/admin/ops", label: "Operatività", icon: Activity },
     {
@@ -275,32 +271,14 @@ export default function AdminSidebar({
     <div className="flex h-full flex-col justify-between bg-[#252526] text-[#cccccc] border-r border-[#333333] select-none overflow-hidden font-sans">
       {/* Brand & Status Header (Always Pinned) */}
       <div className="shrink-0 px-4 py-3.5 border-b border-[#333333] bg-[#252526]">
-        <div className="flex items-center justify-between">
-          <Link
-            href="/admin/dashboard"
-            onClick={onItemClick}
-            className="flex items-center gap-2.5 group"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#007acc] text-white shadow-xs group-hover:bg-[#0062a3] transition-colors">
-              <Shield className="h-4 w-4" />
-            </div>
-
-            <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-wide text-white group-hover:text-[#38bdf8] transition-colors">
-                Del Pasqua
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#858585]">
-                Admin Console
-              </span>
-            </div>
-          </Link>
-
-          {/* Live system pill indicator */}
-          <div className="flex items-center gap-1.5 rounded-full bg-[#1e1e1e] px-2.5 py-1 border border-[#333333] text-[10.5px] font-semibold text-neutral-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[9.5px] uppercase tracking-wider text-emerald-400 font-bold">Live</span>
-          </div>
-        </div>
+        <Link
+          href="/admin/dashboard"
+          onClick={onItemClick}
+          aria-label="Del Pasqua - Dashboard gestionale"
+          className="inline-flex rounded-[5px]"
+        >
+          <Image src="/logo.png" alt="Del Pasqua" width={160} height={45} className="h-10 w-auto object-contain" priority />
+        </Link>
       </div>
 
       {/* Navigation Scrollable Area (Only Middle Menu Scrolls If Needed) */}
@@ -331,7 +309,7 @@ export default function AdminSidebar({
         <Link
           href="/"
           target="_blank"
-          className="group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold bg-[#1e1e1e] border border-[#333333] text-[#cccccc] hover:bg-[#2a2d2e] hover:text-white hover:border-[#444444] transition-colors"
+          className="group flex items-center justify-between rounded-[5px] px-3 py-2 text-xs font-semibold bg-[#1e1e1e] border border-[#333333] text-[#cccccc] hover:bg-[#2a2d2e] hover:text-white hover:border-[#444444] transition-colors"
         >
           <div className="flex items-center gap-2">
             <Store className="h-4 w-4 text-amber-400 group-hover:scale-110 transition-transform" />
@@ -341,9 +319,9 @@ export default function AdminSidebar({
         </Link>
 
         {/* User Card & Logout */}
-        <div className="flex items-center justify-between rounded-lg bg-[#1e1e1e] border border-[#333333] p-2 pl-2.5">
+        <div className="flex items-center justify-between rounded-[5px] bg-[#1e1e1e] border border-[#333333] p-2 pl-2.5">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#007acc] text-xs font-bold text-white">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[5px] bg-[#007acc] text-xs font-bold text-white">
               AD
             </div>
             <div className="flex flex-col min-w-0">
@@ -362,7 +340,7 @@ export default function AdminSidebar({
             onClick={handleLogout}
             disabled={isLoggingOut}
             title="Disconnetti"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-[#858585] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex h-7 w-7 items-center justify-center rounded-[5px] text-[#858585] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-50"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -374,34 +352,18 @@ export default function AdminSidebar({
   return (
     <>
       {/* ─── DESKTOP SIDEBAR (VISUAL STUDIO DARK GREY) ─── */}
-      <aside className="hidden lg:flex w-[280px] h-full shrink-0 flex-col bg-[#252526] border-r border-[#333333] z-20 overflow-hidden">
+      <aside className="sticky top-0 self-start hidden lg:flex w-[280px] h-full shrink-0 flex-col bg-[#252526] border-r border-[#333333] z-20 overflow-hidden">
         <SidebarContent />
       </aside>
 
       {/* ─── MOBILE STICKY TOPBAR (< lg) ─── */}
-      <header className="lg:hidden z-30 border-b border-white/10 bg-[#1f1f23]/95 backdrop-blur-md shadow-sm shrink-0 text-white">
+      <header className="sticky top-0 lg:hidden z-30 border-b border-white/10 bg-[#1f1f23]/95 backdrop-blur-md shadow-sm shrink-0 text-white">
         <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
           <Link
             href="/admin/dashboard"
             className="flex items-center gap-2.5 min-w-0"
           >
-            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0ea5e9] to-[#007acc] text-white shadow-sm ring-1 ring-white/15">
-              <Shield className="h-4 w-4" />
-              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-[#1f1f23]" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-wider text-white truncate">
-                  Del Pasqua
-                </span>
-                <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-sky-300">
-                  Admin
-                </span>
-              </div>
-              <span className="text-[11px] font-medium text-neutral-400 truncate">
-                {activeNavItem ? activeNavItem.label : "Gestionale"}
-              </span>
-            </div>
+            <Image src="/logo.png" alt="Del Pasqua" width={140} height={40} className="h-9 w-auto object-contain" priority />
           </Link>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -409,7 +371,7 @@ export default function AdminSidebar({
             {totalPendingNotifications > 0 && (
               <Link
                 href="/admin/ops"
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-black shadow-sm ring-1 ring-orange-300/40"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[5px] bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-black shadow-sm ring-1 ring-orange-300/40"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
                 <span>{totalPendingNotifications}</span>
@@ -422,7 +384,7 @@ export default function AdminSidebar({
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
               aria-label="Apri menu"
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-neutral-200 hover:text-white hover:bg-white/10 transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-white/5 border border-white/10 text-neutral-200 hover:text-white hover:bg-white/10 transition-colors"
             >
               {mobileOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
             </button>
@@ -441,7 +403,7 @@ export default function AdminSidebar({
               <Link
                 key={qItem.href}
                 href={qItem.href}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-all ${
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-[11px] font-semibold transition-all ${
                   active
                     ? "bg-[#007acc] text-white shadow-xs ring-1 ring-sky-400/40"
                     : "bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5"
