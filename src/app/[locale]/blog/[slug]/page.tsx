@@ -1,4 +1,5 @@
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/blog-data";
+import { getBlogContentBlocks, getBlogHeading } from "@/lib/blog-content";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Link, redirect } from "@/i18n/routing";
@@ -8,6 +9,7 @@ import {
     getBlogCategoryHref,
     getLocalizedBlogCategorySlug,
     getLocalizedBlogHref,
+    getLocalizedBlogSlug,
     normalizeBlogSlug,
 } from "@/lib/blogSlugs";
 import { Metadata } from 'next';
@@ -20,10 +22,9 @@ export async function generateStaticParams() {
   for (const locale of locales) {
     const posts = await getBlogPosts(locale);
     for (const post of posts) {
-      params.push({
-        locale,
-        slug: post.slug,
-      });
+      for (const slug of new Set([getLocalizedBlogSlug(post, locale), post.slug])) {
+        params.push({ locale, slug });
+      }
     }
   }
 
@@ -285,19 +286,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         }[locale] || "Olio EVO"
     };
 
-    // Build TOC from headings
-    const toc: { title: string; id: string; level: number }[] = [];
-    post.content.split('\n\n').forEach((block) => {
-        if (block.startsWith('## ')) {
-            const title = block.replace('## ', '');
-            const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            toc.push({ title, id, level: 2 });
-        } else if (block.startsWith('### ')) {
-            const title = block.replace('### ', '');
-            const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            toc.push({ title, id, level: 3 });
-        }
-    });
+    const contentBlocks = getBlogContentBlocks(post.content);
+    const toc = contentBlocks.map(getBlogHeading).filter(heading => heading !== null);
 
     const renderInline = (text: string) => {
         return text
@@ -311,20 +301,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 '<a href="/$2" class="text-[#3D5A3D] font-semibold underline underline-offset-2 decoration-[#3D5A3D]/40 hover:decoration-[#3D5A3D] transition-all">$1</a>');
     };
 
-    let h2Counter = 0;
-
-    const renderContent = (content: string) => {
-        const blocks = content.split(/\n\n+/);
+    const renderContent = () => {
         const elements: React.ReactNode[] = [];
+        let h2Counter = 0;
 
-        for (let idx = 0; idx < blocks.length; idx++) {
-            const block = blocks[idx].trim();
-            if (!block) continue;
+        for (const [idx, block] of contentBlocks.entries()) {
+            const heading = getBlogHeading(block);
 
-            if (block.startsWith('## ')) {
+            if (heading?.level === 2) {
                 h2Counter++;
-                const title = block.replace(/^## /, '');
-                const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                const { title, id } = heading;
                 elements.push(
                     <h2 key={idx} id={id} className="flex items-start gap-4 mt-16 mb-6 scroll-mt-32 group">
                         <span className="flex-shrink-0 w-9 h-9 rounded-xl bg-[#3D5A3D]/10 flex items-center justify-center text-[#3D5A3D] font-black text-sm mt-0.5 group-hover:bg-[#3D5A3D] group-hover:text-white transition-colors">
@@ -336,9 +322,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 continue;
             }
 
-            if (block.startsWith('### ')) {
-                const title = block.replace(/^### /, '');
-                const id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            if (heading?.level === 3) {
+                const { title, id } = heading;
                 elements.push(
                     <h3 key={idx} id={id} className="flex items-center gap-3 mt-10 mb-4 scroll-mt-32">
                         <span className="w-1 h-6 rounded-full bg-[#3D5A3D] flex-shrink-0" />
@@ -467,7 +452,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             );
         }
 
-        h2Counter = 0;
         return elements;
     };
 
@@ -653,7 +637,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 )}
 
                                 <div className="flex-1 min-w-0">
-                                    {renderContent(post.content)}
+                                    {renderContent()}
                                 </div>
                             </div>
 
