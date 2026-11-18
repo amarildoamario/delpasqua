@@ -83,6 +83,12 @@ export function getCatalogPath() {
   return path.join(process.cwd(), "src", "db", "products.json");
 }
 
+export async function readCatalogFile(): Promise<CatalogProduct[]> {
+  const raw = await fs.readFile(getCatalogPath(), "utf8");
+  const json: unknown = JSON.parse(raw);
+  return Array.isArray(json) ? (json as CatalogProduct[]) : [];
+}
+
 // Include the file revision in both caches: direct catalog edits and deployments
 // must not reuse the previous images for an hour until tag revalidation happens.
 const readCatalogRevision = cache(async () => {
@@ -93,12 +99,7 @@ const readCatalogRevision = cache(async () => {
 export const readCatalog = cache(async () => {
   const revision = await readCatalogRevision();
   return safeUnstableCache(
-    async (): Promise<CatalogProduct[]> => {
-      const filePath = getCatalogPath();
-      const raw = await fs.readFile(filePath, "utf8");
-      const json: unknown = JSON.parse(raw);
-      return Array.isArray(json) ? (json as CatalogProduct[]) : [];
-    },
+    readCatalogFile,
     ["catalog-raw", revision],
     { tags: ["catalog"], revalidate: 3600 }
   )();
