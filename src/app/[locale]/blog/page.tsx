@@ -287,7 +287,7 @@ export default async function BlogPage({
                         {/* Articles */}
                         <div className="order-2 lg:order-1 flex flex-col divide-y divide-stone-100">
                             {filteredPosts.length > 0 ? (
-                                filteredPosts.map((post, idx) => (
+                                filteredPosts.map((post) => (
                                     <article key={post.id} className="group py-10 first:pt-0 last:pb-0">
                                         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
                                             {/* Thumbnail */}
@@ -299,7 +299,6 @@ export default async function BlogPage({
                                                     fill
                                                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                                                     sizes="(min-width: 1024px) 256px, (min-width: 640px) 208px, 100vw"
-                                                    priority={idx === 0}
                                                 />
                                             </div>
 

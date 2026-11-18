@@ -23,6 +23,7 @@ export async function prepareQuoteCheckout(args: {
   quoteId: string; origin: string; accept?: boolean;
   analytics?: ReturnType<typeof orderAnalyticsContext>;
   analyticsExcluded?: boolean;
+  userAgent?: string | null;
 }, client?: Stripe) {
   const environmentError = client ? null : localStripeTestError();
   if (environmentError) throw new QuoteCheckoutError("unavailable", environmentError);
@@ -96,6 +97,7 @@ export async function prepareQuoteCheckout(args: {
           address: quote.addressLine1, addressLine1: quote.addressLine1, addressLine2: quote.addressLine2,
           city: quote.city, zip: quote.postalCode, postalCode: quote.postalCode, province: quote.province, countryCode: quote.countryCode,
           shippingNotes: quote.shippingTerms, notes: quote.notes, orderPublicToken: randomUUID(),
+          userAgent: !args.analyticsExcluded && args.userAgent ? args.userAgent : null,
           subtotalCents: quote.subtotalCents, discountCents: quote.discountCents, vatCents: quote.vatCents, shippingCents: quote.shippingCents, totalCents: quote.totalCents,
           items: { create: items.map((item) => ({ ...item, lineTaxCents: 0, productSnapshot: { productId: item.productId, variantId: item.variantId, title: item.title, variantLabel: item.variantLabel }, pricingSnapshot: { source: "quote", quoteId: snapshot.id, vatRate: snapshot.vatRate } })) },
           events: { create: [
@@ -113,7 +115,13 @@ export async function prepareQuoteCheckout(args: {
       }
       if (args.accept && quote.checkoutOrderId) {
         await recordCheckoutAudience(tx, quote.checkoutOrderId, args.analyticsExcluded === true, args.analytics);
-        await tx.order.update({ where: { id: quote.checkoutOrderId }, data: { stripeCheckoutSessionId: session.id } });
+        await tx.order.update({
+          where: { id: quote.checkoutOrderId },
+          data: {
+            stripeCheckoutSessionId: session.id,
+            ...(!args.analyticsExcluded && args.userAgent ? { userAgent: args.userAgent } : {}),
+          },
+        });
       }
       return { quote, paymentUrl: `${args.origin}/preventivo/${quote.paymentToken}/`, checkoutUrl: session.url };
     }, { timeout: 45000, maxWait: 5000 });

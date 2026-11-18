@@ -12,6 +12,7 @@ import ToggleMessage from "@/components/ui/ToggleMessage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "@/context/CartContext";
+import { track } from "@/lib/analytics/track";
 import { translateCartCheckoutError, translateCartPromoError } from "@/lib/cartI18n";
 import { goToCassa } from "@/lib/client/goToCassa";
 import { formatEUR } from "@/lib/money";
@@ -167,7 +168,15 @@ export default function CartDrawer({
 
   useEffect(() => {
     if (!open) return;
+    track({
+      type: "view_cart",
+      data: {
+        itemsCount: lines.length,
+        isTest: lines.length > 0 && lines.every((line) => line.productId === "prodotto-test"),
+      },
+    });
     void refreshAvailability();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, refreshAvailability]);
 
   useEffect(() => {

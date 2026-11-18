@@ -47,8 +47,14 @@ async function startCheckout(req: Request, token: string) {
     const quote = await prisma.quote.findUnique({ where: { paymentToken: token }, select: { id: true } });
     if (!quote) return NextResponse.json({ error: "Preventivo non disponibile." }, { status: 404, headers });
     const analyticsExcluded = await requestCheckoutExcluded(prisma, req);
-    const result = await prepareQuoteCheckout({ quoteId: quote.id, origin: quoteAppOrigin(req), accept: true,
-      analytics: analyticsExcluded ? null : orderAnalyticsContext(req), analyticsExcluded });
+    const result = await prepareQuoteCheckout({
+      quoteId: quote.id,
+      origin: quoteAppOrigin(req),
+      accept: true,
+      analytics: analyticsExcluded ? null : orderAnalyticsContext(req),
+      analyticsExcluded,
+      userAgent: req.headers.get("user-agent"),
+    });
     return new NextResponse(null, { status: 303, headers: { ...headers, Location: result.checkoutUrl } });
   } catch (error) {
     const code = error instanceof QuoteCheckoutError ? error.code : "unavailable";

@@ -23,7 +23,7 @@ const translations = {
     trackingVal: "Inviato all'email dell'ordine quando disponibile.",
     costs: {
       title: "Costi di spedizione",
-      desc: "La spedizione e gratuita per ordini sopra 50 EUR. Per importi inferiori o condizioni particolari, l'eventuale costo viene mostrato al checkout prima del pagamento."
+      desc: "La spedizione e gratuita per ordini sopra 69 EUR. Per importi inferiori o condizioni particolari, l'eventuale costo viene mostrato al checkout prima del pagamento."
     },
     missing: {
       title: "Mancata consegna o giacenza",
@@ -57,7 +57,7 @@ const translations = {
     trackingVal: "Sent to the order email when available.",
     costs: {
       title: "Shipping costs",
-      desc: "Shipping is free for orders over 50 EUR. For lower amounts or special conditions, any cost is shown at checkout before payment."
+      desc: "Shipping is free for orders over 69 EUR. For lower amounts or special conditions, any cost is shown at checkout before payment."
     },
     missing: {
       title: "Undelivered package or storage",
@@ -90,7 +90,7 @@ const translations = {
     trackingVal: "Wird an die E-Mail-Adresse der Bestellung gesendet, sofern verfügbar.",
     costs: {
       title: "Versandkosten",
-      desc: "Der Versand ist ab einem Bestellwert von 50 EUR kostenlos. Bei geringeren Beträgen oder besonderen Bedingungen werden die Kosten an der Kasse vor der Zahlung angezeigt."
+      desc: "Der Versand ist ab einem Bestellwert von 69 EUR kostenlos. Bei geringeren Beträgen oder besonderen Bedingungen werden die Kosten an der Kasse vor der Zahlung angezeigt."
     },
     missing: {
       title: "Nichtzustellung oder Lagerung",
@@ -123,7 +123,7 @@ const translations = {
     trackingVal: "Verzonden naar de bestelemail indien beschikbaar.",
     costs: {
       title: "Verzendkosten",
-      desc: "Verzending is gratis voor bestellingen boven 50 EUR. Voor lagere bedragen of speciale voorwaarden worden eventuele kosten getoond bij het afrekenen voor betaling."
+      desc: "Verzending is gratis voor bestellingen boven 69 EUR. Voor lagere bedragen of speciale voorwaarden worden eventuele kosten getoond bij het afrekenen voor betaling."
     },
     missing: {
       title: "Niet-geleverd pakket of opslag",
@@ -156,7 +156,7 @@ const translations = {
     trackingVal: "Sendt til ordremailet, når det er tilgængeligt.",
     costs: {
       title: "Forsendelsesomkostninger",
-      desc: "Forsendelse er gratis for ordrer over 50 EUR. For lavere beløb eller særlige betingelser vises eventuelle omkostninger ved kassen før betaling."
+      desc: "Forsendelse er gratis for ordrer over 69 EUR. For lavere beløb eller særlige betingelser vises eventuelle omkostninger ved kassen før betaling."
     },
     missing: {
       title: "Udebleven levering eller opbevaring",
@@ -189,7 +189,7 @@ const translations = {
     trackingVal: "Sendt til e-posten for bestillingen når den er tilgjengelig.",
     costs: {
       title: "Fraktkostnader",
-      desc: "Frakt er gratis for bestillinger over 50 EUR. For lavere beløp eller spesielle betingelser, vil eventuelle kostnader vises i kassen før betaling."
+      desc: "Frakt er gratis for bestillinger over 69 EUR. For lavere beløp eller spesielle betingelser, vil eventuelle kostnader vises i kassen før betaling."
     },
     missing: {
       title: "Ulevert pakke eller oppbevaring",

@@ -70,7 +70,8 @@ test("metrics export counts two paid orders without any browser purchase events,
     const response = await GET(new Request(url, { headers: { cookie: "admin_session=metrics-test-token" } }));
     assert.equal(response.status, 200);
     const report = await response.json();
-    assert.equal(report.meta.version, "metrics-export-v5");
+    assert.equal(report.meta.version, "metrics-export-v6");
+    assert.equal(report.meta.legacyVersionAlias, "metrics-export-v5");
     assert.equal(report.meta.salesSource, "Order.paidAt");
     assert.equal(report.meta.conversionDenominator, "uniqueSessions");
     assert.equal(report.kpis.paidOrders, 2);

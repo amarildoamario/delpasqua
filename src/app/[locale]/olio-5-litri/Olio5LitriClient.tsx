@@ -2,7 +2,6 @@
 import React from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { motion } from "motion/react";
 import { ArrowRight, Leaf, ShieldCheck, ShoppingBag, Droplet, CheckCircle2, Award, Wine, Info } from "lucide-react";
 import { olio5LitriUi } from "./olio5LitriUi";
 import Footer from "@/components/Footer";
@@ -154,32 +153,28 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
       <div className="absolute bottom-[25%] left-[-10%] w-[400px] h-[400px] rounded-full bg-[#3D5A3D]/5 blur-[110px] pointer-events-none select-none" />
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-[55vh] lg:h-[70vh] overflow-hidden bg-[#0A0E0B] flex items-center justify-center border-b border-[#2D3E30]/20">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-fixed opacity-40 select-none pointer-events-none"
-          style={{ backgroundImage: `url('${content.heroImage}')` }}
-        />
+      <section className="relative h-[55vh] lg:h-[70vh] overflow-hidden bg-[#0A0E0B] flex items-center justify-center border-b border-[#2D3E30]/20 md:[clip-path:inset(0)]">
+        <div aria-hidden="true" className="absolute inset-0 select-none pointer-events-none md:fixed">
+          <Image
+            src={content.heroImage}
+            alt=""
+            fill
+            priority
+            fetchPriority="high"
+            sizes="100vw"
+            className="object-cover object-center opacity-40"
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E0B]/30 via-[#0A0E0B]/60 to-[#0A0E0B]" />
         
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] text-[#D5B27F] uppercase mb-6"
-          >
+          <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] text-[#D5B27F] uppercase mb-6">
             <span className="h-px w-6 bg-[#D5B27F]/70" />
             {content.kicker}
             <span className="h-px w-6 bg-[#D5B27F]/70" />
-          </motion.div>
+          </div>
           
-          <motion.h1 
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light leading-[1.15] tracking-tight text-stone-100"
-          >
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light leading-[1.15] tracking-tight text-stone-100">
             {locale === "it" ? (
               <>
                 Olio Extravergine <br className="hidden sm:inline" />
@@ -193,16 +188,11 @@ export default function Olio5LitriClient({ locale, content, products }: Props) {
             ) : (
               content.title
             )}
-          </motion.h1>
+          </h1>
           
-          <motion.p 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-6 max-w-3xl mx-auto text-[#D6D3D1] text-sm sm:text-base lg:text-lg font-light leading-relaxed opacity-95"
-          >
+          <p className="mt-6 max-w-3xl mx-auto text-[#D6D3D1] text-sm sm:text-base lg:text-lg font-light leading-relaxed opacity-95">
             {content.subtitle}
-          </motion.p>
+          </p>
         </div>
       </section>
 

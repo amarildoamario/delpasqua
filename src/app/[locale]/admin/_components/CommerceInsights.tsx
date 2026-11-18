@@ -1,5 +1,6 @@
 import InfoTooltip from "./InfoTooltip";
 import ActivityHistogram from "./ActivityHistogram";
+import Kpi from "./Kpi";
 import Link from "next/link";
 import type { readCommerceInsights } from "@/lib/server/commerceInsights";
 import type { readCustomerMetrics } from "@/lib/server/customerMetrics";
@@ -10,16 +11,8 @@ type Insights = Awaited<ReturnType<typeof readCommerceInsights>>;
 type Customers = Awaited<ReturnType<typeof readCustomerMetrics>>;
 const number = (value: number | null, digits = 1) => value === null ? "—" : new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value);
 const percent = (value: number | null) => value === null ? "—" : `${number(value * 100, 2)}%`;
-const funnelCard = "min-w-0 rounded-[5px] border border-transparent bg-[linear-gradient(#fff,#fff),linear-gradient(120deg,#3b82f6,#ef4444)] [background-clip:padding-box,border-box] [background-origin:border-box] p-2.5 [overflow-wrap:anywhere]";
-
 function FunnelCard({ label, value, detail }: { label: string; value: number; detail?: string }) {
-  return (
-    <div className={funnelCard}>
-      <dt className="text-[11px] font-semibold leading-tight text-neutral-600">{label}</dt>
-      <dd className="mt-1 text-base font-extrabold tabular-nums text-neutral-900">{number(value, 0)}</dd>
-      {detail && <dd className="text-[11px] text-neutral-600">{detail}</dd>}
-    </div>
-  );
+  return <Kpi title={label} value={number(value, 0)} subtitle={detail} funnel />;
 }
 
 export default function CommerceInsights({ insights, customers, activity, activityLinks = [] }: {
@@ -78,60 +71,36 @@ export default function CommerceInsights({ insights, customers, activity, activi
               Sessioni coorte: <b>{number(sessionFunnel.sessions, 0)}</b> · Tasso acquisto sessione: <b>{sessionFunnel.purchaseRate === null ? "—" : `${number(sessionFunnel.purchaseRate * 100, 2)}%`}</b>
             </span>
           </div>
-          <div className="mt-2.5 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 text-xs">
-            <div className={funnelCard}>
-              <div className="text-[10px] font-semibold uppercase text-neutral-500">Sessioni Blog</div>
-              <div className="mt-0.5 text-sm font-extrabold text-neutral-900 tabular-nums">{number(sessionFunnel.blogSessions, 0)}</div>
-              <div className="text-[10px] text-neutral-500">→ Prodotto: {sessionFunnel.blogToProductRate === null ? "—" : `${number(sessionFunnel.blogToProductRate * 100)}%`}</div>
-            </div>
-            <div className={funnelCard}>
-              <div className="text-[10px] font-semibold uppercase text-neutral-500">Sessioni Shop</div>
-              <div className="mt-0.5 text-sm font-extrabold text-neutral-900 tabular-nums">{number(sessionFunnel.shopSessions, 0)}</div>
-              <div className="text-[10px] text-neutral-500">Lista o scheda</div>
-            </div>
-            <div className={funnelCard}>
-              <div className="text-[10px] font-semibold uppercase text-neutral-500">Scheda Prodotto</div>
-              <div className="mt-0.5 text-sm font-extrabold text-neutral-900 tabular-nums">{number(sessionFunnel.productDetailSessions, 0)}</div>
-              <div className="text-[10px] text-neutral-500">Reach: {sessionFunnel.productReachRate === null ? "—" : `${number(sessionFunnel.productReachRate * 100)}%`}</div>
-            </div>
-            <div className={funnelCard}>
-              <div className="text-[10px] font-semibold uppercase text-neutral-500">Sessioni Add-to-Cart</div>
-              <div className="mt-0.5 text-sm font-extrabold text-neutral-900 tabular-nums">{number(sessionFunnel.addToCartSessions, 0)}</div>
-              <div className="text-[10px] text-neutral-500">Da scheda: {sessionFunnel.productToCartRate === null ? "—" : `${number(sessionFunnel.productToCartRate * 100)}%`}</div>
-            </div>
-            <div className={funnelCard}>
-              <div className="text-[10px] font-semibold uppercase text-neutral-500">Checkout Avviato</div>
-              <div className="mt-0.5 text-sm font-extrabold text-neutral-900 tabular-nums">{number(sessionFunnel.checkoutStartedSessions, 0)}</div>
-              <div className="text-[10px] text-neutral-500">Clic cassa: {number(sessionFunnel.checkoutClickedSessions, 0)}</div>
-            </div>
-            <div className={funnelCard}>
-              <div className="text-[10px] font-semibold uppercase text-neutral-500">Sessioni Acquisto</div>
-              <div className="mt-0.5 text-sm font-extrabold text-emerald-700 tabular-nums">{number(sessionFunnel.purchasingSessions, 0)}</div>
-              <div className="text-[10px] text-neutral-500">Collegate a ordine</div>
-            </div>
+          <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
+            <FunnelCard label="Sessioni Blog" value={sessionFunnel.blogSessions} detail={`→ Prodotto: ${sessionFunnel.blogToProductRate === null ? "—" : `${number(sessionFunnel.blogToProductRate * 100)}%`}`} />
+            <FunnelCard label="Sessioni Shop" value={sessionFunnel.shopSessions} detail="Lista o scheda" />
+            <FunnelCard label="Scheda Prodotto" value={sessionFunnel.productDetailSessions} detail={`Reach: ${sessionFunnel.productReachRate === null ? "—" : `${number(sessionFunnel.productReachRate * 100)}%`}`} />
+            <FunnelCard label="Sessioni Add-to-Cart" value={sessionFunnel.addToCartSessions} detail={`Da scheda: ${sessionFunnel.productToCartRate === null ? "—" : `${number(sessionFunnel.productToCartRate * 100)}%`}`} />
+            <FunnelCard label="Checkout Avviato" value={sessionFunnel.checkoutStartedSessions} detail={`Clic cassa: ${number(sessionFunnel.checkoutClickedSessions, 0)}`} />
+            <FunnelCard label="Sessioni Acquisto" value={sessionFunnel.purchasingSessions} detail="Collegate a ordine" />
           </div>
         </section>
       ) : null}
       <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">
         <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel carrelli<InfoTooltip label="Funnel carrelli" description="Segue i carrelli che hanno ricevuto almeno un'aggiunta nel periodo selezionato. Un carrello può arrivare al checkout senza aprire la pagina del carrello." /></h3>
-        <dl className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-5">
           <FunnelCard label="Con aggiunte" value={cartFunnel.cartsWithAdditions} />
           <FunnelCard label="Carrelli visualizzati" value={cartFunnel.cartsViewed} />
           <FunnelCard label="Clic al checkout" value={cartFunnel.cartsWithCheckoutClick} detail={percent(cartFunnel.checkoutStartRate)} />
           <FunnelCard label="Checkout senza vista del carrello" value={cartFunnel.cartsBypassingCartView} />
           <FunnelCard label="Carrelli con ordine pagato" value={cartFunnel.cartsWithPaidOrder} detail={percent(cartFunnel.purchaseRate)} />
-        </dl>
+        </div>
       </section>
       <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">
         <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel checkout Stripe<InfoTooltip label="Funnel checkout Stripe" description="Segue i checkout Stripe avviati nel periodo. I recuperati sono già inclusi nei pagati. I ritorni dalla pagina di annullamento restano separati dalle chiusure definitive." /></h3>
-        <dl className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
           <FunnelCard label="Checkout avviati" value={checkoutCohort.stripeCheckoutsStarted} />
           <FunnelCard label="In corso" value={checkoutCohort.openPending} />
           <FunnelCard label="Ritorni da annullamento" value={checkoutCohort.canceledReturnOpen} />
           <FunnelCard label="Chiusi senza pagamento" value={checkoutCohort.definitiveClosedUnpaid} detail={percent(checkoutCohort.definitiveCloseRate)} />
           <FunnelCard label="Pagati" value={checkoutCohort.paid} detail={percent(checkoutCohort.paidRate)} />
           <FunnelCard label="Di cui recuperati" value={checkoutCohort.recoveredAfterCancelOrClose} />
-        </dl>
+        </div>
       </section>
     </div>
     <section className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-4">

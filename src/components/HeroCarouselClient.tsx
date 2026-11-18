@@ -21,6 +21,7 @@ export default function HeroCarouselClient({ slides, labels }: HeroCarouselClien
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [firstImageSettled, setFirstImageSettled] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
   const requestedIndexRef = useRef(0);
   const readyImagesRef = useRef(new Set<number>());
@@ -80,26 +81,32 @@ export default function HeroCarouselClient({ slides, labels }: HeroCarouselClien
             aria-hidden={!active}
             inert={!active}
           >
-            <Image
-              src={slide.imageSrc}
-              alt={slide.imageAlt}
-              fill
-              priority={slideIndex === 0}
-              loading={slideIndex === 0 ? undefined : "eager"}
-              fetchPriority={slideIndex === 0 ? "high" : "low"}
-              quality={75}
-              onLoad={(event) => {
-                const image = event.currentTarget;
-                void image.decode().then(() => {
-                  readyImagesRef.current.add(slideIndex);
-                  if (requestedIndexRef.current === slideIndex) showSlide(slideIndex);
-                }).catch(() => {
-                  // A failed image must not replace the currently readable slide.
-                });
-              }}
-              sizes="100vw"
-              className="object-cover object-center"
-            />
+            {/* Give the first slide the connection until its image is ready. */}
+            {slideIndex === 0 || firstImageSettled ? (
+              <Image
+                src={slide.imageSrc}
+                alt={slide.imageAlt}
+                fill
+                priority={slideIndex === 0}
+                loading={slideIndex === 0 ? undefined : "eager"}
+                fetchPriority={slideIndex === 0 ? "high" : "low"}
+                quality={75}
+                onLoad={(event) => {
+                  const image = event.currentTarget;
+                  void image.decode().then(() => {
+                    readyImagesRef.current.add(slideIndex);
+                    if (requestedIndexRef.current === slideIndex) showSlide(slideIndex);
+                  }).catch(() => {
+                    // A failed image must not replace the currently readable slide.
+                  }).finally(() => {
+                    if (slideIndex === 0) setFirstImageSettled(true);
+                  });
+                }}
+                onError={slideIndex === 0 ? () => setFirstImageSettled(true) : undefined}
+                sizes="100vw"
+                className="object-cover object-center"
+              />
+            ) : null}
 
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,11,8,0.68)_0%,rgba(18,11,8,0.38)_38%,rgba(18,11,8,0.16)_62%,rgba(18,11,8,0.46)_100%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,164,97,0.18),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(98,128,72,0.14),transparent_24%)]" />

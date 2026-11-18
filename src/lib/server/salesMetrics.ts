@@ -125,6 +125,8 @@ function romeMidnight(day: string) {
   return new Date(utc.getTime() - (hour * 60 + minute) * 60_000);
 }
 
+export const ADMIN_REPORT_LOOKBACK_DAYS = 30;
+
 export function metricsPeriod(startParam?: string, endParam?: string, now = new Date(), defaultDays = 7) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit",

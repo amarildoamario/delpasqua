@@ -66,7 +66,7 @@ const labels = {
         ? `Disponibili solo ${availableQty} pezzi. Aggiunti ${addedQty}.`
         : `Aggiunti ${addedQty}. Quantita ridotta per disponibilita limitata.`,
     freeShipping: "Spedizione gratis",
-    freeShippingSub: "Sopra i 50 euro",
+    freeShippingSub: "Sopra i 69 euro",
     quality: "Qualita garantita",
     qualitySub: "100% italiano",
     productDetails: "Dettagli prodotto",
@@ -79,7 +79,7 @@ const labels = {
     defaults: {
       caratteristiche: "Olio extravergine di oliva ottenuto direttamente dalle olive e unicamente mediante processi meccanici. Acidita <0,3%. Estratto a freddo per preservare tutte le proprieta organolettiche.",
       imballaggio: "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
-      spedizione: "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50 euro.",
+      spedizione: "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 69 euro.",
       resi: "Reso gratuito entro 14 giorni. Rimborso completo senza domande.",
     },
   },
@@ -101,7 +101,7 @@ const labels = {
         ? `Only ${availableQty} items available. Added ${addedQty}.`
         : `Added ${addedQty}. Quantity reduced because of limited availability.`,
     freeShipping: "Free shipping",
-    freeShippingSub: "Over EUR 50",
+    freeShippingSub: "Over EUR 69",
     quality: "Guaranteed quality",
     qualitySub: "100% Italian",
     productDetails: "Product details",
@@ -114,7 +114,7 @@ const labels = {
     defaults: {
       caratteristiche: "Extra virgin olive oil obtained directly from olives and solely by mechanical processes. Cold extracted to preserve its sensory qualities.",
       imballaggio: "Dark glass bottle or protective tin packaging designed to preserve the oil from light and oxidation.",
-      spedizione: "Delivery in 2-3 working days with tracking. Free shipping for orders over EUR 50.",
+      spedizione: "Delivery in 2-3 working days with tracking. Free shipping for orders over EUR 69.",
       resi: "Returns available within 14 days according to the sales conditions.",
     },
   },
@@ -136,7 +136,7 @@ const labels = {
         ? `Nur ${availableQty} Stueck verfuegbar. ${addedQty} hinzugefuegt.`
         : `${addedQty} hinzugefuegt. Menge wegen begrenztem Bestand reduziert.`,
     freeShipping: "Kostenloser Versand",
-    freeShippingSub: "Ab EUR 50",
+    freeShippingSub: "Ab EUR 69",
     quality: "Garantierte Qualitaet",
     qualitySub: "100% italienisch",
     productDetails: "Produktdetails",
@@ -149,7 +149,7 @@ const labels = {
     defaults: {
       caratteristiche: "Natives Olivenoel extra, direkt aus Oliven und ausschliesslich mit mechanischen Verfahren gewonnen. Kaltextrahiert, um die sensorischen Eigenschaften zu bewahren.",
       imballaggio: "Dunkle Glasflasche oder schuetzende Dose, um das Oel vor Licht und Oxidation zu schuetzen.",
-      spedizione: "Lieferung in 2-3 Werktagen mit Sendungsverfolgung. Kostenloser Versand ab EUR 50.",
+      spedizione: "Lieferung in 2-3 Werktagen mit Sendungsverfolgung. Kostenloser Versand ab EUR 69.",
       resi: "Rueckgabe innerhalb von 14 Tagen gemaess den Verkaufsbedingungen.",
     },
   },
@@ -171,7 +171,7 @@ const labels = {
         ? `Nog maar ${availableQty} beschikbaar. ${addedQty} toegevoegd.`
         : `${addedQty} toegevoegd. Aantal verlaagd door beperkte voorraad.`,
     freeShipping: "Gratis verzending",
-    freeShippingSub: "Boven EUR 50",
+    freeShippingSub: "Boven EUR 69",
     quality: "Gegarandeerde kwaliteit",
     qualitySub: "100% Italiaans",
     productDetails: "Productdetails",
@@ -184,7 +184,7 @@ const labels = {
     defaults: {
       caratteristiche: "Extra vierge olijfolie rechtstreeks uit olijven verkregen en uitsluitend met mechanische procedes. Koud geextraheerd om de sensorische kwaliteiten te behouden.",
       imballaggio: "Donkere glazen fles of beschermende blikverpakking om de olie tegen licht en oxidatie te beschermen.",
-      spedizione: "Levering binnen 2-3 werkdagen met tracking. Gratis verzending bij bestellingen boven EUR 50.",
+      spedizione: "Levering binnen 2-3 werkdagen met tracking. Gratis verzending bij bestellingen boven EUR 69.",
       resi: "Retour mogelijk binnen 14 dagen volgens de verkoopvoorwaarden.",
     },
   },
@@ -206,7 +206,7 @@ const labels = {
         ? `Kun ${availableQty} tilbage. ${addedQty} tilfoejet.`
         : `${addedQty} tilfoejet. Antallet blev reduceret pga. begraenset lager.`,
     freeShipping: "Gratis fragt",
-    freeShippingSub: "Over EUR 50",
+    freeShippingSub: "Over EUR 69",
     quality: "Garanteret kvalitet",
     qualitySub: "100% italiensk",
     productDetails: "Produktdetaljer",
@@ -219,7 +219,7 @@ const labels = {
     defaults: {
       caratteristiche: "Ekstra jomfruolivenolie fremstillet direkte af oliven og udelukkende ved mekaniske processer. Koldpresset for at bevare de sensoriske kvaliteter.",
       imballaggio: "Moerk glasflaske eller beskyttende dunk, der beskytter olien mod lys og oxidering.",
-      spedizione: "Levering paa 2-3 hverdage med tracking. Gratis fragt ved ordrer over EUR 50.",
+      spedizione: "Levering paa 2-3 hverdage med tracking. Gratis fragt ved ordrer over EUR 69.",
       resi: "Returnering inden for 14 dage i henhold til salgsbetingelserne.",
     },
   },
@@ -241,7 +241,7 @@ const labels = {
         ? `Bare ${availableQty} tilgjengelig. ${addedQty} lagt til.`
         : `${addedQty} lagt til. Antallet ble redusert paa grunn av begrenset lager.`,
     freeShipping: "Gratis frakt",
-    freeShippingSub: "Over EUR 50",
+    freeShippingSub: "Over EUR 69",
     quality: "Garantert kvalitet",
     qualitySub: "100% italiensk",
     productDetails: "Produktdetaljer",
@@ -254,7 +254,7 @@ const labels = {
     defaults: {
       caratteristiche: "Extra virgin olivenolje fremstilt direkte fra oliven og utelukkende med mekaniske prosesser. Kaldpresset for aa bevare de sensoriske kvalitetene.",
       imballaggio: "Moerk glassflaske eller beskyttende kanne som beskytter oljen mot lys og oksidasjon.",
-      spedizione: "Levering paa 2-3 virkedager med sporing. Gratis frakt for bestillinger over EUR 50.",
+      spedizione: "Levering paa 2-3 virkedager med sporing. Gratis frakt for bestillinger over EUR 69.",
       resi: "Retur innen 14 dager i henhold til salgsbetingelsene.",
     },
   },

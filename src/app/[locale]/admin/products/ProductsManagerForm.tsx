@@ -264,7 +264,7 @@ function makeNewProductTemplate(forcedId?: string, title?: string, category?: st
       imballaggio:
         "Bottiglia in vetro scuro per proteggere dall'ossidazione. Confezione riciclabile e protettiva.",
       spedizione:
-        "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 50€.",
+        "Consegna in 2-3 giorni lavorativi. Tracking in tempo reale. Spedizione gratuita per ordini sopra i 69€.",
       resi: "Reso gratuito entro 14 giorni. Rimborso completo senza domande.",
     },
     variants: [

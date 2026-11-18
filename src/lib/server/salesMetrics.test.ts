@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { describePeriodWindow, metricsMonthKey, metricsMonthWindow, metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
+import { ADMIN_REPORT_LOOKBACK_DAYS, describePeriodWindow, metricsMonthKey, metricsMonthWindow, metricsPeriod, salesConversion, summarizeSales, type SalesOrder } from "./salesMetrics";
 import { parseVariantLiters, isCanFormat, summarizeCartDemand } from "./salesMetrics";
 
 test("volume parsing uses exact units and formats distinguish one-litre bottles from cans", () => {
@@ -148,10 +148,11 @@ test("calendar boundaries follow daylight saving changes and reject rolled dates
   assert.notEqual(metricsPeriod("2026-02-31", "2026-11-08", start).startISO, "2026-02-31");
 });
 
-test("dashboard keeps its thirty-day default while metrics retain their seven-day default", () => {
+test("admin reports include today and the previous thirty calendar days by default", () => {
   const now = new Date("2026-11-08T12:00:00Z");
-  assert.equal(metricsPeriod(undefined, undefined, now, 30).startISO, "2026-10-09");
-  assert.equal(metricsPeriod(undefined, undefined, now).startISO, "2026-11-01");
+  const period = metricsPeriod(undefined, undefined, now, ADMIN_REPORT_LOOKBACK_DAYS);
+  assert.equal(period.startISO, "2026-10-09");
+  assert.equal(period.endISO, "2026-11-08");
 });
 
 test("monthly dashboard accounting follows Italian calendar months across UTC midnight and year rollover", () => {

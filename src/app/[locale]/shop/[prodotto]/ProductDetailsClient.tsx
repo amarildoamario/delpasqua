@@ -843,12 +843,7 @@ export default function ProductDetailsClient({
       <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-16">
         
         {/* COLONNA SINISTRA: GALLERIA IMMAGINI PREMIUM */}
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="flex flex-col"
-        >
+        <div className="flex flex-col">
           {/* Visualizzatore Principale */}
           <div className="relative overflow-hidden rounded-[5px] bg-[#FAF7F2] border border-[#E7DEC8] aspect-[4/5] shadow-[0_12px_40px_rgba(0,0,0,0.03)] group">
             {/* Badges in alto a sinistra/destra */}
@@ -898,7 +893,7 @@ export default function ProductDetailsClient({
               })()}
             </div>
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false} mode="wait">
               {activeImage ? (
                 <motion.div
                   key={activeImage}
@@ -969,15 +964,10 @@ export default function ProductDetailsClient({
               })}
             </div>
           )}
-        </motion.div>
+        </div>
 
         {/* COLONNA DESTRA: DETTAGLI PRODOTTO E ACQUISTO */}
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="flex flex-col"
-        >
+        <div className="flex flex-col">
           {/* Categoria */}
           <div className="flex items-center gap-2 mb-1.5">
             <span className="text-[10px] font-bold tracking-[0.2em] text-[#B5945B] uppercase">
@@ -1455,7 +1445,7 @@ export default function ProductDetailsClient({
             <Truck className="h-3.5 w-3.5 text-neutral-400" />
             <span>{text.shippingPromo}</span>
           </div>
-        </motion.div>
+        </div>
 
       </div>
 

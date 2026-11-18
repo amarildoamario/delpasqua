@@ -10,6 +10,7 @@ import {
 } from "@/lib/server/metricsAnalyticsV6";
 import {
   describePeriodWindow,
+  ADMIN_REPORT_LOOKBACK_DAYS,
   metricsPeriod,
   readSalesMetrics,
   salesConversion,
@@ -45,7 +46,7 @@ export async function GET(req: Request) {
   const includeInternal = internalRaw === "1" || internalRaw === "true" || internalRaw === "yes" || internalRaw === "on";
 
 
-  const period = metricsPeriod(startParam, endParam);
+  const period = metricsPeriod(startParam, endParam, new Date(), ADMIN_REPORT_LOOKBACK_DAYS);
   const { start, endExclusive, startISO, endISO } = period;
   const periodMeta = describePeriodWindow(period);
 
@@ -359,7 +360,8 @@ export async function GET(req: Request) {
     },
     meta: {
       schemaVersion: "metrics-export-v6",
-      version: "metrics-export-v5",
+      version: "metrics-export-v6",
+      legacyVersionAlias: "metrics-export-v5",
       timeZone: "Europe/Rome",
       generatedAt: periodMeta.observedThrough,
       period: periodMeta,

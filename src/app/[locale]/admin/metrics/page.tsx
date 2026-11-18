@@ -3,6 +3,7 @@ import React from "react";
 import RangePicker from "@/app/[locale]/admin/dashboard/RangerPicker";
 import { prisma } from "@/lib/server/prisma";
 import {
+  ADMIN_REPORT_LOOKBACK_DAYS,
   metricsPeriod,
   readSalesMetrics,
   salesConversion,
@@ -16,8 +17,7 @@ import { ACTIVITY_TIMEFRAMES, readActivityTimeline } from "@/lib/server/activity
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
 import { computeHistoricalCustomerRetention } from "@/lib/server/metricsAnalyticsV6";
-import InfoTooltip from "../_components/InfoTooltip";
-import { METRIC_DESCRIPTIONS } from "../_components/metricDescriptions";
+import Kpi from "../_components/Kpi";
 
 export const dynamic = "force-dynamic";
 
@@ -69,7 +69,7 @@ export default async function AdminMetricsPage({
   // ✅ internal robusto
   const includeInternal = truthy(getOne(sp.internal));
 
-  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam);
+  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam, new Date(), ADMIN_REPORT_LOOKBACK_DAYS);
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
@@ -783,19 +783,6 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex items-center justify-between">
       <span className="text-neutral-600">{label}</span>
       <span className="font-extrabold text-neutral-900">{value}</span>
-    </div>
-  );
-}
-
-function Kpi({ title, value, subtitle }: { title: string; value: React.ReactNode; subtitle?: string }) {
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-2.5 sm:p-3.5 shadow-xs flex flex-col justify-between min-w-0">
-      <div className="flex items-start justify-between gap-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-neutral-500 leading-tight">
-        <span className="line-clamp-2">{title}</span>
-        <InfoTooltip label={title} description={METRIC_DESCRIPTIONS[title] ?? subtitle ?? title} />
-      </div>
-      <div className="mt-1 text-base sm:text-xl font-extrabold text-neutral-900 tabular-nums truncate">{value}</div>
-      {subtitle ? <div className="mt-0.5 text-[10px] sm:text-[11px] text-neutral-500 leading-tight line-clamp-2">{subtitle}</div> : null}
     </div>
   );
 }

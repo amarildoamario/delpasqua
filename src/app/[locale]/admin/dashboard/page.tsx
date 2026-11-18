@@ -8,7 +8,7 @@ import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server
 
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
 import RangePicker from "./RangerPicker";
-import { metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
+import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
 
 import { readCatalog } from "@/lib/server/catalog";
 
@@ -260,7 +260,7 @@ export default async function AdminDashboard({
 
 
 
-  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam, new Date(), 30);
+  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam, new Date(), ADMIN_REPORT_LOOKBACK_DAYS);
 
   const PAID_LIKE = [
 

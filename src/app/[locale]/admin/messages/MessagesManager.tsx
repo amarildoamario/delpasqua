@@ -83,7 +83,7 @@ const QUICK_REPLY_TEMPLATES = [
     title: "Tempi & Costi di Spedizione",
     subject: "Info su spedizioni e consegne - Del Pasqua",
     body: (name: string) =>
-      `Gentile ${name},\n\nLa informiamo che le nostre spedizioni vengono effettuate tramite corriere espresso con consegna in tutta Italia entro 2-3 giorni lavorativi. L'imballaggio è appositamente studiato per proteggere le bottiglie in vetro.\n\nLa spedizione è gratuita per ordini superiori a 50€.\n\nNon esiti a ricontattarci per ulteriori chiarimenti.\n\nCordiali saluti,\nServizio Clienti Del Pasqua`,
+      `Gentile ${name},\n\nLa informiamo che le nostre spedizioni vengono effettuate tramite corriere espresso con consegna in tutta Italia entro 2-3 giorni lavorativi. L'imballaggio è appositamente studiato per proteggere le bottiglie in vetro.\n\nLa spedizione è gratuita per ordini superiori a 69€.\n\nNon esiti a ricontattarci per ulteriori chiarimenti.\n\nCordiali saluti,\nServizio Clienti Del Pasqua`,
   },
 ];
 

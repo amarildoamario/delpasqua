@@ -8,7 +8,7 @@ import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth"
 import { rateLimit } from "@/lib/server/rateLimit";
 import { readCatalog } from "@/lib/server/catalog";
 import { getStoreSettings } from "@/lib/server/settings";
-import { metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
+import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
   const startParam = url.searchParams.get("start");
   const endParam = url.searchParams.get("end");
 
-  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam ?? undefined, endParam ?? undefined, new Date(), 30);
+  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam ?? undefined, endParam ?? undefined, new Date(), ADMIN_REPORT_LOOKBACK_DAYS);
 
   const PAID_LIKE = [
     "PAGATO",

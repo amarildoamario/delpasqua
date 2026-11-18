@@ -156,6 +156,11 @@ export default function AdminSidebar({
     counts.pendingTastings +
     counts.unreadMessages +
     totalSystemIssues;
+  const alertsBadgeClassName = `inline-flex items-center gap-2 rounded-[5px] px-3 py-2 text-xs font-bold transition-colors ${
+    totalPendingNotifications > 0
+      ? "bg-orange-500 text-white hover:bg-orange-600"
+      : "bg-neutral-700 text-neutral-300 hover:bg-neutral-600"
+  }`;
 
   const sections: NavSectionConfig[] = [
     {
@@ -274,7 +279,7 @@ export default function AdminSidebar({
           href="/admin/ops"
           onClick={onItemClick}
           aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
-          className="inline-flex items-center gap-2 rounded-[5px] bg-orange-500 px-3 py-2 text-xs font-bold text-white hover:bg-orange-600 transition-colors"
+          className={alertsBadgeClassName}
         >
           <Activity className="h-4 w-4" />
           <span>{totalPendingNotifications} avvisi</span>
@@ -362,7 +367,7 @@ export default function AdminSidebar({
           <Link
             href="/admin/ops"
             aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
-            className="inline-flex items-center gap-2 rounded-[5px] bg-orange-500 px-3 py-2 text-xs font-bold text-white hover:bg-orange-600 transition-colors"
+            className={alertsBadgeClassName}
           >
             <Activity className="h-4 w-4" />
             <span>{totalPendingNotifications} avvisi</span>
