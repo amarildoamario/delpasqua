@@ -64,6 +64,31 @@ test("canonicalizeSitePath strips locale prefixes and trailing slashes while pre
   });
 });
 
+test("shop sessions use localized paths and count each session once per language and page type", () => {
+  const events = [
+    ev({ path: "/fr/boutique/" }),
+    ev({ path: "/fr/boutique/fruite-leger/?v=500ml" }),
+    ev({ path: "/fr/boutique/fruite-leger/?v=750ml" }),
+    ev({ path: "/us/shop/" }),
+    ev({ path: "/de/laden/leicht-fruchtig/", sessionId: "s-2" }),
+    ev({ path: "/de/warenkorb/", sessionId: "s-2" }),
+  ];
+  const { sessionFunnel } = computeFunnelsAndSeries({
+    orders: [], events, start, endExclusive: end, startISO: "2026-11-10", endISO: "2026-11-17", now: end,
+  });
+
+  assert.equal(sessionFunnel.shopSessions, 2);
+  assert.equal(sessionFunnel.productDetailSessions, 2);
+  assert.equal(sessionFunnel.cartViewedSessions, 1);
+  assert.deepEqual(sessionFunnel.shopByLocale.filter((row) => row.shopListSessions || row.productDetailSessions), [
+    { locale: "de", shopListSessions: 0, productDetailSessions: 1 },
+    { locale: "fr", shopListSessions: 1, productDetailSessions: 1 },
+    { locale: "us", shopListSessions: 1, productDetailSessions: 0 },
+  ]);
+  assert.equal(canonicalizeSitePath("/fr/boutique/").canonicalPath, "/shop");
+  assert.equal(canonicalizeSitePath("/fr/boutique/fruite-leger/").canonicalPath, "/shop/fruite-leger");
+});
+
 test("sessionFunnel and variantFunnel respect event ordering and deduplicate repeated 5L selections per session", () => {
   const events: V6EventInput[] = [
     // Session s-1: blog -> product detail -> 4 repeated 5lt selections -> 2 add_to_cart -> checkout -> purchase

@@ -41,7 +41,8 @@ Stato attuale:
 - `src/app/sitemap-blog.xml/route.ts` include solo le traduzioni blog disponibili e usa URL/category slug localizzati.
 
 Nota:
-- La sitemap index usa ancora un `lastmod` dinamico per `sitemap-pages.xml`; non e` un blocco go-live, ma se si vuole massima pulizia SEO si puo rimuovere o sostituire con una data reale di contenuto.
+- L'indice riprende le date più recenti dalle sitemap blog e prodotti. Per `sitemap-pages.xml` il campo è omesso perché manca una data verificabile per l'intera sitemap.
+- `npm run seo:audit-shop-links` confronta i link HTML delle schede nei nove shop con gli URL della sitemap prodotti.
 
 ### [PARZIALE] Canonical e hreflang - correzione locale 16/11/2026, deploy da verificare
 

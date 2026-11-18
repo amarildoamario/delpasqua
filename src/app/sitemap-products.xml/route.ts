@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import { readCatalog, filterSeoCatalog, getCatalogPath } from "@/lib/server/catalog";
+import { readProductSitemapEntries } from "@/lib/server/productSitemap";
 import { getLocalizedProductSlug } from "@/lib/productSlugs";
 import { locales, localizedPathnames } from "@/i18n/pathnames";
 import { absoluteUrl, getProductAlternateUrls } from "@/lib/seo";
-import { prisma } from "@/lib/server/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -22,26 +20,10 @@ function escapeXml(unsafe: string): string {
 }
 
 export async function GET() {
-  const products = filterSeoCatalog(await readCatalog());
+  const entries = await readProductSitemapEntries();
   const urls: string[] = [];
 
-  // Fetch productMerch updates from DB
-  const merchList = await prisma.productMerch.findMany({
-    select: { productKey: true, updatedAt: true }
-  });
-  const merchMap = new Map(merchList.map(m => [m.productKey, m.updatedAt]));
-
-  // Read file stat for fallback lastmod
-  const filePath = getCatalogPath();
-  const stat = await fs.stat(filePath);
-  const fileDate = stat.mtime;
-
-  for (const product of products) {
-    // Determine the most specific update date available
-    const productDateVal = (product.updatedAt || product.updateDate) ? new Date((product.updatedAt || product.updateDate) as string) : null;
-    const merchDateVal = merchMap.get(product.id) || null;
-    const finalDate = productDateVal || merchDateVal || fileDate;
-    const lastmod = finalDate.toISOString().split("T")[0];
+  for (const { product, lastmod } of entries) {
 
     // Pre-calculate alternates for hreflang
     const alternatesMap = getProductAlternateUrls(product);
@@ -68,8 +50,7 @@ export async function GET() {
       const url = absoluteUrl(fullPath);
 
       urls.push(`  <url>
-    <loc>${escapeXml(url)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${escapeXml(url)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
 ${altTags}${imageNode}

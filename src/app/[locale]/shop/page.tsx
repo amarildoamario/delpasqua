@@ -141,7 +141,7 @@ export default async function ShopPageWrapper(props: any) {
     Products: messages.Products,
   };
   return (
-    <NextIntlClientProvider messages={pageMessages}>
+    <NextIntlClientProvider locale={locale} messages={pageMessages}>
       <ShopPage {...props} />
     </NextIntlClientProvider>
   );

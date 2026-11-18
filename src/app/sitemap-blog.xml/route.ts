@@ -3,6 +3,8 @@ import { mockBlogPosts, hasBlogPostTranslation } from "@/lib/blog-data";
 import { getLocalizedBlogCategorySlug, getLocalizedBlogSlug } from "@/lib/blogSlugs";
 import { locales, localizedPathnames } from "@/i18n/pathnames";
 import { absoluteUrl, getBlogAlternateUrls, getBlogCategoryAlternateUrls } from "@/lib/seo";
+import { readBlogSitemapDates } from "@/lib/server/blogSitemap";
+import { latestSitemapDate } from "@/lib/sitemapDates";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,7 @@ function escapeXml(unsafe: string): string {
 
 export async function GET() {
   const urls: string[] = [];
+  const datesByLocale = await readBlogSitemapDates();
 
   // 1. Blog Category pages across all locales
   const uniqueCategoryPosts = new Map<string, (typeof mockBlogPosts)[number]>();
@@ -43,20 +46,20 @@ export async function GET() {
     const altTags = Object.entries(alternatesMap)
       .map(([lang, href]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${escapeXml(href)}"/>`)
       .join("\n");
-    const lastmod = new Date(representativePost.updateDate || representativePost.date).toISOString().split("T")[0];
-
     for (const locale of locales) {
       if (!hasBlogPostTranslation(representativePost, locale)) continue;
 
       const categorySlug = getLocalizedBlogCategorySlug(representativePost, locale);
+      const lastmod = latestSitemapDate(...mockBlogPosts
+        .filter((post) => getLocalizedBlogCategorySlug(post, locale) === categorySlug)
+        .map((post) => datesByLocale[locale].get(post.id)));
       const template = localizedPathnames["/blog/category/[category]"]?.[locale] || "/blog/category/[category]";
       const resolvedPath = template.replace("[category]", categorySlug);
       const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
       const url = absoluteUrl(fullPath);
 
       urls.push(`  <url>
-    <loc>${escapeXml(url)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${escapeXml(url)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
 ${altTags}
@@ -92,11 +95,10 @@ ${altTags}
         .replace("[slug]", postSlug);
       const fullPath = locale === "it" ? resolvedPath : `/${locale}${resolvedPath}`;
       const url = absoluteUrl(fullPath);
-      const lastmod = new Date(post.updateDate || post.date).toISOString().split("T")[0];
+      const lastmod = datesByLocale[locale].get(post.id);
 
       urls.push(`  <url>
-    <loc>${escapeXml(url)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${escapeXml(url)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
 ${altTags}${imageNode}

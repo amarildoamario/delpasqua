@@ -79,6 +79,24 @@ export default function CommerceInsights({ insights, customers, activity, activi
             <FunnelCard label="Checkout Avviato" value={sessionFunnel.checkoutStartedSessions} detail={`Clic cassa: ${number(sessionFunnel.checkoutClickedSessions, 0)}`} />
             <FunnelCard label="Sessioni Acquisto" value={sessionFunnel.purchasingSessions} detail="Collegate a ordine" />
           </div>
+          <details className="mt-3 border-t border-neutral-200 pt-2 text-xs">
+            <summary className="cursor-pointer font-semibold text-neutral-800">Sessioni shop per lingua</summary>
+            <p className="mt-1 text-neutral-600">Lingua della pagina visitata. La stessa sessione può comparire in più lingue.</p>
+            <table className="mt-2 w-full tabular-nums">
+              <thead className="text-left text-neutral-600">
+                <tr><th scope="col">Lingua</th><th scope="col" className="text-right">Elenco shop</th><th scope="col" className="text-right">Schede prodotto</th></tr>
+              </thead>
+              <tbody>
+                {sessionFunnel.shopByLocale.map((row) => (
+                  <tr key={row.locale} className="border-t border-neutral-100">
+                    <th scope="row" className="py-1 text-left font-medium">{row.locale.toUpperCase()}</th>
+                    <td className="text-right">{number(row.shopListSessions, 0)}</td>
+                    <td className="text-right">{number(row.productDetailSessions, 0)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
         </section>
       ) : null}
       <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">

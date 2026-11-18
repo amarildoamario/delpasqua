@@ -1,4 +1,5 @@
 import { isSitePage } from "@/lib/analytics/acquisition";
+import { locales, localizedPathnames, type Locale } from "@/i18n/pathnames";
 import { excludedCheckout } from "./checkoutAudience";
 
 export type HistoricalCustomerRowInput = {
@@ -50,6 +51,7 @@ const ROME_WEEKDAY_FMT = new Intl.DateTimeFormat("en-GB", {
 
 const WEEKDAY_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const WEEKDAY_IT = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+const siteLocales: ReadonlySet<string> = new Set(locales);
 
 export function toRomeDateISO(date: Date): string {
   const parts = ROME_DAY_FMT.formatToParts(date);
@@ -76,27 +78,34 @@ function listCalendarDays(startISO: string, endISO: string): string[] {
 export function canonicalizeSitePath(rawPath?: string | null): {
   rawPath: string;
   canonicalPath: string;
-  locale: string;
+  locale: Locale;
   pageCategory: "blog" | "shop_list" | "product_detail" | "cart" | "other";
 } {
   const raw = (rawPath ?? "/").split(/[?#]/, 1)[0] || "/";
   const trimmed = raw.replace(/\/+$/, "") || "/";
-  const localeMatch = trimmed.match(/^\/(it|en|de|nl|da|no|es|fr)(?:\/(.*))?$/);
-  const locale = localeMatch ? localeMatch[1] : "it";
-  const withoutLocale = localeMatch ? `/${localeMatch[2] ?? ""}`.replace(/\/+$/, "") || "/" : trimmed;
+  const firstSegment = trimmed.split("/", 2)[1];
+  const hasLocale = siteLocales.has(firstSegment);
+  const locale = hasLocale ? firstSegment as Locale : "it";
+  const withoutLocale = hasLocale ? trimmed.slice(locale.length + 1) || "/" : trimmed;
+  const shopPath = localizedPathnames["/shop"][locale];
+  const cartPath = localizedPathnames["/cart"][locale];
+  let canonicalPath = withoutLocale;
 
   let pageCategory: "blog" | "shop_list" | "product_detail" | "cart" | "other" = "other";
   if (withoutLocale === "/blog" || withoutLocale.startsWith("/blog/")) {
     pageCategory = "blog";
-  } else if (withoutLocale === "/shop") {
+  } else if (withoutLocale === shopPath || withoutLocale === "/shop") {
     pageCategory = "shop_list";
-  } else if (withoutLocale.startsWith("/shop/")) {
+    canonicalPath = "/shop";
+  } else if (withoutLocale.startsWith(`${shopPath}/`) || withoutLocale.startsWith("/shop/")) {
     pageCategory = "product_detail";
-  } else if (withoutLocale === "/cart") {
+    canonicalPath = `/shop${withoutLocale.slice(withoutLocale.indexOf("/", 1))}`;
+  } else if (withoutLocale === cartPath || withoutLocale === "/cart") {
     pageCategory = "cart";
+    canonicalPath = "/cart";
   }
 
-  return { rawPath: raw, canonicalPath: withoutLocale, locale, pageCategory };
+  return { rawPath: raw, canonicalPath, locale, pageCategory };
 }
 
 function orderContext(order: V6OrderInput, includeInternal: boolean): { visitorId: string; sessionId: string } | null {
@@ -175,6 +184,7 @@ export function computeFunnelsAndSeries(args: {
   // Track per-session timestamps for ordered step checks
   const blogSessionFirstAt = new Map<string, number>();
   const shopSessionSet = new Set<string>();
+  const shopSessionsByLocale = new Map<Locale, { list: Set<string>; details: Set<string> }>();
   const productDetailFirstAt = new Map<string, number>();
   const addToCartLastAt = new Map<string, number>();
   const addToCartSessionSet = new Set<string>();
@@ -265,14 +275,20 @@ export function computeFunnelsAndSeries(args: {
     }
 
     if (ev.type === "page_view" && isSitePage(ev.path) && inCohort) {
-      const { pageCategory } = canonicalizeSitePath(ev.path);
+      const { pageCategory, locale } = canonicalizeSitePath(ev.path);
+      if (pageCategory === "shop_list" || pageCategory === "product_detail") {
+        let sessions = shopSessionsByLocale.get(locale);
+        if (!sessions) {
+          sessions = { list: new Set(), details: new Set() };
+          shopSessionsByLocale.set(locale, sessions);
+        }
+        (pageCategory === "shop_list" ? sessions.list : sessions.details).add(sid);
+        shopSessionSet.add(sid);
+      }
       if (pageCategory === "blog") {
         const prev = blogSessionFirstAt.get(sid);
         if (prev === undefined || t < prev) blogSessionFirstAt.set(sid, t);
-      } else if (pageCategory === "shop_list") {
-        shopSessionSet.add(sid);
       } else if (pageCategory === "product_detail") {
-        shopSessionSet.add(sid);
         const prev = productDetailFirstAt.get(sid);
         if (prev === undefined || t < prev) productDetailFirstAt.set(sid, t);
       } else if (pageCategory === "cart") {
@@ -425,6 +441,14 @@ export function computeFunnelsAndSeries(args: {
     sessions: totalSessions,
     blogSessions: blogSessionsCount,
     shopSessions: shopSessionsCount,
+    shopByLocale: locales.map((locale) => {
+      const sessions = shopSessionsByLocale.get(locale);
+      return {
+        locale,
+        shopListSessions: sessions?.list.size ?? 0,
+        productDetailSessions: sessions?.details.size ?? 0,
+      };
+    }),
     productDetailSessions: productDetailSessionsCount,
     addToCartSessions: addToCartSessionsCount,
     addToCartAfterProductViewSessions,

@@ -2,7 +2,7 @@ import { getBlogPostBySlug, getBlogPosts } from "@/lib/blog-data";
 import { getBlogContentBlocks, getBlogHeading } from "@/lib/blog-content";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Link, redirect } from "@/i18n/routing";
+import { Link, permanentRedirect } from "@/i18n/routing";
 import { ChevronRight, Share2, Printer, Tag, User, Clock, CalendarDays, RefreshCcw, ArrowRight, ExternalLink, BookOpen } from "lucide-react";
 import Footer from "@/components/Footer";
 import {
@@ -10,7 +10,6 @@ import {
     getLocalizedBlogCategorySlug,
     getLocalizedBlogHref,
     getLocalizedBlogSlug,
-    normalizeBlogSlug,
 } from "@/lib/blogSlugs";
 import { Metadata } from 'next';
 import { getBlogAlternateUrls, getSeoLocale, getOpenGraphLocale, SITE_URL, absoluteUrl, localizedPath } from "@/lib/seo";
@@ -96,8 +95,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
     const canonicalCategory = getLocalizedBlogCategorySlug(post, locale);
 
-    if (normalizeBlogSlug(slug) !== normalizeBlogSlug(post.slug) || normalizeBlogSlug(category) !== canonicalCategory) {
-        redirect({
+    if (slug !== getLocalizedBlogSlug(post, locale) || category !== canonicalCategory) {
+        permanentRedirect({
             href: getLocalizedBlogHref(post, locale),
             locale: locale
         });

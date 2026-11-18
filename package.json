@@ -54,6 +54,7 @@
     "seo:search-console": "node scripts/seo/search-console/index.mjs",
     "// seo:all": "Esegue tutti i controlli SEO sotto elencati in una volta sola per darti un report completo sullo stato di salute del sito su Google.",
     "seo:audit-locales": "node scripts/seo/verifica-lingue-locali.mjs",
+    "seo:audit-shop-links": "tsx scripts/seo/verifica-link-shop.ts",
     "// seo:audit-locales": "Controlla che le traduzioni e le configurazioni delle lingue sul sito non creino conflitti che potrebbero confondere Google.",
     "seo:audit-sitemap": "node scripts/seo/verifica-sitemap.mjs",
     "// seo:audit-sitemap": "Analizza la sitemap del sito alla ricerca di link rotti o pagine inesistenti che farebbero perdere punti di posizionamento.",

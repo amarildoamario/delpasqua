@@ -10,6 +10,7 @@ import { getOrCreateCartId } from "@/lib/analytics/cartId";
 import { track } from "@/lib/analytics/track";
 import ToggleMessage from "@/components/ui/ToggleMessage";
 import type { ProductCardProduct } from "@/components/ProductCard";
+import { getLocalizedProductHref } from "@/lib/productSlugs";
 
 export type MobileListCardProduct = ProductCardProduct & {
   formatsList?: string;
@@ -131,7 +132,7 @@ export default function MobileListCard({
     });
   };
 
-  const hrefBase = { pathname: `/shop/${product.slug}` as const };
+  const hrefBase = getLocalizedProductHref(product, locale);
   const href = product.defaultVariantId
     ? { ...hrefBase, query: { v: product.defaultVariantId } }
     : hrefBase;
@@ -204,6 +205,8 @@ export default function MobileListCard({
         <Link
           href={href}
           prefetch={false}
+          data-slug={product.slug}
+          data-testid="product-card"
           onClick={onClick}
           aria-label={product.title}
           className="absolute inset-0 z-10 block opacity-0"
