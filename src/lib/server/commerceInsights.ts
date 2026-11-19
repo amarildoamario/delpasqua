@@ -169,6 +169,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   for (const o of paid) if (inDay(o.paidAt!)) hours[bucketIndexes(o.paidAt!)[0]].orders.add(o.id);
   const serialize = (bucket: typeof hours[number], label: string) => ({ label, visits: bucket.visits.size, carts: bucket.carts.size, orders: bucket.orders.size });
   const startISO = toRomeDateISO(start);
+  const now = new Date();
   const v6 = computeFunnelsAndSeries({
     orders,
     events,
@@ -177,6 +178,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     endExclusive,
     startISO,
     endISO: hourlyDay,
+    now,
     includeInternal,
   });
   return {
@@ -224,7 +226,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     weekdays: days.map((b, i) => serialize(b, dayLabels[i])),
     weekdayExposure: v6.weekdayExposure,
     sessionFunnel: v6.sessionFunnel,
-    blogProductCards: summarizeBlogCards(events, start, endExclusive),
+    blogProductCards: summarizeBlogCards(events, v6.blogCohort, start, endExclusive, now),
     cartFunnel: v6.cartFunnel,
     checkoutCohort: v6.checkoutCohort,
     productFunnel: v6.productFunnel,

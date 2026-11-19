@@ -5,7 +5,7 @@ const date = new Intl.DateTimeFormat("it-IT", { dateStyle: "long", timeZone: "Eu
 const shortDate = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome" });
 const rate = new Intl.NumberFormat("it-IT", { style: "percent", maximumFractionDigits: 1 });
 const change = new Intl.NumberFormat("it-IT", { signDisplay: "exceptZero", maximumFractionDigits: 1 });
-const phases = { before: "Prima", day: "Giorno della modifica", after: "Dopo" };
+const phases = { before: "Prima", after: "Dopo" };
 const positions = { title: "Accanto al titolo", after_first_paragraph: "Dopo il primo paragrafo", end: "In fondo all’articolo" };
 
 export default function BlogCardMetrics({ report }: { report: ReturnType<typeof summarizeBlogCards> }) {
@@ -13,18 +13,20 @@ export default function BlogCardMetrics({ report }: { report: ReturnType<typeof 
     <section id="card-prodotti-blog" aria-labelledby="titolo-card-prodotti-blog" className="scroll-mt-4 rounded-2xl border border-neutral-200 bg-white p-3 sm:p-4">
       <h3 id="titolo-card-prodotti-blog" className="text-sm font-bold">Card prodotto nel blog</h3>
       <p className="mt-1 text-xs text-neutral-700">
-        <time dateTime={report.introductionDate} className="font-semibold">{date.format(new Date(report.introductionDate))}</time>
-        {" · "}Il confronto include tutti i {report.articles.length} articoli del blog, in tutte le lingue.
+        I clic sulle schede si contano dalle{" "}
+        <time dateTime={report.trackingStartsAt} className="font-semibold">
+          00:00 del {date.format(new Date(report.introductionDate))}
+        </time>{" "}(ora italiana).
       </p>
       <div className="mt-4 grid gap-4 lg:grid-cols-[3fr_2fr]">
         <div>
-          <h4 className="text-xs font-bold">Dall’articolo alla scheda prodotto</h4>
+          <h4 className="text-xs font-bold">Dal blog alla scheda prodotto</h4>
           <table className="mt-2 w-full text-xs tabular-nums">
             <caption className="sr-only">Passaggi allo shop prima e dopo la modifica nel periodo selezionato</caption>
             <thead className="text-right text-neutral-600">
               <tr>
                 <th scope="col" className="py-1 text-left font-medium">Periodo</th>
-                <th scope="col" className="px-1 font-medium">Sessioni articolo</th>
+                <th scope="col" className="px-1 font-medium">Sessioni blog</th>
                 <th scope="col" className="px-1 font-medium">Al prodotto</th>
                 <th scope="col" className="font-medium">Tasso</th>
               </tr>
@@ -38,19 +40,27 @@ export default function BlogCardMetrics({ report }: { report: ReturnType<typeof 
                       {shortDate.formatRange(new Date(period.startDate), new Date(period.endDate))}
                     </span>
                   </th>
-                  <td className="px-1">{period.articleSessions}</td>
+                  <td className="px-1">{period.blogSessions}</td>
                   <td className="px-1">{period.productSessions}</td>
                   <td className="font-semibold">{period.rate === null ? "—" : rate.format(period.rate)}</td>
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="border-t border-neutral-200 text-right font-semibold">
+                <th scope="row" className="py-1.5 text-left">Totale periodo selezionato</th>
+                <td className="px-1">{report.totalBlogSessions}</td>
+                <td className="px-1">{report.totalProductSessions}</td>
+                <td>{report.totalBlogSessions ? rate.format(report.totalProductSessions / report.totalBlogSessions) : "—"}</td>
+              </tr>
+            </tfoot>
           </table>
           <p className="mt-2 text-xs">
             {report.changePercentagePoints !== null
               ? <>Variazione dopo la modifica <b>{change.format(report.changePercentagePoints)} punti percentuali</b></>
               : "Per vedere la variazione servono sessioni misurate sia prima sia dopo la data della modifica."}
           </p>
-          <p className="mt-2 text-[11px] text-neutral-600">Ogni sessione conta una volta, alla prima visita a uno degli articoli nel periodo selezionato. Il tasso indica quante di queste sessioni proseguono su una scheda prodotto.</p>
+          <p className="mt-2 text-[11px] text-neutral-600">Come nel funnel, contano l’indice del blog, le categorie e gli articoli in tutte le lingue. Ogni sessione è assegnata alla prima visita al blog nel periodo selezionato.</p>
         </div>
         <div>
           <h4 className="text-xs font-bold">Clic sulle card nel periodo selezionato</h4>

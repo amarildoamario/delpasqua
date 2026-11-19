@@ -16,8 +16,6 @@ const articlePlacements: Partial<Record<string, ArticleProducts>> = {
   "chim-2": ["evo:500ml", "fruttato-intenso:500ml", "fruttato-leggero-latta:1lt"],
 };
 
-export const blogCardIntroductionDate = "2026-11-19";
-
 const defaultPlacements: ArticleProducts = [
   "evo:500ml", "fruttato-medio:500ml", "fruttato-leggero-latta:1lt",
 ];

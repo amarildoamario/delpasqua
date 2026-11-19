@@ -169,7 +169,7 @@ export function computeFunnelsAndSeries(args: {
   const sessionFirstPageView = new Map<string, V6EventInput>();
   const visitorAllPageViews = new Map<string, V6EventInput[]>();
   for (const ev of [...history, ...events]) {
-    if (ev.type !== "page_view" || !isSitePage(ev.path) || !ev.visitorId || ev.createdAt >= endExclusive) continue;
+    if (ev.type !== "page_view" || !isSitePage(ev.path) || !ev.visitorId || ev.createdAt >= endExclusive || ev.createdAt > now) continue;
     const vList = visitorAllPageViews.get(ev.visitorId) ?? [];
     vList.push(ev);
     visitorAllPageViews.set(ev.visitorId, vList);
@@ -263,7 +263,7 @@ export function computeFunnelsAndSeries(args: {
   const sessionCarts = new Map<string, Set<string>>();
 
   for (const ev of events) {
-    if (!inRange(ev.createdAt)) continue;
+    if (!inRange(ev.createdAt) || ev.createdAt > now) continue;
     const t = ev.createdAt.getTime();
     const sid = ev.sessionId;
     const inCohort = Boolean(sid && cohortSessionIds.has(sid));
@@ -389,11 +389,11 @@ export function computeFunnelsAndSeries(args: {
     }
   }
 
-  let blogToProductSessions = 0;
+  const blogToProductSessionIds = new Set<string>();
   for (const [sid, blogAt] of blogSessionFirstAt.entries()) {
     const prodAt = productDetailFirstAt.get(sid);
     if (prodAt !== undefined && blogAt <= prodAt) {
-      blogToProductSessions++;
+      blogToProductSessionIds.add(sid);
     }
   }
 
@@ -430,6 +430,7 @@ export function computeFunnelsAndSeries(args: {
 
   const totalSessions = cohortSessionIds.size;
   const blogSessionsCount = blogSessionFirstAt.size;
+  const blogToProductSessions = blogToProductSessionIds.size;
   const shopSessionsCount = shopSessionSet.size;
   const productDetailSessionsCount = productDetailFirstAt.size;
   const addToCartSessionsCount = addToCartSessionSet.size;
@@ -802,6 +803,7 @@ export function computeFunnelsAndSeries(args: {
 
   return {
     sessionFunnel,
+    blogCohort: { firstVisitAt: blogSessionFirstAt, productSessionIds: blogToProductSessionIds },
     cartFunnel,
     checkoutCohort,
     productFunnel,
