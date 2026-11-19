@@ -344,6 +344,7 @@
         }
     },
     "ShopPage": {
+        "viewProduct": "Se produkt",
         "header": {
             "label": "Butikk",
             "title_part1": "Alle ",

@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Link, permanentRedirect } from "@/i18n/routing";
 import { ChevronRight, Share2, Printer, Tag, User, Clock, CalendarDays, RefreshCcw, ArrowRight, ExternalLink, BookOpen } from "lucide-react";
 import Footer from "@/components/Footer";
+import BlogProductCard from "@/components/shop/BlogProductCard";
+import { getBlogProducts } from "@/lib/server/blogProducts";
 import {
     getBlogCategoryHref,
     getLocalizedBlogCategorySlug,
@@ -94,15 +96,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     if (!post) notFound();
 
     const canonicalCategory = getLocalizedBlogCategorySlug(post, locale);
+    const articleSlug = getLocalizedBlogSlug(post, locale);
 
-    if (slug !== getLocalizedBlogSlug(post, locale) || category !== canonicalCategory) {
+    if (slug !== articleSlug || category !== canonicalCategory) {
         permanentRedirect({
             href: getLocalizedBlogHref(post, locale),
             locale: locale
         });
     }
 
-    const allPosts = await getBlogPosts(locale);
+    const [allPosts, products] = await Promise.all([
+        getBlogPosts(locale),
+        getBlogProducts(locale, post.id, articleSlug),
+    ]);
+    const titleProduct = products.find(({ position }) => position === "title");
+    const inlineProduct = products.find(({ position }) => position === "after_first_paragraph");
+    const endProduct = products.find(({ position }) => position === "end");
 
     const categories = Array.from(new Set(allPosts.map(p => p.category)));
     const relatedPosts = allPosts.filter(p => p.category === post.category && p.id !== post.id).slice(0, 3);
@@ -303,6 +312,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     const renderContent = () => {
         const elements: React.ReactNode[] = [];
         let h2Counter = 0;
+        let afterLastParagraph = 0;
 
         for (const [idx, block] of contentBlocks.entries()) {
             const heading = getBlogHeading(block);
@@ -449,8 +459,23 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <p key={idx} className="mb-6 text-base sm:text-lg leading-[1.85] text-stone-600 font-normal"
                     dangerouslySetInnerHTML={{ __html: renderInline(block) }} />
             );
+            if (inlineProduct && afterLastParagraph === 0) {
+                elements.push(
+                    <div key="blog-product-inline" className="mb-8">
+                        <BlogProductCard product={inlineProduct} />
+                    </div>
+                );
+            }
+            afterLastParagraph = elements.length;
         }
 
+        if (endProduct) {
+            elements.splice(afterLastParagraph || elements.length, 0,
+                <div key="blog-product-end" className="mb-8">
+                    <BlogProductCard product={endProduct} />
+                </div>
+            );
+        }
         return elements;
     };
 
@@ -542,42 +567,49 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                         </Link>
                     </div>
 
-                    <div className="max-w-3xl">
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.1] mb-6">
+                    <div className={titleProduct ? "lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-[max-content_1fr] lg:gap-x-16 lg:items-start" : "max-w-3xl"}>
+                        <h1 className="max-w-3xl text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.1] mb-6">
                             {post.title}
                         </h1>
-                        <p className="text-lg sm:text-xl text-stone-500 leading-relaxed font-normal mb-8">
-                            {post.excerpt}
-                        </p>
+                        {titleProduct && (
+                            <div className="mb-6 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mb-0">
+                                <BlogProductCard product={titleProduct} />
+                            </div>
+                        )}
+                        <div className="max-w-3xl lg:col-start-1">
+                            <p className="text-lg sm:text-xl text-stone-500 leading-relaxed font-normal mb-8">
+                                {post.excerpt}
+                            </p>
 
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4 border-y border-stone-100">
-                            <div className="flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-full bg-[#3D5A3D]/10 flex items-center justify-center">
-                                    <User className="w-3.5 h-3.5 text-[#3D5A3D]" />
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4 border-y border-stone-100">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-7 h-7 rounded-full bg-[#3D5A3D]/10 flex items-center justify-center">
+                                        <User className="w-3.5 h-3.5 text-[#3D5A3D]" />
+                                    </div>
+                                    <span className="text-sm font-semibold text-zinc-900">{post.author}</span>
                                 </div>
-                                <span className="text-sm font-semibold text-zinc-900">{post.author}</span>
+                                <div className="flex items-center gap-1.5 text-sm text-stone-500">
+                                    <CalendarDays className="w-3.5 h-3.5 text-stone-400" />
+                                    <span>
+                                        {new Date(post.date).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "long", year: "numeric" })}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-sm text-stone-400">
+                                    <RefreshCcw className="w-3.5 h-3.5" />
+                                    <span>{ui.updated} {new Date(post.updateDate).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "short", year: "numeric" })}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-sm font-semibold text-[#3D5A3D] bg-[#3D5A3D]/8 px-3 py-1 rounded-full">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    {post.readingTime} {ui.readingTime}
+                                </div>
+                                <Link
+                                    href={getBlogCategoryHref(post.category)}
+                                    className="flex items-center gap-1.5 text-sm font-semibold text-stone-600 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-full transition-colors"
+                                >
+                                    <Tag className="w-3.5 h-3.5 text-stone-400" />
+                                    {post.category}
+                                </Link>
                             </div>
-                            <div className="flex items-center gap-1.5 text-sm text-stone-500">
-                                <CalendarDays className="w-3.5 h-3.5 text-stone-400" />
-                                <span>
-                                    {new Date(post.date).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "long", year: "numeric" })}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-sm text-stone-400">
-                                <RefreshCcw className="w-3.5 h-3.5" />
-                                <span>{ui.updated} {new Date(post.updateDate).toLocaleDateString(locale === "us" ? "en-US" : locale, { day: "numeric", month: "short", year: "numeric" })}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 text-sm font-semibold text-[#3D5A3D] bg-[#3D5A3D]/8 px-3 py-1 rounded-full">
-                                <Clock className="w-3.5 h-3.5" />
-                                {post.readingTime} {ui.readingTime}
-                            </div>
-                            <Link
-                                href={getBlogCategoryHref(post.category)}
-                                className="flex items-center gap-1.5 text-sm font-semibold text-stone-600 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-full transition-colors"
-                            >
-                                <Tag className="w-3.5 h-3.5 text-stone-400" />
-                                {post.category}
-                            </Link>
                         </div>
                     </div>
                 </div>

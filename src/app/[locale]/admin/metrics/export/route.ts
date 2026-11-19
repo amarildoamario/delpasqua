@@ -655,6 +655,11 @@ export async function GET(req: Request) {
     },
 
     definitions: {
+      "insights.blogProductCards.introductionDate": "Data di introduzione delle card prodotto nel progetto. Giorno di calendario in Europe/Rome.",
+      "insights.blogProductCards.periods": "Il confronto include tutti gli articoli del blog in tutte le lingue. Ogni sessione è assegnata alla prima visita a un articolo nel periodo selezionato. Il tasso è la quota con una successiva vista prodotto nella stessa sessione e nel periodo selezionato. Il giorno della modifica è riportato separatamente.",
+      "insights.blogProductCards.clicksByPosition": "Clic diretti sulle card di tutti gli articoli nel periodo selezionato, raggruppati per posizione. Una sessione può generare più clic.",
+      "insights.blogProductCards.totalClicks": "Somma dei clic diretti sulle card di tutti gli articoli nel periodo selezionato.",
+      "insights.blogProductCards.articles": "Tutti gli articoli del blog con i clic diretti nel periodo selezionato, sommati tra le edizioni linguistiche.",
       "meta.quality.includeInternal": "Se true include eventi interni/dev; se false filtra env=prod e isInternal=false.",
       "kpis.uniqueVisitors": "Numero di visitorId distinti che hanno generato almeno un page_view nel periodo (solo pagine sito, esclusi checkout/pagamenti/tecniche; con quality filter).",
       "kpis.uniqueSessions": "Numero di sessionId distinti che hanno generato almeno un page_view nel periodo (cookie s_id con scadenza ~30 min sliding; con quality filter).",

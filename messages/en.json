@@ -345,6 +345,7 @@
         }
     },
     "ShopPage": {
+        "viewProduct": "View product",
         "header": {
             "label": "Shop",
             "title_part1": "All ",

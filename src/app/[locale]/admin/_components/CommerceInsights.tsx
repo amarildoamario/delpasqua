@@ -1,5 +1,6 @@
 import InfoTooltip from "./InfoTooltip";
 import ActivityHistogram from "./ActivityHistogram";
+import BlogCardMetrics from "./BlogCardMetrics";
 import Kpi from "./Kpi";
 import Link from "next/link";
 import type { readCommerceInsights } from "@/lib/server/commerceInsights";
@@ -99,6 +100,7 @@ export default function CommerceInsights({ insights, customers, activity, activi
           </details>
         </section>
       ) : null}
+      <BlogCardMetrics report={insights.blogProductCards} />
       <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">
         <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel carrelli<InfoTooltip label="Funnel carrelli" description="Segue i carrelli che hanno ricevuto almeno un'aggiunta nel periodo selezionato. Un carrello può arrivare al checkout senza aprire la pagina del carrello." /></h3>
         <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-5">

@@ -4,9 +4,12 @@ export const ANALYTICS_TYPES = [
   "remove_from_cart", "update_cart_quantity", "clear_cart", "view_cart",
   "checkout_click", "begin_checkout", "checkout_canceled", "purchase",
   "contact_click",
+  "blog_product_click",
 ] as const;
 
 export type AnalyticsType = typeof ANALYTICS_TYPES[number];
+export const BLOG_PRODUCT_POSITIONS = ["title", "after_first_paragraph", "end"] as const;
+export type BlogProductPosition = typeof BLOG_PRODUCT_POSITIONS[number];
 export type AnalyticsEvent = {
   eventId: string;
   occurredAt: string;

@@ -4,6 +4,7 @@ import { getOrCreateCartId } from "./cartId";
 import { ANALYTICS_TYPES, analyticsPath, isAdminPath, type AnalyticsEvent } from "./events";
 import { AnalyticsQueue, ANALYTICS_BATCH_SIZE, ANALYTICS_FLUSH_MS } from "./queue";
 import { browserAnalyticsExcluded } from "./exclusion";
+import { blogProductClickData } from "./blogProductClick";
 
 type Track = Partial<Omit<AnalyticsEvent, "type" | "visitorId" | "sessionId">> & { type: string };
 const STORAGE_KEY = "analytics_queue_v2";
@@ -122,7 +123,8 @@ export function track(event: Track) {
     eventId: event.eventId ?? crypto.randomUUID(), occurredAt: event.occurredAt ?? new Date().toISOString(),
     path: analyticsPath(event.path ?? location.pathname),
     referrer,
-    cartId, env, isInternal: env !== "prod", data: numbers,
+    cartId, env, isInternal: env !== "prod",
+    data: event.type === "blog_product_click" ? blogProductClickData(data) : numbers,
   };
   const pending = getQueue();
   pending.add(item);

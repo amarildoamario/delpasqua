@@ -1,5 +1,7 @@
 "use client";
 
+import { formatEUR } from "@/lib/money";
+
 import { isUniformProductImage, shouldContainProductImage } from "@/lib/productImageFit";
 
 import Image from "next/image";
@@ -70,13 +72,6 @@ type Product = {
   specs?: Specs;
   purchaseInfo?: PurchaseInfo;
 };
-
-function formatEUR(cents: number, locale: string) {
-  return new Intl.NumberFormat(locale === "it" ? "it-IT" : locale, {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
-}
 
 type FormatNavItem = {
   productId: string;

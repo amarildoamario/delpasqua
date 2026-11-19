@@ -3,6 +3,7 @@ import { acquisitionSource, ACQUISITION_LABELS, isSitePage } from "@/lib/analyti
 import { metricsPeriod } from "./salesMetrics";
 import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
 import { computeFunnelsAndSeries, toRomeDateISO } from "./metricsAnalyticsV6";
+import { summarizeBlogCards } from "./blogCardMetrics";
 
 type InsightEvent = {
   type: string; createdAt: Date; visitorId: string; sessionId: string;
@@ -223,6 +224,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     weekdays: days.map((b, i) => serialize(b, dayLabels[i])),
     weekdayExposure: v6.weekdayExposure,
     sessionFunnel: v6.sessionFunnel,
+    blogProductCards: summarizeBlogCards(events, start, endExclusive),
     cartFunnel: v6.cartFunnel,
     checkoutCohort: v6.checkoutCohort,
     productFunnel: v6.productFunnel,
@@ -241,7 +243,7 @@ export async function readCommerceInsights(db: Pick<PrismaClient, "order" | "ana
       select: { id: true, quoteId: true, userAgent: true, email: true, totalCents: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
         events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED", "ORDER_CANCELED", "STRIPE_SESSION_FAILED", ...CHECKOUT_AUDIENCE_TYPES] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
           select: { metaJson: true, type: true, createdAt: true, toStatus: true } } } }),
-    db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase", "product_view", "select_variant", "view_cart", "checkout_click", "begin_checkout", "contact_click"] } },
+    db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase", "product_view", "select_variant", "view_cart", "checkout_click", "begin_checkout", "contact_click", "blog_product_click"] } },
       select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, productKey: true, variantKey: true, referrer: true, userAgent: true, data: true } }),
   ]);
   const visitorIds = new Set<string>();

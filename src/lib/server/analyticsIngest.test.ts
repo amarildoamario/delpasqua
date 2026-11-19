@@ -24,6 +24,28 @@ test("contact clicks pass the public schema and ingestion without leaking contac
   assert.equal((row.data as Record<string, unknown>).email, undefined);
 });
 
+test("blog product clicks retain the placement and variant through ingestion", () => {
+  const placement = {
+    article: "olivenoel-fuer-pizza-roh-oder-nach-dem-backen",
+    locale: "de",
+    position: "after_first_paragraph",
+  };
+  const payload = AnalyticsPayloadSchema.parse([event({
+    type: "blog_product_click",
+    productKey: "peperoncino",
+    variantKey: "500ml",
+    data: { ...placement, extra: "discard this" },
+  })]);
+  assert(Array.isArray(payload));
+  const [row] = prepareAnalyticsEvents(payload, request(), now);
+  assert.equal(row.type, "blog_product_click");
+  assert.equal(row.productKey, "peperoncino");
+  assert.equal(row.variantKey, "500ml");
+  const { meta, ...data } = row.data as Record<string, unknown>;
+  assert(meta);
+  assert.deepEqual(data, placement);
+});
+
 test("batches use one SQL call with parameterized data, with no read-before-write", async () => {
   const calls: unknown[][] = [];
   const db = { $executeRaw: async (sql: TemplateStringsArray, ...values: unknown[]) => {

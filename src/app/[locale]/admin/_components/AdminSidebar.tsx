@@ -214,6 +214,7 @@ export default function AdminSidebar({
       title: "Metriche & Export",
       items: [
         { href: "/admin/metrics", label: "Metriche", icon: BarChart3 },
+        { href: "/admin/metrics/#card-prodotti-blog", label: "Clic prodotti nel blog", icon: BarChart3 },
         { href: "/admin/exports", label: "Export Dati", icon: Upload },
       ],
     },

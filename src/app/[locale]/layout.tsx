@@ -48,7 +48,7 @@ export default async function RootLayout({
 
   setRequestLocale(locale);
 
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
   const layoutMessages = {
     Common: messages.Common,
     Cart: messages.Cart,
@@ -63,7 +63,7 @@ export default async function RootLayout({
       </head>
 
       <body className={`${uiSans.className} bg-white text-zinc-900 antialiased font-sans`}>
-        <NextIntlClientProvider messages={layoutMessages}>
+        <NextIntlClientProvider locale={locale} messages={layoutMessages}>
           <Providers initialCatalog={initialCatalog}>
             <AnalyticsTracker />
             <Navbar initialCatalog={initialCatalog.map((product) => ({ id: product.id, slug: product.slug }))} />

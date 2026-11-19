@@ -351,6 +351,7 @@
         }
     },
     "ShopPage": {
+        "viewProduct": "Se produkt",
         "header": {
             "label": "Shop",
             "title_part1": "Alle ",

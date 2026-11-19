@@ -1,3 +1,6 @@
-export function formatEUR(cents: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
+export function formatEUR(cents: number, locale = "it") {
+  return new Intl.NumberFormat(locale === "us" ? "en-US" : locale === "it" ? "it-IT" : locale, {
+    style: "currency",
+    currency: "EUR",
+  }).format(cents / 100);
 }

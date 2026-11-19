@@ -5,6 +5,7 @@ import type { AnalyticsEventSchema } from "@/lib/server/schemas";
 import { normalizeTrafficCountry } from "@/lib/server/trafficGeography";
 import { acquisitionSource } from "@/lib/analytics/acquisition";
 import { hasAnalyticsExclusion } from "@/lib/analytics/exclusion";
+import { blogProductClickData } from "@/lib/analytics/blogProductClick";
 
 type IncomingEvent = z.infer<typeof AnalyticsEventSchema>;
 type Writer = { $executeRaw: (sql: TemplateStringsArray, ...values: unknown[]) => Promise<number> };
@@ -52,6 +53,7 @@ export function prepareAnalyticsEvents(events: IncomingEvent[], req: Request, no
     for (const key of ["qty", "unitPriceCents", "totalCents", "itemsCount", "fromQty", "toQty", "delta", "resultsCount"]) {
       if (typeof source[key] === "number" && Number.isFinite(source[key])) data[key] = source[key];
     }
+    if (event.type === "blog_product_click") Object.assign(data, blogProductClickData(source));
     data.meta = { source: "web", trafficType: "real", env, isInternal: false, device, countryCode, acquisition: acquisitionSource(ua, event.referrer) };
     const id = event.type === "purchase" ? `ana-purchase-${event.orderId ?? "missing"}` :
       event.type === "checkout_canceled" && event.orderId ? `ana-cancel-${event.orderId}` :

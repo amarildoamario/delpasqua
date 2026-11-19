@@ -351,6 +351,7 @@
         }
     },
     "ShopPage": {
+        "viewProduct": "Product bekijken",
         "header": {
             "label": "Winkel",
             "title_part1": "Alle ",

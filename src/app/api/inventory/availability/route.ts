@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/server/prisma";
+import { getAvailabilityBySkus } from "@/lib/server/inventoryRead";
 import { z } from "zod";
 
 const QuerySchema = z.object({
@@ -27,20 +27,7 @@ export async function GET(req: Request) {
     .filter(Boolean)
     .slice(0, 200);
 
-  // strict: se SKU non esiste -> available 0
-  const availability: Record<string, number> = {};
-  for (const sku of skus) availability[sku] = 0;
-
-  const rows = await prisma.inventoryItem.findMany({
-    where: { sku: { in: skus } },
-    select: { sku: true, stock: true, reserved: true },
-  });
-
-  for (const r of rows) {
-    const stock = Number(r.stock ?? 0);
-    const reserved = Number(r.reserved ?? 0);
-    availability[r.sku] = Math.max(0, stock - reserved);
-  }
+  const availability = await getAvailabilityBySkus(skus);
 
   return NextResponse.json({ availability }, {
     headers: {
