@@ -1,6 +1,8 @@
 // src/app/shop/_components/ProductPurchaseBox.client.tsx
 "use client";
 
+import { convertStorefrontCents, formatMoney, formatStorefrontPrice, storefrontCurrency } from "@/lib/money";
+import { SHIPPING_RULES } from "@/lib/shippingConfig";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { useCart } from "@/context/CartContext";
@@ -34,13 +36,6 @@ type PurchaseInfo = {
   spedizione?: string;
   resi?: string;
 };
-
-function formatEUR(cents: number, locale: string) {
-  return new Intl.NumberFormat(locale === "it" ? "it-IT" : locale, {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
-}
 
 function pickText(custom: unknown, fallback: string) {
   const s = typeof custom === "string" ? custom.trim() : "";
@@ -100,8 +95,8 @@ const labels = {
       availableQty != null
         ? `Only ${availableQty} items available. Added ${addedQty}.`
         : `Added ${addedQty}. Quantity reduced because of limited availability.`,
-    freeShipping: "Free shipping",
-    freeShippingSub: "Over EUR 69",
+    freeShipping: "Free shipping within Italy",
+    freeShippingSub: "Over {threshold}",
     quality: "Guaranteed quality",
     qualitySub: "100% Italian",
     productDetails: "Product details",
@@ -114,7 +109,7 @@ const labels = {
     defaults: {
       caratteristiche: "Extra virgin olive oil obtained directly from olives and solely by mechanical processes. Cold extracted to preserve its sensory qualities.",
       imballaggio: "Dark glass bottle or protective tin packaging designed to preserve the oil from light and oxidation.",
-      spedizione: "Delivery in 2-3 working days with tracking. Free shipping for orders over EUR 69.",
+      spedizione: "Delivery within Italy in 2-3 working days with tracking. Free shipping on orders over {threshold}.",
       resi: "Returns available within 14 days according to the sales conditions.",
     },
   },
@@ -276,7 +271,8 @@ export default function ProductPurchaseBox({
   purchaseInfo?: PurchaseInfo;
 }) {
   const locale = useLocale();
-  const text = labels[(locale as LabelLocale)] ?? labels.it;
+  const text = labels[(locale === "us" ? "en" : locale) as LabelLocale] ?? labels.it;
+  const italyShippingThreshold = formatStorefrontPrice(SHIPPING_RULES.IT.freeShippingThresholdCents, locale);
   const isControlled = selectedVariantId != null && typeof onVariantChange === "function";
   const [localVariantId, setLocalVariantId] = useState<string | undefined>(selectedVariantId ?? variants[0]?.id);
 
@@ -437,12 +433,13 @@ export default function ProductPurchaseBox({
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const totalPrice = priceCents * qty;
+  const totalPrice = convertStorefrontCents(priceCents, locale) * qty;
 
   const detailsTexts = {
     caratteristiche: pickText(locale === "it" ? purchaseInfo?.caratteristiche : undefined, text.defaults.caratteristiche),
     imballaggio: pickText(locale === "it" ? purchaseInfo?.imballaggio : undefined, text.defaults.imballaggio),
-    spedizione: pickText(locale === "it" ? purchaseInfo?.spedizione : undefined, text.defaults.spedizione),
+    spedizione: pickText(locale === "it" ? purchaseInfo?.spedizione : undefined, text.defaults.spedizione)
+      .replace("{threshold}", italyShippingThreshold),
     resi: pickText(locale === "it" ? purchaseInfo?.resi : undefined, text.defaults.resi),
   };
 
@@ -539,10 +536,10 @@ export default function ProductPurchaseBox({
           <div>
             <span className="text-[10px] font-medium tracking-[0.2em] text-neutral-400 uppercase">{productId}</span>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="font-sans text-3xl font-bold text-neutral-900">{formatEUR(priceCents, locale)}</span>
+              <span className="font-sans text-3xl font-bold text-neutral-900">{formatStorefrontPrice(priceCents, locale)}</span>
               {variants.length > 1 && (
                 <span className="text-sm text-neutral-400 line-through">
-                  {formatEUR(Math.max(...variants.map((v) => v.priceCents)), locale)}
+                  {formatStorefrontPrice(Math.max(...variants.map((v) => v.priceCents)), locale)}
                 </span>
               )}
             </div>
@@ -577,7 +574,7 @@ export default function ProductPurchaseBox({
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-neutral-900">{formatEUR(priceCents, locale)}</span>
+                  <span className="text-sm font-semibold text-neutral-900">{formatStorefrontPrice(priceCents, locale)}</span>
                   <ChevronDown
                     className={`h-4 w-4 text-neutral-400 transition-transform duration-300 ${showVariantDropdown ? "rotate-180" : ""
                       }`}
@@ -609,7 +606,7 @@ export default function ProductPurchaseBox({
                         <span className="text-[11px] text-neutral-400">{out ? text.unavailable : avail != null ? text.inStock(avail) : "-"}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-neutral-900">{formatEUR(variant.priceCents, locale)}</span>
+                        <span className="text-sm font-medium text-neutral-900">{formatStorefrontPrice(variant.priceCents, locale)}</span>
                         {isSelected && (
                           <div className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900">
                             <Check className="h-3 w-3 text-white" />
@@ -665,7 +662,7 @@ export default function ProductPurchaseBox({
               }`}
           >
             <ShoppingCart className="h-4 w-4" />
-            {isOut ? text.soldOut : `${text.add} - ${formatEUR(totalPrice, locale)}`}
+            {isOut ? text.soldOut : `${text.add} - ${formatMoney(totalPrice, storefrontCurrency(locale), locale)}`}
           </span>
 
           {isAdding && (
@@ -682,6 +679,7 @@ export default function ProductPurchaseBox({
           )}
         </button>
 
+
         {added && (
           <div style={{ borderRadius: '5px' }} className="mt-3 flex items-center justify-center gap-2 bg-emerald-50 py-3 text-sm text-emerald-700 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <Check className="h-4 w-4" />
@@ -695,7 +693,7 @@ export default function ProductPurchaseBox({
             <Truck className="h-4 w-4 shrink-0 text-neutral-400 mt-0.5" />
             <div>
               <p className="text-[11px] font-medium text-neutral-900">{text.freeShipping}</p>
-              <p className="text-[10px] text-neutral-500">{text.freeShippingSub}</p>
+              <p className="text-[10px] text-neutral-500">{text.freeShippingSub.replace("{threshold}", italyShippingThreshold)}</p>
             </div>
           </div>
           <div style={{ borderRadius: '5px' }} className="flex items-start gap-2 bg-neutral-50 p-3">

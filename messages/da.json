@@ -1088,6 +1088,7 @@
             "invalid_cart": "Ugyldig indkøbskurv.",
             "order_creation": "Fejl under oprettelse af ordre.",
             "invalid_server_response": "Ugyldigt serversvar.",
+            "price_changed": "Det samlede beløb er ændret. Kontrollér det nye beløb, og prøv igen.",
             "checkout_unavailable": "Checkout er ikke tilgængelig.",
             "missing_checkout_url": "Checkout-URL mangler.",
             "checkout_generic": "Checkout-fejl."

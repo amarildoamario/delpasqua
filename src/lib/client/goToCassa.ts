@@ -3,6 +3,7 @@
 import { track } from "@/lib/analytics/track";
 import { getOrCreateCartId } from "@/lib/analytics/cartId";
 import { checkoutLocaleFromPathname } from "@/lib/checkoutLocale";
+import type { CheckoutPayment } from "@/lib/server/checkoutPayment";
 
 export type CartLine = { productId: string; variantId: string; qty: number };
 
@@ -38,7 +39,11 @@ function safeUuid(): string {
 
 export async function goToCassa(
   lines: CartLine[],
-  options?: { promotionCode?: string; countryCode?: string }
+  options?: {
+    promotionCode?: string;
+    countryCode?: string;
+    expectedPayment?: Pick<CheckoutPayment, "currency" | "totalCents">;
+  }
 ): Promise<GoToCassaResult> {
   if (!lines?.length) return { ok: false, message: "Il carrello è vuoto." };
 
@@ -53,6 +58,7 @@ export async function goToCassa(
     const locale = checkoutLocaleFromPathname(pathname);
 
     const body: Record<string, unknown> = { items: lines, cartId, locale };
+    if (options?.expectedPayment) body.expectedPayment = options.expectedPayment;
     if (options?.promotionCode) {
       body.promotionCode = options.promotionCode.trim().toUpperCase();
     }
@@ -73,7 +79,7 @@ export async function goToCassa(
       let serverMsg = "";
       try {
         const j = await res.json();
-        serverMsg = typeof j?.message === "string" ? j.message : "";
+        serverMsg = typeof j?.message === "string" ? j.message : j?.error === "CHECKOUT_PRICE_CHANGED" ? j.error : "";
       } catch {
         try {
           serverMsg = await res.text();

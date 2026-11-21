@@ -1,5 +1,6 @@
 "use client";
 
+import { formatStorefrontPrice } from "@/lib/money";
 import { Link } from "@/i18n/routing";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
@@ -77,10 +78,7 @@ export default function ShopHighlights({ initialProducts }: ShopHighlightsProps)
       const cardVariant = homeVariant ?? p.variants?.find((variant) => variant.priceCents === minPriceCents);
       const productTitle = locale === "it" ? p.title : (tp(`${p.id}.title`) || p.title);
       const hasMany = (p.variants?.length ?? 0) > 1;
-      const fmt = new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
-        style: "currency",
-        currency: "EUR",
-      }).format(minPriceCents / 100);
+      const fmt = formatStorefrontPrice(minPriceCents, locale);
 
       // Build variant images list with deduplication
       const seenSrcs = new Set<string>();

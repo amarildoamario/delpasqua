@@ -1,5 +1,6 @@
 "use client"
 
+import { formatStorefrontPrice } from "@/lib/money";
 import ProductCardImage from "@/components/ProductCardImage"
 import { Heart, ShoppingCart } from "lucide-react"
 import { Link } from "@/i18n/routing"
@@ -422,7 +423,7 @@ export default function ProductCard({
               </span>
               <div className="mt-1 flex items-baseline gap-1">
                 <span className="font-sans text-[1.15rem] font-bold tracking-tight text-[#1f1a17]">
-                  {product.priceLabel || "€0,00"}
+                  {product.priceLabel || formatStorefrontPrice(0, locale)}
                 </span>
                 <span className="text-[9px] font-medium text-[#8a7c6e]">
                   {text.vat}

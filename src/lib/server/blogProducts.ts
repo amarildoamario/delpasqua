@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { getBlogProductSelections } from "@/lib/blog-product-placements";
 import { makeInventorySku } from "@/lib/inventorySku";
-import { formatEUR } from "@/lib/money";
+import { formatStorefrontPrice } from "@/lib/money";
 import { getLocalizedProductHref, translateVariantLabel } from "@/lib/productSlugs";
 import { readPublicCatalogWithMerch } from "./catalog";
 import { getAvailabilityBySkus } from "./inventoryRead";
@@ -59,7 +59,7 @@ export async function getBlogProducts(locale: string, articleId: string, article
 
     return [{
       ...selection, locale, article, title, label, image, viewProduct,
-      price: formatEUR(priceCents, locale),
+      price: formatStorefrontPrice(priceCents, locale),
       href: { ...getLocalizedProductHref(product, locale), query: { v: variantKey } },
     }];
   });

@@ -1,7 +1,7 @@
 import InfoTooltip from "./InfoTooltip";
 import ActivityHistogram from "./ActivityHistogram";
 import BlogCardMetrics from "./BlogCardMetrics";
-import Kpi from "./Kpi";
+import Kpi, { KPI_VALUE_CLASS } from "./Kpi";
 import Link from "next/link";
 import type { readCommerceInsights } from "@/lib/server/commerceInsights";
 import type { readCustomerMetrics } from "@/lib/server/customerMetrics";
@@ -12,8 +12,132 @@ type Insights = Awaited<ReturnType<typeof readCommerceInsights>>;
 type Customers = Awaited<ReturnType<typeof readCustomerMetrics>>;
 const number = (value: number | null, digits = 1) => value === null ? "—" : new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value);
 const percent = (value: number | null) => value === null ? "—" : `${number(value * 100, 2)}%`;
-function FunnelCard({ label, value, detail }: { label: string; value: number; detail?: string }) {
-  return <Kpi title={label} value={number(value, 0)} subtitle={detail} funnel />;
+const cartFunnelSteps = {
+  additions: {
+    label: "Con aggiunte",
+    description: "Carrelli distinti in cui è stato aggiunto almeno un prodotto nel periodo selezionato.",
+  },
+  viewed: {
+    label: "Carrelli visualizzati",
+    description: "Tra i carrelli con aggiunte, quanti sono stati visualizzati sul sito nel periodo.",
+  },
+  notViewed: {
+    label: "Carrelli non visualizzati",
+    description: "Tra i carrelli con aggiunte, quanti risultano senza una visualizzazione registrata nel periodo.",
+  },
+  checkout: {
+    label: "Clic al checkout",
+    description: "Carrelli distinti con almeno un clic per andare in cassa dopo un’aggiunta. La percentuale è calcolata sui carrelli con aggiunte.",
+  },
+  checkoutWithView: {
+    label: "Clic con vista del carrello",
+    description: "Carrelli che hanno registrato sia una visualizzazione del carrello sia un clic per andare in cassa nel periodo.",
+  },
+  checkoutWithoutView: {
+    label: "Clic senza vista del carrello",
+    description: "Carrelli con un clic per andare in cassa e senza una visualizzazione del carrello registrata nel periodo.",
+  },
+  paid: {
+    label: "Carrelli con ordine pagato",
+    description: "Carrelli con aggiunte collegati ad almeno un ordine pagato nel periodo. La percentuale è calcolata sui carrelli con aggiunte.",
+  },
+};
+
+function FunnelCard({ label, value, detail, description }: { label: string; value: number; detail?: string; description?: string }) {
+  return <Kpi title={label} value={number(value, 0)} subtitle={detail} description={description} funnel />;
+}
+
+function CartDiagramBlock({ label, count, description }: {
+  label: string;
+  count: number;
+  description: string;
+}) {
+  return (
+    <div className={`cart-funnel-block relative grid min-h-20 min-w-0 content-center justify-items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-neutral-900 shadow-xs sm:min-h-[5.25rem] sm:px-4`}>
+      <strong className={`max-w-full break-all ${KPI_VALUE_CLASS}`}>{number(count, 0)}</strong>
+      <span className="text-[11px] leading-snug font-bold tracking-wide text-pretty text-neutral-600 uppercase">{label}</span>
+      <div className="absolute top-0.5 right-0.5">
+        <InfoTooltip label={label} description={description} />
+      </div>
+    </div>
+  );
+}
+
+function CartDiagramArrow({ warm = false, className = "" }: { warm?: boolean; className?: string }) {
+  return (
+    <div aria-hidden="true" className={`cart-funnel-arrow ${className} ${warm ? "text-[#906b34]" : "text-[#758a83]"}`} />
+  );
+}
+
+function CartFunnelDiagram({ funnel }: { funnel: Insights["cartFunnel"] }) {
+  const paidWithoutClick = funnel.cartsWithPaidOrder - funnel.cartsWithCheckoutClickAndPaidOrder;
+  const paths = [
+    {
+      view: cartFunnelSteps.viewed,
+      count: funnel.cartsViewed,
+      checkout: cartFunnelSteps.checkoutWithView,
+      clicks: funnel.cartsWithCheckoutClick - funnel.cartsBypassingCartView,
+      warm: false,
+    },
+    {
+      view: cartFunnelSteps.notViewed,
+      count: funnel.cartsWithAdditions - funnel.cartsViewed,
+      checkout: cartFunnelSteps.checkoutWithoutView,
+      clicks: funnel.cartsBypassingCartView,
+      warm: true,
+    },
+  ] as const;
+
+  return (
+    <figure className="mt-4 rounded-xl border border-neutral-200 bg-white px-2.5 pt-5 pb-6 sm:px-6 sm:py-6">
+      <figcaption className={`cart-funnel-caption text-center`}>
+        <p className="inline-flex items-center gap-1 text-sm font-bold text-neutral-900">
+          Percorso dei carrelli
+          <InfoTooltip label="Percorso dei carrelli" description="Il diagramma parte dai carrelli con aggiunte e distingue quelli visualizzati da quelli senza una vista registrata. I due rami si riuniscono nei carrelli con un clic in cassa." />
+        </p>
+        {funnel.cartsWithAdditions === 0 && (
+          <p className="mt-1 text-xs text-neutral-600">Nessun carrello con aggiunte nel periodo selezionato.</p>
+        )}
+      </figcaption>
+      <div className={`cart-funnel-layout mx-auto mt-4 max-w-[32rem]`}>
+        <div className={`cart-funnel-central mx-auto w-4/5 max-w-60`}>
+          <CartDiagramBlock {...cartFunnelSteps.additions} count={funnel.cartsWithAdditions} />
+        </div>
+        <div aria-hidden="true" className="cart-funnel-split">
+          <CartDiagramArrow className={`cart-funnel-arm cart-funnel-upper`} />
+          <CartDiagramArrow className={`cart-funnel-arm cart-funnel-lower`} warm />
+        </div>
+        <div className={`cart-funnel-paths grid grid-cols-2`}>
+          {paths.map((path) => (
+            <div key={path.view.label} className={`cart-funnel-path row-span-5 mx-1.5 grid grid-rows-subgrid sm:mx-2.5`}>
+              <CartDiagramArrow className="cart-funnel-vertical-only" warm={path.warm} />
+              <CartDiagramBlock {...path.view} count={path.count} />
+              <CartDiagramArrow warm={path.warm} />
+              <CartDiagramBlock {...path.checkout} count={path.clicks} />
+              <div aria-hidden="true" className={`cart-funnel-vertical-only mx-auto h-3 w-0.5 ${path.warm ? "bg-[#906b34]" : "bg-[#758a83]"}`} />
+            </div>
+          ))}
+        </div>
+        <div aria-hidden="true" className="cart-funnel-merge">
+          <span className={`cart-funnel-tail cart-funnel-upper bg-[#758a83]`} />
+          <span className={`cart-funnel-tail cart-funnel-lower bg-[#906b34]`} />
+          <CartDiagramArrow className="cart-funnel-exit" />
+        </div>
+        <div className={`cart-funnel-central mx-auto w-4/5 max-w-60`}>
+          <CartDiagramBlock {...cartFunnelSteps.checkout} count={funnel.cartsWithCheckoutClick} />
+        </div>
+        <CartDiagramArrow className={paidWithoutClick > 0 ? "invisible" : undefined} />
+        <div className={`cart-funnel-central mx-auto w-4/5 max-w-60`}>
+          <CartDiagramBlock {...cartFunnelSteps.paid} count={funnel.cartsWithPaidOrder} />
+        </div>
+        {paidWithoutClick > 0 && (
+          <p className="col-span-full mt-2 text-center text-xs text-neutral-600">
+            Tra i carrelli con ordine pagato, <strong>{number(funnel.cartsWithCheckoutClickAndPaidOrder, 0)}</strong> con clic al checkout tracciato e <strong>{number(paidWithoutClick, 0)}</strong> senza.
+          </p>
+        )}
+      </div>
+    </figure>
+  );
 }
 
 export default function CommerceInsights({ insights, customers, activity, activityLinks = [] }: {
@@ -46,7 +170,7 @@ export default function CommerceInsights({ insights, customers, activity, activi
         <h2 className="flex items-center gap-1 text-xs sm:text-sm font-bold leading-tight">Checkout annullati<InfoTooltip label="Checkout annullati o scaduti" description="Considera i checkout commerciali Stripe creati nel periodo. Conta una volta i checkout non pagati con ritorno di annullamento o con annullamento, scadenza o fallimento registrati nel database entro la fine del periodo. Il rapporto è checkout chiusi senza pagamento / (checkout chiusi senza pagamento + pagati della stessa coorte). Chi poi paga viene contato tra i pagati. I checkout ancora in corso restano separati. Gli ordini di prova sono esclusi." /></h2>
         <p className="mt-1.5 text-xl sm:text-2xl font-extrabold tabular-nums">{stripe.exitRate === null ? "—" : `${number(stripe.exitRate * 100)}%`}</p>
         <p className="mt-1 text-[11px] text-neutral-600 leading-tight">{stripe.canceledUnpaid} chiusi / ({stripe.canceledUnpaid} + {stripe.paid} pagati)</p>
-        <p className="mt-1 text-[10px] text-neutral-500 leading-tight">{stripe.started} avviati · {stripe.recovered} rec. · {stripe.pendingOrUnobserved} in corso</p>
+        <p className="mt-1 text-[10px] text-neutral-500 leading-tight">{stripe.started} checkout Stripe creati · {stripe.recovered} rec. · {stripe.pendingOrUnobserved} in corso</p>
         {checkoutCohort ? (
           <p className="mt-1 text-[10px] text-neutral-500 leading-tight">
             Stati non pagati: {checkoutCohort.expiredUnpaid} scad. · {checkoutCohort.canceledUnpaid} annull. · {checkoutCohort.failedUnpaid} fall. · {checkoutCohort.canceledReturnOpen} ritorno cancel
@@ -66,7 +190,7 @@ export default function CommerceInsights({ insights, customers, activity, activi
         <section className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="flex items-center gap-1 text-xs sm:text-sm font-bold">
-              Funnel per Sessione (Coorte)<InfoTooltip label="Funnel per Sessione (Coorte)" description="Misura sulla stessa popolazione di sessioni iniziate nel periodo quante visitano il blog, lo shop, aprono una scheda prodotto, aggiungono al carrello dopo la vista prodotto, avviano il checkout e completano un acquisto collegato. Ogni sessione conta al massimo una volta per step." />
+              Funnel per Sessione (Coorte)<InfoTooltip label="Funnel per Sessione (Coorte)" description="Conta le sessioni con almeno una pagina del sito vista nel periodo. Ogni sessione conta al massimo una volta per scheda, anche se genera più tentativi di checkout." />
             </h3>
             <span className="text-[11px] text-neutral-500">
               Sessioni coorte: <b>{number(sessionFunnel.sessions, 0)}</b> · Tasso acquisto sessione: <b>{sessionFunnel.purchaseRate === null ? "—" : `${number(sessionFunnel.purchaseRate * 100, 2)}%`}</b>
@@ -77,7 +201,7 @@ export default function CommerceInsights({ insights, customers, activity, activi
             <FunnelCard label="Sessioni Shop" value={sessionFunnel.shopSessions} detail="Lista o scheda" />
             <FunnelCard label="Scheda Prodotto" value={sessionFunnel.productDetailSessions} detail={`Reach: ${sessionFunnel.productReachRate === null ? "—" : `${number(sessionFunnel.productReachRate * 100)}%`}`} />
             <FunnelCard label="Sessioni Add-to-Cart" value={sessionFunnel.addToCartSessions} detail={`Da scheda: ${sessionFunnel.productToCartRate === null ? "—" : `${number(sessionFunnel.productToCartRate * 100)}%`}`} />
-            <FunnelCard label="Checkout Avviato" value={sessionFunnel.checkoutStartedSessions} detail={`Clic cassa: ${number(sessionFunnel.checkoutClickedSessions, 0)}`} />
+            <FunnelCard label="Visite con tentativo in cassa" value={sessionFunnel.checkoutStartedSessions} detail={`${number(sessionFunnel.checkoutClickedSessions, 0)} visite con clic in cassa`} />
             <FunnelCard label="Sessioni Acquisto" value={sessionFunnel.purchasingSessions} detail="Collegate a ordine" />
           </div>
           <details className="mt-3 border-t border-neutral-200 pt-2 text-xs">
@@ -101,20 +225,25 @@ export default function CommerceInsights({ insights, customers, activity, activi
         </section>
       ) : null}
       <BlogCardMetrics report={insights.blogProductCards} />
-      <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">
-        <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel carrelli<InfoTooltip label="Funnel carrelli" description="Segue i carrelli che hanno ricevuto almeno un'aggiunta nel periodo selezionato. Un carrello può arrivare al checkout senza aprire la pagina del carrello." /></h3>
+      <section id="funnel-carrelli" aria-labelledby="funnel-carrelli-title" className={`cart-funnel-container min-w-0 scroll-mt-6 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4`}>
+        <h3 id="funnel-carrelli-title" className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel carrelli<InfoTooltip label="Funnel carrelli" description="Segue i carrelli che hanno ricevuto almeno un'aggiunta nel periodo selezionato. Il clic indica che qualcuno ha premuto il pulsante per andare in cassa. È possibile farlo anche senza visualizzare il carrello." /></h3>
         <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-5">
-          <FunnelCard label="Con aggiunte" value={cartFunnel.cartsWithAdditions} />
-          <FunnelCard label="Carrelli visualizzati" value={cartFunnel.cartsViewed} />
-          <FunnelCard label="Clic al checkout" value={cartFunnel.cartsWithCheckoutClick} detail={percent(cartFunnel.checkoutStartRate)} />
-          <FunnelCard label="Checkout senza vista del carrello" value={cartFunnel.cartsBypassingCartView} />
-          <FunnelCard label="Carrelli con ordine pagato" value={cartFunnel.cartsWithPaidOrder} detail={percent(cartFunnel.purchaseRate)} />
+          <FunnelCard {...cartFunnelSteps.additions} value={cartFunnel.cartsWithAdditions} />
+          <FunnelCard {...cartFunnelSteps.viewed} value={cartFunnel.cartsViewed} />
+          <FunnelCard {...cartFunnelSteps.checkout} value={cartFunnel.cartsWithCheckoutClick} detail={percent(cartFunnel.checkoutStartRate)} />
+          <FunnelCard {...cartFunnelSteps.checkoutWithoutView} value={cartFunnel.cartsBypassingCartView} />
+          <FunnelCard {...cartFunnelSteps.paid} value={cartFunnel.cartsWithPaidOrder} detail={percent(cartFunnel.purchaseRate)} />
         </div>
+        <CartFunnelDiagram funnel={cartFunnel} />
       </section>
       <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">
-        <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel checkout Stripe<InfoTooltip label="Funnel checkout Stripe" description="Segue i checkout Stripe avviati nel periodo. I recuperati sono già inclusi nei pagati. I ritorni dalla pagina di annullamento restano separati dalle chiusure definitive." /></h3>
+        <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel checkout Stripe<InfoTooltip label="Funnel checkout Stripe" description="Conta ogni checkout Stripe creato nel periodo, anche quando una visita genera più tentativi o quando si apre Stripe da un preventivo PDF senza una visita tracciata. I recuperati sono inclusi nei pagati." /></h3>
+        <p className="mt-1 text-xs text-neutral-600 tabular-nums">
+          Con visita collegata <b>{number(checkoutCohort.stripeCheckoutsWithSiteSession, 0)}</b> (su <b>{number(checkoutCohort.siteSessionsWithStripeCheckout, 0)}</b> visite distinte)
+          {" · "}Senza visita collegata <b>{number(checkoutCohort.stripeCheckoutsWithoutSiteSession, 0)}</b>
+        </p>
         <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
-          <FunnelCard label="Checkout avviati" value={checkoutCohort.stripeCheckoutsStarted} />
+          <FunnelCard label="Checkout Stripe creati" value={checkoutCohort.stripeCheckoutsStarted} />
           <FunnelCard label="In corso" value={checkoutCohort.openPending} />
           <FunnelCard label="Ritorni da annullamento" value={checkoutCohort.canceledReturnOpen} />
           <FunnelCard label="Chiusi senza pagamento" value={checkoutCohort.definitiveClosedUnpaid} detail={percent(checkoutCohort.definitiveCloseRate)} />

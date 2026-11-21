@@ -34,6 +34,8 @@ model Order {
 
   paymentProvider  String @default("stripe")
   stripeCustomerId String?
+  paymentPricing   Json?
+  paymentRefundCents Int?
 
   fullName String
   email    String

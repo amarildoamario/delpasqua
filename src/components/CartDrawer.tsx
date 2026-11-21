@@ -15,7 +15,8 @@ import { useCart } from "@/context/CartContext";
 import { track } from "@/lib/analytics/track";
 import { translateCartCheckoutError, translateCartPromoError } from "@/lib/cartI18n";
 import { goToCassa } from "@/lib/client/goToCassa";
-import { formatEUR } from "@/lib/money";
+import { convertStorefrontCents, formatMoney, formatStorefrontPrice, storefrontCurrency } from "@/lib/money";
+import type { CheckoutPayment } from "@/lib/server/checkoutPayment";
 import type { CartLine } from "@/lib/shopTypes";
 import { cn } from "@/lib/utils";
 import {
@@ -51,6 +52,8 @@ type CheckoutPricingItem = {
 };
 
 type Totals = {
+  payment?: CheckoutPayment;
+  pricingKey?: string;
   items: CheckoutPricingItem[];
   subtotalCents: number;
   discountCents: number;
@@ -117,6 +120,10 @@ export default function CartDrawer({
 }) {
   const t = useTranslations("Cart");
   const locale = useLocale();
+  const formatPrice = (cents: number) => formatStorefrontPrice(cents, locale);
+  const currency = storefrontCurrency(locale);
+  const formatPayment = (cents: number) => formatMoney(cents, currency, locale);
+  const [previewVersion, setPreviewVersion] = useState(0);
   const {
     lines,
     remove,
@@ -136,6 +143,7 @@ export default function CartDrawer({
     if (locale === "da") return "DK";
     if (locale === "no") return "NO";
     if (locale === "it") return "IT";
+    if (locale === "us") return "US";
     if (locale === "en") return "GB"; // Default fallback for en
     return "GB";
   }, [locale]);
@@ -202,11 +210,17 @@ export default function CartDrawer({
       return { line, product, variant };
     });
   }, [lines, catalog]);
+  const promoCode = promoApplied?.code;
+  const pricingKey = JSON.stringify([lines, promoCode, countryCode, locale, previewVersion]);
+  const payment = totals.pricingKey === pricingKey && totals.payment?.currency === currency ? totals.payment : undefined;
+  const pricingItems = payment?.items ?? (currency === "EUR" ? totals.items : undefined);
+  const awaitingPayment = currency !== "EUR" && !payment;
+
   const pricingItemsByKey = useMemo(() => {
     return new Map(
-      totals.items.map((item) => [`${item.productId}:${item.variantId}`, item] as const)
+      (pricingItems ?? []).map((item) => [`${item.productId}:${item.variantId}`, item] as const)
     );
-  }, [totals.items]);
+  }, [pricingItems]);
 
   useEffect(() => {
     if (!lastAvailabilityNotice || !open) return;
@@ -261,8 +275,9 @@ export default function CartDrawer({
               variantId: item.variantId,
               qty: item.qty,
             })),
-            promotionCode: promoApplied?.code,
+            promotionCode: promoCode,
             countryCode,
+            locale,
           }),
         });
 
@@ -270,10 +285,12 @@ export default function CartDrawer({
 
         const data = (await response.json()) as Totals;
         if (!cancelled) {
-          if (promoApplied?.code && !(data as Totals & { promotionApplied?: { code: string } | null }).promotionApplied) {
+          if (promoCode && !(data as Totals & { promotionApplied?: { code: string } | null }).promotionApplied) {
             setPromoApplied(null);
           }
           setTotals({
+            pricingKey,
+            payment: data.payment,
             items: Array.isArray(data.items) ? data.items : [],
             subtotalCents: Number(data.subtotalCents ?? 0),
             discountCents: Number(data.discountCents ?? 0),
@@ -292,7 +309,7 @@ export default function CartDrawer({
     return () => {
       cancelled = true;
     };
-  }, [lines, promoApplied, countryCode]);
+  }, [lines, promoCode, countryCode, locale, pricingKey]);
 
   async function handleApplyPromo() {
     const code = promoInput.trim();
@@ -395,11 +412,11 @@ export default function CartDrawer({
                     <span>
                       {t("drawer.free_shipping_above")}{" "}
                       <span className="font-medium text-zinc-900">
-                        {formatEUR(shippingRule.freeShippingThresholdCents)}
+                        {formatPrice(shippingRule.freeShippingThresholdCents)}
                       </span>
                       . {t("drawer.free_shipping_missing")}{" "}
                       <span className="font-medium text-zinc-900">
-                        {formatEUR(remainingForFreeShipping)}
+                        {formatPrice(remainingForFreeShipping)}
                       </span>
                     </span>
                   </div>
@@ -437,7 +454,7 @@ export default function CartDrawer({
                 <p className="text-sm text-zinc-500">{t("drawer.empty")}</p>
                 <div className="mt-3 flex items-center justify-center gap-1.5 rounded-full border border-black/5 bg-zinc-50 px-3 py-1.5 text-xs text-zinc-600">
                   <PackageOpen className="h-3.5 w-3.5" strokeWidth={1.5} />
-                  <span>{t("drawer.shipping_from", { amount: formatEUR(SHIPPING_CENTS) })}</span>
+                  <span>{t("drawer.shipping_from", { amount: formatPrice(SHIPPING_CENTS) })}</span>
                 </div>
                 <button
                   onClick={onClose}
@@ -450,7 +467,7 @@ export default function CartDrawer({
               <div className="space-y-4">
                 {viewLines.map(({ line, product, variant }) => {
                   const pricingItem = pricingItemsByKey.get(`${line.productId}:${line.variantId}`);
-                  const unit = pricingItem?.unitPriceCents ?? variant?.priceCents ?? 0;
+                  const unit = pricingItem?.unitPriceCents ?? convertStorefrontCents(variant?.priceCents ?? 0, locale);
                   const lineTotal = pricingItem?.lineSubtotalCents ?? unit * line.qty;
                   const imageSrc = variant?.imageSrc ?? product?.imageSrc;
                   const imageAlt = variant?.imageAlt ?? product?.imageAlt ?? product?.title ?? t("common.product_fallback");
@@ -536,23 +553,23 @@ export default function CartDrawer({
             <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex items-center justify-between text-zinc-600">
                 <span>{t("common.subtotal")}</span>
-                <span className="text-zinc-900">{formatEUR(subtotal)}</span>
+                <span className="text-zinc-900">{awaitingPayment ? "—" : formatPayment(payment?.subtotalCents ?? subtotal)}</span>
               </div>
-              {discountCents > 0 && (
+              {!awaitingPayment && (payment?.discountCents ?? discountCents) > 0 && (
                 <div className="flex items-center justify-between text-emerald-700">
                   <span>{t("common.discount_with_code", { code: promoApplied?.code ?? "" })}</span>
-                  <span className="font-medium">-{formatEUR(discountCents)}</span>
+                  <span className="font-medium">-{formatPayment(payment?.discountCents ?? discountCents)}</span>
                 </div>
               )}
               <div className="flex items-center justify-between text-zinc-600">
                 <span>{t("common.shipping_estimate")}</span>
                 <span className={shippingPreview === 0 ? "font-medium text-emerald-600" : "text-zinc-900"}>
-                  {shippingPreview === 0 ? t("common.free") : formatEUR(shippingPreview)}
+                  {awaitingPayment ? "—" : shippingPreview === 0 ? t("common.free") : formatPayment(payment?.shippingCents ?? shippingPreview)}
                 </span>
               </div>
               <div className="flex items-center justify-between border-t border-black/10 pt-2 font-medium text-zinc-900">
                 <span>{t("common.total")}</span>
-                <span>{formatEUR(total)}</span>
+                <span>{awaitingPayment ? "—" : formatPayment(payment?.totalCents ?? total)}</span>
               </div>
             </div>
 
@@ -574,16 +591,18 @@ export default function CartDrawer({
 
               <button
                 type="button"
-                disabled={lines.length === 0 || payLoading || isCheckoutBlocked}
+                disabled={lines.length === 0 || payLoading || isCheckoutBlocked || awaitingPayment}
                 onClick={async () => {
                   if (payLoading) return;
                   setPayError(null);
                   setPayLoading(true);
 
                   const res = await goToCassa(lines, {
+                    expectedPayment: payment ? { currency, totalCents: payment.totalCents } : undefined,
                     promotionCode: promoApplied?.code,
                   });
                   if (!res.ok) {
+                    if (res.message === "CHECKOUT_PRICE_CHANGED") setPreviewVersion((version) => version + 1);
                     setPayError(translateCartCheckoutError(res.message, t));
                     setPayLoading(false);
                     return;
@@ -655,6 +674,7 @@ function CartLineCard({
   onChange: (next: number) => void;
 }) {
   const t = useTranslations("Cart");
+  const locale = useLocale();
 
   return (
     <Card className="overflow-hidden rounded-[5px] border-[#e8e0d6]/70 bg-white shadow-[0_8px_24px_rgba(24,24,27,0.12),0_1px_3px_rgba(24,24,27,0.08)]">
@@ -688,7 +708,7 @@ function CartLineCard({
                   </div>
                   <span className="text-zinc-300">•</span>
                   <div className="text-[11px] text-zinc-500">
-                    {unit > 0 ? t("common.per_item_with_price", { price: formatEUR(unit) }) : "--"}
+                    {unit > 0 ? t("common.per_item_with_price", { price: formatMoney(unit, storefrontCurrency(locale), locale) }) : "--"}
                   </div>
                 </div>
               </div>
@@ -712,7 +732,7 @@ function CartLineCard({
                 <QtyStepper qty={line.qty} maxQty={maxQty} onDec={onDec} onInc={onInc} onChange={onChange} />
                 <div className="text-right">
                   <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{t("common.total")}</div>
-                  <div className="mt-1 font-medium tracking-[0.03em] text-zinc-900">{formatEUR(lineTotal)}</div>
+                  <div className="mt-1 font-medium tracking-[0.03em] text-zinc-900">{formatMoney(lineTotal, storefrontCurrency(locale), locale)}</div>
                 </div>
               </div>
             </div>

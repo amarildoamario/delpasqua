@@ -399,6 +399,8 @@ export function computeFunnelsAndSeries(args: {
 
   // Link orders to cohort sessions and carts
   const checkoutStartedSessionSet = new Set<string>();
+  const stripeCheckoutSessionSet = new Set<string>();
+  let stripeCheckoutsWithSiteSession = 0;
   const purchasingSessionSet = new Set<string>();
   const paidCartSet = new Set<string>();
   const legacyPurchaseByOrder = new Map(
@@ -409,6 +411,10 @@ export function computeFunnelsAndSeries(args: {
     const ctx = orderContext(order, includeInternal);
     if (ctx?.sessionId && cohortSessionIds.has(ctx.sessionId)) {
       checkoutStartedSessionSet.add(ctx.sessionId);
+      if (order.stripeCheckoutSessionId) {
+        stripeCheckoutsWithSiteSession++;
+        stripeCheckoutSessionSet.add(ctx.sessionId);
+      }
     }
   }
 
@@ -470,6 +476,7 @@ export function computeFunnelsAndSeries(args: {
   let cartsViewedInCohort = 0;
   let cartsWithCheckoutClick = 0;
   let cartsBypassingCartView = 0;
+  let cartsWithCheckoutClickAndPaidOrder = 0;
   for (const [cid, info] of cartFirstAddAt.entries()) {
     const viewed = cartViewedSet.has(cid);
     if (viewed) cartsViewedInCohort++;
@@ -477,6 +484,7 @@ export function computeFunnelsAndSeries(args: {
     if (clickAt !== undefined && clickAt >= info.at) {
       cartsWithCheckoutClick++;
       if (!viewed) cartsBypassingCartView++;
+      if (paidCartSet.has(cid)) cartsWithCheckoutClickAndPaidOrder++;
     }
   }
   const cartsWithAdditionsCount = cartFirstAddAt.size;
@@ -489,6 +497,7 @@ export function computeFunnelsAndSeries(args: {
     cartsWithCheckoutClick,
     cartsBypassingCartView,
     cartsWithPaidOrder: cartsWithPaidOrderCount,
+    cartsWithCheckoutClickAndPaidOrder,
     checkoutStartRate: cartsWithAdditionsCount > 0 ? cartsWithCheckoutClick / cartsWithAdditionsCount : null,
     purchaseRate: cartsWithAdditionsCount > 0 ? cartsWithPaidOrderCount / cartsWithAdditionsCount : null,
   };
@@ -545,6 +554,9 @@ export function computeFunnelsAndSeries(args: {
     storefrontOrdersCreated: createdOrders.filter((o) => !o.quoteId).length,
     quoteOrdersCreated: createdOrders.filter((o) => Boolean(o.quoteId)).length,
     stripeCheckoutsStarted: stripeCohort.length,
+    stripeCheckoutsWithSiteSession,
+    stripeCheckoutsWithoutSiteSession: stripeCohort.length - stripeCheckoutsWithSiteSession,
+    siteSessionsWithStripeCheckout: stripeCheckoutSessionSet.size,
     openPending,
     canceledReturnOpen,
     expiredUnpaid,

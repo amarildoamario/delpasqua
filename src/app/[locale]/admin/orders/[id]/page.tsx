@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { formatMoney } from "@/lib/money";
+import { storedCheckoutPayment } from "@/lib/server/checkoutPayment";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/server/prisma";
 import ShipToggleButton from "@/app/[locale]/admin/orders/ship/ShipToggleButton";
@@ -45,6 +47,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   });
 
   if (!order) return notFound();
+  const payment = storedCheckoutPayment(order.paymentPricing);
 
   const preparedAt =
     order.preparingAt ??
@@ -110,8 +113,9 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           <OrderStatusActions
             orderId={order.id}
             status={order.status}
-            totalCents={order.totalCents}
-            refundCents={order.refundCents}
+            totalCents={payment?.totalCents ?? order.totalCents}
+            currency={payment?.currency ?? "EUR"}
+            refundCents={payment ? (order.paymentRefundCents ?? 0) : order.refundCents}
             stripePaymentIntentId={order.stripePaymentIntentId}
             passedStatuses={Array.from(
               new Set([
@@ -390,10 +394,17 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 <span className="text-lg font-extrabold text-emerald-400">{euro(order.totalCents)}</span>
               </div>
 
-              {order.refundCents > 0 ? (
+              {payment && (
+                <div className="flex justify-between text-sm">
+                  <span>Importo Stripe ({payment.currency})</span>
+                  <span className="font-semibold">{formatMoney(payment.totalCents, payment.currency)}</span>
+                </div>
+              )}
+
+              {order.refundCents > 0 || (order.paymentRefundCents ?? 0) > 0 ? (
                 <div className="flex justify-between text-red-400 border-t border-dashed border-neutral-800 pt-2 mt-2">
                   <span>Rimborsato</span>
-                  <span className="font-bold">-{euro(order.refundCents)}</span>
+                  <span className="font-bold">-{payment ? formatMoney(order.paymentRefundCents ?? 0, payment.currency) : euro(order.refundCents)}</span>
                 </div>
               ) : null}
 

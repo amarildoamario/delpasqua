@@ -1,3 +1,4 @@
+import { convertStorefrontCents, storefrontCurrency } from "@/lib/money";
 import { setRequestLocale } from 'next-intl/server';
 // src/app/shop/[prodotto]/page.tsx
 import { notFound } from "next/navigation";
@@ -253,7 +254,8 @@ async function ProductPage({
   const homeLabel = "Home";
 
   const variants = translatedProduct.variants || [];
-  const prices = variants.map(v => v.priceCents);
+  const currency = storefrontCurrency(locale);
+  const prices = variants.map(v => convertStorefrontCents(v.priceCents, locale));
   const lowPrice = prices.length > 0 ? (Math.min(...prices) / 100).toFixed(2) : "0.00";
   const highPrice = prices.length > 0 ? (Math.max(...prices) / 100).toFixed(2) : "0.00";
   const offerCount = prices.length;
@@ -293,8 +295,8 @@ async function ProductPage({
       "@type": "OfferShippingDetails",
       "shippingRate": {
         "@type": "MonetaryAmount",
-        "value": (rule.shippingFlatCents / 100).toFixed(2),
-        "currency": "EUR"
+        "value": (convertStorefrontCents(rule.shippingFlatCents, locale) / 100).toFixed(2),
+        "currency": currency
       },
       "shippingDestination": {
         "@type": "DefinedRegion",
@@ -331,8 +333,8 @@ async function ProductPage({
         ...(isFree ? {} : {
           "returnShippingFeesAmount": {
             "@type": "MonetaryAmount",
-            "value": (rule.returnShippingFeeCents / 100).toFixed(2),
-            "currency": "EUR"
+            "value": (convertStorefrontCents(rule.returnShippingFeeCents, locale) / 100).toFixed(2),
+            "currency": currency
           }
         }),
         "merchantReturnLink": returnUrl
@@ -361,8 +363,8 @@ async function ProductPage({
       "@type": "Offer",
       "sku": variantSku,
       "mpn": variantSku,
-      "price": (variant.priceCents / 100).toFixed(2),
-      "priceCurrency": "EUR",
+      "price": (convertStorefrontCents(variant.priceCents, locale) / 100).toFixed(2),
+      "priceCurrency": currency,
       "url": variantUrl,
       "image": variantImage,
       "itemCondition": "https://schema.org/NewCondition",
@@ -381,7 +383,7 @@ async function ProductPage({
 
   const offersJson = variants.length === 1 ? offersList[0] : {
     "@type": "AggregateOffer",
-    "priceCurrency": "EUR",
+    "priceCurrency": currency,
     "lowPrice": lowPrice,
     "highPrice": highPrice,
     "offerCount": offerCount,

@@ -1081,6 +1081,7 @@
             "invalid_cart": "Ugyldig handlekurv.",
             "order_creation": "Feil ved opprettelse av ordre.",
             "invalid_server_response": "Ugyldig serversvar.",
+            "price_changed": "Totalsummen er endret. Kontroller det nye beløpet og prøv igjen.",
             "checkout_unavailable": "Kassen er ikke tilgjengelig.",
             "missing_checkout_url": "Kasse-URL mangler.",
             "checkout_generic": "Feil ved kassen."

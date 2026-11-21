@@ -8,6 +8,7 @@ const PROMO_ERROR_KEYS: Record<string, string> = {
 };
 
 const CHECKOUT_ERROR_KEYS: Record<string, string> = {
+  CHECKOUT_PRICE_CHANGED: "errors.price_changed",
   "Carrello vuoto": "errors.empty_cart",
   "Il carrello è vuoto.": "errors.empty_cart",
   "Prodotto non disponibile.": "errors.product_unavailable",

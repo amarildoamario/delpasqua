@@ -1080,6 +1080,7 @@
             "invalid_cart": "Carrito no válido.",
             "order_creation": "Error al crear el pedido.",
             "invalid_server_response": "Respuesta del servidor no válida.",
+            "price_changed": "El total ha cambiado. Comprueba el importe actualizado y vuelve a intentarlo.",
             "checkout_unavailable": "Caja no disponible.",
             "missing_checkout_url": "Falta la URL de la caja.",
             "checkout_generic": "Error en la caja."

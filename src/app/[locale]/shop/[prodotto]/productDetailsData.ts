@@ -85,7 +85,7 @@ export const copy = {
     quantity: "QUANTITY",
     addToCart: "ADD TO CART",
     goToCheckout: "GO TO CHECKOUT",
-    shippingPromo: "Free shipping for orders over €69",
+    shippingPromo: "Free shipping within Italy on orders over {threshold}",
     description: "DESCRIPTION",
     features: "CHARACTERISTICS",
     pairings: "PAIRINGS",
@@ -127,7 +127,7 @@ export const copy = {
       },
       {
         q: "What are the shipping times and costs?",
-        a: "We ship throughout Italy in 24/48 hours with tracked express courier. Shipping is free for all orders over €69; for lower amounts, the shipping fee is €9.90.",
+        a: "We ship throughout Italy in 24/48 hours with tracked express courier. Shipping within Italy is free on orders over {threshold}; for lower amounts, the shipping fee is {fee}.",
       },
       {
         q: "Can I request custom sizes or tins for catering?",
@@ -440,7 +440,7 @@ export const copy = {
     quantity: "QUANTITY",
     addToCart: "ADD TO CART",
     goToCheckout: "GO TO CHECKOUT",
-    shippingPromo: "Free shipping for orders over €69",
+    shippingPromo: "Free shipping within Italy on orders over {threshold}",
     description: "DESCRIPTION",
     features: "CHARACTERISTICS",
     pairings: "PAIRINGS",
@@ -482,7 +482,7 @@ export const copy = {
       },
       {
         q: "What are the shipping times and costs?",
-        a: "We ship throughout Italy in 24/48 hours with tracked express courier. Shipping is free for all orders over €69; for lower amounts, the shipping fee is €9.90.",
+        a: "We ship throughout Italy in 24/48 hours with tracked express courier. Shipping within Italy is free on orders over {threshold}; for lower amounts, the shipping fee is {fee}.",
       },
       {
         q: "Can I request custom sizes or tins for catering?",

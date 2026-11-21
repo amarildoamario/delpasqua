@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/lib/shopTypes";
-import { formatEUR } from "@/lib/money";
+import { formatStorefrontPrice } from "@/lib/money";
 import AddToCartPanel from "@/components/AddToCartPanel";
 import { track } from "@/lib/analytics/track";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 function buildQueryString(sp: URLSearchParams, key: string, value: string) {
   const next = new URLSearchParams(sp.toString());
@@ -36,6 +36,7 @@ function StockLine({ available }: { available: number }) {
 }
 
 export default function ProductPurchaseDetails({ product, availabilityByVariantId }: Props) {
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -114,7 +115,7 @@ export default function ProductPurchaseDetails({ product, availabilityByVariantI
     <div className="mt-8">
       <div className="flex items-baseline gap-4">
         <div className="font-serif text-3xl tracking-[0.06em] text-zinc-900">
-          {variant ? formatEUR(variant.priceCents) : ""}
+          {variant ? formatStorefrontPrice(variant.priceCents, locale) : ""}
         </div>
         <div className="text-xs tracking-[0.18em] text-zinc-500">{t("panel.plus_vat")}</div>
       </div>

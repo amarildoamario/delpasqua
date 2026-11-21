@@ -142,6 +142,46 @@ test("sessionFunnel and variantFunnel respect event ordering and deduplicate rep
   assert.equal(v5lt.selectionToCartRate, 1);
 });
 
+test("the cart funnel connects only paid carts with a tracked checkout click to the click step", () => {
+  const orders = [ord(), ord({ id: "o-2", stripeCheckoutSessionId: "cs_2", events: [] })];
+  const events = [
+    ev({ type: "add_to_cart", productKey: "olio", data: { qty: 1 } }),
+    ev({ type: "checkout_click", createdAt: new Date("2026-11-10T10:05:00Z") }),
+    ev({ type: "purchase", orderId: "o-1", createdAt: orders[0].paidAt! }),
+    ev({ type: "add_to_cart", productKey: "olio", cartId: "c-2", data: { qty: 1 } }),
+    ev({ type: "purchase", orderId: "o-2", cartId: "c-2", createdAt: orders[1].paidAt! }),
+  ];
+  const { cartFunnel } = computeFunnelsAndSeries({
+    orders, events, start, endExclusive: end, startISO: "2026-11-10", endISO: "2026-11-17", now: end,
+  });
+
+  assert.equal(cartFunnel.cartsWithCheckoutClick, 1);
+  assert.equal(cartFunnel.cartsWithPaidOrder, 2);
+  assert.equal(cartFunnel.cartsWithCheckoutClickAndPaidOrder, 1);
+});
+
+test("checkout attribution distinguishes Stripe attempts from tracked site sessions", () => {
+  const { checkoutCohort, sessionFunnel } = computeFunnelsAndSeries({
+    orders: [
+      ord(),
+      ord({ id: "retry", stripeCheckoutSessionId: "cs_retry" }),
+      ord({ id: "quote", quoteId: "quote-1", stripeCheckoutSessionId: "cs_quote", events: [] }),
+      ord({
+        id: "attempt-without-stripe", stripeCheckoutSessionId: null, paidAt: null,
+        events: [{ type: "ANALYTICS_CONTEXT", metaJson: JSON.stringify({ visitorId: "v-2", sessionId: "s-2", env: "prod" }) }],
+      }),
+    ],
+    events: [ev(), ev({ visitorId: "v-2", sessionId: "s-2" })],
+    start, endExclusive: end, startISO: "2026-11-10", endISO: "2026-11-17", now: end,
+  });
+
+  assert.equal(sessionFunnel.checkoutStartedSessions, 2);
+  assert.equal(checkoutCohort.stripeCheckoutsStarted, 3);
+  assert.equal(checkoutCohort.stripeCheckoutsWithSiteSession, 2);
+  assert.equal(checkoutCohort.stripeCheckoutsWithoutSiteSession, 1);
+  assert.equal(checkoutCohort.siteSessionsWithStripeCheckout, 1);
+});
+
 test("checkoutCohort separates open, cancel_url return, expired, failed, canceled, paid and recovered", () => {
   const closedAt = new Date("2026-11-12T12:00:00Z");
   const orders: V6OrderInput[] = [

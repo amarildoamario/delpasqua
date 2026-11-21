@@ -1,3 +1,4 @@
+import { formatStorefrontPrice } from "@/lib/money";
 import { setRequestLocale } from 'next-intl/server';
 import { locales, type Locale } from "@/i18n/pathnames";
 import { readPublicCatalog } from "@/lib/server/catalog";
@@ -203,10 +204,7 @@ async function NuovoRaccoltoPage({ params }: { params: Promise<{ locale: string 
     .map((product) => {
       const firstVariant = product.variants?.[0];
       const priceCents = firstVariant?.priceCents ?? 0;
-      const priceLabel = new Intl.NumberFormat(activeLocale === "it" ? "it-IT" : "en-US", {
-        style: "currency",
-        currency: "EUR",
-      }).format(priceCents / 100);
+      const priceLabel = formatStorefrontPrice(priceCents, activeLocale);
 
       const title = activeLocale === "it"
         ? (product.title ?? product.id)

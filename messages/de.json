@@ -1085,6 +1085,7 @@
             "invalid_cart": "Ungültiger Warenkorb.",
             "order_creation": "Fehler beim Erstellen der Bestellung.",
             "invalid_server_response": "Ungültige Serverantwort.",
+            "price_changed": "Der Gesamtbetrag hat sich geändert. Prüfe den neuen Betrag und versuche es erneut.",
             "checkout_unavailable": "Checkout nicht verfügbar.",
             "missing_checkout_url": "Checkout-URL fehlt.",
             "checkout_generic": "Checkout-Fehler."

@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { translateVariantLabel, translateVariantTitle, getCleanSize } from "@/lib/productSlugs";
-import { formatEUR } from "@/lib/money";
+import { formatStorefrontPrice } from "@/lib/money";
 import { SHIPPING_RULES } from "@/lib/shippingConfig";
 
 const hasTranslation = (t: { has?: (key: string) => boolean }, key: string) =>
@@ -204,10 +204,7 @@ export default function ShopPageClient({
 
       const cardTitle = hasMultiple ? title : (cheapestVariant.title || title);
 
-      const priceLabel = new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
-        style: "currency",
-        currency: "EUR",
-      }).format(cheapestVariant.priceCents / 100);
+      const priceLabel = formatStorefrontPrice(cheapestVariant.priceCents, locale);
 
       const formatLabels = sortedVariants
         .map(v => getCleanSize(v.id, locale))
@@ -540,7 +537,7 @@ export default function ShopPageClient({
           <div className="mt-16 flex flex-col items-center justify-center gap-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#d7cbbb] bg-white/72 px-4 py-2 text-xs font-medium text-[#5f554c] shadow-sm shadow-[#1f1a17]/5">
               <IconTruck className="h-4 w-4" />
-              {t("info.shipping", { amount: formatEUR(SHIPPING_RULES.IT.freeShippingThresholdCents) })}
+              {t("info.shipping", { amount: formatStorefrontPrice(SHIPPING_RULES.IT.freeShippingThresholdCents, locale) })}
             </div>
             <p className="text-xs text-[#8a7258]">
               {t("info.notes")}

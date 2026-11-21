@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Activity,
   BadgePercent,
@@ -26,7 +26,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { adminFetch } from "@/lib/client/adminFetch";
-import { useRouter } from "next/navigation";
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export interface AdminBadgeCounts {
   toShip: number;
@@ -144,11 +144,25 @@ export default function AdminSidebar({
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const previousPathname = useRef(pathname);
 
-  // Close mobile drawer on route change
   useEffect(() => {
     setMobileOpen(false);
+    if (previousPathname.current === pathname) return;
+    previousPathname.current = pathname;
+    if (!window.matchMedia("(min-width: 64rem)").matches && !window.location.hash) {
+      document.getElementById("admin-content")?.scrollTo({ top: 0 });
+    }
   }, [pathname]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 64rem)");
+    const closeOnDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setMobileOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
 
   const totalSystemIssues = counts.webhookIssues + counts.outboxIssues;
   const totalPendingNotifications =
@@ -272,10 +286,10 @@ export default function AdminSidebar({
     }
   };
 
-  const SidebarContent = ({ onItemClick }: { onItemClick?: () => void }) => (
+  const renderSidebarContent = (onItemClick?: () => void) => (
     <div className="flex h-full flex-col justify-between bg-[#252526] text-[#cccccc] border-r border-[#333333] select-none overflow-hidden font-sans">
       {/* Brand & Status Header (Always Pinned) */}
-      <div className="shrink-0 px-4 py-3.5 border-b border-[#333333] bg-[#252526]">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[#333333] bg-[#252526] px-4 py-3.5">
         <Link
           href="/admin/ops"
           onClick={onItemClick}
@@ -285,10 +299,18 @@ export default function AdminSidebar({
           <Activity className="h-4 w-4" />
           <span>{totalPendingNotifications} avvisi</span>
         </Link>
+        {onItemClick && (
+          <SheetClose
+            aria-label="Chiudi menu gestionale"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-[5px] border border-white/10 bg-white/5 text-neutral-200 hover:bg-white/10 hover:text-white"
+          >
+            <X aria-hidden="true" className="size-5" />
+          </SheetClose>
+        )}
       </div>
 
       {/* Navigation Scrollable Area (Only Middle Menu Scrolls If Needed) */}
-      <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-3 py-3 space-y-4">
+      <nav aria-label="Sezioni del gestionale" className="no-scrollbar min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-y-contain px-3 py-3">
         {sections.map((sec) => (
           <div key={sec.title} className="space-y-1">
             <div className="px-3.5 pt-1 pb-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#858585] flex items-center justify-between">
@@ -307,7 +329,7 @@ export default function AdminSidebar({
             </div>
           </div>
         ))}
-      </div>
+      </nav>
 
       {/* Footer / User Card & Actions (Always Pinned) */}
       <div className="shrink-0 px-3 py-3 border-t border-[#333333] bg-[#252526] space-y-2">
@@ -359,81 +381,65 @@ export default function AdminSidebar({
     <>
       {/* ─── DESKTOP SIDEBAR (VISUAL STUDIO DARK GREY) ─── */}
       <aside className="sticky top-0 self-start hidden lg:flex w-[280px] h-full shrink-0 flex-col bg-[#252526] border-r border-[#333333] z-20 overflow-hidden">
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
 
-      {/* ─── MOBILE STICKY TOPBAR (< lg) ─── */}
-      <header className="relative z-30 min-w-0 shrink-0 border-b border-white/10 bg-[#1f1f23] text-white shadow-sm lg:hidden">
-        <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
-          <Link
-            href="/admin/ops"
-            aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
-            className={alertsBadgeClassName}
-          >
-            <Activity className="h-4 w-4" />
-            <span>{totalPendingNotifications} avvisi</span>
-          </Link>
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Mobile Menu Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setMobileOpen((prev) => !prev)}
-              aria-label={mobileOpen ? "Chiudi menu" : "Apri menu"}
-              aria-expanded={mobileOpen}
-              aria-controls="admin-mobile-menu"
-              className="flex h-9 w-9 items-center justify-center rounded-[5px] bg-white/5 border border-white/10 text-neutral-200 hover:text-white hover:bg-white/10 transition-colors"
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen} swipeDirection="left">
+        <header className="relative z-30 min-w-0 shrink-0 border-b border-white/10 bg-[#1f1f23] text-white shadow-sm lg:hidden">
+          <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
+            <Link
+              href="/admin/ops"
+              aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
+              className={alertsBadgeClassName}
             >
-              {mobileOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Quick-Jump Horizontal Strip */}
-        <nav
-          aria-label="Accesso rapido gestionale"
-          className="no-scrollbar flex w-full min-w-0 items-center gap-1.5 overflow-x-auto overscroll-x-contain px-3.5 pb-2.5 pt-0.5"
-        >
-          {mobileQuickLinks.map((qItem) => {
-            const QIcon = qItem.icon;
-            const active = isItemActive(qItem.href);
-            return (
-              <Link
-                key={qItem.href}
-                href={qItem.href}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-[11px] font-semibold transition-all ${
-                  active
-                    ? "bg-[#007acc] text-white shadow-xs ring-1 ring-sky-400/40"
-                    : "bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5"
-                }`}
+              <Activity className="h-4 w-4" />
+              <span>{totalPendingNotifications} avvisi</span>
+            </Link>
+            <div className="flex items-center gap-2 shrink-0">
+              <SheetTrigger
+                aria-label="Apri menu gestionale"
+                className="flex size-11 items-center justify-center rounded-[5px] border border-white/10 bg-white/5 text-neutral-200 transition-colors hover:bg-white/10 hover:text-white"
               >
-                <QIcon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-neutral-400"}`} />
-                <span>{qItem.label}</span>
-                {typeof qItem.badge === "number" && qItem.badge > 0 ? (
-                  <span className="ml-0.5 inline-flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-orange-500 px-1 text-[9px] font-black text-white">
-                    {qItem.badge > 99 ? "99+" : qItem.badge}
-                  </span>
-                ) : null}
-              </Link>
-            );
-          })}
-        </nav>
-      </header>
-
-      {/* ─── MOBILE SLIDE-OVER DRAWER (< lg) ─── */}
-      {mobileOpen && (
-        <div className="absolute inset-0 z-50 flex lg:hidden">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-2xs transition-opacity animate-in fade-in duration-100"
-            onClick={() => setMobileOpen(false)}
-          />
-
-          {/* Drawer Menu */}
-          <div id="admin-mobile-menu" className="relative w-[280px] max-w-[85vw] h-full shadow-2xl z-10 animate-in slide-in-from-left duration-150">
-            <SidebarContent onItemClick={() => setMobileOpen(false)} />
+                <Menu aria-hidden="true" className="size-5" />
+              </SheetTrigger>
+            </div>
           </div>
-        </div>
-      )}
+
+          {/* Quick-Jump Horizontal Strip */}
+          <nav
+            aria-label="Accesso rapido gestionale"
+            className="no-scrollbar flex w-full min-w-0 items-center gap-1.5 overflow-x-auto overscroll-x-contain px-3.5 pb-2.5 pt-0.5"
+          >
+            {mobileQuickLinks.map((qItem) => {
+              const QIcon = qItem.icon;
+              const active = isItemActive(qItem.href);
+              return (
+                <Link
+                  key={qItem.href}
+                  href={qItem.href}
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-[11px] font-semibold transition-all ${
+                    active
+                      ? "bg-[#007acc] text-white shadow-xs ring-1 ring-sky-400/40"
+                      : "bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5"
+                  }`}
+                >
+                  <QIcon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-neutral-400"}`} />
+                  <span>{qItem.label}</span>
+                  {typeof qItem.badge === "number" && qItem.badge > 0 ? (
+                    <span className="ml-0.5 inline-flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-orange-500 px-1 text-[9px] font-black text-white">
+                      {qItem.badge > 99 ? "99+" : qItem.badge}
+                    </span>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </nav>
+        </header>
+        <SheetContent side="left" hideClose aria-modal="true" className="bottom-auto h-dvh max-h-dvh w-[min(20rem,88vw)] overflow-hidden border-[#333333] bg-[#252526] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] lg:hidden">
+          <SheetTitle className="sr-only">Menu gestionale</SheetTitle>
+          {renderSidebarContent(() => setMobileOpen(false))}
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

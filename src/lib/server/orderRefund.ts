@@ -1,5 +1,6 @@
 import type { OrderStatus, Prisma } from "@/generated/prisma/client";
 import { assertOrderInvariants } from "@/lib/server/orderStatus";
+import { storedCheckoutPayment } from "./checkoutPayment";
 
 type Tx = Prisma.TransactionClient;
 
@@ -40,9 +41,15 @@ export async function applyStripeRefundToOrderTx(tx: Tx, args: ApplyStripeRefund
   }
 
   const previousStatus = order.status;
-  const safeRefundCents = Math.max(0, Math.min(order.totalCents, Math.trunc(args.cumulativeRefundCents)));
+  const payment = storedCheckoutPayment(order.paymentPricing);
+  const paymentTotalCents = payment?.totalCents ?? order.totalCents;
+  const recordedRefundCents = payment ? (order.paymentRefundCents ?? 0) : order.refundCents;
+  const refundedCents = Math.max(recordedRefundCents, Math.min(paymentTotalCents, Math.trunc(args.cumulativeRefundCents)));
+  const safeRefundCents = payment && paymentTotalCents > 0
+    ? Math.round(order.totalCents * (refundedCents / paymentTotalCents))
+    : refundedCents;
   const nextStatus: OrderStatus =
-    safeRefundCents >= order.totalCents ? "RIMBORSATO" : "PARZIALMENTE_RIMBORSATO";
+    refundedCents >= paymentTotalCents ? "RIMBORSATO" : "PARZIALMENTE_RIMBORSATO";
   const now = new Date();
 
   const updated = await tx.order.update({
@@ -50,6 +57,7 @@ export async function applyStripeRefundToOrderTx(tx: Tx, args: ApplyStripeRefund
     data: {
       status: nextStatus,
       refundCents: safeRefundCents,
+      ...(payment ? { paymentRefundCents: refundedCents } : {}),
       refundedAt: order.refundedAt ?? now,
       ...(args.stripeChargeId ? { stripeChargeId: args.stripeChargeId } : {}),
       ...(args.stripePaymentIntentId ? { stripePaymentIntentId: args.stripePaymentIntentId } : {}),
@@ -71,6 +79,7 @@ export async function applyStripeRefundToOrderTx(tx: Tx, args: ApplyStripeRefund
         source: args.source,
         refundCents: safeRefundCents,
         totalCents: order.totalCents,
+        ...(payment ? { paymentCurrency: payment.currency, paymentRefundCents: refundedCents } : {}),
         stripeEventId: args.stripeEventId ?? null,
         stripeRefundId: args.stripeRefundId ?? null,
         stripeChargeId: args.stripeChargeId ?? null,

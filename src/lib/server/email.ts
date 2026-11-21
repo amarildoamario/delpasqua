@@ -1,4 +1,6 @@
 import { Resend } from "resend";
+import { formatMoney, type Currency } from "@/lib/money";
+import { storedCheckoutPayment, storedCheckoutPaymentItem } from "./checkoutPayment";
 import { prisma } from "@/lib/server/prisma";
 import type { TransactionalEmailType } from "@/generated/prisma/client";
 
@@ -8,10 +10,6 @@ import type { TransactionalEmailType } from "@/generated/prisma/client";
  * - Ora: resend può essere null e sendViaResend gestisce la mancanza di key.
  */
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-
-function eur(cents: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
-}
 
 function baseUrl() {
   return (
@@ -117,7 +115,7 @@ function formatShipping(o: unknown) {
   return `${fullName}\n${addressLine1}${line2}\n${postalCode} ${city}${prov}\n${countryCode}${phoneTxt}`;
 }
 
-function itemsToText(items: unknown) {
+function itemsToText(items: unknown, currency: Currency) {
   const list = normalizeItems(items);
 
   return list
@@ -126,12 +124,13 @@ function itemsToText(items: unknown) {
       const variantLabel = String(it.variantLabel ?? "");
       const qty = Number(it.qty ?? 0);
       const unit = Number(it.unitPriceCents ?? 0);
-      return `- ${title} (${variantLabel}) x${qty} — ${eur(unit * qty)}`;
+      return `- ${title} (${variantLabel}) x${qty} — ${formatMoney(unit * qty, currency)}`;
     })
     .join("\n");
 }
 
-function totalsToText(o: unknown) {
+function totalsToText(o: TransactionalEmailPreviewPayload) {
+  const amount = (cents: number) => formatMoney(cents, o.currency ?? "EUR");
   const rows: string[] = [];
   const subtotalCents = getNum(o, "subtotalCents");
   const discountCents = getNum(o, "discountCents");
@@ -139,11 +138,11 @@ function totalsToText(o: unknown) {
   const taxCents = getNum(o, "taxCents");
   const totalCents = getNum(o, "totalCents");
 
-  rows.push(`Subtotale: ${eur(subtotalCents)}`);
-  if (discountCents) rows.push(`Sconto: -${eur(discountCents)}`);
-  rows.push(`Spedizione: ${eur(shippingCents)}`);
-  if (taxCents) rows.push(`Tasse: ${eur(taxCents)}`);
-  rows.push(`Totale: ${eur(totalCents)}`);
+  rows.push(`Subtotale: ${amount(subtotalCents)}`);
+  if (discountCents) rows.push(`Sconto: -${amount(discountCents)}`);
+  rows.push(`Spedizione: ${amount(shippingCents)}`);
+  if (taxCents) rows.push(`Tasse: ${amount(taxCents)}`);
+  rows.push(`Totale: ${amount(totalCents)}`);
   return rows.join("\n");
 }
 
@@ -285,9 +284,9 @@ function htmlShell(args: {
   </html>`;
 }
 
-function orderSummaryCardHtml(o: unknown) {
+function orderSummaryCardHtml(o: TransactionalEmailPreviewPayload) {
   const orderNumber = escapeHtml(String(getOptStr(o, "orderNumber") || getOptStr(o, "id")));
-  const total = escapeHtml(eur(getNum(o, "totalCents")));
+  const total = escapeHtml(formatMoney(o.totalCents, o.currency ?? "EUR"));
 
   return `
     <table class="order-summary" role="presentation">
@@ -315,7 +314,7 @@ function shippingCardHtml(o: unknown) {
   `;
 }
 
-function itemsTableHtml(items: unknown) {
+function itemsTableHtml(items: unknown, currency: Currency) {
   const list = normalizeItems(items);
 
   const rows = list
@@ -323,7 +322,7 @@ function itemsTableHtml(items: unknown) {
       const title = escapeHtml(String(it.title ?? ""));
       const varLabel = escapeHtml(String(it.variantLabel ?? ""));
       const qty = Number(it.qty ?? 0);
-      const price = escapeHtml(eur(Number(it.unitPriceCents ?? 0) * qty));
+      const price = escapeHtml(formatMoney(Number(it.unitPriceCents ?? 0) * qty, currency));
 
       return `
         <tr>
@@ -352,10 +351,11 @@ function itemsTableHtml(items: unknown) {
 }
 
 function orderDetailsHtml(o: TransactionalEmailPreviewPayload) {
-  return `<div class="order-details">${orderSummaryCardHtml(o)}${itemsTableHtml(o.items)}</div>`;
+  return `<div class="order-details">${orderSummaryCardHtml(o)}${itemsTableHtml(o.items, o.currency ?? "EUR")}</div>`;
 }
 
-function totalsCardHtml(o: unknown) {
+function totalsCardHtml(o: TransactionalEmailPreviewPayload) {
+  const amount = (cents: number) => formatMoney(cents, o.currency ?? "EUR");
   const subtotalCents = getNum(o, "subtotalCents");
   const discountCents = getNum(o, "discountCents");
   const shippingCents = getNum(o, "shippingCents");
@@ -363,11 +363,11 @@ function totalsCardHtml(o: unknown) {
   const totalCents = getNum(o, "totalCents");
 
   const rows: Array<{ k: string; v: string; strong?: boolean }> = [
-    { k: "Subtotale", v: eur(subtotalCents) },
-    ...(discountCents ? [{ k: "Sconto", v: `-${eur(discountCents)}` }] : []),
-    { k: "Spedizione", v: eur(shippingCents) },
-    ...(taxCents ? [{ k: "Tasse", v: eur(taxCents) }] : []),
-    { k: "Totale", v: eur(totalCents), strong: true },
+    { k: "Subtotale", v: amount(subtotalCents) },
+    ...(discountCents ? [{ k: "Sconto", v: `-${amount(discountCents)}` }] : []),
+    { k: "Spedizione", v: amount(shippingCents) },
+    ...(taxCents ? [{ k: "Tasse", v: amount(taxCents) }] : []),
+    { k: "Totale", v: amount(totalCents), strong: true },
   ];
 
   const htmlRows = rows
@@ -397,6 +397,7 @@ function totalsCardHtml(o: unknown) {
 
 export type TransactionalEmailPreviewPayload = {
   isTest?: boolean;
+  currency?: Currency;
   id: string;
   orderNumber: string | null;
   status: string;
@@ -432,7 +433,7 @@ export const PREVIEWABLE_TRANSACTIONAL_EMAIL_TYPES = [
 function buildEmail(type: TransactionalEmailType, o: TransactionalEmailPreviewPayload): BuiltTransactionalEmail {
   const orderNumber = String(o.orderNumber ?? o.id);
 
-  const itemsText = itemsToText(o.items ?? []);
+  const itemsText = itemsToText(o.items ?? [], o.currency ?? "EUR");
   const totalsText = totalsToText(o);
   const shippingText = formatShipping(o);
 
@@ -670,7 +671,20 @@ export async function sendTransactionalEmail(args: {
     return { ok: true, status: "skipped" };
   }
 
-  const built = buildEmail(type, order);
+  const payment = storedCheckoutPayment(order.paymentPricing);
+  const amounts = payment ? {
+    subtotalCents: payment.subtotalCents,
+    discountCents: payment.discountCents,
+    shippingCents: payment.shippingCents,
+    totalCents: payment.totalCents,
+    taxCents: 0,
+    currency: payment.currency,
+  } : { currency: "EUR" as const };
+  const items = order.items.map((item) => ({
+    ...item,
+    unitPriceCents: storedCheckoutPaymentItem(item.pricingSnapshot)?.unitPriceCents ?? item.unitPriceCents,
+  }));
+  const built = buildEmail(type, { ...order, ...amounts, items });
 
   // Use the same renderer as the admin print sheet; no print/audit or fiscal counters are mutated.
   let attachments: Array<{ filename: string; content: Buffer; contentType: string }> | undefined;

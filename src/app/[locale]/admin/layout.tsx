@@ -3,6 +3,7 @@ import { prisma, databaseReadOnly } from "@/lib/server/prisma";
 import { databasePolicy } from "@/lib/server/databaseSafety.mjs";
 import { requireAdminPage } from "@/lib/server/adminAuth";
 import AdminSidebar from "./_components/AdminSidebar";
+import "./_components/CartFunnelDiagram.css";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Main Content Side Column */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-neutral-50">
         {/* Scrollable inner content box */}
-        <div className="no-scrollbar min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-3.5 py-4 pb-20 sm:px-6 sm:py-6">
+        <div id="admin-content" className="no-scrollbar min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-3.5 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-6 sm:pt-6 lg:pb-6">
           {databaseReadOnly ? (
             <div role="status" className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               <strong>Modalità consultazione.</strong> Il database online è in sola lettura. I salvataggi richiedono un database di sviluppo separato.

@@ -28,6 +28,7 @@ export const CheckoutSchema = z.object({
   items: z.array(CartLineSchema).min(1).max(50),
   promotionCode: z.string().trim().min(2).max(40).optional(),
   countryCode: z.string().trim().toUpperCase().optional(),
+  locale: z.string().max(16).optional(),
 });
 
 export const PromotionValidateSchema = z.object({
@@ -73,6 +74,10 @@ export const CreateOrderSchema = z.object({
   promotionCode: z.string().trim().min(2).max(40).optional(),
   locale: z.string().optional(),
   countryCode: z.string().trim().toUpperCase().optional(),
+  expectedPayment: z.object({
+    currency: z.enum(["EUR", "USD", "GBP"]),
+    totalCents: z.number().int().nonnegative().safe(),
+  }).optional(),
 });
 
 /**

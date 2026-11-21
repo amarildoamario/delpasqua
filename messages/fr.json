@@ -1080,6 +1080,7 @@
             "invalid_cart": "Panier non valide.",
             "order_creation": "Erreur lors de la création de la commande.",
             "invalid_server_response": "Réponse du serveur non valide.",
+            "price_changed": "Le total a changé. Vérifiez le nouveau montant et réessayez.",
             "checkout_unavailable": "Caisse indisponible.",
             "missing_checkout_url": "URL de caisse manquante.",
             "checkout_generic": "Erreur lors du passage à la caisse."

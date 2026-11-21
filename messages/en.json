@@ -364,7 +364,7 @@
             "reset": "Show all products"
         },
         "info": {
-            "shipping": "Free shipping on orders over {amount}",
+            "shipping": "Free shipping within Italy on orders over {amount}",
             "notes": "Prices are indicative and include VAT. Contact us for custom orders."
         },
         "filters": {
@@ -1080,6 +1080,7 @@
             "invalid_cart": "Invalid cart.",
             "order_creation": "Error while creating the order.",
             "invalid_server_response": "Invalid server response.",
+            "price_changed": "The total has changed. Check the updated amount and try again.",
             "checkout_unavailable": "Checkout unavailable.",
             "missing_checkout_url": "Missing checkout URL.",
             "checkout_generic": "Checkout error."

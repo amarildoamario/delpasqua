@@ -1,3 +1,4 @@
+import { readDashboardTrend } from "@/lib/server/dashboardTrend";
 import { closedCheckoutWhere } from "@/lib/server/checkoutMetrics";
 import Link from "next/link";
 import CountryFlag from "@/components/CountryFlag";
@@ -1158,94 +1159,8 @@ export default async function AdminDashboard({
 
 
 
-  // ========= TREND GIORNALIERO (filtrato per periodo) =========
-
-  const rows = (await prisma.$queryRaw<
-
-    Array<{
-
-      day: string;
-
-      orders: number;
-
-      paidOrders: number;
-
-      grossCents: number | null;
-
-      paidGrossCents: number | null;
-
-    }>
-
-  >`
-
-  SELECT
-
-    TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD') AS day,
-
-    COUNT(*)::int AS orders,
-
-
-
-    -- conteggio ordini "pagati" (anche se avanzano di stato)
-
-    SUM(
-
-      CASE
-
-        WHEN status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
-        THEN 1
-
-        ELSE 0
-
-      END
-
-    )::int AS "paidOrders",
-
-
-
-    -- totale lordo di TUTTI gli ordini (anche pending/canceled)
-
-    SUM("totalCents")::int AS "grossCents",
-
-
-
-    -- fatturato "pagati" (anche se avanzano di stato)
-
-    SUM(
-
-      CASE
-
-        WHEN status IN ('PAID','PREPARING','SHIPPED','DELIVERED','REFUNDED','PARTIALLY_REFUNDED')
-        THEN "totalCents"
-
-        ELSE 0
-
-      END
-
-    )::int AS "paidGrossCents"
-
-
-
-  FROM "Order"
-
-  WHERE "createdAt" >= ${start.toISOString()}::timestamp AND "createdAt" < ${endExclusive.toISOString()}::timestamp
-    AND "isTest" = false
-
-    AND (${marketFilter}::text IS NULL OR "countryCode" = ${marketFilter}::text)
-
-  GROUP BY TO_CHAR("createdAt" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD')
-
-  ORDER BY day ASC
-
-`) ?? [];
-
-
-
-
-
-  const maxPaidGross = Math.max(1, ...rows.map((r) => Number(r.paidGrossCents ?? 0)));
-
-
+  const trendRows = await readDashboardTrend(prisma, start, endExclusive, marketFilter, PAID_LIKE);
+  const maxPaidGross = Math.max(1, ...trendRows.map((row) => row.paidGrossCents));
 
   function getMarketQuery(marketCode?: string) {
 
@@ -1891,7 +1806,7 @@ export default async function AdminDashboard({
 
       {/* Trend */}
 
-      <Section title="Trend" subtitle="Andamento giornaliero sul periodo selezionato (barre = fatturato pagato).">
+      <Section title="Trend" subtitle="Ordini e checkout chiusi senza pagamento per giorno. Le prove del browser sono visibili a parte.">
 
         <div className="overflow-x-auto">
 
@@ -1906,10 +1821,12 @@ export default async function AdminDashboard({
                 <th className="py-1 pr-4">Ordini</th>
 
                 <th className="py-1 pr-4">Pagati</th>
+                <th className="py-1 pr-4">Checkout chiusi</th>
+                <th className="py-1 pr-4">Prove browser escluse</th>
 
                 <th className="py-1 pr-4">Fatturato (pagati)</th>
 
-                <th className="py-1 pr-4">Bar</th>
+                <th className="py-1 pr-4">Andamento</th>
 
               </tr>
 
@@ -1917,9 +1834,9 @@ export default async function AdminDashboard({
 
             <tbody className="divide-y divide-neutral-200">
 
-              {rows.map((r) => {
+              {trendRows.map((r) => {
 
-                const paidGross = Number(r.paidGrossCents ?? 0);
+                const paidGross = r.paidGrossCents;
 
                 const w = Math.round((paidGross / maxPaidGross) * 200);
 
@@ -1932,6 +1849,8 @@ export default async function AdminDashboard({
                     <td className="py-1 pr-4 text-neutral-700">{r.orders}</td>
 
                     <td className="py-1 pr-4 text-neutral-700">{r.paidOrders}</td>
+                    <td className="py-1 pr-4 text-neutral-700">{r.closedCheckouts}</td>
+                    <td className="py-1 pr-4 text-neutral-500">{r.excludedCheckouts}</td>
 
                     <td className="py-1 pr-4 font-extrabold text-neutral-900">
 
@@ -1957,11 +1876,11 @@ export default async function AdminDashboard({
 
 
 
-              {rows.length === 0 ? (
+              {trendRows.length === 0 ? (
 
                 <tr>
 
-                  <td className="py-4 text-neutral-500" colSpan={5}>
+                  <td className="py-4 text-neutral-500" colSpan={7}>
 
                     Nessun dato per il periodo selezionato.
 

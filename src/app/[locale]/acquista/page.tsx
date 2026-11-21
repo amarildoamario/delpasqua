@@ -1,3 +1,4 @@
+import { formatStorefrontPrice } from "@/lib/money";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
@@ -48,13 +49,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     follow: true,
     hreflang: false,
   });
-}
-
-function formatPrice(cents: number, locale: string) {
-  return new Intl.NumberFormat(locale === "it" ? "it-IT" : "en-US", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 export default async function AcquistaPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -119,7 +113,7 @@ export default async function AcquistaPage({ params }: { params: Promise<{ local
                   {minPrice !== null ? (
                     <p className="mt-4 text-sm font-semibold text-[#132c1c]">
                       {isEn ? "From " : "Da "}
-                      {formatPrice(minPrice, locale)}
+                      {formatStorefrontPrice(minPrice, locale)}
                     </p>
                   ) : null}
                 </div>

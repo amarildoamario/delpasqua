@@ -1,5 +1,6 @@
 "use client";
 
+import { formatMoney, type Currency } from "@/lib/money";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { OrderStatus } from "@/generated/prisma/client";
@@ -21,14 +22,11 @@ import {
   Loader2,
 } from "lucide-react";
 
-function euro(cents: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
-}
-
 type Props = {
   orderId: string;
   status: OrderStatus;
   totalCents: number;
+  currency: Currency;
   refundCents: number;
   stripePaymentIntentId?: string | null;
   notes?: string | null;
@@ -49,6 +47,7 @@ export default function OrderStatusActions({
   orderId,
   status,
   totalCents,
+  currency,
   refundCents,
   stripePaymentIntentId,
   passedStatuses = [],
@@ -423,7 +422,7 @@ export default function OrderStatusActions({
             </div>
             <div className="text-sm text-neutral-600 space-y-2.5 leading-relaxed">
               <p>
-                Verrà emesso un rimborso reale su Stripe per un importo di <b>{euro(remainingRefundCents)}</b>.
+                Verrà emesso un rimborso reale su Stripe per un importo di <b>{formatMoney(remainingRefundCents, currency)}</b>.
               </p>
               <p>
                 Dopo la conferma, lo stato dell&apos;ordine verrà aggiornato in <b>RIMBORSATO</b> o{" "}

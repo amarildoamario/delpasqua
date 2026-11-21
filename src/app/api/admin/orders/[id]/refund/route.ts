@@ -11,6 +11,7 @@ import { AdminOrderRefundSchema } from "@/lib/server/schemas";
 import { applyStripeRefundToOrderTx, isRefundableOrderStatus } from "@/lib/server/orderRefund";
 import { scheduleOutboxBatch } from "@/lib/server/outboxScheduling";
 import { OrderInvariantError } from "@/lib/server/orderStatus";
+import { storedCheckoutPayment } from "@/lib/server/checkoutPayment";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -43,6 +44,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
         status: true,
         totalCents: true,
         refundCents: true,
+        paymentPricing: true,
+        paymentRefundCents: true,
         stripePaymentIntentId: true,
         stripeChargeId: true,
       },
@@ -56,7 +59,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       return NextResponse.json({ error: "MISSING_STRIPE_PAYMENT_INTENT" }, { status: 409 });
     }
 
-    const remainingRefundCents = order.totalCents - order.refundCents;
+    const payment = storedCheckoutPayment(order.paymentPricing);
+    const paymentTotalCents = payment?.totalCents ?? order.totalCents;
+    const refundedCents = payment ? (order.paymentRefundCents ?? 0) : order.refundCents;
+    const remainingRefundCents = paymentTotalCents - refundedCents;
     if (remainingRefundCents <= 0) {
       return NextResponse.json({ error: "ORDER_ALREADY_REFUNDED" }, { status: 409 });
     }
@@ -64,7 +70,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const refund = await stripe.refunds.create(
       {
         payment_intent: order.stripePaymentIntentId,
-        amount: remainingRefundCents,
+        ...(payment ? {} : { amount: remainingRefundCents }),
         reason: parsed.data.reason,
         metadata: {
           orderId: order.id,
@@ -73,7 +79,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
         },
       },
       {
-        idempotencyKey: `order-refund:${order.id}:${order.refundCents}:${remainingRefundCents}`,
+        idempotencyKey: `order-refund:${order.id}:${refundedCents}:${remainingRefundCents}`,
       }
     );
 
@@ -87,9 +93,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
         { status: 502 }
       );
     }
+    if (payment && refund.currency !== payment.currency.toLowerCase()) {
+      throw new Error("Stripe refund currency does not match the stored checkout currency");
+    }
 
     let stripeChargeId = stripeId(refund.charge) ?? order.stripeChargeId;
-    let cumulativeRefundCents = Math.min(order.totalCents, order.refundCents + refund.amount);
+    let cumulativeRefundCents = Math.min(paymentTotalCents, refundedCents + refund.amount);
 
     if (stripeChargeId) {
       const charge = await stripe.charges.retrieve(stripeChargeId);
@@ -121,6 +130,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
             id: refund.id,
             status: refund.status,
             amount: refund.amount,
+            currency: refund.currency,
           },
         },
         { status: 200 }

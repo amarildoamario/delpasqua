@@ -2,6 +2,8 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import Stripe from "stripe";
+import { formatMoney } from "@/lib/money";
+import { storedCheckoutPayment, storedCheckoutPaymentItem } from "@/lib/server/checkoutPayment";
 import { getTranslations } from "next-intl/server";
 
 import SuccessAutoRefresh from "./SuccessAutoRefresh";
@@ -25,12 +27,6 @@ function getStripeOrNull() {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key || !key.startsWith("sk_")) return null;
   return new Stripe(key, { apiVersion: "2026-01-28.clover" as never });
-}
-
-function euro(cents: number) {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(
-    (cents ?? 0) / 100
-  );
 }
 
 function getOne(v: string | string[] | undefined) {
@@ -286,6 +282,8 @@ async function CheckoutSuccessPage({
     );
   }
 
+  const payment = storedCheckoutPayment(order.paymentPricing);
+  const formatAmount = (cents: number) => formatMoney(cents, payment?.currency ?? "EUR", locale);
   const isPaid = order.status === "PAGATO";
   const shouldClearCart = isPaid || (stripePaymentStatus ?? "").toLowerCase() === "paid";
 
@@ -411,7 +409,7 @@ async function CheckoutSuccessPage({
                       <div className="flex items-center justify-between">
                         <span className="text-neutral-600">Totale</span>
                         <span className="text-lg font-semibold text-neutral-900">
-                          {euro(order.totalCents)}
+                          {formatAmount(payment?.totalCents ?? order.totalCents)}
                         </span>
                       </div>
 
@@ -449,6 +447,7 @@ async function CheckoutSuccessPage({
             <div className="mt-4 divide-y divide-neutral-200 overflow-hidden rounded-2xl border border-neutral-200">
               {order.items.map((it: Item) => {
                 const snap = it.productSnapshot ?? null;
+                const paidItem = storedCheckoutPaymentItem(it.pricingSnapshot);
                 const p = catalog.find((x) => x.id === it.productId);
                 const v = p?.variants.find((vv) => vv.id === it.variantId);
 
@@ -487,7 +486,7 @@ async function CheckoutSuccessPage({
 
                         <div className="shrink-0 text-right">
                           <div className="font-semibold text-neutral-900">
-                            {euro(it.lineTotalCents)}
+                            {formatAmount(paidItem?.lineTotalCents ?? it.lineTotalCents)}
                           </div>
                         </div>
                       </div>
@@ -495,7 +494,7 @@ async function CheckoutSuccessPage({
                       <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
                         <span>Qtà {it.qty}</span>
                         <span>•</span>
-                        <span>{euro(it.unitPriceCents)} / cad.</span>
+                        <span>{formatAmount(paidItem?.unitPriceCents ?? it.unitPriceCents)} / cad.</span>
                       </div>
                     </div>
                   </div>

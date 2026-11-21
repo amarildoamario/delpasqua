@@ -4,6 +4,7 @@ import { CheckoutSchema } from "@/lib/server/schemas";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { computeOrderPricing } from "@/lib/server/pricing";
+import { checkoutPayment } from "@/lib/server/checkoutPayment";
 
 function getIP(req: Request) {
   const xf = req.headers.get("x-forwarded-for");
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
         vatCents: pricing.vatCents,
         shippingCents: pricing.shippingCents,
         totalCents: pricing.totalCents,
+        payment: checkoutPayment(pricing, parsed.data.locale),
         promotionApplied: pricing.promotionApplied,
       },
       { status: 200 }

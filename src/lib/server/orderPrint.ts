@@ -1,5 +1,7 @@
 import { companyInfo } from "@/lib/companyInfo";
 import type * as Prisma from "@/generated/prisma/client";
+import { formatMoney } from "@/lib/money";
+import { storedCheckoutPayment } from "./checkoutPayment";
 
 type OrderWithItems = Prisma.Prisma.OrderGetPayload<{ include: { items: true } }>;
 export type PrintableOrder = Pick<OrderWithItems,
@@ -8,6 +10,7 @@ export type PrintableOrder = Pick<OrderWithItems,
   "countryCode" | "paymentMethod" | "paymentProvider" | "paidAt" | "shippingNotes" |
   "subtotalCents" | "discountCents" | "shippingCents" | "vatCents" | "totalCents"
 > & {
+  paymentPricing?: OrderWithItems["paymentPricing"];
   items: Pick<OrderWithItems["items"][number], "sku" | "title" | "variantLabel" | "qty" | "unitPriceCents" | "lineVatCents" | "lineTotalCents">[];
   previousPrintCount: number;
   lastPrintedAt: Date | null;
@@ -100,6 +103,7 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
 
   const htmlItems = orders
     .map((order, idx) => {
+      const payment = storedCheckoutPayment(order.paymentPricing);
       const itemsHtml = order.items
         .map((item) => {
           const variantLabel = item.variantLabel
@@ -269,6 +273,10 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
                 <td style="padding: 6px 0 0 0; color: #171717;">Totale ${isQuote ? "Preventivo" : "Ordine"}:</td>
                 <td style="text-align: right; padding: 6px 0 0 0; color: #171717;">${euro(order.totalCents)}</td>
               </tr>
+              ${payment ? `<tr>
+                <td style="padding-top: 4px;">Importo Stripe (${payment.currency})</td>
+                <td style="text-align: right; padding-top: 4px;">${escapeHtml(formatMoney(payment.totalCents, payment.currency))}</td>
+              </tr>` : ""}
             </table>
           </div>
           ${isQuote ? `<div class="quote-acceptance" style="margin-top: 28px; border-top: 1px solid #ddd; padding-top: 20px; font-size: 11px; line-height: 1.65; break-inside: avoid;">

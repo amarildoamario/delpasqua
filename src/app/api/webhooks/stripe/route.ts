@@ -5,6 +5,7 @@ import { prisma } from "@/lib/server/prisma";
 import { releaseReserved } from "@/lib/server/inventory";
 import { scheduleOutboxBatch } from "@/lib/server/outboxScheduling";
 import { applyPaidOrderInvariantsTx } from "@/lib/server/orderPayment";
+import { matchesCheckoutPayment, storedCheckoutPayment } from "@/lib/server/checkoutPayment";
 import {
   extractOrderIdFromCheckoutSession,
   registerIncomingStripeWebhookEvent,
@@ -234,6 +235,37 @@ async function loadOrderForSession(session: Stripe.Checkout.Session) {
 
 type WebhookOrder = NonNullable<Awaited<ReturnType<typeof loadOrderForSession>>>;
 
+async function flagCheckoutPaymentMismatch(order: WebhookOrder, session: Stripe.Checkout.Session, eventId: string) {
+  const expected = storedCheckoutPayment(order.paymentPricing);
+  if (!expected || matchesCheckoutPayment(expected, session)) return false;
+
+  const { sessionId, paymentIntentId } = getSessionIds(session);
+  const metaJson = JSON.stringify({
+    stripeEventId: eventId,
+    expectedCurrency: expected.currency,
+    expectedTotal: expected.totalCents,
+    receivedCurrency: session.currency,
+    receivedTotal: session.amount_total,
+  });
+  await prisma.$transaction(async (tx) => {
+    await tx.order.update({ where: { id: order.id }, data: { isFlagged: true, attentionDismissedAt: null } });
+    const mismatchEvent = { orderId: order.id, type: "STRIPE_PAYMENT_AMOUNT_MISMATCH", metaJson };
+    if (!(await tx.orderEvent.findFirst({ where: mismatchEvent, select: { id: true } }))) {
+      await tx.orderEvent.create({
+        data: { ...mismatchEvent, message: "Importo o valuta Stripe diversi dall'importo atteso" },
+      });
+    }
+    await tx.stripeWebhookEvent.update({
+      where: { eventId },
+      data: {
+        orderId: order.id, sessionId, paymentIntentId, outcome: "review",
+        processedAt: new Date(), errorMessage: "Checkout amount or currency mismatch",
+      },
+    });
+  });
+  return true;
+}
+
 async function markPaidOrderForManualReviewTx(
   tx: Tx,
   args: {
@@ -436,6 +468,10 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ received: true }, { status: 200 });
         }
 
+        if (await flagCheckoutPaymentMismatch(order, session, event.id)) {
+          return NextResponse.json({ received: true, review: true });
+        }
+
         // ✅ METODO DI PAGAMENTO USATO (REAL)
         // lo calcolo QUI prima della tx (chiamata esterna a Stripe)
         let paymentMethodLabel = await getRealPaymentMethodLabelFromPaymentIntent(paymentIntentId);
@@ -447,7 +483,8 @@ export async function POST(req: NextRequest) {
           else if (types.length > 1) paymentMethodLabel = types.map(titleCase).join(", ");
         }
 
-        const isPaidCheckout = (session.payment_status ?? "").toLowerCase() === "paid";
+        const isPaidCheckout = session.payment_status === "paid" ||
+          (order.paymentPricing != null && session.payment_status === "no_payment_required" && session.amount_total === 0);
 
         // Validazione address+name
         if (!name || !isValidAddress(addr)) {
@@ -653,6 +690,10 @@ export async function POST(req: NextRequest) {
             },
           });
           return NextResponse.json({ received: true }, { status: 200 });
+        }
+
+        if (await flagCheckoutPaymentMismatch(order, session, event.id)) {
+          return NextResponse.json({ received: true, review: true });
         }
 
         let paymentMethodLabel = await getRealPaymentMethodLabelFromPaymentIntent(paymentIntentId);

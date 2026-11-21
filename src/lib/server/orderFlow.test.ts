@@ -4,6 +4,7 @@ import { computeAvailableInventory, validateCartQuantityForSku } from "./cartVal
 import { canTransitionOrderStatus, getOrderInvariantViolations } from "./orderStatus";
 import { applyPaidOrderInvariantsTx } from "./orderPayment";
 import { applyStripeRefundToOrderTx } from "./orderRefund";
+import type { CheckoutPayment } from "./checkoutPayment";
 import { evaluatePromotionEligibility } from "./promotionUsage";
 import {
   OutOfStockError,
@@ -39,6 +40,8 @@ type OrderRow = {
   refundedAt: Date | null;
   totalCents: number;
   refundCents: number;
+  paymentPricing?: CheckoutPayment | null;
+  paymentRefundCents?: number | null;
   email: string;
   fullName: string;
   address: string;
@@ -923,6 +926,37 @@ test("applyStripeRefundToOrderTx records a full refund and enqueues refund email
     stripePaymentIntentId: "pi_123",
   });
 
+  assert.equal(store.outbox.length, 1);
+});
+
+test("refunds use the stored Stripe currency amounts and retain the euro accounting amounts", async () => {
+  const { store, tx } = buildFakeTx({
+    orders: [{
+      ...baseOrder("order-multicurrency"),
+      status: "PAGATO",
+      totalCents: 2500,
+      refundCents: 0,
+      paymentPricing: {
+        currency: "GBP", subtotalCents: 2100, discountCents: 0, shippingCents: 0, totalCents: 2100, items: [],
+      },
+    }],
+  });
+  const args = {
+    orderId: "order-multicurrency",
+    source: "admin_refund" as const,
+    stripePaymentIntentId: "pi_multicurrency",
+  };
+  const partial = await applyStripeRefundToOrderTx(tx, { ...args, cumulativeRefundCents: 840 });
+  assert.equal(partial.paymentRefundCents, 840);
+  assert.equal(partial.refundCents, 1000);
+  assert.equal(partial.status, "PARZIALMENTE_RIMBORSATO");
+  const full = await applyStripeRefundToOrderTx(tx, { ...args, cumulativeRefundCents: 2100 });
+  assert.equal(full.paymentRefundCents, 2100);
+  assert.equal(full.refundCents, 2500);
+  assert.equal(full.status, "RIMBORSATO");
+  const stale = await applyStripeRefundToOrderTx(tx, { ...args, cumulativeRefundCents: 840 });
+  assert.equal(stale.status, "RIMBORSATO");
+  assert.equal(stale.paymentRefundCents, 2100);
   assert.equal(store.outbox.length, 1);
 });
 

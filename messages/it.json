@@ -1100,6 +1100,7 @@
             "invalid_cart": "Carrello non valido.",
             "order_creation": "Errore durante la creazione dell'ordine.",
             "invalid_server_response": "Risposta server non valida.",
+            "price_changed": "Il totale è cambiato. Controlla il nuovo importo e riprova.",
             "checkout_unavailable": "Checkout non disponibile.",
             "missing_checkout_url": "URL checkout mancante.",
             "checkout_generic": "Errore checkout."

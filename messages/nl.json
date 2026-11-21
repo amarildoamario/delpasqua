@@ -1085,6 +1085,7 @@
             "invalid_cart": "Ongeldige winkelwagen.",
             "order_creation": "Fout bij het aanmaken van de bestelling.",
             "invalid_server_response": "Ongeldige serverreactie.",
+            "price_changed": "Het totaal is gewijzigd. Controleer het nieuwe bedrag en probeer opnieuw.",
             "checkout_unavailable": "Checkout niet beschikbaar.",
             "missing_checkout_url": "Checkout-URL ontbreekt.",
             "checkout_generic": "Checkoutfout."

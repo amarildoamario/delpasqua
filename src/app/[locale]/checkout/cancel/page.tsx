@@ -1,5 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
 import Stripe from "stripe";
+import { formatMoney } from "@/lib/money";
+import { storedCheckoutPayment } from "@/lib/server/checkoutPayment";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { prisma } from "@/lib/server/prisma";
@@ -8,18 +10,6 @@ import CancelTrack from "./_components/CancelTrack";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const intlLocaleByRouteLocale: Record<string, string> = {
-  it: "it-IT",
-  en: "en-GB",
-  de: "de-DE",
-  nl: "nl-NL",
-  da: "da-DK",
-  no: "nb-NO",
-  es: "es-ES",
-  fr: "fr-FR",
-  us: "en-US",
-};
 
 function getStripeOrNull() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -34,13 +24,6 @@ function getOne(v: string | string[] | undefined) {
 function clampId(id: string) {
   if (id.length <= 18) return id;
   return `${id.slice(0, 8)}...${id.slice(-8)}`;
-}
-
-function euro(cents: number, locale: string) {
-  return new Intl.NumberFormat(intlLocaleByRouteLocale[locale] ?? "it-IT", {
-    style: "currency",
-    currency: "EUR",
-  }).format(cents / 100);
 }
 
 async function CancelPage({
@@ -124,6 +107,9 @@ async function CancelPage({
       ? clampId(order.id)
       : null;
 
+  const payment = storedCheckoutPayment(order?.paymentPricing);
+  const currency = payment?.currency ?? "EUR";
+  const totalCents = payment?.totalCents ?? order?.totalCents ?? 0;
   const itemsCount = order?.items?.reduce((sum, it) => sum + it.qty, 0) ?? 0;
 
   return (
@@ -132,8 +118,8 @@ async function CancelPage({
         orderId={order?.id ?? orderId ?? null}
         sessionId={sessionId}
         itemsCount={itemsCount}
-        totalCents={order?.totalCents ?? 0}
-        currency="EUR"
+        totalCents={totalCents}
+        currency={currency}
         hasOrder={Boolean(order)}
       />
 
@@ -221,7 +207,7 @@ async function CancelPage({
                         <div className="flex items-center justify-between">
                           <span className="text-neutral-600">{t("order_total")}</span>
                           <span className="font-semibold text-neutral-900">
-                            {euro(order.totalCents, locale)}
+                            {formatMoney(totalCents, currency, locale)}
                           </span>
                         </div>
                       </>

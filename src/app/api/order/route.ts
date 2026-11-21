@@ -11,6 +11,7 @@ import { enforceBodyLimit } from "@/lib/server/bodyLimit";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { createOrderEvent } from "@/lib/server/orderEvents";
 import { computeOrderPricing } from "@/lib/server/pricing";
+import { checkoutPayment, matchesCheckoutPayment } from "@/lib/server/checkoutPayment";
 import { evaluatePromotionEligibility, lockPromotionRow } from "@/lib/server/promotionUsage";
 import { releaseReserved, reserveStockOrThrow } from "@/lib/server/inventory";
 import { computeRiskScore } from "@/lib/server/antiFraud";
@@ -160,6 +161,15 @@ export async function POST(req: Request) {
       promotionCode: parsed.data.promotionCode,
       countryCode: selectedCountry,
     });
+    const payment = checkoutPayment(pricing, parsed.data.locale);
+    const localizedPayment = payment.currency !== "EUR";
+    const expectedPayment = parsed.data.expectedPayment;
+    if (expectedPayment && (
+      expectedPayment.currency !== payment.currency || expectedPayment.totalCents !== payment.totalCents
+    )) {
+      return Response.json({ error: "CHECKOUT_PRICE_CHANGED" }, { status: 409 });
+    }
+    const stripeCurrency = payment.currency.toLowerCase();
     if (hasMixedTestAndCommercialItems(pricing.items)) {
       return Response.json(
         { error: "Il prodotto di test deve essere acquistato da solo." },
@@ -215,6 +225,7 @@ export async function POST(req: Request) {
           idempotencyKey: idemKey,
           status: "IN_ATTESA",
           currency: "eur",
+          ...(localizedPayment ? { paymentPricing: payment } : {}),
 
           subtotalCents: pricing.subtotalCents,
           vatCents: pricing.vatCents,
@@ -249,7 +260,7 @@ export async function POST(req: Request) {
           shippingNotes: customer?.notes ?? null,
 
           items: {
-            create: pricing.items.map((it) => ({
+            create: pricing.items.map((it, i) => ({
               productId: it.productId,
               variantId: it.variantId,
 
@@ -269,7 +280,10 @@ export async function POST(req: Request) {
               lineTaxCents: it.lineTaxCents,
 
               productSnapshot: it.productSnapshot as NonNullable<unknown>,
-              pricingSnapshot: it.pricingSnapshot as NonNullable<unknown>,
+              pricingSnapshot: {
+                ...it.pricingSnapshot,
+                ...(localizedPayment ? { payment: payment.items[i] } : {}),
+              } as NonNullable<unknown>,
             })),
           },
 
@@ -298,11 +312,11 @@ export async function POST(req: Request) {
     const appUrl = resolveAppUrl(req);
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-      ...order.items.map((it) => ({
+      ...pricing.items.map((it, i) => ({
         quantity: it.qty,
         price_data: {
-          currency: "eur",
-          unit_amount: it.unitPriceCents,
+          currency: stripeCurrency,
+          unit_amount: payment.items[i].unitPriceCents,
           product_data: {
             name: it.title,
             description: it.variantLabel,
@@ -340,11 +354,11 @@ export async function POST(req: Request) {
 
     // Se c'e uno sconto, crea un coupon Stripe al volo e aggiungilo alla sessione.
     let stripeCouponId: string | undefined;
-    if (pricing.discountCents > 0 && pricing.promotionApplied) {
+    if (payment.discountCents > 0 && pricing.promotionApplied) {
       try {
         const coupon = await stripe.coupons.create({
-          amount_off: pricing.discountCents,
-          currency: "eur",
+          amount_off: payment.discountCents,
+          currency: stripeCurrency,
           duration: "once",
           name: `Sconto ${pricing.promotionApplied.code}`,
           metadata: {
@@ -388,6 +402,10 @@ export async function POST(req: Request) {
     try {
       const sessionResp = await stripe.checkout.sessions.create({
         mode: "payment",
+        ...(localizedPayment ? {
+          adaptive_pricing: { enabled: false },
+          locale: payment.currency === "GBP" ? "en-GB" : "en",
+        } : {}),
         expires_at: Math.floor(Date.now() / 1000) + ORDER_PENDING_TTL_MINUTES * 60,
         ...(stripeCustomerId
           ? { customer: stripeCustomerId }
@@ -403,9 +421,11 @@ export async function POST(req: Request) {
         shipping_options: [
           {
             shipping_rate_data: {
-              display_name: order.shippingCents > 0 ? "Spedizione" : "Spedizione gratuita",
+              display_name: localizedPayment
+                ? (payment.shippingCents > 0 ? "Shipping" : "Free shipping")
+                : (payment.shippingCents > 0 ? "Spedizione" : "Spedizione gratuita"),
               type: "fixed_amount",
-              fixed_amount: { currency: "eur", amount: order.shippingCents },
+              fixed_amount: { currency: stripeCurrency, amount: payment.shippingCents },
             },
           },
         ],
@@ -441,13 +461,13 @@ export async function POST(req: Request) {
     console.log("✅ has_customer_email:", Boolean(session.customer_email));
     console.log("✅ has_shipping_details:", Boolean((session as { shipping_details?: unknown }).shipping_details));
 
-    if (!session.url) {
+    if (!session.url || (localizedPayment && !matchesCheckoutPayment(payment, session))) {
       await expireStripeSessionBestEffort(session.id);
       await failPendingOrderWithoutCheckoutSession({
         orderId: order.id,
-        reason: "Stripe checkout session created without a checkout URL",
+        reason: "Stripe checkout session missing URL or returned a different total/currency",
       });
-      return new Response("Stripe session URL missing", { status: 500 });
+      return new Response("Stripe checkout session could not be verified", { status: 500 });
     }
 
     try {

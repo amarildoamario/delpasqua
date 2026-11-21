@@ -7,6 +7,7 @@ import { getStoreSettings } from "@/lib/server/settings";
 import { calcVatCentsFromSubtotal } from "@/lib/server/vat";
 import type { Product } from "@/lib/shopTypes";
 import { getShippingRule, isActiveMarketCountry } from "@/lib/shippingConfig";
+import { allocateProportionally } from "./checkoutPayment";
 
 export type PricingInputLine = {
   productId: string;
@@ -62,27 +63,6 @@ export type PricingResult = {
 
 function clampInt(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.trunc(n)));
-}
-
-function allocateProportionally(total: number, weights: number[]) {
-  if (total <= 0) return weights.map(() => 0);
-  const sumW = weights.reduce((a, b) => a + b, 0);
-  if (sumW <= 0) return weights.map(() => 0);
-
-  const raw = weights.map((w) => (total * w) / sumW);
-  const base = raw.map((x) => Math.floor(x));
-  let remainder = total - base.reduce((a, b) => a + b, 0);
-
-  const fracIdx = raw
-    .map((x, i) => ({ i, frac: x - Math.floor(x) }))
-    .sort((a, b) => b.frac - a.frac);
-
-  const out = [...base];
-  for (let k = 0; k < fracIdx.length && remainder > 0; k++) {
-    out[fracIdx[k].i] += 1;
-    remainder -= 1;
-  }
-  return out;
 }
 
 function getOptionalString(obj: unknown, key: string): string | null {

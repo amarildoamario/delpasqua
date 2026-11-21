@@ -1,6 +1,7 @@
 "use client";
 
-import { formatEUR } from "@/lib/money";
+import { convertStorefrontCents, formatMoney, formatStorefrontPrice, storefrontCurrency } from "@/lib/money";
+import { SHIPPING_RULES } from "@/lib/shippingConfig";
 
 import { isUniformProductImage, shouldContainProductImage } from "@/lib/productImageFit";
 
@@ -352,13 +353,17 @@ export default function ProductDetailsClient({
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
 
-  const cartTotalCents = useMemo(() => {
-    return lines.reduce((sum, line) => {
+  const cartAmounts = useMemo(() => {
+    return lines.reduce((totals, line) => {
       const cartProduct = catalog.find((item) => item.id === line.productId);
       const cartVariant = cartProduct?.variants.find((item) => item.id === line.variantId);
-      return sum + (cartVariant?.priceCents ?? 0) * line.qty;
-    }, 0);
-  }, [lines, catalog]);
+      const cents = cartVariant?.priceCents ?? 0;
+      return {
+        eurCents: totals.eurCents + cents * line.qty,
+        localCents: totals.localCents + convertStorefrontCents(cents, locale) * line.qty,
+      };
+    }, { eurCents: 0, localCents: 0 });
+  }, [lines, catalog, locale]);
 
   // Controllo disponibilità in tempo reale
   const [loadingAvail, setLoadingAvail] = useState(false);
@@ -498,7 +503,7 @@ export default function ProductDetailsClient({
           data: {
             isTest: lines.every((line) => line.productId === "prodotto-test"),
             itemsCount: lines.length,
-            totalCents: cartTotalCents,
+            totalCents: cartAmounts.eurCents,
           },
         });
       } catch (trackError) {
@@ -551,8 +556,8 @@ export default function ProductDetailsClient({
 
   // Prezzo calcolato
   const variantPriceCents = selectedVariant?.priceCents ?? variants[0]?.priceCents ?? 0;
-  const totalPriceFormatted = formatEUR(variantPriceCents * qty, locale);
-  const cartTotalFormatted = formatEUR(cartTotalCents, locale);
+  const totalPriceFormatted = formatMoney(convertStorefrontCents(variantPriceCents, locale) * qty, storefrontCurrency(locale), locale);
+  const cartTotalFormatted = formatMoney(cartAmounts.localCents, storefrontCurrency(locale), locale);
 
   // Lightbox Immagini Gallery
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -788,7 +793,7 @@ export default function ProductDetailsClient({
         merchBadge: p.merchBadge || null,
         imageSrc: cheapestVariant?.imageSrc ?? p.imageSrc ?? "",
         imageAlt: cheapestVariant?.imageAlt ?? p.imageAlt ?? "",
-        priceLabel: formatEUR(priceCents, locale),
+        priceLabel: formatStorefrontPrice(priceCents, locale),
         priceCaption: hasMultiple ? pCopy.from : pCopy.price,
         priceCents,
         defaultVariantId: cheapestVariant?.id,
@@ -813,6 +818,9 @@ export default function ProductDetailsClient({
   };
 
   const currentFaqs = text.faqs || [];
+  const hasConvertedPrices = storefrontCurrency(locale) !== "EUR";
+  const italyShippingThreshold = formatStorefrontPrice(SHIPPING_RULES.IT.freeShippingThresholdCents, locale);
+  const italyShippingFee = formatStorefrontPrice(SHIPPING_RULES.IT.shippingFlatCents, locale);
 
   const shopLabel = detailText.shopLabel;
   const homePath = locale === "it" ? "/" : `/${locale}`;
@@ -983,7 +991,7 @@ export default function ProductDetailsClient({
           {/* Prezzo e Informazioni Fiscali */}
           <div className="mt-4 flex items-baseline gap-3">
             <span className="font-sans text-3xl font-extrabold text-[#0A0A0A] tracking-tight">
-              {formatEUR(variantPriceCents, locale)}
+              {formatStorefrontPrice(variantPriceCents, locale)}
             </span>
             <span className="text-xs text-[#8B7355] font-bold uppercase tracking-[0.15em]">
               {formatSizeLabel(selectedVariant)}
@@ -992,6 +1000,7 @@ export default function ProductDetailsClient({
               | IVA inclusa
             </span>
           </div>
+
 
           {/* Descrizione Breve */}
           <div className="relative mt-4 md:h-[90px] md:min-h-[90px] md:max-h-[90px] h-auto shrink-0 grow-0">
@@ -1104,7 +1113,7 @@ export default function ProductDetailsClient({
                           isSelectable && item.productId === currentProduct.id && String(item.variantId) === String(selectedVariantId);
 
                         const priceCents = isSelectable ? getFormatNavItemPrice(item.productId, item.variantId) : null;
-                        const formattedPrice = priceCents ? formatEUR(priceCents, locale) : "—";
+                        const formattedPrice = priceCents ? formatStorefrontPrice(priceCents, locale) : "—";
 
                         const prod = findAvailableProduct(item.productId);
                         const variant = prod?.variants?.find((v) => String(v.id) === String(item.variantId));
@@ -1202,7 +1211,7 @@ export default function ProductDetailsClient({
                           {formatSizeLabel(v)}
                         </span>
                         <span className={`text-[11px] mt-0.5 ${isSelected ? "text-white/80" : "text-neutral-400"}`}>
-                          {formatEUR(v.priceCents, locale)}
+                          {formatStorefrontPrice(v.priceCents, locale)}
                         </span>
                       </button>
                     );
@@ -1265,7 +1274,7 @@ export default function ProductDetailsClient({
 
                       <div className="text-right">
                         <span className={`text-base font-extrabold tracking-tight ${isSelected ? "text-[#B5945B]" : "text-neutral-900"}`}>
-                          {formatEUR(v.priceCents, locale)}
+                          {formatStorefrontPrice(v.priceCents, locale)}
                         </span>
                       </div>
                     </button>
@@ -1415,7 +1424,7 @@ export default function ProductDetailsClient({
               )}
             </motion.button>
 
-            {cartCount > 0 && cartTotalCents > 0 ? (
+            {cartCount > 0 && cartAmounts.localCents > 0 ? (
               <motion.button
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
@@ -1438,7 +1447,7 @@ export default function ProductDetailsClient({
           {/* Promo Spedizione */}
           <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-neutral-500">
             <Truck className="h-3.5 w-3.5 text-neutral-400" />
-            <span>{text.shippingPromo}</span>
+            <span>{hasConvertedPrices ? text.shippingPromo.replace("{threshold}", italyShippingThreshold) : text.shippingPromo}</span>
           </div>
         </div>
 
@@ -1638,7 +1647,7 @@ export default function ProductDetailsClient({
                   
                   {isOpen && (
                     <div className="p-5 pt-0 border-t border-neutral-100 text-sm leading-relaxed text-neutral-600 font-light bg-neutral-50/20 animate-in fade-in slide-in-from-top-1 duration-200">
-                      {faq.a}
+                      {hasConvertedPrices ? faq.a.replace("{threshold}", italyShippingThreshold).replace("{fee}", italyShippingFee) : faq.a}
                     </div>
                   )}
                 </div>
