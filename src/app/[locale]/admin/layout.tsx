@@ -62,7 +62,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const [toShip, outboxIssues, webhookIssues, pendingTastings, unreadMessages] = await fetchAdminDashboardData();
 
   return (
-    <div className="admin-panel fixed inset-x-0 bottom-0 top-[var(--main-navbar-offset,98px)] flex min-w-0 flex-col overflow-hidden bg-neutral-50 md:top-[var(--main-navbar-offset,118px)] lg:static lg:h-[calc(var(--viewport-height,100svh)-118px)] lg:flex-row">
+    // Absolute positioning on desktop keeps admin dialogs in the navbar's stacking context.
+    <div className="admin-panel fixed inset-x-0 bottom-0 top-[var(--main-navbar-offset,98px)] flex min-w-0 flex-col overflow-hidden bg-neutral-50 md:top-[var(--main-navbar-offset,118px)] lg:flex-row lg:pointer-fine:absolute">
       {/* Modern Executive Sidebar (Desktop aside + Mobile topbar & drawer) */}
       <AdminSidebar
         counts={{

@@ -267,8 +267,8 @@ html {
   }
 }
 
-/* On mobile, the admin shell owns scrolling below the site header. */
-@media (width < 64rem) {
+/* The admin shell owns scrolling below the site header. */
+@media screen {
   html:has(.admin-panel),
   body:has(.admin-panel) {
     overflow: hidden;
