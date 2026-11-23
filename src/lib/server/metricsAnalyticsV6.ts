@@ -184,6 +184,8 @@ export function computeFunnelsAndSeries(args: {
   // Track per-session timestamps for ordered step checks
   const blogSessionFirstAt = new Map<string, number>();
   const shopSessionSet = new Set<string>();
+  const shopListSessionIds = new Set<string>();
+  let shopListPageViews = 0;
   const shopSessionsByLocale = new Map<Locale, { list: Set<string>; details: Set<string> }>();
   const productDetailFirstAt = new Map<string, number>();
   const addToCartLastAt = new Map<string, number>();
@@ -284,6 +286,10 @@ export function computeFunnelsAndSeries(args: {
         }
         (pageCategory === "shop_list" ? sessions.list : sessions.details).add(sid);
         shopSessionSet.add(sid);
+        if (pageCategory === "shop_list") {
+          shopListSessionIds.add(sid);
+          shopListPageViews++;
+        }
       }
       if (pageCategory === "blog") {
         const prev = blogSessionFirstAt.get(sid);
@@ -439,6 +445,7 @@ export function computeFunnelsAndSeries(args: {
   const blogToProductSessions = blogToProductSessionIds.size;
   const shopSessionsCount = shopSessionSet.size;
   const productDetailSessionsCount = productDetailFirstAt.size;
+  const shopListAndDetailSessions = [...shopListSessionIds].filter((sid) => productDetailFirstAt.has(sid)).length;
   const addToCartSessionsCount = addToCartSessionSet.size;
   const checkoutStartedSessionsCount = checkoutStartedSessionSet.size;
   const purchasingSessionsCount = purchasingSessionSet.size;
@@ -448,6 +455,12 @@ export function computeFunnelsAndSeries(args: {
     sessions: totalSessions,
     blogSessions: blogSessionsCount,
     shopSessions: shopSessionsCount,
+    shopBreakdown: {
+      listOnly: shopListSessionIds.size - shopListAndDetailSessions,
+      listAndDetail: shopListAndDetailSessions,
+      detailOnly: productDetailSessionsCount - shopListAndDetailSessions,
+      listPageViews: shopListPageViews,
+    },
     shopByLocale: locales.map((locale) => {
       const sessions = shopSessionsByLocale.get(locale);
       return {
@@ -815,7 +828,7 @@ export function computeFunnelsAndSeries(args: {
 
   return {
     sessionFunnel,
-    blogCohort: { firstVisitAt: blogSessionFirstAt, productSessionIds: blogToProductSessionIds },
+    blogCohort: { firstVisitAt: blogSessionFirstAt, productSessionIds: blogToProductSessionIds, productFirstAt: productDetailFirstAt },
     cartFunnel,
     checkoutCohort,
     productFunnel,

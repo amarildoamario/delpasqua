@@ -655,10 +655,12 @@ export async function GET(req: Request) {
     },
 
     definitions: {
+      "sessionFunnel.shopBreakdown": "Sessioni Shop ripartite fra solo elenco, elenco e schede, oppure solo schede. listPageViews conta le visualizzazioni dell'elenco in tutte le lingue, comprese le riaperture nella stessa sessione.",
       "insights.blogProductCards.introductionDate": "Data di inizio del conteggio dei clic dalle 00:00 in Europe/Rome e del periodo Dopo.",
       "insights.blogProductCards.trackingStartsAt": "Istante di inizio del conteggio in formato ISO 8601 UTC.",
       "insights.blogProductCards.periods": "Stessa coorte del funnel su indice, categorie e articoli in tutte le lingue. Ogni sessione è assegnata a Prima o Dopo secondo la sua prima visita al blog nel periodo selezionato. Il tasso usa lo stesso criterio di passaggio dal blog al prodotto del funnel.",
       "insights.blogProductCards.totalBlogSessions": "Sessioni blog del funnel nell’intero periodo selezionato, pari alla somma delle sessioni Prima e Dopo.",
+      "insights.blogProductCards.periods[].routes": "Per il periodo Dopo, ripartizione delle sessioni al prodotto. Si considera ciò che è stato registrato dalla prima visita al blog alla prima scheda: prima si verifica il clic su una card, poi il passaggio dall'elenco Shop, infine gli altri percorsi. Per il periodo Prima il campo vale null.",
       "insights.blogProductCards.totalProductSessions": "Sessioni passate dal blog al prodotto secondo il funnel nell’intero periodo selezionato.",
       "insights.blogProductCards.clicksByPosition": "Clic diretti sulle card di tutti gli articoli nel periodo selezionato a partire dalla data di inizio del conteggio, raggruppati per posizione.",
       "insights.blogProductCards.totalClicks": "Somma dei clic diretti conteggiati in tutte le posizioni.",

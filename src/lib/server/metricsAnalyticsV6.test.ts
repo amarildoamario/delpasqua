@@ -72,17 +72,20 @@ test("shop sessions use localized paths and count each session once per language
     ev({ path: "/us/shop/" }),
     ev({ path: "/de/laden/leicht-fruchtig/", sessionId: "s-2" }),
     ev({ path: "/de/warenkorb/", sessionId: "s-2" }),
+    ev({ path: "/fr/boutique/", sessionId: "s-3" }),
+    ev({ path: "/fr/boutique/?sort=price", sessionId: "s-3" }),
   ];
   const { sessionFunnel } = computeFunnelsAndSeries({
     orders: [], events, start, endExclusive: end, startISO: "2026-11-10", endISO: "2026-11-17", now: end,
   });
 
-  assert.equal(sessionFunnel.shopSessions, 2);
+  assert.equal(sessionFunnel.shopSessions, 3);
+  assert.deepEqual(sessionFunnel.shopBreakdown, { listOnly: 1, listAndDetail: 1, detailOnly: 1, listPageViews: 4 });
   assert.equal(sessionFunnel.productDetailSessions, 2);
   assert.equal(sessionFunnel.cartViewedSessions, 1);
   assert.deepEqual(sessionFunnel.shopByLocale.filter((row) => row.shopListSessions || row.productDetailSessions), [
     { locale: "de", shopListSessions: 0, productDetailSessions: 1 },
-    { locale: "fr", shopListSessions: 1, productDetailSessions: 1 },
+    { locale: "fr", shopListSessions: 2, productDetailSessions: 1 },
     { locale: "us", shopListSessions: 1, productDetailSessions: 0 },
   ]);
   assert.equal(canonicalizeSitePath("/fr/boutique/").canonicalPath, "/shop");

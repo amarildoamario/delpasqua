@@ -2,7 +2,8 @@ import { locales } from "@/i18n/pathnames";
 import { BLOG_PRODUCT_POSITIONS } from "@/lib/analytics/events";
 import { hasBlogPostTranslation, mockBlogPosts } from "@/lib/blog-data";
 import { getLocalizedBlogSlug } from "@/lib/blogSlugs";
-import { toRomeDateISO, type computeFunnelsAndSeries, type V6EventInput } from "./metricsAnalyticsV6";
+import { isSitePage } from "@/lib/analytics/acquisition";
+import { canonicalizeSitePath, toRomeDateISO, type computeFunnelsAndSeries, type V6EventInput } from "./metricsAnalyticsV6";
 import { metricsPeriod } from "./salesMetrics";
 
 const articleSlugs = new Map<string, string>();
@@ -19,7 +20,7 @@ const trackingStart = metricsPeriod(introductionDate, introductionDate).start;
 
 export function summarizeBlogCards(
   events: V6EventInput[],
-  { firstVisitAt, productSessionIds }: ReturnType<typeof computeFunnelsAndSeries>["blogCohort"],
+  { firstVisitAt, productSessionIds, productFirstAt }: ReturnType<typeof computeFunnelsAndSeries>["blogCohort"],
   start: Date,
   endExclusive: Date,
   now: Date,
@@ -28,10 +29,24 @@ export function summarizeBlogCards(
   const clicksFrom = Math.max(+start, +trackingStart);
   const clicksByPosition = { title: 0, after_first_paragraph: 0, end: 0 };
   const articleClicks = new Map<string, number>();
+  const cardClickBeforeProduct = new Set<string>();
+  const shopListBeforeProduct = new Set<string>();
 
   for (const event of events) {
     const at = event.createdAt.getTime();
-    if (event.type !== "blog_product_click" || at < clicksFrom || at >= observedUntil || !event.sessionId) continue;
+    if (at < clicksFrom || at >= observedUntil || !event.sessionId) continue;
+    if (event.type !== "blog_product_click" && event.type !== "page_view") continue;
+
+    const blogAt = firstVisitAt.get(event.sessionId);
+    const productAt = productFirstAt.get(event.sessionId);
+    const onWayToProduct = blogAt !== undefined && productAt !== undefined && blogAt <= at && at <= productAt;
+
+    if (event.type === "page_view") {
+      if (onWayToProduct && isSitePage(event.path) && canonicalizeSitePath(event.path).pageCategory === "shop_list") {
+        shopListBeforeProduct.add(event.sessionId);
+      }
+      continue;
+    }
 
     const data = event.data as { article?: string; locale?: string; position?: string } | null;
     if (!data || typeof data.locale !== "string" || typeof data.article !== "string") continue;
@@ -40,6 +55,7 @@ export function summarizeBlogCards(
     if (id && position) {
       clicksByPosition[position]++;
       articleClicks.set(id, (articleClicks.get(id) ?? 0) + 1);
+      if (onWayToProduct) cardClickBeforeProduct.add(event.sessionId);
     }
   }
 
@@ -50,14 +66,21 @@ export function summarizeBlogCards(
   const periods = ranges.filter(({ from, until }) => from < until).map(({ phase, from, until }) => {
     let blogSessions = 0;
     let productSessions = 0;
+    const routes = phase === "after" ? { withCardClick: 0, viaShopList: 0, other: 0 } : null;
     for (const [session, at] of firstVisitAt) {
       if (at < from || at >= until) continue;
       blogSessions++;
-      if (productSessionIds.has(session)) productSessions++;
+      if (!productSessionIds.has(session)) continue;
+      productSessions++;
+      if (routes) {
+        if (cardClickBeforeProduct.has(session)) routes.withCardClick++;
+        else if (shopListBeforeProduct.has(session)) routes.viaShopList++;
+        else routes.other++;
+      }
     }
     return {
       phase, startDate: toRomeDateISO(new Date(from)), endDate: toRomeDateISO(new Date(until - 1)),
-      blogSessions, productSessions, rate: blogSessions ? productSessions / blogSessions : null,
+      blogSessions, productSessions, rate: blogSessions ? productSessions / blogSessions : null, routes,
     };
   });
 

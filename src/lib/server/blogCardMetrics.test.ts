@@ -96,6 +96,28 @@ test("includes all published editions and their card clicks before and after the
   }
 });
 
+test("counts one route per product session and keeps later or repeated card clicks in the event total", () => {
+  const click = (sessionId: string, time: string) => visit(sessionId, `2026-11-20T${time}Z`, german, {
+    type: "blog_product_click", data: { article: pizzaSlug, locale: "de", position: "title" },
+  });
+  const events = ["card", "shop-list", "other", "no-product"].flatMap((sessionId) => [
+    visit(sessionId, "2026-11-20T10:00Z", german),
+    ...(sessionId === "no-product" ? [] : [visit(sessionId, "2026-11-20T10:10Z", "/de/laden/fruchtig/")]),
+  ]);
+  const report = analyze([
+    ...events,
+    click("card", "10:01"), click("card", "10:02"), click("shop-list", "10:20"), click("no-product", "10:04"),
+    visit("card", "2026-11-20T10:05Z", "/de/laden/"),
+    visit("shop-list", "2026-11-20T10:05Z", "/de/laden/"),
+    visit("other", "2026-11-20T09:55Z", "/de/laden/"),
+  ].reverse());
+
+  assert.equal(report.periods[0].routes, null);
+  assert.equal(report.periods[1].productSessions, 3);
+  assert.deepEqual(report.periods[1].routes, { withCardClick: 1, viaShopList: 1, other: 1 });
+  assert.equal(report.totalClicks, 4);
+});
+
 test("every article selects a catalog variant for each card position", () => {
   for (const { id } of mockBlogPosts) {
     const selections = getBlogProductSelections(id);

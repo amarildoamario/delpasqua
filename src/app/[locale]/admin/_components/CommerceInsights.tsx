@@ -47,18 +47,58 @@ function FunnelCard({ label, value, detail, description }: { label: string; valu
   return <Kpi title={label} value={number(value, 0)} subtitle={detail} description={description} funnel />;
 }
 
-function CartDiagramBlock({ label, count, description }: {
+function ShopSessionsDiagram({ funnel }: { funnel: Insights["sessionFunnel"] }) {
+  const { listOnly, listAndDetail, detailOnly, listPageViews } = funnel.shopBreakdown;
+
+  return (
+    <figure className="mt-4 rounded-xl border border-neutral-200 bg-white p-3 sm:p-4">
+      <figcaption className="text-sm font-bold text-neutral-900">Composizione delle sessioni Shop</figcaption>
+      <div className="mt-3 grid items-stretch gap-1 text-center sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,3fr)] sm:gap-3">
+        <div className="mx-auto w-full max-w-44 sm:max-w-none">
+          <FunnelDiagramBlock label="Sessioni Shop" count={funnel.shopSessions} />
+        </div>
+        <span aria-hidden="true" className="self-center text-base font-semibold leading-none text-neutral-500">=</span>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-1 sm:gap-3">
+          <FunnelDiagramBlock
+            label="Solo elenco"
+            count={listOnly}
+            description="Sessioni in cui è stato aperto l’elenco Shop almeno una volta, senza aprire alcuna scheda prodotto."
+          />
+          <span aria-hidden="true" className="self-center text-base font-semibold text-neutral-500">+</span>
+          <FunnelDiagramBlock
+            label="Elenco e schede"
+            count={listAndDetail}
+            description="Sessioni in cui sono stati aperti sia l’elenco Shop sia almeno una scheda prodotto, in qualsiasi ordine. Ogni sessione conta una volta."
+          />
+          <span aria-hidden="true" className="self-center text-base font-semibold text-neutral-500">+</span>
+          <FunnelDiagramBlock
+            label="Solo schede"
+            count={detailOnly}
+            description="Sessioni in cui è stata aperta almeno una scheda prodotto, senza passare dall’elenco Shop. Ad esempio, da una card del blog o da un link diretto."
+          />
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-neutral-700">
+        <strong>{number(listPageViews, 0)} visualizzazioni dell’elenco</strong> in tutte le lingue, comprese le riaperture.
+      </p>
+    </figure>
+  );
+}
+
+function FunnelDiagramBlock({ label, count, description }: {
   label: string;
   count: number;
-  description: string;
+  description?: string;
 }) {
   return (
     <div className={`cart-funnel-block relative grid min-h-20 min-w-0 content-center justify-items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-neutral-900 shadow-xs sm:min-h-[5.25rem] sm:px-4`}>
       <strong className={`max-w-full break-all ${KPI_VALUE_CLASS}`}>{number(count, 0)}</strong>
       <span className="text-[11px] leading-snug font-bold tracking-wide text-pretty text-neutral-600 uppercase">{label}</span>
-      <div className="absolute top-0.5 right-0.5">
-        <InfoTooltip label={label} description={description} />
-      </div>
+      {description ? (
+        <div className="absolute top-0.5 right-0.5">
+          <InfoTooltip label={label} description={description} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -101,7 +141,7 @@ function CartFunnelDiagram({ funnel }: { funnel: Insights["cartFunnel"] }) {
       </figcaption>
       <div className={`cart-funnel-layout mx-auto mt-4 max-w-[32rem]`}>
         <div className={`cart-funnel-central mx-auto w-4/5 max-w-60`}>
-          <CartDiagramBlock {...cartFunnelSteps.additions} count={funnel.cartsWithAdditions} />
+          <FunnelDiagramBlock {...cartFunnelSteps.additions} count={funnel.cartsWithAdditions} />
         </div>
         <div aria-hidden="true" className="cart-funnel-split">
           <CartDiagramArrow className={`cart-funnel-arm cart-funnel-upper`} />
@@ -111,9 +151,9 @@ function CartFunnelDiagram({ funnel }: { funnel: Insights["cartFunnel"] }) {
           {paths.map((path) => (
             <div key={path.view.label} className={`cart-funnel-path row-span-5 mx-1.5 grid grid-rows-subgrid sm:mx-2.5`}>
               <CartDiagramArrow className="cart-funnel-vertical-only" warm={path.warm} />
-              <CartDiagramBlock {...path.view} count={path.count} />
+              <FunnelDiagramBlock {...path.view} count={path.count} />
               <CartDiagramArrow warm={path.warm} />
-              <CartDiagramBlock {...path.checkout} count={path.clicks} />
+              <FunnelDiagramBlock {...path.checkout} count={path.clicks} />
               <div aria-hidden="true" className={`cart-funnel-vertical-only mx-auto h-3 w-0.5 ${path.warm ? "bg-[#906b34]" : "bg-[#758a83]"}`} />
             </div>
           ))}
@@ -124,11 +164,11 @@ function CartFunnelDiagram({ funnel }: { funnel: Insights["cartFunnel"] }) {
           <CartDiagramArrow className="cart-funnel-exit" />
         </div>
         <div className={`cart-funnel-central mx-auto w-4/5 max-w-60`}>
-          <CartDiagramBlock {...cartFunnelSteps.checkout} count={funnel.cartsWithCheckoutClick} />
+          <FunnelDiagramBlock {...cartFunnelSteps.checkout} count={funnel.cartsWithCheckoutClick} />
         </div>
         <CartDiagramArrow className={paidWithoutClick > 0 ? "invisible" : undefined} />
         <div className={`cart-funnel-central mx-auto w-4/5 max-w-60`}>
-          <CartDiagramBlock {...cartFunnelSteps.paid} count={funnel.cartsWithPaidOrder} />
+          <FunnelDiagramBlock {...cartFunnelSteps.paid} count={funnel.cartsWithPaidOrder} />
         </div>
         {paidWithoutClick > 0 && (
           <p className="col-span-full mt-2 text-center text-xs text-neutral-600">
@@ -198,12 +238,13 @@ export default function CommerceInsights({ insights, customers, activity, activi
           </div>
           <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
             <FunnelCard label="Sessioni Blog" value={sessionFunnel.blogSessions} detail={`→ Prodotto: ${sessionFunnel.blogToProductRate === null ? "—" : `${number(sessionFunnel.blogToProductRate * 100)}%`}`} />
-            <FunnelCard label="Sessioni Shop" value={sessionFunnel.shopSessions} detail="Lista o scheda" />
-            <FunnelCard label="Scheda Prodotto" value={sessionFunnel.productDetailSessions} detail={`Reach: ${sessionFunnel.productReachRate === null ? "—" : `${number(sessionFunnel.productReachRate * 100)}%`}`} />
+            <FunnelCard label="Sessioni Shop" value={sessionFunnel.shopSessions} detail="Elenco o schede" description="Sessioni distinte con almeno una visita all’elenco Shop o a una scheda prodotto, in qualsiasi lingua." />
+            <FunnelCard label="Sessioni con scheda prodotto" value={sessionFunnel.productDetailSessions} detail={sessionFunnel.productReachRate === null ? undefined : `${number(sessionFunnel.productReachRate * 100)}% di tutte le sessioni`} />
             <FunnelCard label="Sessioni Add-to-Cart" value={sessionFunnel.addToCartSessions} detail={`Da scheda: ${sessionFunnel.productToCartRate === null ? "—" : `${number(sessionFunnel.productToCartRate * 100)}%`}`} />
             <FunnelCard label="Visite con tentativo in cassa" value={sessionFunnel.checkoutStartedSessions} detail={`${number(sessionFunnel.checkoutClickedSessions, 0)} visite con clic in cassa`} />
             <FunnelCard label="Sessioni Acquisto" value={sessionFunnel.purchasingSessions} detail="Collegate a ordine" />
           </div>
+          <ShopSessionsDiagram funnel={sessionFunnel} />
           <details className="mt-3 border-t border-neutral-200 pt-2 text-xs">
             <summary className="cursor-pointer font-semibold text-neutral-800">Sessioni shop per lingua</summary>
             <p className="mt-1 text-neutral-600">Lingua della pagina visitata. La stessa sessione può comparire in più lingue.</p>
