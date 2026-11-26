@@ -99,6 +99,7 @@ export async function startVoucherCheckout(proposalId: string, internal: boolean
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         locale: "it",
+        wallet_options: { link: { display: "never" } },
         ...(prefillEmail ? { customer_email: prefillEmail } : {}),
         phone_number_collection: { enabled: true },
         billing_address_collection: "auto",
