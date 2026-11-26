@@ -43,7 +43,7 @@ export async function readVoucherRequest(req: Request, maxBytes: number): Promis
 }
 
 export function voucherProposalUrl(origin: string, id: string) {
-  return new URL(`/voucher/${id}/`, origin).href;
+  return new URL(`/api/vouchers/${id}/checkout/`, origin).href;
 }
 
 export function voucherProposalFilename(id: string) {

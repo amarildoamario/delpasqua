@@ -44,7 +44,7 @@ export default async function VoucherProposalPage({ params }: { params: Promise<
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
         <a href={pdf} className="underline underline-offset-4">Scarica PDF</a>
-        <a href={`/voucher/${id}/`} target="_blank" rel="noreferrer" className="underline underline-offset-4">Apri il link della proposta</a>
+        <a href={`/api/vouchers/${id}/checkout/`} target="_blank" rel="noreferrer" className="underline underline-offset-4">Apri il link di pagamento</a>
       </div>
     </section>
     {payments.length > 0 && <section className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">

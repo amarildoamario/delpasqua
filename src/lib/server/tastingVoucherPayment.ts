@@ -37,8 +37,8 @@ export function voucherNumber(voucher: { sequence: number; paidAt: Date }, peopl
 export function voucherRedemptionCode(id: string) {
   const secret = process.env.VOUCHER_CODE_SECRET;
   if (!secret || secret.length < 32) throw new Error("Voucher code secret unavailable");
-  const code = createHmac("sha256", secret).update(id).digest("hex").slice(0, 16).toUpperCase();
-  return code.match(/.{4}/g)!.join("-");
+  const num = createHmac("sha256", secret).update(id).digest().readUInt32BE(0) % 1_000_000;
+  return String(num).padStart(6, "0");
 }
 
 export function voucherCodeDigest(code: string) {
@@ -54,19 +54,21 @@ export async function startVoucherCheckout(proposalId: string, internal: boolean
   const mode = voucherCheckoutMode();
   if (!mode) throw new VoucherCheckoutError("unavailable");
   const livemode = mode === "live";
-  if (internal && livemode) throw new VoucherCheckoutError("internal");
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { timeout: 8000, maxNetworkRetries: 1 });
   let sessionToExpire: string | undefined;
   try {
     const url = await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT "id" FROM "TastingVoucherProposal" WHERE "id" = ${proposalId} FOR UPDATE`;
-      const proposal = await tx.tastingVoucherProposal.findUnique({ where: { id: proposalId } });
+      const proposal = await tx.tastingVoucherProposal.findUnique({
+        where: { id: proposalId },
+        include: { emails: { orderBy: { createdAt: "desc" }, take: 1, select: { recipient: true } } },
+      });
       if (!proposal) throw new VoucherCheckoutError("unavailable");
-      const audience = { proposalId, internal, livemode };
       const paid = await tx.tastingVoucherCheckout.findFirst({
-        where: { ...audience, voucher: { isNot: null } }, select: { id: true },
+        where: { proposalId, livemode, voucher: { isNot: null } }, select: { id: true },
       });
       if (paid) throw new VoucherCheckoutError("paid", paid.id);
+      const audience = { proposalId, internal, livemode };
       const previous = await tx.tastingVoucherCheckout.findFirst({
         where: audience, orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         select: { id: true, stripeSessionId: true, failedAt: true },
@@ -80,9 +82,11 @@ export async function startVoucherCheckout(proposalId: string, internal: boolean
       const id = randomUUID();
       const returnUrl = new URL(`/voucher/${proposalId}/`, origin).href;
       const metadata = { type: VOUCHER_CHECKOUT_TYPE, voucherCheckoutId: id };
+      const prefillEmail = proposal.emails[0]?.recipient;
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         locale: "it",
+        ...(prefillEmail ? { customer_email: prefillEmail } : {}),
         phone_number_collection: { enabled: true },
         billing_address_collection: "auto",
         expires_at: Math.floor(Date.now() / 1000) + 31 * 60,
@@ -146,7 +150,7 @@ export async function processVoucherCheckoutEvent(event: {
     }
     const id = randomUUID();
     const codeDigest = voucherCodeDigest(voucherRedemptionCode(id));
-    const isTest = checkout.internal || !session.livemode;
+    const isTest = !session.livemode;
     await tx.tastingVoucher.create({ data: {
       id, checkoutId: checkout.id, codeDigest, stripePaymentIntentId: paymentIntentId,
       totalCents: checkout.proposal.totalCents, fullName: session.customer_details?.name?.trim() || null,

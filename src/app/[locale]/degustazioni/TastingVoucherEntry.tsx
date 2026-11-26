@@ -116,8 +116,8 @@ export function TastingVoucherEntry({ tastingTypes, voucher, onVoucherChange }: 
       className="mt-4 w-full max-w-md space-y-2 rounded-[5px] lg:mt-0">
       <Label htmlFor={`${id}-code`}>{t("voucher.code")}</Label>
       <Input ref={field} id={`${id}-code`} value={input} onChange={(event) => { setInput(event.target.value); setError(""); }}
-        className="w-full rounded-[5px] bg-white font-mono uppercase" autoCapitalize="characters" autoComplete="off" spellCheck={false}
-        maxLength={32} required disabled={checking} />
+        className="w-full rounded-[5px] bg-white font-mono tracking-widest" inputMode="numeric" autoComplete="off" spellCheck={false}
+        placeholder="123456" maxLength={16} required disabled={checking} />
       <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-end">
         <Button type="submit" disabled={checking} className="h-10 cursor-pointer rounded-[5px] bg-[#3D5A3D] px-3 text-sm text-white hover:bg-[#2D4A2D] hover:shadow-sm">
           {checking ? t("voucher.checking") : t("voucher.check")}

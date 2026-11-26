@@ -8,16 +8,17 @@ import { quoteAppOrigin } from "@/lib/server/quoteCheckout";
 import { VoucherProposalIdSchema } from "@/lib/server/tastingVoucherProposal";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
-export async function POST(req: Request, { params }: { params: Promise<{ token: string }> }) {
-  const { token } = await params;
+async function handleCheckout(req: Request, token: string) {
   const url = new URL(req.url);
-  const headers = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" };
-  if (!VoucherProposalIdSchema.safeParse(token).success || !voucherCheckoutMode()) {
+  const headers = {
+    "Cache-Control": "private, no-store",
+    "Referrer-Policy": "no-referrer",
+    "X-Robots-Tag": "noindex, nofollow",
+  };
+  if (!VoucherProposalIdSchema.safeParse(token).success) {
     return NextResponse.json({ error: "Checkout non disponibile." }, { status: 404, headers });
-  }
-  if (req.headers.get("origin") !== url.origin) {
-    return NextResponse.json({ error: "Origine della richiesta non valida." }, { status: 403, headers });
   }
   const back = (state: string, attempt?: string) => {
     const returnUrl = new URL(`/voucher/${token}/`, url);
@@ -25,7 +26,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ token: 
     if (attempt) returnUrl.searchParams.set("attempt", attempt);
     return NextResponse.redirect(returnUrl, { status: 303, headers });
   };
-  const limit = await rateLimit({ key: `voucher-checkout:${getClientIpFromHeaders(req.headers) || "unknown"}`, limit: 15, windowSeconds: 60 });
+  if (!voucherCheckoutMode()) {
+    return back("unavailable");
+  }
+  const limit = await rateLimit({
+    key: `voucher-checkout:${getClientIpFromHeaders(req.headers) || "unknown"}`,
+    limit: 15,
+    windowSeconds: 60,
+  });
   if (!limit.ok) return back("rate");
   try {
     const internal = await requestCheckoutExcluded(prisma, req);
@@ -34,4 +42,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ token: 
   } catch (error) {
     return error instanceof VoucherCheckoutError ? back(error.code, error.attemptId) : back("unavailable");
   }
+}
+
+export async function GET(req: Request, { params }: { params: Promise<{ token: string }> }) {
+  const { token } = await params;
+  return handleCheckout(req, token);
+}
+
+export async function POST(req: Request, { params }: { params: Promise<{ token: string }> }) {
+  const { token } = await params;
+  const url = new URL(req.url);
+  if (req.headers.get("origin") !== url.origin) {
+    return NextResponse.json(
+      { error: "Origine della richiesta non valida." },
+      { status: 403, headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } },
+    );
+  }
+  return handleCheckout(req, token);
 }

@@ -4,9 +4,9 @@ import { buildWeekSlots, getTastingTypes, getWeekStartMonday } from "@/lib/tasti
 import { databasePolicy } from "./databaseSafety.mjs";
 import { voucherCodeDigest } from "./tastingVoucherPayment";
 
-export const VoucherCodeInput = z.string().max(32).transform((value) =>
-  value.trim().toUpperCase().replace(/[\s-]/g, ""),
-).pipe(z.string().regex(/^[A-F0-9]{16}$/)).transform((value) => value.match(/.{4}/g)!.join("-"));
+export const VoucherCodeInput = z.string().max(16).transform((value) =>
+  value.trim().replace(/[\s-]/g, ""),
+).pipe(z.string().regex(/^\d{6}$/));
 
 export class VoucherBookingError extends Error {
   constructor(public code: "VOUCHER_INVALID" | "VOUCHER_USED" | "VOUCHER_SLOT", public status: 400 | 409) {

@@ -182,7 +182,7 @@ async function buildPreview(templateId: TemplateId): Promise<PreviewData> {
         title: tastingTitle,
         people: 2,
         children: 1,
-        code: "A4F9-2C8E-7B1D-09E3",
+        code: "482915",
         bookingUrl,
         isTest: false,
       });
