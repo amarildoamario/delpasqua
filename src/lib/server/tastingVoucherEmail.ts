@@ -5,15 +5,15 @@ import { Resend } from "resend";
 import { companyInfo } from "@/lib/companyInfo";
 import { prisma } from "./prisma";
 import { buildPrintPdfAttachment } from "./orderPdf";
-import { voucherCodeDigest, voucherNumber, voucherRedemptionCode, voucherEmailAllowed } from "./tastingVoucherPayment";
+import { voucherCodeDigest, voucherNumber, voucherRedemptionCode, voucherEmailAllowed, voucherSecret } from "./tastingVoucherPayment";
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (char) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!,
 );
 
 function attachmentKey() {
-  const secret = process.env.VOUCHER_CODE_SECRET;
-  if (!secret || secret.length < 32) throw new Error("Chiave degli allegati voucher non disponibile");
+  const secret = voucherSecret();
+  if (!secret) throw new Error("Chiave degli allegati voucher non disponibile");
   return createHmac("sha256", secret).update("voucher-pdf-v1").digest();
 }
 

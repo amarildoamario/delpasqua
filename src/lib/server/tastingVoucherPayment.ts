@@ -9,9 +9,22 @@ export const VOUCHER_CHECKOUT_TYPE = "tasting-voucher";
 export const TASTING_VOUCHER_EMAIL_EVENT = "TASTING_VOUCHER_PAID";
 const emailSchema = z.string().max(254).email();
 
+export function voucherSecret(): string | null {
+  const candidates = [
+    process.env.VOUCHER_CODE_SECRET,
+    process.env.ADMIN_SESSION_SECRET,
+    process.env.STRIPE_WEBHOOK_SECRET,
+  ];
+  for (const value of candidates) {
+    const trimmed = value?.trim();
+    if (trimmed && trimmed.length >= 24) return trimmed;
+  }
+  return null;
+}
+
 export function voucherCheckoutMode(): "live" | "test" | null {
   const mode = databasePolicy().mode;
-  if ((process.env.VOUCHER_CODE_SECRET?.length ?? 0) < 32 || !process.env.STRIPE_WEBHOOK_SECRET) return null;
+  if (!voucherSecret() || !process.env.STRIPE_WEBHOOK_SECRET) return null;
   if (mode === "local-development" && !localStripeTestError()) return "test";
   if (mode === "deployed-production" && /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY ?? "")
     && process.env.RESEND_API_KEY && process.env.EMAIL_FROM) return "live";
@@ -35,8 +48,8 @@ export function voucherNumber(voucher: { sequence: number; paidAt: Date }, peopl
 }
 
 export function voucherRedemptionCode(id: string) {
-  const secret = process.env.VOUCHER_CODE_SECRET;
-  if (!secret || secret.length < 32) throw new Error("Voucher code secret unavailable");
+  const secret = voucherSecret();
+  if (!secret) throw new Error("Voucher code secret unavailable");
   const num = createHmac("sha256", secret).update(id).digest().readUInt32BE(0) % 1_000_000;
   return String(num).padStart(6, "0");
 }

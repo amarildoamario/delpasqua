@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { formatMoney } from "@/lib/money";
 import { prisma } from "@/lib/server/prisma";
 import { VoucherProposalIdSchema } from "@/lib/server/tastingVoucherProposal";
@@ -24,6 +24,7 @@ export default async function VoucherProposalPreview({ params, searchParams }: {
   if (!proposal) notFound();
   const { checkout, attempt } = await searchParams;
   const mode = voucherCheckoutMode();
+  if (!checkout && mode) redirect(`/api/vouchers/${token}/checkout/`);
   const attemptId = VoucherProposalIdSchema.safeParse(attempt);
   const completed = (checkout === "completed" || checkout === "processing" || checkout === "paid") && mode && attemptId.success
     ? await prisma.tastingVoucherCheckout.findFirst({
