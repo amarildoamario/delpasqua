@@ -5,6 +5,7 @@ import CountryFlag from "@/components/CountryFlag";
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 
 import { prisma } from "@/lib/server/prisma";
+import { voucherMetrics } from "@/lib/server/voucherMetrics";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
@@ -775,7 +776,9 @@ export default async function AdminDashboard({
 
   // Load Store Settings and Leonardo Overrides
 
-  const [storeSettings, overridesRow, revenueAgg] = await Promise.all([
+  const [vouchers, storeSettings, overridesRow, revenueAgg] = await Promise.all([
+
+    voucherMetrics(start, endExclusive),
 
     getStoreSettings(),
 
@@ -1579,6 +1582,14 @@ export default async function AdminDashboard({
       </Section>
 
 
+
+      {vouchers && <Section title="Voucher degustazioni" subtitle="Attività commerciale nel periodo selezionato.">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <StatCard title="Checkout avviati" value={String(vouchers.checkouts)} />
+          <StatCard title="Voucher pagati" value={String(vouchers.paid)} />
+          <StatCard title="Incassi lordi voucher" value={euro(vouchers.grossCents)} />
+        </div>
+      </Section>}
 
       {/* Finanza */}
 

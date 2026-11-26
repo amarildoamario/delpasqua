@@ -12,6 +12,7 @@ import {
   safeWebhookPayloadSnippet,
 } from "@/lib/server/stripeWebhook";
 import { sendTastingBookingAdminEmail, sendTastingConfirmedCustomerEmail } from "@/lib/server/tastingEmail";
+import { processVoucherCheckoutEvent, VOUCHER_CHECKOUT_TYPE } from "@/lib/server/tastingVoucherPayment";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -364,9 +365,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Webhook signature verification failed" }, { status: 400 });
   }
 
+  const voucherSession = event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded"
+    || event.type === "checkout.session.async_payment_failed" || event.type === "checkout.session.expired"
+    ? event.data.object as Stripe.Checkout.Session : null;
+  const isVoucher = voucherSession?.metadata?.type === VOUCHER_CHECKOUT_TYPE;
   const registration = await registerIncomingStripeWebhookEvent(prisma.stripeWebhookEvent, {
     event,
-    rawBody,
+    rawBody: isVoucher ? JSON.stringify({ id: event.id, type: event.type, sessionId: voucherSession?.id }) : rawBody,
   });
   if (!registration.shouldProcess) {
     return NextResponse.json(
@@ -380,6 +385,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    if (isVoucher && voucherSession) {
+      if (await processVoucherCheckoutEvent(event, voucherSession)) scheduleOutboxBatch({ limit: 1 });
+      return NextResponse.json({ received: true }, { status: 200 });
+    }
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
@@ -951,7 +960,7 @@ export async function POST(req: NextRequest) {
       data: {
         outcome: "failed_processing",
         processedAt: new Date(),
-        errorMessage: getStripeErrorMessage(err),
+        errorMessage: isVoucher ? "Voucher checkout processing failed" : getStripeErrorMessage(err),
       },
     });
     return NextResponse.json({ received: false, retry: true }, { status: 500 });

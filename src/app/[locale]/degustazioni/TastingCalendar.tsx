@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   X,
   ChevronLeft,
@@ -20,6 +20,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TastingVoucherEntry, useVoucherErrorMessage, type AppliedVoucher } from "./TastingVoucherEntry";
 
 type Slot = { start: string; end: string };
 type Booking = {
@@ -103,6 +104,7 @@ function getFirstAvailableTime(d: Date, isMorning: boolean, durMins: number, boo
 
 export default function TastingsCalendar(props: {
   tastingTypes: TastingType[];
+  heading?: ReactNode;
   initialWeekStartIso?: string;
   initialSlots?: Slot[];
   initialBookings?: Booking[];
@@ -143,17 +145,21 @@ export default function TastingsCalendar(props: {
   const [phone, setPhone] = useState("");
   const [timeReq, setTimeReq] = useState("");
   const [notes, setNotes] = useState("");
+  const [voucher, setVoucher] = useState<AppliedVoucher | null>(null);
+  const voucherErrorMessage = useVoucherErrorMessage();
 
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [success, setSuccess] = useState<null | {
     bookingId: string;
     mail?: MailResult;
+    viaVoucher?: boolean;
   }>(null);
 
   const isMorningShift = selected ? new Date(selected.start).getHours() < 14 : false;
-  const activeType = useMemo(() => props.tastingTypes.find((t) => t.id === typeId) || props.tastingTypes[0], [typeId, props.tastingTypes]);
-  const activePrice = splitTastingPrice(activeType?.priceFrom, locale);
+  const activeTypeId = voucher?.tastingTypeId ?? typeId;
+  const activeType = useMemo(() => props.tastingTypes.find((t) => t.id === activeTypeId) || props.tastingTypes[0], [activeTypeId, props.tastingTypes]);
+  const activePrice = voucher ? null : splitTastingPrice(activeType?.priceFrom, locale);
   const fromLabel = getPriceFromLabel(locale);
 
   const suggestedTime = useMemo(() => {
@@ -233,11 +239,11 @@ export default function TastingsCalendar(props: {
     setOpen(true);
     setSubmitError(null);
     setSuccess(null);
-    setChildren(0);
+    if (!voucher) setChildren(0);
 
     // Auto-compila col primo slot libero
     const isMorn = new Date(s.start).getHours() < 14;
-    const durMins = props.tastingTypes[0]?.durationMinutes || 60;
+    const durMins = voucher ? activeType.durationMinutes : props.tastingTypes[0]?.durationMinutes || 60;
     const avail = getFirstAvailableTime(day, isMorn, durMins, bookings);
     setTimeReq(avail);
   }
@@ -258,27 +264,30 @@ export default function TastingsCalendar(props: {
     setSubmitLoading(true);
 
     try {
-      const r = await fetch("/api/tasting/book", {
+      const r = await fetch("/api/tasting/book/", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           slotStartIso: selected.start,
           slotEndIso: selected.end,
-          tastingTypeId: typeId,
-          people,
-          children,
+          tastingTypeId: activeTypeId,
+          people: voucher?.people ?? people,
+          children: voucher?.children ?? children,
           fullName,
           email,
           phone,
           notes,
           timeReq,
+          ...(voucher ? { voucherCode: voucher.code } : {}),
         }),
       });
 
       if (!r.ok) {
         const j = await r.json().catch(() => ({}));
         const msg =
-          r.status === 409
+          typeof j.code === "string" && j.code.startsWith("VOUCHER_")
+            ? voucherErrorMessage(j.code)
+            : r.status === 409
             ? t("modal.errors.just_booked")
             : (j?.error as string) || t("modal.errors.generic");
         setSubmitError(msg);
@@ -292,7 +301,8 @@ export default function TastingsCalendar(props: {
         return;
       }
 
-      setSuccess({ bookingId: j.bookingId, mail: j.mail });
+      setSuccess({ bookingId: j.bookingId, mail: j.mail, viaVoucher: !!voucher });
+      if (voucher) setVoucher(null);
 
       await loadWeek(weekStart);
     } catch (e: unknown) {
@@ -310,6 +320,8 @@ export default function TastingsCalendar(props: {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+
 
   useEffect(() => {
     let active = true;
@@ -337,6 +349,7 @@ export default function TastingsCalendar(props: {
   if (initialLoading) {
     return (
       <div className="w-full">
+        {props.heading && <div className="mb-8">{props.heading}</div>}
         {/* Navigation Skeleton */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div className="flex items-center gap-3">
@@ -386,33 +399,39 @@ export default function TastingsCalendar(props: {
 
   return (
     <div className="w-full">
-      {/* Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => loadWeek(addDays(weekStart, -7))}
-            className="inline-flex items-center justify-center w-12 h-12 rounded-[5px] border border-[#E7E5E4] bg-white text-[#44403C] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
+      <div className="mb-8 grid gap-5 lg:min-h-[176px] lg:grid-cols-[minmax(0,1fr)_minmax(300px,28rem)] lg:grid-rows-[auto_1fr] lg:gap-x-8">
+        {props.heading && <div className="min-w-0">{props.heading}</div>}
+        <div className="flex min-w-0 flex-col items-center lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:items-end lg:self-center">
+          <TastingVoucherEntry tastingTypes={props.tastingTypes} voucher={voucher} onVoucherChange={setVoucher} />
+        </div>
+        {/* Navigation */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center lg:col-start-1 lg:row-start-2 lg:self-end">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => loadWeek(addDays(weekStart, -7))}
+              className="inline-flex items-center justify-center w-12 h-12 rounded-[5px] border border-[#E7E5E4] bg-white text-[#44403C] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
 
-          <div className="px-5 py-3 bg-[#F5F5F4] rounded-[5px]">
-            <span className="text-sm font-medium text-[#1C1917]">{weekLabel}</span>
+            <div className="px-5 py-3 bg-[#F5F5F4] rounded-[5px]">
+              <span className="text-sm font-medium text-[#1C1917]">{weekLabel}</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => loadWeek(addDays(weekStart, 7))}
+              className="inline-flex items-center justify-center w-12 h-12 rounded-[5px] border border-[#E7E5E4] bg-white text-[#44403C] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => loadWeek(addDays(weekStart, 7))}
-            className="inline-flex items-center justify-center w-12 h-12 rounded-[5px] border border-[#E7E5E4] bg-white text-[#44403C] transition hover:border-[#3D5A3D]/30 hover:text-[#1C1917] hover:shadow-sm"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
+          {loadingWeek && (
+            <span className="text-sm text-[#8B7355] animate-pulse">{t("loading")}</span>
+          )}
         </div>
-
-        {loadingWeek && (
-          <span className="text-sm text-[#8B7355] animate-pulse">{t("loading")}</span>
-        )}
       </div>
 
       {/* Desktop: 7 Columns Grid */}
@@ -468,7 +487,7 @@ export default function TastingsCalendar(props: {
                       daySlots.map((s) => {
                         const isMorn = new Date(s.start).getHours() < 14;
                         // dur 60 as base minimal
-                        const avail = getFirstAvailableTime(d, isMorn, 60, bookings);
+                        const avail = getFirstAvailableTime(d, isMorn, voucher ? activeType.durationMinutes : 60, bookings);
                         const taken = avail === "";
 
                         return (
@@ -573,7 +592,7 @@ export default function TastingsCalendar(props: {
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {daySlots.map((s) => {
                     const isMorn = new Date(s.start).getHours() < 14;
-                    const avail = getFirstAvailableTime(d, isMorn, 60, bookings);
+                    const avail = getFirstAvailableTime(d, isMorn, voucher ? activeType.durationMinutes : 60, bookings);
                     const taken = avail === "";
 
                     return (
@@ -687,7 +706,7 @@ export default function TastingsCalendar(props: {
                     {t("modal.success.title")}
                   </div>
                   <div className="mt-2 text-sm text-[#292524]">
-                    {t("modal.success.desc")}
+                    {success.viaVoucher ? t("voucher.pending") : t("modal.success.desc")}
                   </div>
                   <div className="mt-3 text-xs text-[#8B7355]">
                     ID:{" "}
@@ -697,7 +716,7 @@ export default function TastingsCalendar(props: {
                   </div>
                 </div>
 
-                <div
+                {!success.viaVoucher && <div
                   className={[
                     "rounded-[5px] border px-4 py-3 text-xs text-center",
                     success.mail?.ok && success.mail.status === "sent"
@@ -716,7 +735,7 @@ export default function TastingsCalendar(props: {
                     if (m.ok && m.status === "skipped") return t("modal.success.mail_skipped");
                     return t("modal.success.mail_error");
                   })()}
-                </div>
+                </div>}
 
                 <Button
                   type="button"
@@ -761,7 +780,10 @@ export default function TastingsCalendar(props: {
                   </Card>
                 )}
 
-                <div className="space-y-2.5">
+                {voucher ? <div className="rounded-[5px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                  <p className="font-semibold">{activeType.title}</p>
+                  <p>{t("voucher.group", { adults: voucher.people, children: voucher.children })}</p>
+                </div> : <div className="space-y-2.5">
                   <Label>{t("modal.form.type_label")}</Label>
                   <div role="radiogroup" aria-label={t("modal.form.type_label")} className="grid gap-2 lg:grid-cols-3">
                     {props.tastingTypes.map((tastingType) => {
@@ -850,10 +872,11 @@ export default function TastingsCalendar(props: {
                       );
                     })}
                   </div>
-                </div>
+                </div>}
 
                 <Card className="rounded-[5px] border-[#E7E5E4] bg-[linear-gradient(180deg,#fffdf9_0%,#faf7f2_100%)] shadow-none">
                   <CardContent className="space-y-4 p-3.5 sm:p-4">
+                    {!voucher && <>
                     <div className="space-y-2.5">
                       <Label>{t("modal.form.people_label")}</Label>
                       <div className="flex items-center gap-2.5">
@@ -914,6 +937,7 @@ export default function TastingsCalendar(props: {
                       </div>
                     </div>
 
+                    </>}
                     <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                       <div className="min-w-0 space-y-2 overflow-hidden sm:col-span-2">
                         <div className="flex min-w-0 flex-col gap-1.5">
@@ -1034,6 +1058,8 @@ export default function TastingsCalendar(props: {
                   >
                     {submitLoading ? (
                       t("modal.form.submitting")
+                    ) : voucher ? (
+                      t("voucher.submit")
                     ) : typeId === "premium" ? (
                       t("modal.form.submit")
                     ) : (
@@ -1041,6 +1067,7 @@ export default function TastingsCalendar(props: {
                     )}
                   </Button>
                 </div>
+                {voucher && <p className="pb-4 text-xs leading-relaxed text-[#57534E]">{t("voucher.disclaimer")}</p>}
               </div>
             )}
           </div>

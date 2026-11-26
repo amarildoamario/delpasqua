@@ -91,6 +91,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Vouchercode invoeren",
+          "code": "Vouchercode",
+          "check": "Code controleren",
+          "checking": "Controleren…",
+          "verified": "De code is geldig. Kies een datum in de agenda om een reservering aan te vragen.",
+          "remove": "Voucher verwijderen",
+          "group": "Volwassenen {adults} · Kinderen {children}",
+          "invalid": "Deze vouchercode is ongeldig. Controleer de code en probeer het opnieuw.",
+          "used": "Deze voucher is al gekoppeld aan een actieve reservering.",
+          "slot_error": "Kies een beschikbare datum en tijd in de agenda.",
+          "rate": "Te veel pogingen. Wacht een minuut en probeer het opnieuw.",
+          "error": "De voucher kon niet worden gecontroleerd. Probeer het zo opnieuw.",
+          "submit": "Aanvraag versturen",
+          "disclaimer": "Ook een aanvraag met een voucher moet worden goedgekeurd. Als de oliemolen op de gekozen datum niet beschikbaar is, moet je mogelijk de code opnieuw invoeren en een nieuwe aanvraag versturen.",
+          "pending": "Je aanvraag wacht op goedkeuring. Je ontvangt een e-mail zodra deze is bevestigd."
+        },
         "loading": "Laden...",
         "today": "VANDAAG",
         "no_slots": "Geen plekken",

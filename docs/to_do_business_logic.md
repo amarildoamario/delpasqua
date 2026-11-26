@@ -312,3 +312,17 @@ Fix richiesto:
 - Colonne prodotto a larghezza fissa, prima riga di prodotto/quantita/prezzo/totale sulla stessa baseline; cifre tabulari e importi a destra. Allineati anche i valori dei campi Data Preventivo e Pagamento.
 - Link di accettazione blu, titolo PREVENTIVO sempre rosso. Spazi aumentati tra intestazione, dati, tabella, riepilogo e condizioni. Modifiche CSS limitate al preventivo, nel renderer condiviso.
 - Anteprima con tre prodotti su una pagina, verificata visivamente e tramite coordinate PDF (baseline identica dei quattro campi). Lint, typecheck e tre test composizione preventivo superati. PDF locale aggiornato; nessun deploy o pagamento eseguito.
+
+## [✅ IMPLEMENTATO IN LOCALE] Voucher degustazioni - 2026-11-26
+
+- Primo passaggio nel menu Voucher del gestionale. Creazione della proposta con tipologia di degustazione, adulti, bambini e prezzo totale. PDF scaricabile con il template condiviso dei preventivi e link testuale alla proposta.
+- Invio manuale con destinatario, oggetto, testo e PDF allegato. L'archivio Voucher conserva tentativi, stato e copia del PDF inviato nella singola proposta.
+- L'archivio permette di eliminare una proposta dopo conferma. L'eliminazione rimuove lo storico e gli allegati associati e disattiva il link pubblico.
+- Verifica su database locale con Chromium. Creazione, download del PDF, apertura del link, invio con provider simulato e allegato storico verificati.
+- Checkout Stripe attivo in sandbox locale. Raccoglie email e telefono, verifica importo e valuta sul webhook firmato ed emette numero e codice una sola volta dopo il pagamento confermato.
+- Metriche Voucher nel dashboard per il periodo selezionato. I checkout del browser escluso e quelli in modalità test Stripe non contribuiscono ai conteggi, le vendite commerciali contribuiscono a quantità e incassi lordi.
+- Consegna automatica accodata dopo il pagamento, con PDF definitivo all'email raccolta da Stripe e conferma del provider nel dettaglio della proposta. Pagamento reale in sandbox e invio a provider simulato verificati end-to-end.
+- Il calendario verifica il codice e vincola la richiesta al tipo di degustazione e ai partecipanti acquistati. La richiesta viene inserita in attesa di approvazione, con notifica admin e le email esistenti di conferma e annullamento al cliente.
+- Un solo riscatto attivo per voucher. L'annullamento libera il voucher e l'orario, mantenendo la richiesta annullata nello storico.
+- Verifica locale con Chromium e database: codice errato, riscatto valido, conferma, annullamento con riuso dello stesso codice e dello stesso slot, richieste concorrenti ed email simulate.
+- Checkout commerciale predisposto per l'ambiente di produzione con configurazione Stripe, email e chiave voucher. Nessun deploy eseguito.

@@ -28,9 +28,11 @@ type ModalKind = null | "ACCEPT" | "CANCEL";
 export default function TastingStatusActions({
   id,
   status,
+  viaVoucher,
 }: {
   id: string;
   status: "PENDING" | "CONFIRMED" | "CANCELED";
+  viaVoucher?: boolean;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState<null | "PENDING" | "CONFIRMED" | "CANCELED">(null);
@@ -40,22 +42,22 @@ export default function TastingStatusActions({
   const [step, setStep] = useState<1 | 2>(1);
 
   const busy = Boolean(loading);
+  const releasedVoucher = viaVoucher && status === "CANCELED";
 
   async function setStatus(next: "PENDING" | "CONFIRMED" | "CANCELED") {
     if (busy) return;
     setLoading(next);
 
     try {
-      const r = await adminFetch("/api/admin/tastings/status", {
+      const r = await adminFetch("/api/admin/tastings/status/", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id, status: next }),
       });
 
       if (!r.ok) {
-        const t = await r.text().catch(() => "");
-        console.error("Update tasting status failed", r.status, t);
-        window.alert("Errore cambio stato");
+        const result = await r.json().catch(() => null);
+        window.alert(result?.error || "Errore cambio stato");
         return;
       }
 
@@ -119,7 +121,7 @@ export default function TastingStatusActions({
         <button
           type="button"
           onClick={openAcceptModal}
-          disabled={status === "CONFIRMED" || busy}
+          disabled={status === "CONFIRMED" || releasedVoucher || busy}
           className="rounded-xl bg-neutral-900 px-3 py-2 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
         >
           {loading === "CONFIRMED" ? "…" : "Accetta"}
@@ -128,7 +130,7 @@ export default function TastingStatusActions({
         <button
           type="button"
           onClick={() => setStatus("PENDING")}
-          disabled={status === "PENDING" || busy}
+          disabled={status === "PENDING" || releasedVoucher || busy}
           className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 hover:bg-neutral-50 disabled:opacity-50"
         >
           {loading === "PENDING" ? "…" : "Ripristina"}
@@ -165,7 +167,9 @@ export default function TastingStatusActions({
         step={step}
         loading={loading === "CANCELED"}
         step1Text="Stai per cancellare la prenotazione. Vuoi procedere?"
-        step2Text="Confermi definitivamente la cancellazione? Verrà inviata un'email al cliente."
+        step2Text={viaVoucher
+          ? "Confermi la cancellazione? Il voucher tornerà utilizzabile e verrà inviata un’email al cliente."
+          : "Confermi definitivamente la cancellazione? Verrà inviata un'email al cliente."}
         confirmLabel={step === 1 ? "Continua" : "Conferma cancellazione"}
         onCancel={closeModal}
         onBack={() => setStep(1)}

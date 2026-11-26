@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/server/prisma";
 import { sendTransactionalEmail } from "@/lib/server/email";
 import type { TransactionalEmailType } from "@/generated/prisma/client";
+import { deliverTastingVoucher } from "@/lib/server/tastingVoucherEmail";
+import { TASTING_VOUCHER_EMAIL_EVENT } from "@/lib/server/tastingVoucherPayment";
 
 const MAX_ATTEMPTS = 8;
 
@@ -119,6 +121,10 @@ export async function processOutboxBatch(opts: {
         typeof rawOrderId === "string" ? rawOrderId.trim() : String(rawOrderId ?? "").trim();
 
       switch (ev.type) {
+        case TASTING_VOUCHER_EMAIL_EVENT:
+          if (typeof payloadObj.voucherId !== "string") throw new Error("Voucher non specificato nel job email");
+          await deliverTastingVoucher(payloadObj.voucherId);
+          break;
         case "ORDER_PAID":
           if (orderId) await sendChecked("ORDER_PAID", orderId);
           break;

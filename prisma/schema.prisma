@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  previewFeatures = ["driverAdapters", "partialIndexes"]
   output          = "../src/generated/prisma"
 }
 
@@ -518,12 +518,101 @@ model TastingBooking {
   notes    String?
 
   stripeSessionId String? @unique
+  voucherId       String?
+  voucher         TastingVoucher? @relation(fields: [voucherId], references: [id], onDelete: Restrict)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([slotStart])
   @@index([status, slotStart])
+  @@index([voucherId])
+  @@unique([slotStart, slotEnd], map: "TastingBooking_active_slot_key", where: raw("(status <> 'CANCELED'::\"TastingBookingStatus\")"))
+  @@unique([voucherId], map: "TastingBooking_active_voucher_key", where: raw("((\"voucherId\" IS NOT NULL) AND (status <> 'CANCELED'::\"TastingBookingStatus\"))"))
+}
+
+model TastingVoucherProposal {
+  id           String   @id @default(uuid())
+  requestId    String   @unique
+  tastingType  String
+  tastingTitle String
+  people       Int
+  children     Int      @default(0)
+  totalCents   Int
+  createdAt    DateTime @default(now())
+  emails       TastingVoucherProposalEmail[]
+  checkouts    TastingVoucherCheckout[]
+
+  @@index([createdAt, id])
+}
+
+model TastingVoucherCheckout {
+  id              String @id @default(uuid())
+  proposalId      String
+  proposal        TastingVoucherProposal @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+  stripeSessionId String @unique
+  internal        Boolean
+  livemode        Boolean
+  failedAt        DateTime?
+  createdAt       DateTime @default(now())
+  voucher         TastingVoucher?
+
+  @@index([proposalId, internal, livemode, createdAt])
+  @@index([internal, livemode, createdAt])
+}
+
+model TastingVoucher {
+  id                    String @id @default(uuid())
+  checkoutId            String @unique
+  checkout              TastingVoucherCheckout @relation(fields: [checkoutId], references: [id], onDelete: Restrict)
+  sequence              Int @unique @default(autoincrement())
+  codeDigest            String @unique
+  stripePaymentIntentId String @unique
+  totalCents            Int
+  fullName              String?
+  email                 String
+  phone                 String
+  isTest                Boolean
+  paidAt                DateTime
+  delivery              TastingVoucherDelivery?
+  bookings              TastingBooking[]
+
+  @@index([isTest, paidAt])
+}
+
+model TastingVoucherDelivery {
+  voucherId  String @id
+  voucher    TastingVoucher @relation(fields: [voucherId], references: [id], onDelete: Restrict)
+  from       String
+  replyTo    String?
+  recipient  String
+  subject    String
+  body       String
+  filename   String
+  pdfEncrypted Bytes
+  createdAt  DateTime @default(now())
+  sentAt     DateTime?
+  providerId String?
+}
+
+model TastingVoucherProposalEmail {
+  id             String   @id @default(cuid())
+  proposalId     String
+  proposal       TastingVoucherProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  idempotencyKey String   @unique
+  recipient      String
+  subject        String
+  body           String
+  from           String
+  replyTo        String?
+  filename       String
+  pdf            Bytes
+  emailId        String?
+  sentAt         DateTime?
+  lastError      String?
+  createdAt      DateTime @default(now())
+
+  @@index([proposalId, createdAt])
 }
 
 model Quote {

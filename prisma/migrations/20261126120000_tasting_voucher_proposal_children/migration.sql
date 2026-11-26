@@ -1,0 +1,1 @@
+ALTER TABLE "TastingVoucherProposal" ADD COLUMN "children" INTEGER NOT NULL DEFAULT 0;

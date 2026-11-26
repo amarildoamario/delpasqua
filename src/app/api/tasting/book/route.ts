@@ -7,6 +7,9 @@ import { getTastingTypes } from "@/lib/tasting/slots";
 import { sendTastingBookingAdminEmail } from "@/lib/server/tastingEmail";
 import { rateLimitOrThrow } from "@/lib/server/rateLimit";
 import { enforceBodyLimit } from "@/lib/server/bodyLimit";
+import {
+  findRedeemableVoucher, voucherBookingTimes, VoucherBookingError, VoucherCodeInput,
+} from "@/lib/server/tastingVoucherRedemption";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +42,7 @@ const BodySchema = z.object({
   phone: z.string().min(5).max(30),
   notes: z.string().max(800).optional().or(z.literal("")),
   timeReq: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+  voucherCode: VoucherCodeInput.optional(),
 });
 
 function safeDate(iso: string) {
@@ -65,10 +69,8 @@ function resolveAppUrl(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const environmentError = localStripeTestError();
-    if (environmentError) return NextResponse.json({ error: environmentError }, { status: 503 });
     enforceBodyLimit(req, 8_000);
-    rateLimitOrThrow({ key: `tasting-book:${getIP(req)}`, limit: 10, windowSeconds: 60 });
+    await rateLimitOrThrow({ key: `tasting-book:${getIP(req)}`, limit: 10, windowSeconds: 60 });
 
     const json: unknown = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(json);
@@ -82,6 +84,10 @@ export async function POST(req: Request) {
   }
 
   const data = parsed.data;
+  if (!data.voucherCode) {
+    const environmentError = localStripeTestError();
+    if (environmentError) return NextResponse.json({ error: environmentError }, { status: 503 });
+  }
 
   const slotStart = safeDate(data.slotStartIso);
   let slotEnd = safeDate(data.slotEndIso);
@@ -98,7 +104,7 @@ export async function POST(req: Request) {
   }
 
   // ✅ Applichiamo l'orario richiesto dall'utente altrimenti rimane quello standard (es: 10:30)
-  if (data.timeReq) {
+  if (!data.voucherCode && data.timeReq) {
     const [hh, mm] = data.timeReq.split(":").map(Number);
     slotStart.setHours(hh, mm, 0, 0);
     // Ricalcoliamo la fine in base alla durata del tipo di degustazione
@@ -110,40 +116,43 @@ export async function POST(req: Request) {
       // Lock di tabella esclusivo per impedire ad altre transazioni concorrenti di scrivere/controllare slot contemporaneamente
       await tx.$executeRaw`LOCK TABLE "TastingBooking" IN EXCLUSIVE MODE`;
 
-      const dayStart = new Date(slotStart);
+      const voucher = data.voucherCode ? await findRedeemableVoucher(tx, data.voucherCode) : null;
+      const times = voucher ? voucherBookingTimes(slotStart, data.timeReq, voucher.type.durationMinutes) : { slotStart, slotEnd };
+      const dayStart = new Date(times.slotStart);
       dayStart.setHours(0, 0, 0, 0);
-      const dayEnd = new Date(slotStart);
+      const dayEnd = new Date(times.slotStart);
       dayEnd.setHours(23, 59, 59, 999);
 
       const existingForDay = await tx.tastingBooking.findMany({
         where: {
           status: { not: "CANCELED" },
-          slotStart: { gte: dayStart, lte: dayEnd },
+          ...(voucher ? { slotStart: { lt: times.slotEnd }, slotEnd: { gt: times.slotStart } }
+            : { slotStart: { gte: dayStart, lte: dayEnd } }),
         },
         select: { slotStart: true, slotEnd: true },
       });
 
-      const conflict = existingForDay.find(b => slotStart < b.slotEnd && slotEnd > b.slotStart);
+      const conflict = existingForDay.find(b => times.slotStart < b.slotEnd && times.slotEnd > b.slotStart);
 
       if (conflict) {
         throw Object.assign(new Error("L'orario richiesto si accavalla con una prenotazione esistente in questo lasso di tempo. Riprova con un altro orario."), { status: 409, code: "SLOT_CONFLICT" });
       }
 
       console.log("[TASTING][BOOK] request inside transaction", {
-        tastingTypeId: data.tastingTypeId,
-        people: data.people,
+        tastingTypeId: voucher?.type.id ?? data.tastingTypeId,
+        people: voucher?.people ?? data.people,
         email: maskEmail(data.email),
-        slotStart: slotStart.toISOString(),
-        slotEnd: slotEnd.toISOString(),
+        slotStart: times.slotStart.toISOString(),
+        slotEnd: times.slotEnd.toISOString(),
       });
 
       return tx.tastingBooking.create({
         data: {
-          slotStart,
-          slotEnd,
-          tastingType: type.title,
-          people: data.people,
-          children: data.children ?? 0,
+          ...times,
+          tastingType: voucher?.type.title ?? type.title,
+          people: voucher?.people ?? data.people,
+          children: voucher?.children ?? data.children ?? 0,
+          ...(voucher ? { voucherId: voucher.id } : {}),
           fullName: data.fullName.trim(),
           email: data.email.trim().toLowerCase(),
           phone: data.phone.trim(),
@@ -169,7 +178,7 @@ export async function POST(req: Request) {
   const isPaid = type.id === "classica" || type.id === "intermedia";
   const pricePerPerson = type.id === "classica" ? 20 : type.id === "intermedia" ? 35 : 0;
 
-  if (isPaid) {
+  if (isPaid && !data.voucherCode) {
     try {
       const appUrl = resolveAppUrl(req);
       const priceCents = pricePerPerson * 100;
@@ -245,6 +254,7 @@ export async function POST(req: Request) {
     email: booking.email,
     phone: booking.phone,
     notes: booking.notes,
+    viaVoucher: !!data.voucherCode,
   });
 
   console.log("[TASTING][BOOK] admin mail result (premium inquiry)", mail);
@@ -255,6 +265,9 @@ export async function POST(req: Request) {
       mail,
     });
   } catch (e: unknown) {
+    if (e instanceof VoucherBookingError) {
+      return NextResponse.json({ code: e.code }, { status: e.status });
+    }
     const err = e as Error & { status?: number; statusCode?: number; retryAfterSec?: number; code?: string; meta?: unknown };
     const status = err?.status ?? err?.statusCode;
 
@@ -278,7 +291,7 @@ export async function POST(req: Request) {
     }
 
     if (err.code === "P2002") {
-      console.warn("[TASTING][BOOK] slot conflict (P2002)", err.meta);
+      console.warn("[TASTING][BOOK] slot conflict (P2002)");
       return NextResponse.json({ error: "Slot not available" }, { status: 409 });
     }
 

@@ -85,6 +85,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Carica codice voucher",
+          "code": "Codice voucher",
+          "check": "Verifica codice",
+          "checking": "Verifica in corso…",
+          "verified": "Il codice è corretto e la tua prenotazione può essere effettuata. Seleziona una data nel calendario.",
+          "remove": "Rimuovi voucher",
+          "group": "Adulti {adults} · Bambini {children}",
+          "invalid": "Il codice voucher non è valido. Controllalo e riprova.",
+          "used": "Il voucher è già associato a una prenotazione attiva.",
+          "slot_error": "Seleziona una data e un orario disponibili nel calendario.",
+          "rate": "Troppi tentativi. Attendi un minuto e riprova.",
+          "error": "Impossibile verificare il voucher. Riprova tra poco.",
+          "submit": "Invia Richiesta",
+          "disclaimer": "La richiesta dovrà essere approvata anche se la prenotazione arriva tramite voucher. In caso di mancate disponibilità da parte del frantoio nella data selezionata può essere necessario riprocessare la richiesta di inserimento codice voucher e prenotazione.",
+          "pending": "La tua richiesta è in attesa di approvazione. Ti invieremo un’email quando sarà confermata."
+        },
         "loading": "Caricamento...",
         "today": "OGGI",
         "no_slots": "Nessuno slot",

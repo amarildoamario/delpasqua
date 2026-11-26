@@ -85,6 +85,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Saisir un code cadeau",
+          "code": "Code cadeau",
+          "check": "Vérifier le code",
+          "checking": "Vérification…",
+          "verified": "Le code est valide. Choisissez une date dans le calendrier pour envoyer votre demande.",
+          "remove": "Retirer le bon cadeau",
+          "group": "Adultes {adults} · Enfants {children}",
+          "invalid": "Ce code est invalide. Vérifiez-le et réessayez.",
+          "used": "Ce bon cadeau est déjà lié à une réservation active.",
+          "slot_error": "Choisissez une date et une heure disponibles dans le calendrier.",
+          "rate": "Trop de tentatives. Attendez une minute avant de réessayer.",
+          "error": "Impossible de vérifier le bon cadeau. Réessayez dans un instant.",
+          "submit": "Envoyer la demande",
+          "disclaimer": "Même avec un bon cadeau, votre demande doit être approuvée. Si le moulin n’est pas disponible à la date choisie, il peut être nécessaire de saisir à nouveau le code et d’envoyer une nouvelle demande.",
+          "pending": "Votre demande est en attente d’approbation. Vous recevrez un e-mail après confirmation."
+        },
         "loading": "Chargement...",
         "today": "AUJOURD'HUI",
         "no_slots": "Aucun créneau",

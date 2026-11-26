@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "// 🚀 AVVIO & SVILUPPO (Per lanciare o compilare il sito locale)": "--------------------------------------------------",
-    "predev": "node scripts/ensure-local-database.mjs",
+    "predev": "node scripts/ensure-local-database.mjs && prisma generate",
     "dev": "next dev",
     "dev:db": "prisma dev --name delpasqua-dev --detach",
     "dev:db:stop": "prisma dev stop delpasqua-dev",

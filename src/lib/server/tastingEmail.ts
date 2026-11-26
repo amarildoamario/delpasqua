@@ -27,6 +27,7 @@ function escapeHtml(s: string) {
 
 function fmtIt(d: Date) {
   return new Intl.DateTimeFormat("it-IT", {
+    timeZone: "Europe/Rome",
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -177,6 +178,122 @@ function getErrRaw(e: unknown) {
 /**
  * ✅ EMAIL ADMIN — notifica nuova prenotazione
  */
+export function buildTastingBookingAdminEmailContent(args: {
+  id: string;
+  status: string;
+  slotStart: Date;
+  slotEnd: Date;
+  tastingType: string;
+  people: number;
+  children?: number | null;
+  fullName: string;
+  email: string;
+  phone: string;
+  notes?: string | null;
+  viaVoucher?: boolean;
+}) {
+  const url = baseUrl();
+  const title = args.viaVoucher ? "Nuova richiesta degustazione con voucher" : "Nuova prenotazione degustazione";
+  const subject = `${title} — ${args.fullName}`;
+
+  const text = [
+    title,
+    `ID: ${args.id}`,
+    `Stato: ${args.status}`,
+    `Slot: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
+    `Tipo: ${args.tastingType}`,
+    `Persone: ${args.people}`,
+    args.children ? `Bambini: ${args.children}` : "",
+    `Nome: ${args.fullName}`,
+    `Email: ${args.email}`,
+    `Telefono: ${args.phone}`,
+    args.notes ? `Note: ${args.notes}` : "",
+    `Admin: ${url}/admin/degustazioni`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const statusLabel = args.status === "PENDING" ? "In attesa di conferma" : args.status;
+  const statusBg = args.status === "PENDING" ? "#fef3c7" : "#ecfdf5";
+  const statusColor = args.status === "PENDING" ? "#92400e" : "#065f46";
+  const participants = args.children
+    ? `${args.people} ${args.people === 1 ? "adulto" : "adulti"} · ${args.children} ${args.children === 1 ? "bambino" : "bambini"}`
+    : `${args.people} ${args.people === 1 ? "adulto" : "adulti"}`;
+
+  const html = `<!doctype html>
+<html lang="it">
+<body style="margin:0;padding:0;background:#f5f5f2;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55;color:#1c1917;">
+  <div style="max-width:640px;margin:0 auto;padding:24px 16px;">
+    <div style="background:#ffffff;border:1px solid #e7e5e4;border-radius:5px;overflow:hidden;">
+      <div style="padding:22px 24px 18px;border-bottom:1px solid #e7e5e4;background:#fafaf9;">
+        <div style="margin-bottom:10px;">
+          <span style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:${args.viaVoucher ? "#e8f0e6" : "#f5f5f4"};color:${args.viaVoucher ? "#274c34" : "#57534e"};">
+            ${args.viaVoucher ? "Riscatto Voucher" : "Degustazione"}
+          </span>
+          <span style="display:inline-block;margin-left:6px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;background:${statusBg};color:${statusColor};">
+            ${escapeHtml(statusLabel)}
+          </span>
+        </div>
+        <h2 style="margin:0;font-size:20px;line-height:1.3;font-weight:700;color:#111827;">${escapeHtml(title)}</h2>
+        <p style="margin:6px 0 0;font-size:13px;color:#57534e;">ID prenotazione: <span style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#292524;">${escapeHtml(args.id)}</span></p>
+      </div>
+
+      <div style="padding:22px 24px;">
+        <p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#78716c;">Dettagli richiesta</p>
+        <table role="presentation" style="width:100%;border-collapse:collapse;background:#fafaf9;border:1px solid #e7e5e4;border-radius:5px;">
+          <tr>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:13px;color:#78716c;width:130px;vertical-align:top;">Data e orario</td>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:14px;font-weight:600;color:#111827;">${escapeHtml(fmtIt(args.slotStart))}<br/><span style="font-weight:400;color:#57534e;font-size:13px;">fino a ${escapeHtml(fmtIt(args.slotEnd))}</span></td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:13px;color:#78716c;vertical-align:top;">Esperienza</td>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:14px;font-weight:600;color:#111827;">${escapeHtml(args.tastingType)}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-size:13px;color:#78716c;vertical-align:top;">Partecipanti</td>
+            <td style="padding:10px 14px;font-size:14px;color:#111827;">${escapeHtml(participants)}</td>
+          </tr>
+        </table>
+
+        <p style="margin:20px 0 10px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#78716c;">Contatto cliente</p>
+        <table role="presentation" style="width:100%;border-collapse:collapse;background:#ffffff;border:1px solid #e7e5e4;border-radius:5px;">
+          <tr>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:13px;color:#78716c;width:130px;">Nome</td>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:14px;font-weight:600;color:#111827;">${escapeHtml(args.fullName)}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:13px;color:#78716c;">Email</td>
+            <td style="padding:10px 14px;border-bottom:1px solid #e7e5e4;font-size:14px;"><a href="mailto:${escapeHtml(args.email)}" style="color:#274c34;text-decoration:none;font-weight:500;">${escapeHtml(args.email)}</a></td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-size:13px;color:#78716c;">Telefono</td>
+            <td style="padding:10px 14px;font-size:14px;"><a href="tel:${escapeHtml(args.phone)}" style="color:#111827;text-decoration:none;">${escapeHtml(args.phone)}</a></td>
+          </tr>
+        </table>
+
+        ${
+          args.notes
+            ? `<div style="margin-top:16px;padding:12px 14px;background:#fafaf9;border:1px solid #e7e5e4;border-left:3px solid #274c34;border-radius:5px;">
+                <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#78716c;">Note del cliente</p>
+                <p style="margin:0;font-size:14px;color:#292524;">${escapeHtml(args.notes)}</p>
+              </div>`
+            : ""
+        }
+
+        <div style="margin-top:22px;">
+          <a href="${escapeHtml(
+            url + "/admin/degustazioni"
+          )}" style="display:inline-block;background:#1c1917;color:#ffffff;text-decoration:none;padding:11px 18px;border-radius:5px;font-size:14px;font-weight:600;">Gestisci in Admin</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  return { subject, text, html };
+}
+
 export async function sendTastingBookingAdminEmail(args: {
   id: string;
   status: string;
@@ -189,6 +306,7 @@ export async function sendTastingBookingAdminEmail(args: {
   email: string;
   phone: string;
   notes?: string | null;
+  viaVoucher?: boolean;
 }): Promise<MailOk | MailFail> {
   const to = adminRecipients();
   const from = process.env.EMAIL_FROM;
@@ -243,57 +361,7 @@ export async function sendTastingBookingAdminEmail(args: {
     return res;
   }
 
-  const url = baseUrl();
-  const subject = `Nuova prenotazione degustazione — ${args.fullName}`;
-
-  const text = [
-    "Nuova prenotazione degustazione",
-    `ID: ${args.id}`,
-    `Stato: ${args.status}`,
-    `Slot: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
-    `Tipo: ${args.tastingType}`,
-    `Persone: ${args.people}`,
-    args.children ? `Bambini: ${args.children}` : "",
-    `Nome: ${args.fullName}`,
-    `Email: ${args.email}`,
-    `Telefono: ${args.phone}`,
-    args.notes ? `Note: ${args.notes}` : "",
-    `Admin: ${url}/admin/degustazioni`,
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  const html = `<!doctype html><html><body style="font-family:ui-sans-serif,system-ui;line-height:1.5;color:#111827;">
-    <h2 style="margin:0 0 10px 0;">Nuova prenotazione degustazione</h2>
-    <div style="padding:14px;border:1px solid #e5e7eb;border-radius:14px;background:#f9fafb;max-width:640px;">
-      <p style="margin:0 0 8px 0;"><b>ID:</b> ${escapeHtml(args.id)}</p>
-      <p style="margin:0 0 8px 0;"><b>Stato:</b> ${escapeHtml(args.status)}</p>
-      <p style="margin:0 0 8px 0;"><b>Slot:</b> ${escapeHtml(fmtIt(args.slotStart))} → ${escapeHtml(
-        fmtIt(args.slotEnd)
-      )}</p>
-      <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
-      <p style="margin:0 0 8px 0;"><b>Persone:</b> ${args.people}</p>
-      ${
-        args.children
-          ? `<p style="margin:0 0 8px 0;"><b>Bambini:</b> ${args.children}</p>`
-          : ""
-      }
-      <hr style="border:none;border-top:1px solid #e5e7eb;margin:12px 0;" />
-      <p style="margin:0 0 6px 0;"><b>Nome:</b> ${escapeHtml(args.fullName)}</p>
-      <p style="margin:0 0 6px 0;"><b>Email:</b> ${escapeHtml(args.email)}</p>
-      <p style="margin:0 0 6px 0;"><b>Telefono:</b> ${escapeHtml(args.phone)}</p>
-      ${
-        args.notes
-          ? `<p style="margin:10px 0 0 0;"><b>Note:</b><br/>${escapeHtml(args.notes)}</p>`
-          : ""
-      }
-      <div style="margin-top:14px;">
-        <a href="${escapeHtml(
-          url + "/admin/degustazioni"
-        )}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:700;">Apri in Admin</a>
-      </div>
-    </div>
-  </body></html>`;
+  const { subject, text, html } = buildTastingBookingAdminEmailContent(args);
 
   console.log("[TASTING][EMAIL][ADMIN] sending", {
     bookingId: args.id,
@@ -343,6 +411,66 @@ export async function sendTastingBookingAdminEmail(args: {
 /**
  * ✅ EMAIL CLIENTE — inviata quando l'admin cancella (CANCELED)
  */
+export function buildTastingCanceledCustomerEmailContent(args: {
+  fullName: string;
+  slotStart: Date;
+  slotEnd: Date;
+  tastingType: string;
+  people: number;
+  children?: number | null;
+  viaVoucher?: boolean;
+}) {
+  const url = baseUrl();
+  const subject = `Prenotazione degustazione annullata — ${fmtIt(args.slotStart)}`;
+  const rebooking = args.viaVoucher
+    ? "Il tuo voucher è di nuovo utilizzabile. Puoi usare lo stesso codice per richiedere una nuova data."
+    : "Se vuoi, puoi prenotare un nuovo slot dal sito.";
+
+  const text = [
+    `Ciao ${args.fullName},`,
+    "",
+    "la tua prenotazione per la degustazione è stata annullata ❌",
+    "",
+    `Quando: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
+    `Tipo: ${args.tastingType}`,
+    `Persone: ${args.people}`,
+    args.children ? `Bambini: ${args.children}` : "",
+    "",
+    rebooking,
+    "",
+    `${url}/degustazioni`,
+    "",
+    "A presto!",
+  ].join("\n");
+
+  const html = `<!doctype html><html><body style="font-family:ui-sans-serif,system-ui;line-height:1.6;color:#111827;">
+    <div style="max-width:640px;margin:0 auto;padding:18px;">
+      <h2 style="margin:0 0 10px 0;">Prenotazione annullata ❌</h2>
+      <p style="margin:0 0 14px 0;">Ciao <b>${escapeHtml(args.fullName)}</b>,</p>
+      <div style="padding:14px;border:1px solid #e5e7eb;border-radius:5px;background:#f9fafb;">
+        <p style="margin:0 0 8px 0;"><b>Quando:</b> ${escapeHtml(fmtIt(args.slotStart))} → ${escapeHtml(
+    fmtIt(args.slotEnd)
+  )}</p>
+        <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
+        <p style="margin:0 ${args.children ? "0 8px 0" : ""};"><b>Persone:</b> ${args.people}</p>
+        ${
+          args.children
+            ? `<p style="margin:0;"><b>Bambini:</b> ${args.children}</p>`
+            : ""
+        }
+      </div>
+      <p style="margin:14px 0 0 0;">${escapeHtml(rebooking)}</p>
+      <div style="margin-top:14px;">
+        <a href="${escapeHtml(
+          url + "/degustazioni"
+        )}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 14px;border-radius:5px;font-weight:700;">Prenota una nuova degustazione</a>
+      </div>
+    </div>
+  </body></html>`;
+
+  return { subject, text, html };
+}
+
 export async function sendTastingCanceledCustomerEmail(args: {
   toEmail: string;
   fullName: string;
@@ -351,6 +479,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
   tastingType: string;
   people: number;
   children?: number | null;
+  viaVoucher?: boolean;
 }): Promise<MailOk | MailFail> {
   const from = process.env.EMAIL_FROM;
   const resend = getResend();
@@ -400,50 +529,7 @@ export async function sendTastingCanceledCustomerEmail(args: {
     return out;
   }
 
-  const url = baseUrl();
-  const subject = `Prenotazione degustazione annullata — ${fmtIt(args.slotStart)}`;
-
-  const text = [
-    `Ciao ${args.fullName},`,
-    "",
-    "la tua prenotazione per la degustazione è stata annullata ❌",
-    "",
-    `Quando: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
-    `Tipo: ${args.tastingType}`,
-    `Persone: ${args.people}`,
-    args.children ? `Bambini: ${args.children}` : "",
-    "",
-    "Se vuoi, puoi prenotare un nuovo slot dal sito.",
-    "",
-    `${url}/degustazioni`,
-    "",
-    "A presto!",
-  ].join("\n");
-
-  const html = `<!doctype html><html><body style="font-family:ui-sans-serif,system-ui;line-height:1.6;color:#111827;">
-    <div style="max-width:640px;margin:0 auto;padding:18px;">
-      <h2 style="margin:0 0 10px 0;">Prenotazione annullata ❌</h2>
-      <p style="margin:0 0 14px 0;">Ciao <b>${escapeHtml(args.fullName)}</b>,</p>
-      <div style="padding:14px;border:1px solid #e5e7eb;border-radius:14px;background:#f9fafb;">
-        <p style="margin:0 0 8px 0;"><b>Quando:</b> ${escapeHtml(fmtIt(args.slotStart))} → ${escapeHtml(
-    fmtIt(args.slotEnd)
-  )}</p>
-        <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
-        <p style="margin:0 ${args.children ? "0 8px 0" : ""};"><b>Persone:</b> ${args.people}</p>
-        ${
-          args.children
-            ? `<p style="margin:0;"><b>Bambini:</b> ${args.children}</p>`
-            : ""
-        }
-      </div>
-      <p style="margin:14px 0 0 0;">Se vuoi, puoi prenotare un nuovo slot dal sito.</p>
-      <div style="margin-top:14px;">
-        <a href="${escapeHtml(
-          url + "/degustazioni"
-        )}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:700;">Prenota una nuova degustazione</a>
-      </div>
-    </div>
-  </body></html>`;
+  const { subject, text, html } = buildTastingCanceledCustomerEmailContent(args);
 
   console.log("[TASTING][EMAIL][CUSTOMER][CANCELED] sending", {
     to: maskEmail(args.toEmail),
@@ -500,6 +586,60 @@ export async function sendTastingCanceledCustomerEmail(args: {
 /**
  * ✅ EMAIL CLIENTE — inviata a conferma prenotazione (CONFIRMED)
  */
+export function buildTastingConfirmedCustomerEmailContent(args: {
+  fullName: string;
+  slotStart: Date;
+  slotEnd: Date;
+  tastingType: string;
+  people: number;
+  children?: number | null;
+}) {
+  const url = baseUrl();
+  const subject = `Prenotazione degustazione confermata — ${fmtIt(args.slotStart)}`;
+
+  const text = [
+    `Ciao ${args.fullName},`,
+    "",
+    "la tua prenotazione per la degustazione è confermata ✅",
+    "",
+    `Quando: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
+    `Tipo: ${args.tastingType}`,
+    `Persone: ${args.people}`,
+    args.children ? `Bambini: ${args.children}` : "",
+    "",
+    "Se hai domande, rispondi a questa email.",
+    "",
+    "A presto!",
+  ].join("\n");
+
+  const html = `<!doctype html><html><body style="font-family:ui-sans-serif,system-ui;line-height:1.6;color:#111827;">
+    <div style="max-width:640px;margin:0 auto;padding:18px;">
+      <h2 style="margin:0 0 10px 0;">Prenotazione confermata ✅</h2>
+      <p style="margin:0 0 14px 0;">Ciao <b>${escapeHtml(args.fullName)}</b>,</p>
+      <div style="padding:14px;border:1px solid #e5e7eb;border-radius:5px;background:#f9fafb;">
+        <p style="margin:0 0 8px 0;"><b>Quando:</b> ${escapeHtml(fmtIt(args.slotStart))} → ${escapeHtml(
+    fmtIt(args.slotEnd)
+  )}</p>
+        <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
+        <p style="margin:0 ${args.children ? "0 8px 0" : ""};"><b>Persone:</b> ${args.people}</p>
+        ${
+          args.children
+            ? `<p style="margin:0;"><b>Bambini:</b> ${args.children}</p>`
+            : ""
+        }
+      </div>
+      <p style="margin:14px 0 0 0;">Se hai domande, rispondi a questa email.</p>
+      <div style="margin-top:14px;">
+        <a href="${escapeHtml(
+          url
+        )}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 14px;border-radius:5px;font-weight:700;">Vai al sito</a>
+      </div>
+    </div>
+  </body></html>`;
+
+  return { subject, text, html };
+}
+
 export async function sendTastingConfirmedCustomerEmail(args: {
   toEmail: string;
   fullName: string;
@@ -549,48 +689,7 @@ export async function sendTastingConfirmedCustomerEmail(args: {
     return out;
   }
 
-  const url = baseUrl();
-  const subject = `Prenotazione degustazione confermata — ${fmtIt(args.slotStart)}`;
-
-  const text = [
-    `Ciao ${args.fullName},`,
-    "",
-    "la tua prenotazione per la degustazione è confermata ✅",
-    "",
-    `Quando: ${fmtIt(args.slotStart)} → ${fmtIt(args.slotEnd)}`,
-    `Tipo: ${args.tastingType}`,
-    `Persone: ${args.people}`,
-    args.children ? `Bambini: ${args.children}` : "",
-    "",
-    "Se hai domande, rispondi a questa email.",
-    "",
-    "A presto!",
-  ].join("\n");
-
-  const html = `<!doctype html><html><body style="font-family:ui-sans-serif,system-ui;line-height:1.6;color:#111827;">
-    <div style="max-width:640px;margin:0 auto;padding:18px;">
-      <h2 style="margin:0 0 10px 0;">Prenotazione confermata ✅</h2>
-      <p style="margin:0 0 14px 0;">Ciao <b>${escapeHtml(args.fullName)}</b>,</p>
-      <div style="padding:14px;border:1px solid #e5e7eb;border-radius:14px;background:#f9fafb;">
-        <p style="margin:0 0 8px 0;"><b>Quando:</b> ${escapeHtml(fmtIt(args.slotStart))} → ${escapeHtml(
-    fmtIt(args.slotEnd)
-  )}</p>
-        <p style="margin:0 0 8px 0;"><b>Tipo:</b> ${escapeHtml(args.tastingType)}</p>
-        <p style="margin:0 ${args.children ? "0 8px 0" : ""};"><b>Persone:</b> ${args.people}</p>
-        ${
-          args.children
-            ? `<p style="margin:0;"><b>Bambini:</b> ${args.children}</p>`
-            : ""
-        }
-      </div>
-      <p style="margin:14px 0 0 0;">Se hai domande, rispondi a questa email.</p>
-      <div style="margin-top:14px;">
-        <a href="${escapeHtml(
-          url
-        )}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:700;">Vai al sito</a>
-      </div>
-    </div>
-  </body></html>`;
+  const { subject, text, html } = buildTastingConfirmedCustomerEmailContent(args);
 
   console.log("[TASTING][EMAIL][CUSTOMER] sending", {
     to: maskEmail(args.toEmail),

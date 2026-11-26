@@ -52,6 +52,31 @@ function escapeHtml(value: string | number | null | undefined) {
     .replace(/'/g, "&#39;");
 }
 
+function renderPrintLetterhead(logoSrc: string) {
+  return `<div style="display: flex; gap: 12px; align-items: center;">
+    <img src="${escapeHtml(logoSrc)}" alt="Logo" style="width: 48px; height: 48px; object-fit: contain;" onerror="this.style.display='none'">
+    <div>
+      <h2 style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; color: #171717;">${escapeHtml(companyInfo.brandName)}</h2>
+      <div style="font-size: 10px; line-height: 1.35; color: #555; margin-top: 2px;">
+        ${escapeHtml(companyInfo.companyName)} · ${escapeHtml(companyInfo.addressSingleLine)}<br>
+        Tel. ${escapeHtml(companyInfo.phone)} · ${escapeHtml(companyInfo.email)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPrintHeader(logoSrc: string, titleHtml: string, reference: string, detailsHtml: string, date: string) {
+  return `<div class="document-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 2px solid #171717; padding-bottom: 12px; margin-bottom: 18px;">
+    ${renderPrintLetterhead(logoSrc)}
+    <div style="text-align: right; min-width: 160px;">
+      <div style="font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #737373; font-weight: 700;">${titleHtml}</div>
+      <div style="font-size: 16px; font-weight: 800; color: #171717; margin-top: 1px;">${escapeHtml(reference)}</div>
+      ${detailsHtml ? `<div style="font-size: 10.5px; color: #333; margin-top: 2px;">${detailsHtml}</div>` : ""}
+      <div style="font-size: 9.5px; color: #666;">${escapeHtml(date)}</div>
+    </div>
+  </div>`;
+}
+
 function formatDate(value: Date | null | undefined) {
   if (!value) return "-";
   return new Date(value).toLocaleString("it-IT", {
@@ -96,6 +121,68 @@ function formatPaymentMethod(order: {
 
 export type PrintDocumentOptions = { kind?: "quote"; validUntil?: Date; notes?: string; vatRate?: number; paymentUrl?: string; shippingTerms?: string };
 
+function renderPrintInfoColumns(leftTitle: string, leftHtml: string, rightTitle: string, rightHtml: string) {
+  const headingStyle = "font-size: 10px; text-transform: uppercase; font-weight: 700; color: #737373; margin-bottom: 4px; letter-spacing: 0.04em;";
+  return `<div class="document-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 18px; font-size: 12px;">
+    <div><div style="${headingStyle}">${escapeHtml(leftTitle)}</div>${leftHtml}</div>
+    <div><div style="${headingStyle}">${escapeHtml(rightTitle)}</div>${rightHtml}</div>
+  </div>`;
+}
+
+function renderQuoteDetails(dateLabel: string, date: string, paymentMethod: string) {
+  return `<div style="display: grid; grid-template-columns: 100px minmax(0, 1fr); column-gap: 8px; row-gap: 8px; font-size: 11px; color: #444; line-height: 1.5;">
+    <strong>${escapeHtml(dateLabel)}:</strong><span>${escapeHtml(date)}</span>
+    <strong>Pagamento:</strong><span>${escapeHtml(paymentMethod)}</span>
+  </div>`;
+}
+
+function renderPrintItemRow(reference: string, title: string, detailHtml: string, quantity: number, extraHtml: string, totalHtml: string, totalNote = "") {
+  return `<tr>
+    <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; font-family: monospace; font-size: 11px; color: #555;">${escapeHtml(reference)}</td>
+    <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5;"><strong style="color: #111; font-size: 12px;">${escapeHtml(title)}</strong>${detailHtml}</td>
+    <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: center; font-weight: 700; font-size: 13px;">${quantity}</td>
+    <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: right; font-size: 12px; color: #444;">${extraHtml}</td>
+    <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: right; font-size: 12px; font-weight: 600;">
+      <div>${totalHtml}</div>
+      ${totalNote}
+    </td>
+  </tr>`;
+}
+
+function renderPrintItems(quoteStyles: boolean, columns: readonly [string, string, string, string, string], rows: string) {
+  const directions = ["left", "left", "center", "right", "right"];
+  return `<table class="document-items" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+    ${quoteStyles ? '<colgroup><col style="width: 17%"><col style="width: 39%"><col style="width: 8%"><col style="width: 18%"><col style="width: 18%"></colgroup>' : ""}
+    <thead><tr style="background: #f5f5f5; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555;">
+      ${columns.map((label, index) => `<th scope="col" style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: ${directions[index]};">${escapeHtml(label)}</th>`).join("")}
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderPrintSummary(quoteStyles: boolean, rows: string, notes = "") {
+  return `<div class="document-summary" style="display: flex; justify-content: flex-end; gap: 24px; font-size: 11.5px; margin-top: 6px; ${quoteStyles ? "break-inside: avoid;" : ""}">
+    ${notes ? `<div style="flex: 1; min-width: 0; font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere;"><strong>Note e condizioni</strong><br>${escapeHtml(notes)}</div>` : ""}
+    <table style="width: 250px; flex-shrink: 0; border-collapse: collapse;">${rows}</table>
+  </div>`;
+}
+
+function renderPrintTotal(label: string, totalHtml: string) {
+  return `<tr style="font-weight: 800; border-top: 1.5px solid #171717; font-size: 13.5px;">
+    <td style="padding: 6px 0 0 0; color: #171717;">${escapeHtml(label)}:</td>
+    <td style="text-align: right; padding: 6px 0 0 0; color: #171717;">${totalHtml}</td>
+  </tr>`;
+}
+
+function renderPrintAcceptance(title: string, conditions: string, paymentText: string, paymentUrl?: string) {
+  return `<div class="quote-acceptance" style="margin-top: 28px; border-top: 1px solid #ddd; padding-top: 20px; font-size: 11px; line-height: 1.65; break-inside: avoid;">
+    <strong>${escapeHtml(title)}</strong><br>${escapeHtml(conditions)}
+    ${paymentUrl ? `<p style="margin: 14px 0;">${escapeHtml(paymentText)}</p>
+      <a href="${escapeHtml(paymentUrl)}" style="color: #1d4ed8; font-weight: 700; overflow-wrap: anywhere;">Vai al pagamento &rarr;</a><br>
+      <span style="font-size: 9px; overflow-wrap: anywhere;">${escapeHtml(paymentUrl)}</span>` : ""}
+  </div>`;
+}
+
 export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.png", options: PrintDocumentOptions = {}) {
   const isQuote = options.kind === "quote";
   const reprintedCount = orders.filter((order) => order.previousPrintCount > 0).length;
@@ -114,27 +201,7 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
               ? `<div style="font-size: 10px; color: #888; margin-top: 1px;">IVA incl.: ${euro(item.lineVatCents)}</div>`
               : "";
 
-          return `
-            <tr>
-              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; font-family: monospace; font-size: 11px; color: #555;">
-                ${escapeHtml(item.sku)}
-              </td>
-              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5;">
-                <strong style="color: #111; font-size: 12px;">${escapeHtml(item.title)}</strong>
-                ${variantLabel}
-              </td>
-              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: center; font-weight: 700; font-size: 13px;">
-                ${item.qty}
-              </td>
-              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: right; font-size: 12px; color: #444;">
-                ${euro(item.unitPriceCents)}
-              </td>
-              <td style="padding: 7px 8px; border-bottom: 1px solid #e5e5e5; text-align: right; font-size: 12px; font-weight: 600;">
-                <div>${euro(item.lineTotalCents)}</div>
-                ${lineVatNote}
-              </td>
-            </tr>
-          `;
+          return renderPrintItemRow(item.sku, item.title, variantLabel, item.qty, euro(item.unitPriceCents), euro(item.lineTotalCents), lineVatNote);
         })
         .join("");
 
@@ -152,43 +219,15 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
       return `
         ${printWarning}
         <div class="order-sheet${isQuote ? " quote-sheet" : ""}">
-          <!-- Clean Header (No Grey Box) -->
-          <div class="document-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 2px solid #171717; padding-bottom: 12px; margin-bottom: 18px;">
-            <div style="display: flex; gap: 12px; align-items: center;">
-              <img src="${escapeHtml(logoSrc)}" alt="Logo" style="width: 48px; height: 48px; object-fit: contain;" onerror="this.style.display='none'">
-              <div>
-                <h2 style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; color: #171717;">
-                  ${escapeHtml(companyInfo.brandName)}
-                </h2>
-                <div style="font-size: 10px; line-height: 1.35; color: #555; margin-top: 2px;">
-                  ${escapeHtml(companyInfo.companyName)} · ${escapeHtml(companyInfo.addressSingleLine)}<br>
-                  Tel. ${escapeHtml(companyInfo.phone)} · ${escapeHtml(companyInfo.email)}
-                </div>
-              </div>
-            </div>
+          ${renderPrintHeader(
+            logoSrc,
+            isQuote ? '<span style="color: #b91c1c; font-size: 17px; font-weight: 900;">PREVENTIVO</span>' : `Ordine ${idx + 1} di ${orders.length}`,
+            order.orderNumber ?? order.id.slice(0, 8),
+            isQuote ? `<strong>Valido fino al:</strong> ${escapeHtml(options.validUntil?.toLocaleDateString("it-IT", { timeZone: "Europe/Rome" }) ?? "-")}` : `<strong>Stato:</strong> ${escapeHtml(DB_STATUS_LABEL[order.status] ?? order.status)}`,
+            formatDate(order.createdAt),
+          )}
 
-            <div style="text-align: right; min-width: 160px;">
-              <div style="font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #737373; font-weight: 700;">
-                ${isQuote ? '<span style="color: #b91c1c; font-size: 17px; font-weight: 900;">PREVENTIVO</span>' : `Ordine ${idx + 1} di ${orders.length}`}
-              </div>
-              <div style="font-size: 16px; font-weight: 800; color: #171717; margin-top: 1px;">
-                ${escapeHtml(order.orderNumber ?? order.id.slice(0, 8))}
-              </div>
-              <div style="font-size: 10.5px; color: #333; margin-top: 2px;">
-                ${isQuote ? `<strong>Valido fino al:</strong> ${escapeHtml(options.validUntil?.toLocaleDateString("it-IT", { timeZone: "Europe/Rome" }) ?? "-")}` : `<strong>Stato:</strong> ${escapeHtml(DB_STATUS_LABEL[order.status] ?? order.status)}`}
-              </div>
-              <div style="font-size: 9.5px; color: #666;">
-                ${escapeHtml(formatDate(order.createdAt))}
-              </div>
-            </div>
-          </div>
-
-          <!-- Clean Info Columns (No Grey Boxes) -->
-          <div class="document-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 18px; font-size: 12px;">
-            <div>
-              <div style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: #737373; margin-bottom: 4px; letter-spacing: 0.04em;">
-                Destinatario Spedizione
-              </div>
+          ${renderPrintInfoColumns("Destinatario Spedizione", `
               <div style="font-size: 13px; font-weight: 700; color: #111;">
                 ${escapeHtml(order.fullName || "Nominativo non specificato")}
               </div>
@@ -200,19 +239,12 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
               <div style="margin-top: 4px; font-size: 11px; color: #555;">
                 <strong>Tel:</strong> ${escapeHtml(order.phone || "-")} · <strong>Email:</strong> ${escapeHtml(order.email || "-")}
               </div>
-            </div>
-
-            <div>
-              <div style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: #737373; margin-bottom: 4px; letter-spacing: 0.04em;">
-                Dettagli Spedizione & Pagamento
-              </div>
-              ${isQuote ? `<div style="display: grid; grid-template-columns: 100px minmax(0, 1fr); column-gap: 8px; row-gap: 8px; font-size: 11px; color: #444; line-height: 1.5;">
-                <strong>Data Preventivo:</strong><span>${escapeHtml(formatDate(order.createdAt))}</span>
-                <strong>Pagamento:</strong><span>${escapeHtml(formatPaymentMethod(order))}</span>
-              </div>` : `<div style="font-size: 11px; color: #444; line-height: 1.4;">
-                <strong>${isQuote ? "Data Preventivo" : "Data Ordine"}:</strong> ${escapeHtml(formatDate(order.createdAt))}<br>
+          `, "Dettagli Spedizione & Pagamento", `
+              ${isQuote ? renderQuoteDetails("Data Preventivo", formatDate(order.createdAt), formatPaymentMethod(order))
+                : `<div style="font-size: 11px; color: #444; line-height: 1.4;">
+                <strong>Data Ordine:</strong> ${escapeHtml(formatDate(order.createdAt))}<br>
                 <strong>Pagamento:</strong> ${escapeHtml(formatPaymentMethod(order))}<br>
-                ${isQuote ? "" : `<strong>Data Pagamento:</strong> ${escapeHtml(formatDate(order.paidAt))}`}
+                <strong>Data Pagamento:</strong> ${escapeHtml(formatDate(order.paidAt))}
               </div>`}
               ${
                 order.shippingNotes
@@ -223,30 +255,11 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
               `
                   : ""
               }
-            </div>
-          </div>
+          `)}
 
-          <!-- Items Table (The only element with clean table structure) -->
-          <table class="document-items" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
-            ${isQuote ? '<colgroup><col style="width: 17%"><col style="width: 39%"><col style="width: 8%"><col style="width: 18%"><col style="width: 18%"></colgroup>' : ""}
-            <thead>
-              <tr style="background: #f5f5f5; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #555;">
-                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc;">SKU</th>
-                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc;">Prodotto / Referenza</th>
-                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: center;">Qtà</th>
-                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: right;">Prezzo unit.</th>
-                <th style="padding: 6px 8px; border-bottom: 1.5px solid #ccc; text-align: right;">Totale</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
+          ${renderPrintItems(isQuote, ["SKU", "Prodotto / Referenza", "Qtà", "Prezzo unit.", "Totale"], itemsHtml)}
 
-          <!-- Totals Breakdown -->
-          <div class="document-summary" style="display: flex; justify-content: flex-end; gap: 24px; font-size: 11.5px; margin-top: 6px; ${isQuote ? "break-inside: avoid;" : ""}">
-            ${isQuote && options.notes ? `<div style="flex: 1; min-width: 0; font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere;"><strong>Note e condizioni</strong><br>${escapeHtml(options.notes)}</div>` : ""}
-            <table style="width: 250px; flex-shrink: 0; border-collapse: collapse;">
+          ${renderPrintSummary(isQuote, `
               <tr>
                 <td style="padding: 2px 0; color: #555;">Subtotale prodotti:</td>
                 <td style="text-align: right; padding: 2px 0; font-weight: 500;">${euro(order.subtotalCents)}</td>
@@ -269,32 +282,57 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
                 <td style="padding: 2px 0; color: #555;">Spedizione:</td>
                 <td style="text-align: right; padding: 2px 0; font-weight: 500;">${euro(order.shippingCents)}</td>
               </tr>
-              <tr style="font-weight: 800; border-top: 1.5px solid #171717; font-size: 13.5px;">
-                <td style="padding: 6px 0 0 0; color: #171717;">Totale ${isQuote ? "Preventivo" : "Ordine"}:</td>
-                <td style="text-align: right; padding: 6px 0 0 0; color: #171717;">${euro(order.totalCents)}</td>
-              </tr>
+              ${renderPrintTotal(isQuote ? "Totale Preventivo" : "Totale Ordine", euro(order.totalCents))}
               ${payment ? `<tr>
                 <td style="padding-top: 4px;">Importo Stripe (${payment.currency})</td>
                 <td style="text-align: right; padding-top: 4px;">${escapeHtml(formatMoney(payment.totalCents, payment.currency))}</td>
               </tr>` : ""}
-            </table>
-          </div>
-          ${isQuote ? `<div class="quote-acceptance" style="margin-top: 28px; border-top: 1px solid #ddd; padding-top: 20px; font-size: 11px; line-height: 1.65; break-inside: avoid;">
-            <strong>Condizioni di spedizione</strong><br>${escapeHtml(options.shippingTerms || "Spedizione all'indirizzo indicato, ai costi concordati.")}
-            ${options.paymentUrl ? `<p style="margin: 14px 0;">Se accetti il preventivo e le condizioni di spedizione e confermi che l'indirizzo indicato è corretto, apri il link seguente per procedere al pagamento sicuro con Stripe. Prodotti, importi e dati di spedizione sono già predisposti per questo preventivo.</p>
-              <a href="${escapeHtml(options.paymentUrl)}" style="color: #1d4ed8; font-weight: 700; overflow-wrap: anywhere;">Vai al pagamento &rarr;</a><br>
-              <span style="font-size: 9px; overflow-wrap: anywhere;">${escapeHtml(options.paymentUrl)}</span>` : ""}
-          </div>` : ""}
+          `, isQuote ? options.notes : undefined)}
+          ${isQuote ? renderPrintAcceptance(
+            "Condizioni di spedizione",
+            options.shippingTerms || "Spedizione all'indirizzo indicato, ai costi concordati.",
+            "Se accetti il preventivo e le condizioni di spedizione e confermi che l'indirizzo indicato è corretto, apri il link seguente per procedere al pagamento sicuro con Stripe. Prodotti, importi e dati di spedizione sono già predisposti per questo preventivo.",
+            options.paymentUrl,
+          ) : ""}
         </div>
       `;
     })
     .join("");
 
-  const pageHtml = `
+  return renderPrintPage(isQuote ? "Preventivo" : "Stampa Ordini Evasione", isQuote, `
+    <div class="no-print" style="background: #ffffff; padding: 12px 20px; border-radius: 10px; border: 1px solid #e4e4e7; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 800px; margin: 0 auto 20px auto; box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
+      <div>
+        <span style="font-size: 13.5px; font-weight: 700; color: #18181b;">${orders.length} ${orders.length === 1 ? "ordine pronto" : "ordini pronti per la stampa"}</span>
+        <div style="font-size: 11px; color: #71717a; margin-top: 1px;">
+          ${firstPrintCount} prime stampe · ${reprintedCount} ristampe
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button onclick="window.print()" style="background: #18181b; color: #ffffff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+          🖨️ Stampa Adesso
+        </button>
+        <button onclick="window.close()" style="background: #ffffff; color: #3f3f46; border: 1px solid #d4d4d8; border-radius: 8px; padding: 8px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+          Chiudi
+        </button>
+      </div>
+    </div>
+    ${htmlItems}
+    <script>
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          window.print();
+        }, 350);
+      });
+    </script>
+  `);
+}
+
+function renderPrintPage(title: string, quoteStyles: boolean, content: string) {
+  return `
     <!DOCTYPE html>
     <html lang="it">
     <head>
-      <title>${isQuote ? "Preventivo" : "Stampa Ordini Evasione"} - Frantoio Del Pasqua</title>
+      <title>${escapeHtml(title)} - Frantoio Del Pasqua</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
@@ -353,13 +391,14 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
             break-after: auto !important;
           }
         }
-        ${isQuote ? `
+        ${quoteStyles ? `
           .quote-sheet { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
           .quote-sheet .document-header { padding-bottom: 20px !important; margin-bottom: 28px !important; }
           .quote-sheet .document-info { gap: 32px !important; margin-bottom: 30px !important; line-height: 1.55; }
           .quote-sheet .document-info > div > div:first-child { margin-bottom: 8px !important; }
           .quote-sheet .document-items { table-layout: fixed; margin-bottom: 28px !important; }
           .quote-sheet .document-items th { padding-top: 10px !important; padding-bottom: 10px !important; }
+          .quote-sheet .document-items th:nth-child(3) { padding-inline: 4px; white-space: nowrap; }
           .quote-sheet .document-items td { vertical-align: top; font-size: 12px !important; padding-top: 13px !important; padding-bottom: 13px !important; line-height: 1.45; }
           .quote-sheet .document-items th:first-child, .quote-sheet .document-items td:first-child { padding-left: 0 !important; }
           .quote-sheet .document-items th:last-child, .quote-sheet .document-items td:last-child { padding-right: 0 !important; }
@@ -375,35 +414,44 @@ export function renderOrderPrintHtml(orders: PrintableOrder[], logoSrc = "/logo.
       </style>
     </head>
     <body>
-      <div class="no-print" style="background: #ffffff; padding: 12px 20px; border-radius: 10px; border: 1px solid #e4e4e7; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 800px; margin: 0 auto 20px auto; box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
-        <div>
-          <span style="font-size: 13.5px; font-weight: 700; color: #18181b;">${orders.length} ${orders.length === 1 ? "ordine pronto" : "ordini pronti per la stampa"}</span>
-          <div style="font-size: 11px; color: #71717a; margin-top: 1px;">
-            ${firstPrintCount} prime stampe · ${reprintedCount} ristampe
-          </div>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button onclick="window.print()" style="background: #18181b; color: #ffffff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
-            🖨️ Stampa Adesso
-          </button>
-          <button onclick="window.close()" style="background: #ffffff; color: #3f3f46; border: 1px solid #d4d4d8; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
-            Chiudi
-          </button>
-        </div>
-      </div>
-
-      ${htmlItems}
-
-      <script>
-        window.addEventListener("load", () => {
-          setTimeout(() => {
-            window.print();
-          }, 350);
-        });
-      </script>
+      ${content}
     </body>
     </html>
   `;
 
-  return pageHtml;
+}
+
+export function renderVoucherProposalPrintHtml(
+  proposal: { id: string; tastingType: string; tastingTitle: string; people: number; children: number; totalCents: number; createdAt: Date },
+  logoSrc: string,
+  paymentUrl: string,
+) {
+  const date = proposal.createdAt.toLocaleString("it-IT", {
+    timeZone: "Europe/Rome", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
+  });
+  const total = escapeHtml(formatMoney(proposal.totalCents, "EUR"));
+  const tastingRow = renderPrintItemRow(proposal.tastingType, proposal.tastingTitle, "", proposal.people, String(proposal.children), total);
+  return renderPrintPage("Proposta voucher", true, `
+    <div class="order-sheet quote-sheet">
+      ${renderPrintHeader(
+        logoSrc,
+        '<span style="color: #b91c1c; font-size: 17px; font-weight: 900;">PROPOSTA VOUCHER</span>',
+        proposal.id.slice(0, 8).toUpperCase(),
+        "<strong>Stato:</strong> Da pagare",
+        date,
+      )}
+      ${renderPrintInfoColumns("Degustazione", `
+        <div style="font-size: 13px; font-weight: 700; color: #111;">${escapeHtml(proposal.tastingTitle)}</div>
+        <div style="color: #333; margin-top: 2px; line-height: 1.35;">${escapeHtml(companyInfo.brandName)}</div>
+      `, "Dettagli proposta & pagamento", renderQuoteDetails("Data proposta", date, "Online con Stripe"))}
+      ${renderPrintItems(true, ["Rif.", "Tipologia di degustazione", "Adulti", "Bambini", "Totale"], tastingRow)}
+      ${renderPrintSummary(true, renderPrintTotal("Prezzo totale", total), "Il voucher non ha scadenza. La data della degustazione si sceglie dopo l’emissione, previa conferma del Frantoio.")}
+      ${renderPrintAcceptance(
+        "Pagamento della proposta",
+        "Il voucher verrà inviato via email dopo la conferma del pagamento.",
+        "Apri il link seguente per procedere al pagamento.",
+        paymentUrl,
+      )}
+    </div>
+  `);
 }

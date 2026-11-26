@@ -1,0 +1,2 @@
+ALTER INDEX "TastingVoucherCheckout_proposalId_internal_livemode_createdAt_i"
+RENAME TO "TastingVoucherCheckout_proposalId_internal_livemode_created_idx";

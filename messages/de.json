@@ -91,6 +91,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Gutscheincode eingeben",
+          "code": "Gutscheincode",
+          "check": "Code prüfen",
+          "checking": "Wird geprüft…",
+          "verified": "Dein Code ist gültig. Wähle einen Termin im Kalender, um eine Buchungsanfrage zu stellen.",
+          "remove": "Gutschein entfernen",
+          "group": "Erwachsene {adults} · Kinder {children}",
+          "invalid": "Dieser Gutscheincode ist ungültig. Prüfe ihn und versuche es erneut.",
+          "used": "Dieser Gutschein ist bereits einer aktiven Buchung zugeordnet.",
+          "slot_error": "Wähle einen verfügbaren Termin im Kalender.",
+          "rate": "Zu viele Versuche. Warte eine Minute und versuche es erneut.",
+          "error": "Der Gutschein konnte nicht geprüft werden. Versuche es gleich noch einmal.",
+          "submit": "Anfrage senden",
+          "disclaimer": "Auch Buchungsanfragen mit Gutschein müssen bestätigt werden. Wenn die Ölmühle am gewählten Termin nicht verfügbar ist, musst du den Code gegebenenfalls erneut eingeben und eine neue Anfrage stellen.",
+          "pending": "Deine Anfrage wartet auf Bestätigung. Wir senden dir eine E-Mail, sobald sie bestätigt ist."
+        },
         "loading": "Wird geladen...",
         "today": "HEUTE",
         "no_slots": "Keine Plätze",

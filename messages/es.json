@@ -85,6 +85,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Introducir código del bono",
+          "code": "Código del bono",
+          "check": "Verificar código",
+          "checking": "Verificando…",
+          "verified": "El código es válido. Selecciona una fecha en el calendario para solicitar la reserva.",
+          "remove": "Quitar el bono",
+          "group": "Adultos {adults} · Niños {children}",
+          "invalid": "Este código no es válido. Revísalo e inténtalo de nuevo.",
+          "used": "Este bono ya está asociado a una reserva activa.",
+          "slot_error": "Selecciona una fecha y una hora disponibles en el calendario.",
+          "rate": "Demasiados intentos. Espera un minuto y vuelve a intentarlo.",
+          "error": "No se pudo verificar el bono. Inténtalo de nuevo en unos momentos.",
+          "submit": "Enviar solicitud",
+          "disclaimer": "La solicitud debe aprobarse aunque uses un bono. Si el molino no tiene disponibilidad en la fecha elegida, puede que tengas que introducir el código de nuevo y enviar otra solicitud.",
+          "pending": "Tu solicitud está pendiente de aprobación. Te enviaremos un correo cuando se confirme."
+        },
         "loading": "Cargando...",
         "today": "HOY",
         "no_slots": "Sin horarios",

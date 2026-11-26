@@ -84,6 +84,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Legg inn voucherkode",
+          "code": "Voucherkode",
+          "check": "Kontroller koden",
+          "checking": "Kontrollerer…",
+          "verified": "Koden er gyldig. Velg en dato i kalenderen for å sende en bestillingsforespørsel.",
+          "remove": "Fjern voucher",
+          "group": "Voksne {adults} · Barn {children}",
+          "invalid": "Koden er ugyldig. Kontroller den og prøv igjen.",
+          "used": "Denne voucheren er allerede knyttet til en aktiv bestilling.",
+          "slot_error": "Velg en ledig dato og et ledig tidspunkt i kalenderen.",
+          "rate": "For mange forsøk. Vent ett minutt og prøv igjen.",
+          "error": "Vi kunne ikke kontrollere voucheren. Prøv igjen om litt.",
+          "submit": "Send forespørsel",
+          "disclaimer": "Forespørselen må godkjennes selv om du bruker en voucher. Hvis oljemøllen ikke har kapasitet på den valgte datoen, må du kanskje legge inn koden på nytt og sende en ny forespørsel.",
+          "pending": "Forespørselen venter på godkjenning. Du får en e-post når den er bekreftet."
+        },
         "loading": "Laster...",
         "today": "I DAG",
         "no_slots": "Ingen ledige plasser",

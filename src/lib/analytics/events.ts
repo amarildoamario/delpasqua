@@ -31,7 +31,7 @@ export type AnalyticsEvent = {
 
 export function analyticsPath(path: string) {
   // Never retain checkout tokens or arbitrary query strings.
-  return path.split(/[?#]/, 1)[0].replace(/(\/(?:[a-z]{2}\/)?preventivo)\/[^/]+\/?$/, "$1").slice(0, 300);
+  return path.split(/[?#]/, 1)[0].replace(/(\/(?:[a-z]{2}\/)?(?:preventivo|voucher))\/[^/]+\/?$/, "$1").slice(0, 300);
 }
 
 export function isAdminPath(path: string) {

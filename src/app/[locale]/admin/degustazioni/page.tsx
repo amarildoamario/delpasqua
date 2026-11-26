@@ -1,6 +1,7 @@
 import PageHeader from "../_components/PageHeader";
 import TastingStatusActions from "./status-actions";
 import { prisma } from "@/lib/server/prisma";
+import { voucherNumber } from "@/lib/server/tastingVoucherPayment";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ function fmt(d: Date) {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Europe/Rome",
   }).format(d);
 }
 
@@ -33,7 +35,11 @@ export default async function AdminDegustazioniPage() {
   to.setDate(to.getDate() + 90);
 
   const bookings = await prisma.tastingBooking.findMany({
-    where: { slotStart: { gte: from, lte: to } },
+    where: { OR: [
+      { slotStart: { gte: from, lte: to } },
+      { voucherId: { not: null }, status: { in: ["PENDING", "CONFIRMED"] }, slotStart: { gt: to } },
+    ] },
+    include: { voucher: { select: { paidAt: true, sequence: true, isTest: true } } },
     // ✅ più recente → più vecchia
     orderBy: { slotStart: "desc" },
   });
@@ -88,7 +94,12 @@ export default async function AdminDegustazioniPage() {
                     </span>
                   </td>
 
-                  <td className="px-4 py-3 font-semibold text-neutral-900">{b.tastingType}</td>
+                  <td className="px-4 py-3 font-semibold text-neutral-900">
+                    {b.tastingType}
+                    {b.voucher && <div className="mt-1 text-xs text-emerald-800">
+                      Voucher {voucherNumber(b.voucher, b.people)}{b.voucher.isTest ? " · Prova" : ""}
+                    </div>}
+                  </td>
 
                   <td className="px-4 py-3">
                     <div className="font-semibold text-neutral-900">{b.fullName}</div>
@@ -116,7 +127,7 @@ export default async function AdminDegustazioniPage() {
                   </td>
 
                   <td className="px-4 py-3">
-                    <TastingStatusActions id={b.id} status={b.status} />
+                    <TastingStatusActions id={b.id} status={b.status} viaVoucher={!!b.voucher} />
                   </td>
                 </tr>
               ))}

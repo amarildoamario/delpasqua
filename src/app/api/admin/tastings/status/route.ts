@@ -38,12 +38,27 @@ export async function POST(req: Request) {
     );
   }
 
-  const updated = await prisma.tastingBooking.update({
-    where: { id },
-    data: { status: nextStatus },
-  });
-
-  // ...
+  if (existing.status === nextStatus) {
+    return guard.attach(NextResponse.json({ ok: true, bookingId: id, status: nextStatus, customerMail: null }));
+  }
+  if (existing.voucherId && existing.status === "CANCELED") {
+    return guard.attach(NextResponse.json({ error: "Il voucher è tornato disponibile. Il cliente può inviare una nuova richiesta." }, { status: 409 }));
+  }
+  let updated;
+  try {
+    updated = await prisma.tastingBooking.updateMany({
+      where: { id, status: existing.status },
+      data: { status: nextStatus },
+    });
+  } catch (error) {
+    if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+      return guard.attach(NextResponse.json({ error: "L’orario è già occupato da una prenotazione attiva." }, { status: 409 }));
+    }
+    throw error;
+  }
+  if (!updated.count) {
+    return guard.attach(NextResponse.json({ error: "Lo stato è cambiato. Aggiorna la pagina." }, { status: 409 }));
+  }
 
   // ✅ invio mail cliente:
   // - CONFIRMED -> conferma
@@ -51,7 +66,7 @@ export async function POST(req: Request) {
   // - PENDING (ripristina) -> niente mail
   let customerMail: unknown = null;
 
-  if (existing.status !== "CONFIRMED" && nextStatus === "CONFIRMED") {
+  if (nextStatus === "CONFIRMED") {
     customerMail = await sendTastingConfirmedCustomerEmail({
       toEmail: existing.email,
       fullName: existing.fullName,
@@ -62,7 +77,7 @@ export async function POST(req: Request) {
       children: existing.children,
     });
     console.log("[TASTING][ADMIN] Customer confirm mail result:", customerMail);
-  } else if (existing.status !== "CANCELED" && nextStatus === "CANCELED") {
+  } else if (nextStatus === "CANCELED") {
     customerMail = await sendTastingCanceledCustomerEmail({
       toEmail: existing.email,
       fullName: existing.fullName,
@@ -71,6 +86,7 @@ export async function POST(req: Request) {
       tastingType: existing.tastingType,
       people: existing.people,
       children: existing.children,
+      viaVoucher: !!existing.voucherId,
     });
     console.log("[TASTING][ADMIN] Customer cancel mail result:", customerMail);
   } else {
@@ -80,8 +96,8 @@ export async function POST(req: Request) {
   return guard.attach(
     NextResponse.json({
       ok: true,
-      bookingId: updated.id,
-      status: updated.status,
+      bookingId: id,
+      status: nextStatus,
       customerMail,
     })
   );

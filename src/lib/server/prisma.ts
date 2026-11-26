@@ -1,17 +1,20 @@
 import "dotenv/config";
 import { createHash } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@/generated/prisma";
+import { Prisma, PrismaClient } from "@/generated/prisma";
 import pg from "pg";
 import { databasePolicy, databaseGuardExtension } from "./databaseSafety.mjs";
 
-const globalForPrisma = globalThis as unknown as { prismaPostgres?: PrismaClient; databasePolicyKey?: string };
+const globalForPrisma = globalThis as unknown as { prismaPostgres?: PrismaClient; prismaCacheKey?: string };
 const policy = databasePolicy();
 export const databaseReadOnly = policy.readOnly;
-const policyKey = createHash("sha256").update(`${policy.mode}:${policy.connectionString}`).digest("hex");
+const cacheKey = createHash("sha256")
+  .update(`${policy.mode}:${policy.connectionString}\0`)
+  .update(JSON.stringify(Prisma.dmmf.datamodel))
+  .digest("hex");
 
-// A hot reload must not reuse a connection created under an older, writable policy.
-if (globalForPrisma.prismaPostgres && typeof globalForPrisma.prismaPostgres.$extends === "function" && globalForPrisma.databasePolicyKey !== policyKey) {
+// A dev reload can retain the previous client even after Prisma regenerates the models.
+if (globalForPrisma.prismaPostgres && typeof globalForPrisma.prismaPostgres.$extends === "function" && globalForPrisma.prismaCacheKey !== cacheKey) {
   void globalForPrisma.prismaPostgres.$disconnect();
   globalForPrisma.prismaPostgres = undefined;
 }
@@ -30,5 +33,5 @@ function createClient(): PrismaClient {
 export const prisma = globalForPrisma.prismaPostgres ?? createClient();
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prismaPostgres = prisma;
-  globalForPrisma.databasePolicyKey = policyKey;
+  globalForPrisma.prismaCacheKey = cacheKey;
 }

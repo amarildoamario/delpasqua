@@ -1,29 +1,34 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Activity,
   BadgePercent,
-  ClipboardList,
+  BellRing,
+  ChartNoAxesCombined,
+  FileDown,
+  FileText,
+  ListChecks,
   LayoutDashboard,
   Package,
-  Boxes,
-  Settings as SettingsIcon,
-  Upload,
-  Users,
+  ShoppingBag,
+  Warehouse,
+  Settings2,
+  Tags,
+  UsersRound,
   Webhook,
-  CalendarDays,
+  CalendarClock,
+  Ticket,
   Coins,
   Mail,
-  BarChart3,
-  Sparkles,
+  MousePointerClick,
   Store,
   LogOut,
   Menu,
   X,
   ChevronRight,
+  type LucideIcon,
 } from "lucide-react";
 import { adminFetch } from "@/lib/client/adminFetch";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -39,7 +44,7 @@ export interface AdminBadgeCounts {
 interface NavItemConfig {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: LucideIcon;
   badge?: number;
   badgeVariant?: "orders" | "tastings" | "messages" | "system";
   badgePulse?: boolean;
@@ -114,6 +119,7 @@ function SidebarNavItem({
       }`}
     >
       <Icon
+        aria-hidden="true"
         className={`h-[18px] w-[18px] shrink-0 transition-colors ${
           active ? "text-[#38bdf8]" : "text-[#858585] group-hover:text-[#cccccc]"
         }`}
@@ -180,7 +186,7 @@ export default function AdminSidebar({
     {
       title: "Operazioni",
       items: [
-        { href: "/admin/ops", label: "Operatività", icon: Activity },
+        { href: "/admin/ops", label: "Operatività", icon: ListChecks },
         { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
         {
           href: "/admin/orders",
@@ -188,16 +194,17 @@ export default function AdminSidebar({
           badge: counts.toShip,
           badgeVariant: "orders",
           badgePulse: counts.toShip > 0,
-          icon: ClipboardList,
+          icon: ShoppingBag,
         },
-        { href: "/admin/quotes", label: "Preventivi", icon: ClipboardList },
+        { href: "/admin/quotes", label: "Preventivi", icon: FileText },
+        { href: "/admin/vouchers", label: "Voucher", icon: Ticket },
         {
           href: "/admin/degustazioni",
           label: "Degustazioni",
           badge: counts.pendingTastings,
           badgeVariant: "tastings",
           badgePulse: counts.pendingTastings > 0,
-          icon: CalendarDays,
+          icon: CalendarClock,
         },
         {
           href: "/admin/messages",
@@ -212,31 +219,31 @@ export default function AdminSidebar({
     {
       title: "Marketing & Clienti",
       items: [
-        { href: "/admin/sales", label: "Merchandising", icon: BadgePercent },
-        { href: "/admin/customers", label: "Clienti", icon: Users },
-        { href: "/admin/promotions", label: "Promozioni", icon: Sparkles },
+        { href: "/admin/sales", label: "Merchandising", icon: Tags },
+        { href: "/admin/customers", label: "Clienti", icon: UsersRound },
+        { href: "/admin/promotions", label: "Promozioni", icon: BadgePercent },
       ],
     },
     {
       title: "Catalogo & Magazzino",
       items: [
-        { href: "/admin/inventory", label: "Magazzino", icon: Boxes },
+        { href: "/admin/inventory", label: "Magazzino", icon: Warehouse },
         { href: "/admin/products", label: "Prodotti", icon: Package },
       ],
     },
     {
       title: "Metriche & Export",
       items: [
-        { href: "/admin/metrics", label: "Metriche", icon: BarChart3 },
-        { href: "/admin/metrics/#card-prodotti-blog", label: "Clic prodotti nel blog", icon: BarChart3 },
-        { href: "/admin/exports", label: "Export Dati", icon: Upload },
+        { href: "/admin/metrics", label: "Metriche", icon: ChartNoAxesCombined },
+        { href: "/admin/metrics/#card-prodotti-blog", label: "Clic prodotti nel blog", icon: MousePointerClick },
+        { href: "/admin/exports", label: "Export Dati", icon: FileDown },
       ],
     },
     {
       title: "Finanza & Gestione",
       items: [
         { href: "/admin/conti-leonardo", label: "Conti Leonardo", icon: Coins },
-        { href: "/admin/settings", label: "Impostazioni", icon: SettingsIcon },
+        { href: "/admin/settings", label: "Impostazioni", icon: Settings2 },
       ],
     },
     {
@@ -261,15 +268,16 @@ export default function AdminSidebar({
   };
 
   const mobileQuickLinks: NavItemConfig[] = [
-    { href: "/admin/ops", label: "Operatività", icon: Activity },
+    { href: "/admin/ops", label: "Operatività", icon: ListChecks },
     {
       href: "/admin/orders",
       label: "Ordini",
       badge: counts.toShip,
-      icon: ClipboardList,
+      icon: ShoppingBag,
     },
-    { href: "/admin/quotes", label: "Preventivi", icon: ClipboardList },
-    { href: "/admin/metrics", label: "Metriche", icon: BarChart3 },
+    { href: "/admin/quotes", label: "Preventivi", icon: FileText },
+    { href: "/admin/vouchers", label: "Voucher", icon: Ticket },
+    { href: "/admin/metrics", label: "Metriche", icon: ChartNoAxesCombined },
     { href: "/admin/conti-leonardo", label: "Conti", icon: Coins },
     { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   ];
@@ -296,7 +304,7 @@ export default function AdminSidebar({
           aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
           className={alertsBadgeClassName}
         >
-          <Activity className="h-4 w-4" />
+          <BellRing aria-hidden="true" className="h-4 w-4" />
           <span>{totalPendingNotifications} avvisi</span>
         </Link>
         {onItemClick && (
@@ -392,7 +400,7 @@ export default function AdminSidebar({
               aria-label={`${totalPendingNotifications} avvisi - Operazioni`}
               className={alertsBadgeClassName}
             >
-              <Activity className="h-4 w-4" />
+              <BellRing aria-hidden="true" className="h-4 w-4" />
               <span>{totalPendingNotifications} avvisi</span>
             </Link>
             <div className="flex items-center gap-2 shrink-0">
@@ -423,7 +431,7 @@ export default function AdminSidebar({
                       : "bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5"
                   }`}
                 >
-                  <QIcon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-neutral-400"}`} />
+                  <QIcon aria-hidden="true" className={`h-3.5 w-3.5 ${active ? "text-white" : "text-neutral-400"}`} />
                   <span>{qItem.label}</span>
                   {typeof qItem.badge === "number" && qItem.badge > 0 ? (
                     <span className="ml-0.5 inline-flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-orange-500 px-1 text-[9px] font-black text-white">

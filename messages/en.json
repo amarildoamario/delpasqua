@@ -85,6 +85,23 @@
         }
     },
     "TastingsCalendar": {
+        "voucher": {
+          "load": "Load voucher code",
+          "code": "Voucher code",
+          "check": "Verify code",
+          "checking": "Checking…",
+          "verified": "Your code is valid and you can make a booking request. Select a date in the calendar.",
+          "remove": "Remove voucher",
+          "group": "Adults {adults} · Children {children}",
+          "invalid": "This voucher code is invalid. Check it and try again.",
+          "used": "This voucher is already linked to an active booking.",
+          "slot_error": "Select an available date and time in the calendar.",
+          "rate": "Too many attempts. Wait a minute and try again.",
+          "error": "We couldn’t verify the voucher. Try again shortly.",
+          "submit": "Send Request",
+          "disclaimer": "Your booking request must be approved even when you use a voucher. If the mill is unavailable on your chosen date, you may need to enter your voucher code again and submit a new booking request.",
+          "pending": "Your request is awaiting approval. We’ll email you when it’s confirmed."
+        },
         "loading": "Loading...",
         "today": "TODAY",
         "no_slots": "No slots",

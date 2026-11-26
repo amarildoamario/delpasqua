@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getTastingTypes } from "@/lib/tasting/slots";
 import { splitTastingPrice } from "@/lib/tasting/price";
 import dynamic from "next/dynamic";
+import { TastingVoucherLink } from "./TastingVoucherEntry";
 
 const TastingsCalendar = dynamic(() => import("./TastingCalendar"), {
   loading: () => <div className="h-96 w-full animate-pulse rounded-2xl bg-stone-100/50" />,
@@ -106,6 +107,10 @@ async function DegustazioniPage({ params }: { params: Promise<{ locale: string }
               <h1 className="mt-6 font-serif text-4xl font-light leading-[1.1] tracking-tight text-[#1C1917] lg:text-5xl xl:text-6xl">
                 {t("hero.title_part1")} <span className="italic text-[#3D5A3D]">{t("hero.title_italic")}</span> {t("hero.title_part2")}
               </h1>
+
+              <div className="mt-4 flex flex-col items-center lg:hidden">
+                <TastingVoucherLink />
+              </div>
 
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#292524] lg:text-lg">
                 {t("hero.description")}
@@ -226,10 +231,10 @@ async function DegustazioniPage({ params }: { params: Promise<{ locale: string }
         </section>
 
         {/* Calendar Section */}
-        <section className="mx-auto max-w-7xl px-6 pb-20 lg:pb-28">
+        <section id="calendario-degustazioni" className="mx-auto max-w-7xl scroll-mt-28 px-6 pb-20 lg:pb-28">
           <div className="rounded-[5px] border border-[#E7E5E4] bg-white p-6 shadow-sm lg:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
+            <TastingsCalendar tastingTypes={types} heading={
+              <>
                 <div className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#8B7355] uppercase">
                   <span className="h-px w-6 bg-[#8B7355]" />
                   {t("calendar.subtitle")}
@@ -237,22 +242,11 @@ async function DegustazioniPage({ params }: { params: Promise<{ locale: string }
                 <h2 className="mt-3 font-serif text-2xl font-light tracking-tight text-[#1C1917] lg:text-3xl">
                   {t("calendar.title_part1")} <span className="italic text-[#3D5A3D]">{t("calendar.title_italic")}</span>
                 </h2>
-                <p className="mt-2 text-sm text-[#292524]">
+                <p className="mt-2 hidden text-sm text-[#292524] lg:block">
                   {t("calendar.description")}
                 </p>
-              </div>
-
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#3D5A3D]/10 px-4 py-2 text-xs font-medium text-[#3D5A3D]">
-                <IconLeaf className="h-3.5 w-3.5 shrink-0" />
-                {t("calendar.badge")}
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <TastingsCalendar
-                tastingTypes={types}
-              />
-            </div>
+              </>
+            } />
           </div>
         </section>
 

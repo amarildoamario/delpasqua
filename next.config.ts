@@ -70,6 +70,7 @@ const nextConfig: any = {
     "/api/cron/outbox": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
     "/api/admin/outbox/retry": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
     "/api/admin/orders/**": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
+    "/api/admin/vouchers/**": ["./node_modules/@sparticuz/chromium/bin/**", "./public/logo.png"],
   },
 
   // toglie "X-Powered-By: Next.js"
