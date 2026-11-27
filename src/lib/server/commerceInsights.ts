@@ -15,9 +15,11 @@ type InsightEvent = {
 };
 type InsightOrder = {
   id: string; quoteId?: string | null; userAgent?: string | null;
-  channel?: "voucher";
+  channel?: "storefront" | "quote" | "voucher" | "tasting";
+  proposalId?: string | null;
   failedAt?: Date | null;
   email?: string | null; totalCents?: number;
+  refundCents?: number | null; refundedAt?: Date | null;
   createdAt: Date; paidAt: Date | null; isTest: boolean; stripeCheckoutSessionId: string | null;
   status?: string; updatedAt?: Date;
   events: { metaJson: string | null; type?: string; createdAt?: Date; toStatus?: string | null }[];
@@ -160,7 +162,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   const startISO = toRomeDateISO(start);
   const now = new Date();
   const v6 = computeFunnelsAndSeries({
-    orders: orders.filter((order) => order.channel !== "voucher"),
+    orders,
     additionalStripeCheckouts,
     events,
     history,
@@ -242,8 +244,8 @@ export async function readCommerceInsights(
 ) {
   const quality = includeInternal ? {} : { env: "prod", isInternal: false };
   const [orders, events, vouchers, tastingCheckouts] = await Promise.all([
-    db.order.findMany({ where: { isTest: false, OR: [{ createdAt: { gte: start, lt: endExclusive } }, { paidAt: { gte: start, lt: endExclusive } }] },
-      select: { id: true, quoteId: true, userAgent: true, email: true, totalCents: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
+    db.order.findMany({ where: { isTest: false, OR: [{ createdAt: { gte: start, lt: endExclusive } }, { paidAt: { gte: start, lt: endExclusive } }, { refundedAt: { gte: start, lt: endExclusive } }] },
+      select: { id: true, quoteId: true, userAgent: true, email: true, totalCents: true, refundCents: true, refundedAt: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
         events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED", "ORDER_CANCELED", "STRIPE_SESSION_FAILED", ...CHECKOUT_AUDIENCE_TYPES] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
           select: { metaJson: true, type: true, createdAt: true, toStatus: true } } } }),
     db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase", "product_view", "select_variant", "view_cart", "checkout_click", "begin_checkout", "contact_click", "blog_product_click"] } },

@@ -2,7 +2,10 @@ import { readDashboardTrend } from "@/lib/server/dashboardTrend";
 import { closedCheckoutWhere } from "@/lib/server/checkoutMetrics";
 import Link from "next/link";
 import CountryFlag from "@/components/CountryFlag";
+import ChoroplethChart from "@/components/charts/ChoroplethChart";
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
+import { readCommercialFunnel } from "@/lib/server/commercialFunnel";
+import CommercialFunnelCard from "./CommercialFunnelCard";
 
 import { prisma } from "@/lib/server/prisma";
 import { readVoucherCheckouts, summarizeVoucherCheckouts } from "@/lib/server/voucherMetrics";
@@ -280,7 +283,18 @@ export default async function AdminDashboard({
 
   ] as const;
 
-
+  const siteEvents = prisma.analyticsEvent.findMany({
+    where: {
+      createdAt: { gte: start, lt: endExclusive },
+      type: { in: ["page_view", "product_view"] },
+      isInternal: false,
+      env: "prod",
+      ...SITE_ANALYTICS_FILTER,
+    },
+    select: {
+      type: true, createdAt: true, visitorId: true, sessionId: true, path: true, productKey: true, data: true,
+    },
+  }).then((events) => events);
 
   const [
 
@@ -295,6 +309,8 @@ export default async function AdminDashboard({
     checkoutCanceled,
 
     analyticsEvents,
+
+    commercialFunnel,
 
     topPurchasedProduct,
 
@@ -333,40 +349,8 @@ export default async function AdminDashboard({
 
     prisma.order.count({ where: closedCheckoutWhere(start, endExclusive) }),
 
-    // 1. Eventi analitici per calcoli geografici e visite/sessioni/views prodotti
-
-    prisma.analyticsEvent.findMany({
-
-      where: {
-
-        createdAt: { gte: start, lt: endExclusive },
-
-        type: { in: ["page_view", "product_view"] },
-
-        isInternal: false,
-
-        env: "prod",
-        ...SITE_ANALYTICS_FILTER,
-
-      },
-
-      select: {
-
-        type: true,
-
-        createdAt: true,
-
-        visitorId: true,
-
-        sessionId: true,
-
-        productKey: true,
-
-        data: true,
-
-      },
-
-    }),
+    siteEvents,
+    readCommercialFunnel(prisma, { start, endExclusive, startISO, endISO }, siteEvents),
 
     // 2. Prodotto più comprato (titolo)
 
@@ -1312,6 +1296,7 @@ export default async function AdminDashboard({
 
       <RangePicker startISO={startISO} endISO={endISO} />
 
+      <CommercialFunnelCard funnel={commercialFunnel} />
       {/* KPI Principali */}
 
       <Section title="KPI Principali" subtitle="I parametri chiave di performance nel periodo selezionato.">
@@ -1444,50 +1429,32 @@ export default async function AdminDashboard({
 
       <Section title="Traffico e Geografia" subtitle="Analisi geografica e volumi di traffico reali dei visitatori.">
 
-        <div className="grid gap-3 md:grid-cols-2">
-
-          {/* Colonna Visite */}
-
-          <div className="flex flex-col">
-
-            <StatCard
-
-              title="Visite Uniche (Visitatori)"
-
-              value={new Intl.NumberFormat("it-IT").format(uniqueVisitorsCount)}
-
-              hint="Visitatori registrati nel periodo"
-
-              tooltip="Rappresenta il numero di persone uniche (dispositivi/browser) che hanno visitato il sito. Se un utente accede 10 volte, conta comunque come 1 visitatore unico. Ogni visitatore viene attribuito alla prima nazione disponibile nel periodo, anche se non abilitata alla vendita."
-
-            />
-
-            <CountryBarChart title="Visite per Nazione" data={filteredVisitorCountriesData} showAll />
-
+        <div className="grid items-start gap-3 lg:grid-cols-2">
+          <div role="region" aria-label="Visitatori nel mondo" className="min-w-0">
+            <ChoroplethChart visitors={filteredVisitorCountriesData} />
           </div>
 
+          <div className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <div className="flex min-w-0 flex-col">
+              <StatCard
+                title="Visite Uniche (Visitatori)"
+                value={new Intl.NumberFormat("it-IT").format(uniqueVisitorsCount)}
+                hint="Visitatori registrati nel periodo"
+                tooltip="Rappresenta il numero di persone uniche (dispositivi/browser) che hanno visitato il sito. Se un utente accede 10 volte, conta comunque come 1 visitatore unico. Ogni visitatore viene attribuito alla prima nazione disponibile nel periodo, anche se non abilitata alla vendita."
+              />
+              <CountryBarChart title="Visite per Nazione" data={filteredVisitorCountriesData} showAll />
+            </div>
 
-
-          {/* Colonna Sessioni */}
-
-          <div className="flex flex-col">
-
-            <StatCard
-
-              title="Sessioni Totali"
-
-              value={new Intl.NumberFormat("it-IT").format(uniqueSessionsCount)}
-
-              hint="Sessioni di navigazione nel periodo"
-
-              tooltip="Rappresenta una singola sessione di navigazione sul sito (scade dopo 30 minuti di inattività). Se un utente visita il sito al mattino e poi alla sera, conta come 2 sessioni."
-
-            />
-
-            <CountryBarChart title="Sessioni per Nazione" data={filteredSessionCountriesData} showAll />
-
+            <div className="flex min-w-0 flex-col">
+              <StatCard
+                title="Sessioni Totali"
+                value={new Intl.NumberFormat("it-IT").format(uniqueSessionsCount)}
+                hint="Sessioni di navigazione nel periodo"
+                tooltip="Rappresenta una singola sessione di navigazione sul sito (scade dopo 30 minuti di inattività). Se un utente visita il sito al mattino e poi alla sera, conta come 2 sessioni."
+              />
+              <CountryBarChart title="Sessioni per Nazione" data={filteredSessionCountriesData} showAll />
+            </div>
           </div>
-
         </div>
 
       </Section>

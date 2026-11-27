@@ -5,6 +5,7 @@ import RangePicker from "@/app/[locale]/admin/dashboard/RangerPicker";
 import { prisma } from "@/lib/server/prisma";
 import {
   ADMIN_REPORT_LOOKBACK_DAYS,
+  describePeriodWindow,
   metricsPeriod,
   readSalesMetrics,
   salesConversion,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/server/salesMetrics";
 import PageHeader from "../_components/PageHeader";
 import CommerceInsights from "../_components/CommerceInsights";
+import V7EconomicsSection from "../_components/V7EconomicsSection";
 import PageRankings from "../_components/PageRankings";
 import { summarizePageRankings } from "@/lib/pageRankings";
 import { ACTIVITY_TIMEFRAMES, readActivityTimeline } from "@/lib/server/activityTimeline";
@@ -20,6 +22,7 @@ import { commercialTastingBooking } from "@/lib/server/voucherTest";
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
 import { computeHistoricalCustomerRetention } from "@/lib/server/metricsAnalyticsV6";
+import { runV7ConsistencyChecks } from "@/lib/server/metricsAnalyticsV7";
 import Kpi from "../_components/Kpi";
 
 export const dynamic = "force-dynamic";
@@ -72,7 +75,9 @@ export default async function AdminMetricsPage({
   // ✅ internal robusto
   const includeInternal = truthy(getOne(sp.internal));
 
-  const { start, endExclusive, startISO, endISO } = metricsPeriod(startParam, endParam, new Date(), ADMIN_REPORT_LOOKBACK_DAYS);
+  const period = metricsPeriod(startParam, endParam, new Date(), ADMIN_REPORT_LOOKBACK_DAYS);
+  const { start, endExclusive, startISO, endISO } = period;
+  const periodMeta = describePeriodWindow(period);
 
   const rangeWhere = { createdAt: { gte: start, lt: endExclusive } };
 
@@ -317,6 +322,23 @@ export default async function AdminMetricsPage({
     customers.rows,
     start,
   );
+  const reconciliation = runV7ConsistencyChecks({
+    economics: sales.economics,
+    daily: insights.daily,
+    insightsDaily: insights.daily,
+    checkoutCohort: insights.checkoutCohort,
+    acquisition: insights.acquisition,
+    sessionFunnel: insights.sessionFunnel,
+    orderAttribution: insights.orderAttribution,
+    checkedAt: periodMeta.observedThrough,
+  });
+  const unavailableMetrics = [
+    ...(sales.economics.contributionMargin.actualMarginCents === null
+      ? ["Margine di contribuzione effettivo (COGS reale non registrato; esposta stima ipotetica 60% sui soli beni)"]
+      : []),
+    "Saldo finale carrelli / valore carrelli persi (non ricostruibile dai soli eventi add_to_cart)",
+    ...(unpricedUnits > 0 ? [`${nice(unpricedUnits)} unità aggiunte al carrello senza prezzo storico`] : []),
+  ];
   const prodFunnelByKey = new Map(insights.productFunnel.map((r) => [r.productKey, r]));
   const varFunnelByKey = new Map(insights.variantFunnel.map((r) => [`${r.productKey}::${r.variantKey}`, r]));
   const adSpendSetting = await (prisma as { setting?: { findUnique: (args: unknown) => Promise<{ value: string } | null> } }).setting?.findUnique?.({ where: { key: "monthlyAdSpendEur" } })?.catch(() => null);
@@ -393,24 +415,24 @@ export default async function AdminMetricsPage({
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <Kpi
-          title="Fatturato Incassato"
-          value={formatEur(sales.realizedRevenueEur)}
-          subtitle={`${nice(sales.paidOrders)} ordini pagati nel periodo`}
+          title="Incassi Commerciali Lordi"
+          value={formatEur(sales.economics.grossPaymentsEur)}
+          subtitle={`${nice(sales.economics.paidTransactions)} transazioni · Netto: ${formatEur(sales.economics.netCashEur)}`}
         />
         <Kpi
-          title="Scontrino Medio (AOV)"
-          value={formatEur(sales.realizedAovEur)}
-          subtitle="Media valore ordini pagati"
+          title="Incasso Medio Transazione"
+          value={formatEur(sales.economics.averageTransactionEur)}
+          subtitle={`Shop: ${formatEur(sales.economics.revenueByChannelMap.storefront.averageTransactionEur)} · Prev.: ${formatEur(sales.economics.revenueByChannelMap.quote.averageTransactionEur)}`}
         />
         <Kpi
-          title="Valore Prodotti Aggiunti"
+          title="Valore Lordo Aggiunte Carrello"
           value={formatEur(potentialCartRevenueEur)}
-          subtitle={`Media: ${formatEur(avgCartValueEur)} (${nice(cartsWithAdditions)} carrelli; ${nice(unpricedUnits)} n/d)`}
+          subtitle={`Media aggiunte: ${formatEur(avgCartValueEur)} (${nice(cartsWithAdditions)} carrelli; ${nice(unpricedUnits)} n/d)`}
         />
         <Kpi
-          title="Valore Checkout Non Pagati"
+          title="Valore Checkout Chiusi Non Pagati"
           value={formatEur(sales.lostCheckoutRevenueEur)}
-          subtitle={`${nice(sales.unpaidCheckouts)} non pagati (inclusi in corso)`}
+          subtitle={`${nice(insights.checkoutCohort.definitiveClosedUnpaid)} chiusi · ${nice(insights.checkoutCohort.openPending + insights.checkoutCohort.canceledReturnOpen)} aperti`}
         />
         <Kpi
           title="Attach Rate Olio + Vino"
@@ -418,7 +440,7 @@ export default async function AdminMetricsPage({
           subtitle="Ordini pagati con olio e vino"
         />
         <Kpi
-          title="Riordini nel Periodo"
+          title="Clienti con Più Acquisti (Periodo)"
           value={pct(sales.repeatCustomerRate)}
           subtitle={`${nice(sales.repeatPayingCustomers)} nel periodo · ${nice(historicalRetention.historicalReturningCustomers)} ritorno storico`}
         />
@@ -433,19 +455,19 @@ export default async function AdminMetricsPage({
           subtitle={`${nice(cansUnits)} latte · ${nice(bottlesUnits)} bott. · ${nice(unknownFormatUnits)} altri`}
         />
         <Kpi
-          title="Revenue per Session (RPS)"
+          title="Incasso per Sessione (RPS)"
           value={formatEur(revenuePerSessionEur)}
-          subtitle={`${nice(uniqueSessions)} visite totali`}
+          subtitle={`${nice(uniqueSessions)} sessioni osservate`}
         />
         <Kpi
-          title="Margine Contribuzione Stimato"
-          value={formatEur(sales.estimatedContributionMarginEur)}
-          subtitle={`~60% su ${formatEur(sales.netGoodsRevenueEur)} netto`}
+          title="Margine Contribuzione (Stima 60%)"
+          value={formatEur(sales.economics.contributionMargin.estimatedMarginEur)}
+          subtitle={`Stima ipotetica su ${formatEur(sales.economics.contributionMargin.netGoodsRevenueEur)} soli beni (COGS n/d)`}
         />
         <Kpi
-          title="Nuovi Acquirenti vs Riacquisti"
-          value={`${nice(sales.newPayingCustomers)} / ${nice(sales.repeatPayingCustomers)}`}
-          subtitle={`Nuovi: ${formatEur(sales.newRevenueEur)} · Riord.: ${formatEur(sales.repeatRevenueEur)}`}
+          title="Nuovi vs Ritorno Storico"
+          value={`${nice(historicalRetention.historicalFirstTimeCustomers)} / ${nice(historicalRetention.historicalReturningCustomers)}`}
+          subtitle={`Nuovi: ${formatEur(historicalRetention.historicalFirstTimeRevenueEur)} · Ritorno: ${formatEur(historicalRetention.historicalReturningRevenueEur)}`}
         />
         <Kpi
           title="CAC e ROAS"
@@ -454,6 +476,23 @@ export default async function AdminMetricsPage({
         />
       </div>
     </div>
+
+    <V7EconomicsSection
+      economics={sales.economics}
+      daily={insights.daily}
+      forecasts={insights.forecasts}
+      reconciliation={reconciliation}
+      periodLabel={`${startISO} → ${endISO}`}
+      observedThrough={periodMeta.observedThrough}
+      isPartialPeriod={periodMeta.isPartial}
+      attributionCoverage={{
+        session: insights.orderAttribution.sessionCoverage,
+        source: insights.orderAttribution.sourceCoverage,
+        device: insights.orderAttribution.deviceCoverage,
+      }}
+      customerIdentificationCoverage={customers.identificationCoverage}
+      unavailableMetrics={unavailableMetrics}
+    />
 
     {/* 📞 LEAD & CONTATTI DIRETTI */}
     <div className="space-y-2.5">
@@ -516,9 +555,9 @@ export default async function AdminMetricsPage({
       <Kpi title="Pageviews" value={nice(pageViews)} subtitle={`leave: ${nice(pageLeaves)} (${pageViews > 0 ? pct(pageLeaves / pageViews) : "—"})`} />
       <Kpi title="Pagine / sessione" value={avgPagesPerSession !== null ? round1(avgPagesPerSession) : "—"} subtitle={`med: ${medianPagesPerSession ?? "—"} · 1p: ${pct(bounceRate)}`} />
       <Kpi
-        title="Conversione vendite"
+        title="Rapporto Ordini / Sessioni"
         value={pct(conversionAnalytics)}
-        subtitle={`${nice(sales.paidOrders)} / ${nice(uniqueSessions)} visite`}
+        subtitle={`Ecommerce coorte: ${pct(insights.sessionFunnel.purchaseRate)} · ${nice(sales.paidOrders)} / ${nice(uniqueSessions)}`}
       />
       <Kpi
         title="Ordini effettuati"
@@ -551,7 +590,7 @@ export default async function AdminMetricsPage({
     {/* Step Funnel & List CTR */}
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
       <Kpi title="Carrelli visti (view_cart)" value={nice(viewCartCount)} subtitle="Aperture carrello" />
-      <Kpi title="List CTR" value={pct(listCtr)} subtitle={`${nice(productClicks)} / ${nice(listViews)} liste`} />
+      <Kpi title="Rapporto Clic / Liste (eventi)" value={pct(listCtr)} subtitle={`${nice(productClicks)} / ${nice(listViews)} liste`} />
       <Kpi
         title="Checkout click rate"
         value={pct(checkoutClickRate)}

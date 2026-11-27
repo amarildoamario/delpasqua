@@ -11,6 +11,11 @@ import {
   computeHistoricalCustomerRetention,
 } from "@/lib/server/metricsAnalyticsV6";
 import {
+  METRICS_LEGACY_ALIAS_V6,
+  METRICS_SCHEMA_VERSION_V7,
+  runV7ConsistencyChecks,
+} from "@/lib/server/metricsAnalyticsV7";
+import {
   describePeriodWindow,
   ADMIN_REPORT_LOOKBACK_DAYS,
   metricsPeriod,
@@ -353,8 +358,48 @@ export async function GET(req: Request) {
   const prodFunnelByKey = new Map(insights.productFunnel.map((r) => [r.productKey, r]));
   const varFunnelByKey = new Map(insights.variantFunnel.map((r) => [`${r.productKey}::${r.variantKey}`, r]));
 
+  const reconciliation = runV7ConsistencyChecks({
+    economics: sales.economics,
+    daily: insights.daily,
+    insightsDaily: insights.daily,
+    checkoutCohort: insights.checkoutCohort,
+    acquisition: insights.acquisition,
+    sessionFunnel: insights.sessionFunnel,
+    orderAttribution: insights.orderAttribution,
+    checkedAt: periodMeta.observedThrough,
+  });
+
+  const unavailableMetrics = [
+    ...(sales.economics.contributionMargin.actualMarginCents === null
+      ? ["contributionMargin.actual (COGS reale non registrato a database; esposta solo stima ipotetica 60% sui beni)"]
+      : []),
+    ...(lostCartRevenueEur === null
+      ? ["commercial.lostCartRevenueEur (saldo finale carrello non ricostruibile dai soli eventi add_to_cart)"]
+      : []),
+    ...(unpricedUnits > 0
+      ? [`commercial.potentialCartRevenueEur (${unpricedUnits} unità aggiunte senza prezzo storico)`]
+      : []),
+  ];
+
   const payload = {
     insights,
+    economics: sales.economics,
+    reconciliation,
+    dataQuality: {
+      schemaVersion: METRICS_SCHEMA_VERSION_V7,
+      updatedAt: periodMeta.observedThrough,
+      observedPeriod: periodMeta,
+      attributionCoverage: {
+        session: insights.orderAttribution.sessionCoverage,
+        source: insights.orderAttribution.sourceCoverage,
+        device: insights.orderAttribution.deviceCoverage,
+      },
+      reconciliationStatus: reconciliation.status,
+      reconciliationPassed: reconciliation.passedCount,
+      reconciliationTotal: reconciliation.totalCount,
+      failedChecks: reconciliation.failedChecks,
+      unavailableMetrics,
+    },
     customers: {
       ...customers,
       historicalReturningCustomers: historicalRetention.historicalReturningCustomers,
@@ -363,9 +408,9 @@ export async function GET(req: Request) {
       historicalReturningCustomerRatePct: historicalRetention.historicalReturningCustomerRatePct,
     },
     meta: {
-      schemaVersion: "metrics-export-v6",
-      version: "metrics-export-v6",
-      legacyVersionAlias: "metrics-export-v5",
+      schemaVersion: METRICS_SCHEMA_VERSION_V7,
+      version: METRICS_SCHEMA_VERSION_V7,
+      legacyVersionAlias: METRICS_LEGACY_ALIAS_V6,
       timeZone: "Europe/Rome",
       generatedAt: periodMeta.observedThrough,
       period: periodMeta,
@@ -513,13 +558,31 @@ export async function GET(req: Request) {
     },
 
     commercial: {
-      realizedRevenueEur: sales.realizedRevenueEur,
-      realizedAovEur: sales.realizedAovEur,
+      realizedRevenueEur: sales.economics.grossPaymentsEur,
+      realizedAovEur: sales.economics.averageTransactionEur,
+      grossPaymentsCents: sales.economics.grossPaymentsCents,
+      grossPaymentsEur: sales.economics.grossPaymentsEur,
+      refundsInPeriodCents: sales.economics.refundsInPeriodCents,
+      refundsInPeriodEur: sales.economics.refundsInPeriodEur,
+      cohortRefundsCents: sales.economics.cohortRefundsCents,
+      cohortRefundsEur: sales.economics.cohortRefundsEur,
+      netCashCents: sales.economics.netCashCents,
+      netCashEur: sales.economics.netCashEur,
+      revenueByChannel: sales.economics.revenueByChannel,
+      storefrontAovEur: sales.economics.revenueByChannelMap.storefront.averageTransactionEur,
+      quoteAovEur: sales.economics.revenueByChannelMap.quote.averageTransactionEur,
+      voucherAovEur: sales.economics.revenueByChannelMap.voucher.averageTransactionEur,
+      tastingAovEur: sales.economics.revenueByChannelMap.tasting.averageTransactionEur,
       storefrontPaidOrders: sales.storefrontPaidOrders,
       quotePaidOrders: sales.quotePaidOrders,
       voucherPaidOrders: sales.voucherPaidOrders,
       potentialCheckoutRevenueEur: sales.potentialCheckoutRevenueEur,
       lostCheckoutRevenueEur: sales.lostCheckoutRevenueEur,
+      closedUnpaidCheckoutValueEur: insights.checkoutCohort.amountsEur.definitiveClosedUnpaid,
+      openCheckoutValueEur: +(
+        (insights.checkoutCohort.amountsCents.openPending + insights.checkoutCohort.amountsCents.canceledReturnOpen) /
+        100
+      ).toFixed(2),
       potentialCartRevenueEur,
       lostCartRevenueEur,
       avgCartValueEur,
@@ -551,6 +614,7 @@ export async function GET(req: Request) {
       historicalFirstTimeRevenueEur: historicalRetention.historicalFirstTimeRevenueEur,
       netGoodsRevenueEur: sales.netGoodsRevenueEur,
       estimatedContributionMarginEur: sales.estimatedContributionMarginEur,
+      contributionMargin: sales.economics.contributionMargin,
     },
     paidTastingVouchers: paidVouchers.map(({ proposalId, tastingTitle, paidAt, totalCents }) => ({
       proposalId, tastingTitle, paidAt, totalCents,

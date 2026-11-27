@@ -20,7 +20,7 @@ export async function readVoucherCheckouts(
     select: {
       id: true, createdAt: true, failedAt: true, stripeSessionId: true,
       proposal: { select: { id: true, tastingTitle: true, totalCents: true } },
-      voucher: { select: { email: true, paidAt: true, totalCents: true } },
+      voucher: { select: { email: true, fullName: true, paidAt: true, totalCents: true, stripePaymentIntentId: true } },
     },
   }).catch((error: unknown) => {
     // Older read-only database snapshots may predate the voucher tables.
@@ -34,9 +34,11 @@ export async function readVoucherCheckouts(
     createdAt,
     failedAt,
     stripeCheckoutSessionId: stripeSessionId,
+    stripePaymentIntentId: voucher?.stripePaymentIntentId ?? null,
     totalCents: voucher?.totalCents ?? proposal.totalCents,
     paidAt: voucher?.paidAt ?? null,
     email: voucher?.email ?? null,
+    fullName: voucher?.fullName ?? null,
     isTest: false,
     userAgent: null,
     events: [],

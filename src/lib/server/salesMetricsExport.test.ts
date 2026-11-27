@@ -7,15 +7,19 @@ test("metrics count shop and voucher payments without browser purchase events or
     orderReads++;
     const query = args as { where: { isTest: boolean; OR?: unknown[]; paidAt?: { gte: Date; lt: Date } }; select: { events?: unknown; fullName?: unknown; items?: unknown } };
     assert.equal(query.where.isTest, false);
+    const fixture = { isTest: false, createdAt: new Date("2026-11-08T10:00:00Z"), paidAt: new Date("2026-11-08T10:05:00Z"), userAgent: "Mozilla/5.0 Chrome/142", totalCents: 3000, email: "buyer@example.com", stripeCheckoutSessionId: null, events: [], items: [{ productId: "vino" }, { productId: "tartufo" }] };
     if (query.select.fullName) return [];
-    if (query.select.events && !query.select.items) return [];
+    if (query.select.events && !query.select.items) return [
+      { ...fixture, id: "paid-without-return-1" },
+      { ...fixture, id: "paid-without-return-2" },
+      { ...fixture, id: "checkout-pending", paidAt: null },
+    ];
     if (query.where.paidAt) return [
       { id: "paid-without-return-1", isTest: false, paidAt: new Date("2026-11-08T10:05:00Z") },
       { id: "paid-without-return-2", isTest: false, paidAt: new Date("2026-11-08T10:05:00Z") },
     ];
     assert(query.where.OR);
-    assert.equal(query.where.OR.length, 2);
-    const fixture = { isTest: false, createdAt: new Date("2026-11-08T10:00:00Z"), paidAt: new Date("2026-11-08T10:05:00Z"), userAgent: "Mozilla/5.0 Chrome/142", totalCents: 3000, email: "buyer@example.com", items: [{ productId: "vino" }, { productId: "tartufo" }] };
+    assert.equal(query.where.OR.length, 3);
     return [
       { ...fixture, id: "paid-without-return-1" },
       { ...fixture, id: "paid-without-return-2" },
@@ -103,10 +107,16 @@ test("metrics count shop and voucher payments without browser purchase events or
     const response = await GET(new Request(url, { headers: { cookie: "admin_session=metrics-test-token" } }));
     assert.equal(response.status, 200);
     const report = await response.json();
-    assert.equal(report.meta.version, "metrics-export-v6");
-    assert.equal(report.meta.legacyVersionAlias, "metrics-export-v5");
+    assert.equal(report.meta.version, "metrics-export-v7");
+    assert.equal(report.meta.schemaVersion, "metrics-export-v7");
+    assert.equal(report.meta.legacyVersionAlias, "metrics-export-v6");
     assert.equal(report.meta.salesSource, "Order.paidAt + TastingVoucher.paidAt");
     assert.equal(report.meta.conversionDenominator, "uniqueSessions");
+    assert.equal(report.economics.grossPaymentsEur, 130);
+    assert.equal(report.economics.paidTransactions, 3);
+    assert.equal(report.economics.revenueByChannelMap.storefront.grossRevenueEur, 60);
+    assert.equal(report.economics.revenueByChannelMap.voucher.grossRevenueEur, 70);
+    assert.equal(report.reconciliation.status, "ok", `failed checks: ${report.reconciliation.failedChecks.join(", ")}`);
     assert.equal(report.kpis.paidOrders, 3);
     assert.equal(report.kpis.storefrontPaidOrders, 2);
     assert.equal(report.kpis.voucherPaidOrders, 1);
@@ -178,8 +188,8 @@ test("metrics count shop and voucher payments without browser purchase events or
     assert.deepEqual(pageInsights, report.insights, "Dashboard component and export share the same insight calculations");
     assert.deepEqual(pageRankings, [{ path: "/shop/evo", views: 4, totalMs: 19000, samples: 10, averageMs: 1900, longestMs: 2000 }]);
     assert.equal(activity?.rows.reduce((sum, row) => sum + row.orders, 0), 3);
-    assert.equal(kpis.get("Valore Prodotti Aggiunti"), new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(report.commercial.potentialCartRevenueEur));
+    assert.equal(kpis.get("Valore Lordo Aggiunte Carrello"), new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(report.commercial.potentialCartRevenueEur));
     assert.equal(kpis.get("Litri Richiesti a Carrello"), "2.8 L");
-    assert.equal(kpis.get("Valore Checkout Non Pagati"), new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(30));
+    assert.equal(kpis.get("Valore Checkout Chiusi Non Pagati"), new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(30));
   } finally { globalState.prismaPostgres = previous; }
 });

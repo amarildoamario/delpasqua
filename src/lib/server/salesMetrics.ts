@@ -1,6 +1,10 @@
 import type { PrismaClient } from "@/generated/prisma";
 import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
 import { readVoucherCheckouts } from "./voucherMetrics";
+import {
+  normalizeCommercialTransactions,
+  summarizeCommercialEconomics,
+} from "./commercialTransactions";
 
 export type SalesOrderItem = {
   productId?: string;
@@ -13,15 +17,23 @@ export type SalesOrderItem = {
 
 export type SalesOrder = {
   id: string;
-  channel?: "voucher";
+  channel?: "storefront" | "quote" | "voucher" | "tasting";
   quoteId?: string | null;
+  status?: string;
   isTest: boolean;
   createdAt: Date;
   paidAt: Date | null;
+  refundedAt?: Date | null;
   userAgent: string | null;
   totalCents?: number;
   subtotalCents?: number;
+  vatCents?: number | null;
+  shippingCents?: number | null;
   discountCents?: number;
+  stripeFeeCents?: number | null;
+  refundCents?: number | null;
+  stripeCheckoutSessionId?: string | null;
+  stripePaymentIntentId?: string | null;
   email?: string | null;
   items?: SalesOrderItem[];
   events?: { type: string; metaJson?: string | null }[];
@@ -314,6 +326,13 @@ export function summarizeSales(
   }
   const bundleOlioVinoRate = ordersWithItems > 0 ? ordersWithBothOlioVino / ordersWithItems : null;
 
+  const transactions = normalizeCommercialTransactions({
+    orders: unique.filter((o) => o.channel !== "voucher" && o.channel !== "tasting"),
+    vouchers: unique.filter((o) => o.channel === "voucher"),
+    directTastings: unique.filter((o) => o.channel === "tasting"),
+  });
+  const economics = summarizeCommercialEconomics(transactions, start, endExclusive);
+
   return {
     paidOrders: paid.length,
     storefrontPaidOrders,
@@ -345,6 +364,7 @@ export function summarizeSales(
     repeatRevenueEur,
     netGoodsRevenueEur,
     estimatedContributionMarginEur,
+    economics,
     paidOrdersMeta: paid.map((o) => ({ email: o.email, totalCents: o.totalCents, paidAt: o.paidAt })),
   };
 }
@@ -364,18 +384,27 @@ export async function readSalesMetrics(
       OR: [
         { paidAt: { gte: start, lt: endExclusive } },
         { createdAt: { gte: start, lt: endExclusive } },
+        { refundedAt: { gte: start, lt: endExclusive } },
       ],
     },
     select: {
       id: true,
       quoteId: true,
+      status: true,
       isTest: true,
       createdAt: true,
       paidAt: true,
+      refundedAt: true,
       userAgent: true,
       totalCents: true,
       subtotalCents: true,
+      vatCents: true,
+      shippingCents: true,
       discountCents: true,
+      stripeFeeCents: true,
+      refundCents: true,
+      stripeCheckoutSessionId: true,
+      stripePaymentIntentId: true,
       email: true,
       events: { where: { type: { in: ["ANALYTICS_CONTEXT", ...CHECKOUT_AUDIENCE_TYPES] } }, select: { type: true, metaJson: true } },
       items: {

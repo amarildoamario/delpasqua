@@ -1,0 +1,112 @@
+.chart {
+  --segment-light: color-mix(in oklab, var(--funnel-color), white 25%);
+  --segment-dark: color-mix(in oklab, var(--funnel-color), #10264d 25%);
+  --edge: color-mix(in oklab, var(--funnel-color), #203654 42%);
+  display: grid;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  min-width: 0;
+}
+
+.plot {
+  position: relative;
+  min-height: 3.15rem;
+}
+
+.segment {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--segment-dark), var(--segment-light) 49%, var(--segment-dark));
+  clip-path: polygon(
+    calc(50% - var(--funnel-start) / 2) 0,
+    calc(50% + var(--funnel-start) / 2) 0,
+    calc(50% + var(--funnel-end) / 2) 100%,
+    calc(50% - var(--funnel-end) / 2) 100%
+  );
+}
+
+.halo,
+.rim {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 50%;
+  translate: -50% -50%;
+  border: 1px solid var(--edge);
+  border-radius: 50%;
+}
+
+.halo {
+  width: calc(var(--funnel-start) + 0.3rem * var(--halo-index) + 0.45rem);
+  height: calc(0.6rem + 0.18rem * var(--halo-index));
+  opacity: calc(0.46 - 0.12 * var(--halo-index));
+}
+
+.rim {
+  width: max(0.55rem, var(--funnel-start));
+  height: 0.36rem;
+  background: color-mix(in oklab, var(--funnel-color), white 47%);
+}
+
+.plot[data-empty] .rim {
+  border-color: #a3a3a3;
+  background: #fafafa;
+}
+
+.caption {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  min-width: 0;
+  margin-left: 1rem;
+  padding: 0 0 0.65rem;
+}
+
+@media (min-width: 1280px) {
+  .chart {
+    grid-template-columns: repeat(var(--funnel-stages), minmax(0, 1fr));
+    padding-inline: 0.75rem;
+  }
+
+  .stage {
+    display: block;
+  }
+
+  .plot {
+    height: 6.75rem;
+  }
+
+  .segment {
+    background: linear-gradient(180deg, var(--segment-dark), var(--segment-light) 48%, var(--segment-dark));
+    clip-path: polygon(
+      0 calc(50% - var(--funnel-start) / 2),
+      100% calc(50% - var(--funnel-end) / 2),
+      100% calc(50% + var(--funnel-end) / 2),
+      0 calc(50% + var(--funnel-start) / 2)
+    );
+  }
+
+  .halo,
+  .rim {
+    top: 50%;
+    left: 0;
+  }
+
+  .halo {
+    width: calc(0.8rem + 0.28rem * var(--halo-index));
+    height: calc(var(--funnel-start) + 0.35rem * var(--halo-index) + 0.55rem);
+  }
+
+  .rim {
+    width: 0.55rem;
+    height: max(0.55rem, var(--funnel-start));
+  }
+
+  .caption {
+    margin: 0.85rem 0 0;
+    padding: 0 0.5rem 0 0;
+  }
+}

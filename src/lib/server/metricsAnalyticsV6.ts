@@ -24,16 +24,20 @@ export type V6EventInput = {
 
 export type V6OrderInput = {
   id: string;
-  channel?: "voucher" | "tasting";
+  channel?: "storefront" | "quote" | "voucher" | "tasting";
+  proposalId?: string | null;
   failedAt?: Date | null;
   quoteId?: string | null;
   userAgent?: string | null;
   email?: string | null;
   totalCents?: number;
+  refundCents?: number | null;
+  refundedAt?: Date | null;
   isTest: boolean;
   createdAt: Date;
   paidAt: Date | null;
   stripeCheckoutSessionId: string | null;
+  stripePaymentIntentId?: string | null;
   status?: string;
   updatedAt?: Date;
   events: { metaJson: string | null; type?: string; createdAt?: Date; toStatus?: string | null }[];
@@ -43,7 +47,10 @@ const stripeChannels = ["shop", "quote", "voucher", "tasting"] as const;
 const stripeOutcomeCounts = () => ({
   started: 0, openPending: 0, canceledReturnOpen: 0, expiredUnpaid: 0,
   failedUnpaid: 0, canceledUnpaid: 0, unknownClosedUnpaid: 0, paid: 0, recovered: 0,
+  startedCents: 0, openPendingCents: 0, canceledReturnOpenCents: 0, expiredUnpaidCents: 0,
+  failedUnpaidCents: 0, canceledUnpaidCents: 0, unknownClosedUnpaidCents: 0, paidCents: 0,
 });
+export const SITE_LAUNCH_DATE = "2026-11-08";
 
 const ROME_DAY_FMT = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Europe/Rome",
@@ -169,12 +176,18 @@ export function computeFunnelsAndSeries(args: {
   const inRange = (d: Date) => d >= start && d < endExclusive;
   const todayISO = toRomeDateISO(now);
 
-  // Deduplicate commercial orders
+  // Deduplicate commercial orders (including vouchers & paid direct tastings)
   const uniqueOrders = [...new Map(orders.filter((o) => !o.isTest).map((o) => [o.id, o])).values()];
   const paidOrders = uniqueOrders.filter((o) => o.paidAt && inRange(o.paidAt));
-  const createdOrders = uniqueOrders.filter((o) => inRange(o.createdAt) && !excludedCheckout(o));
+  const createdOrders = uniqueOrders.filter(
+    (o) => o.channel !== "voucher" && o.channel !== "tasting" && inRange(o.createdAt) && !excludedCheckout(o),
+  );
   const stripeCohort = new Map<string, V6OrderInput>();
-  for (const checkout of [...createdOrders, ...additionalStripeCheckouts]) {
+  for (const checkout of [
+    ...createdOrders,
+    ...uniqueOrders.filter((o) => o.channel === "voucher" || o.channel === "tasting"),
+    ...additionalStripeCheckouts,
+  ]) {
     const sessionId = checkout.stripeCheckoutSessionId;
     if (sessionId && !sessionId.startsWith("cs_test_") && !checkout.isTest && inRange(checkout.createdAt) &&
       !excludedCheckout(checkout) && !stripeCohort.has(sessionId)) stripeCohort.set(sessionId, checkout);
@@ -536,8 +549,13 @@ export function computeFunnelsAndSeries(args: {
   );
   const byChannel = { shop: stripeOutcomeCounts(), quote: stripeOutcomeCounts(), voucher: stripeOutcomeCounts(), tasting: stripeOutcomeCounts() };
   const totals = stripeOutcomeCounts();
+  const opportunityOutcomes = new Map<string, { paid: boolean; closedUnpaid: boolean; amountCents: number }>();
   for (const order of stripeCohort.values()) {
-    const channel = byChannel[order.channel ?? (order.quoteId ? "quote" : "shop")];
+    const channelKey = order.channel === "voucher" ? "voucher"
+      : order.channel === "tasting" ? "tasting"
+      : order.channel === "quote" || order.quoteId ? "quote"
+      : "shop";
+    const channel = byChannel[channelKey];
     const isPaidInWindow = Boolean(order.paidAt && order.paidAt < endExclusive);
     const hasCancelReturn = cancelReturnOrderIds.has(order.id);
     const hasExpiredEv = order.events.some(
@@ -560,16 +578,41 @@ export function computeFunnelsAndSeries(args: {
       : hasExpiredEv ? "expiredUnpaid"
       : hasUnknownClosure ? "unknownClosedUnpaid"
       : hasCancelReturn ? "canceledReturnOpen" : "openPending";
+    const amountCents = Math.max(0, Math.round(order.totalCents ?? 0));
+    const amountField = `${outcome}Cents` as const;
     for (const counts of [totals, channel]) {
       counts.started++;
       counts[outcome]++;
+      counts.startedCents += amountCents;
+      counts[amountField] += amountCents;
       if (isPaidInWindow && (hasCancelReturn || hasExpiredEv || hasFailedEv || hasCanceledEv || hasUnknownClosure)) counts.recovered++;
     }
+    const oppKey = order.quoteId ? `quote:${order.quoteId}`
+      : order.proposalId ? `proposal:${order.proposalId}`
+      : order.id;
+    const prevOpp = opportunityOutcomes.get(oppKey) ?? { paid: false, closedUnpaid: false, amountCents };
+    if (isPaidInWindow) prevOpp.paid = true;
+    else if (outcome === "failedUnpaid" || outcome === "canceledUnpaid" || outcome === "expiredUnpaid" || outcome === "unknownClosedUnpaid") {
+      prevOpp.closedUnpaid = true;
+    }
+    prevOpp.amountCents = Math.max(prevOpp.amountCents, amountCents);
+    opportunityOutcomes.set(oppKey, prevOpp);
   }
 
   const definitiveClosed = (counts: ReturnType<typeof stripeOutcomeCounts>) =>
     counts.expiredUnpaid + counts.failedUnpaid + counts.canceledUnpaid + counts.unknownClosedUnpaid;
+  const definitiveClosedCents = (counts: ReturnType<typeof stripeOutcomeCounts>) =>
+    counts.expiredUnpaidCents + counts.failedUnpaidCents + counts.canceledUnpaidCents + counts.unknownClosedUnpaidCents;
+  const centsEur = (c: number) => +(c / 100).toFixed(2);
   const definitiveClosedUnpaid = definitiveClosed(totals);
+  const definitiveClosedUnpaidCents = definitiveClosedCents(totals);
+  const uniqueOpportunitiesStarted = opportunityOutcomes.size;
+  const uniqueOpportunitiesPaid = [...opportunityOutcomes.values()].filter((o) => o.paid).length;
+  const uniqueOpportunitiesSupersededByPaid = [...opportunityOutcomes.values()].filter((o) => o.paid && o.closedUnpaid).length;
+  const uniqueOpportunitiesClosedUnpaidCents = [...opportunityOutcomes.values()]
+    .filter((o) => !o.paid && o.closedUnpaid)
+    .reduce((sum, o) => sum + o.amountCents, 0);
+
   const checkoutCohort = {
     ordersCreated: createdOrders.length,
     storefrontOrdersCreated: createdOrders.filter((o) => !o.quoteId).length,
@@ -590,9 +633,53 @@ export function computeFunnelsAndSeries(args: {
     paidRate: totals.started > 0 ? totals.paid / totals.started : null,
     definitiveCloseRate: totals.started > 0 ? definitiveClosedUnpaid / totals.started : null,
     unpaidAtObservationRate: totals.started > 0 ? (totals.started - totals.paid) / totals.started : null,
-    byChannel: stripeChannels.map((channel) => ({
-      channel, ...byChannel[channel], definitiveClosedUnpaid: definitiveClosed(byChannel[channel]),
-    })),
+    amountsCents: {
+      started: totals.startedCents,
+      paid: totals.paidCents,
+      openPending: totals.openPendingCents,
+      canceledReturnOpen: totals.canceledReturnOpenCents,
+      expiredUnpaid: totals.expiredUnpaidCents,
+      failedUnpaid: totals.failedUnpaidCents,
+      canceledUnpaid: totals.canceledUnpaidCents,
+      unknownClosedUnpaid: totals.unknownClosedUnpaidCents,
+      definitiveClosedUnpaid: definitiveClosedUnpaidCents,
+    },
+    amountsEur: {
+      started: centsEur(totals.startedCents),
+      paid: centsEur(totals.paidCents),
+      openPending: centsEur(totals.openPendingCents),
+      canceledReturnOpen: centsEur(totals.canceledReturnOpenCents),
+      definitiveClosedUnpaid: centsEur(definitiveClosedUnpaidCents),
+    },
+    opportunities: {
+      uniqueStarted: uniqueOpportunitiesStarted,
+      uniquePaid: uniqueOpportunitiesPaid,
+      supersededAfterClosedAttempt: uniqueOpportunitiesSupersededByPaid,
+      closedUnpaidCents: uniqueOpportunitiesClosedUnpaidCents,
+      closedUnpaidEur: centsEur(uniqueOpportunitiesClosedUnpaidCents),
+    },
+    byChannel: stripeChannels.map((channel) => {
+      const c = byChannel[channel];
+      const closedCents = definitiveClosedCents(c);
+      const openCents = c.openPendingCents + c.canceledReturnOpenCents;
+      return {
+        channel,
+        started: c.started,
+        openPending: c.openPending,
+        canceledReturnOpen: c.canceledReturnOpen,
+        expiredUnpaid: c.expiredUnpaid,
+        failedUnpaid: c.failedUnpaid,
+        canceledUnpaid: c.canceledUnpaid,
+        unknownClosedUnpaid: c.unknownClosedUnpaid,
+        paid: c.paid,
+        recovered: c.recovered,
+        definitiveClosedUnpaid: definitiveClosed(c),
+        startedCents: c.startedCents,
+        paidCents: c.paidCents,
+        openCents,
+        definitiveClosedUnpaidCents: closedCents,
+      };
+    }),
   };
 
   // Product Funnel & Variant Funnel (with distinct sessions vs repeated clicks!)
@@ -667,7 +754,14 @@ export function computeFunnelsAndSeries(args: {
     paidOrders: number;
     storefrontPaidOrders: number;
     quotePaidOrders: number;
+    voucherPaidOrders: number;
+    tastingPaidOrders: number;
     revenueCents: number;
+    storefrontRevenueCents: number;
+    quoteRevenueCents: number;
+    voucherRevenueCents: number;
+    tastingRevenueCents: number;
+    refundsInPeriodCents: number;
     attributedPaidOrders: number;
   };
 
@@ -696,7 +790,14 @@ export function computeFunnelsAndSeries(args: {
       paidOrders: 0,
       storefrontPaidOrders: 0,
       quotePaidOrders: 0,
+      voucherPaidOrders: 0,
+      tastingPaidOrders: 0,
       revenueCents: 0,
+      storefrontRevenueCents: 0,
+      quoteRevenueCents: 0,
+      voucherRevenueCents: 0,
+      tastingRevenueCents: 0,
+      refundsInPeriodCents: 0,
       attributedPaidOrders: 0,
     });
   }
@@ -737,15 +838,27 @@ export function computeFunnelsAndSeries(args: {
     if (bucket) bucket.checkoutsStarted++;
   }
 
-  // Paid orders and revenue per payment day
+  // Paid orders and revenue per payment day (all commercial channels!)
   for (const order of paidOrders) {
     const dISO = toRomeDateISO(order.paidAt!);
     const bucket = dailyMap.get(dISO);
     if (!bucket) continue;
+    const amountCents = Math.max(0, Math.round(order.totalCents ?? 0));
     bucket.paidOrders++;
-    if (order.quoteId) bucket.quotePaidOrders++;
-    else bucket.storefrontPaidOrders++;
-    bucket.revenueCents += order.totalCents ?? 0;
+    if (order.channel === "voucher") {
+      bucket.voucherPaidOrders++;
+      bucket.voucherRevenueCents += amountCents;
+    } else if (order.channel === "tasting") {
+      bucket.tastingPaidOrders++;
+      bucket.tastingRevenueCents += amountCents;
+    } else if (order.channel === "quote" || order.quoteId) {
+      bucket.quotePaidOrders++;
+      bucket.quoteRevenueCents += amountCents;
+    } else {
+      bucket.storefrontPaidOrders++;
+      bucket.storefrontRevenueCents += amountCents;
+    }
+    bucket.revenueCents += amountCents;
 
     const ctx = orderContext(order, includeInternal);
     const legacy = legacyPurchaseByOrder.get(order.id);
@@ -756,6 +869,16 @@ export function computeFunnelsAndSeries(args: {
       (vid && (visitorAllPageViews.get(vid)?.length ?? 0) > 0),
     );
     if (hasAttribution) bucket.attributedPaidOrders++;
+  }
+
+  // Cash-flow refunds per refund day (including refunds on prior-period orders)
+  for (const order of uniqueOrders) {
+    const refund = Math.max(0, Math.round(order.refundCents ?? 0));
+    if (refund > 0 && order.refundedAt && inRange(order.refundedAt)) {
+      const dISO = toRomeDateISO(order.refundedAt);
+      const bucket = dailyMap.get(dISO);
+      if (bucket) bucket.refundsInPeriodCents += refund;
+    }
   }
 
   const daily = [...dailyMap.values()].map((b) => ({
@@ -776,7 +899,18 @@ export function computeFunnelsAndSeries(args: {
     paidOrders: b.paidOrders,
     storefrontPaidOrders: b.storefrontPaidOrders,
     quotePaidOrders: b.quotePaidOrders,
+    voucherPaidOrders: b.voucherPaidOrders,
+    tastingPaidOrders: b.tastingPaidOrders,
+    revenueCents: b.revenueCents,
     revenueEur: +(b.revenueCents / 100).toFixed(2),
+    refundsInPeriodCents: b.refundsInPeriodCents,
+    refundsInPeriodEur: +(b.refundsInPeriodCents / 100).toFixed(2),
+    revenueByChannel: {
+      storefrontEur: +(b.storefrontRevenueCents / 100).toFixed(2),
+      quoteEur: +(b.quoteRevenueCents / 100).toFixed(2),
+      voucherEur: +(b.voucherRevenueCents / 100).toFixed(2),
+      tastingEur: +(b.tastingRevenueCents / 100).toFixed(2),
+    },
     attributedPaidOrders: b.attributedPaidOrders,
     attributionCoverage: b.paidOrders > 0 ? +(b.attributedPaidOrders / b.paidOrders).toFixed(4) : null,
   }));
@@ -807,7 +941,7 @@ export function computeFunnelsAndSeries(args: {
     };
   });
 
-  // Forecast / Baseline on complete calendar days (Section 9)
+  // Forecast / Baseline on complete calendar days (Section 9 & V7 Section 10)
   const completeDayRows = daily.filter((d) => !d.isPartial && d.isObserved);
   const completeDaysN = completeDayRows.length;
   const completeSessionsSum = completeDayRows.reduce((s, d) => s + d.sessions, 0);
@@ -815,12 +949,26 @@ export function computeFunnelsAndSeries(args: {
   const avgDailySessions = completeDaysN > 0 ? +(completeSessionsSum / completeDaysN).toFixed(2) : null;
   const projected30dSessionsBaseline = avgDailySessions !== null ? Math.round(avgDailySessions * 30) : null;
 
+  const operationalDayRows = completeDayRows.filter((d) => d.date >= SITE_LAUNCH_DATE);
+  const operationalDaysN = operationalDayRows.length;
+  const operationalSessionsSum = operationalDayRows.reduce((s, d) => s + d.sessions, 0);
+  const operationalAvgSessions = operationalDaysN > 0 ? +(operationalSessionsSum / operationalDaysN).toFixed(2) : null;
+  const operationalProjected30d = operationalDaysN > 0 ? +((operationalSessionsSum / operationalDaysN) * 30).toFixed(2) : null;
+
   const forecasts = {
     completeDaysSample: completeDaysN,
     trafficBaseline: avgDailySessions !== null ? {
       avgSessionsPerCompleteDay: avgDailySessions,
       projected30dSessionsAtConstantPace: projected30dSessionsBaseline,
-      note: "Proiezione lineare a ritmo costante sui giorni completi osservati; non e una stima della crescita SEO.",
+      note: "Proiezione lineare a ritmo costante sui giorni completi osservati nel periodo selezionato; non e una stima della crescita SEO.",
+    } : null,
+    operationalBaseline: operationalDaysN > 0 ? {
+      launchDate: SITE_LAUNCH_DATE,
+      completeOperationalDays: operationalDaysN,
+      sessions: operationalSessionsSum,
+      avgSessionsPerDay: operationalAvgSessions,
+      projected30dSessions: operationalProjected30d,
+      note: `Baseline operativa sui soli giorni completi dal lancio (${SITE_LAUNCH_DATE}), inclusi eventuali giorni a zero visite.`,
     } : null,
     trafficGrowthEstimate: null,
     trafficGrowthStatus: completeDaysN < 14 ? "insufficient_history" : "requires_previous_period_comparison",
