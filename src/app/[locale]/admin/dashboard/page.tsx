@@ -8,12 +8,13 @@ import { readCommercialFunnel } from "@/lib/server/commercialFunnel";
 import CommercialFunnelCard from "./CommercialFunnelCard";
 
 import { prisma } from "@/lib/server/prisma";
-import { readVoucherCheckouts, summarizeVoucherCheckouts } from "@/lib/server/voucherMetrics";
+import { paidVouchersInPeriod, readVoucherCheckouts, summarizeVoucherCheckouts } from "@/lib/server/voucherMetrics";
+import { computeDashboardFinance } from "@/lib/server/dashboardFinance";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
 import RangePicker from "./RangerPicker";
-import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
+import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthWindow, metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
 
 import { readCatalog } from "@/lib/server/catalog";
 
@@ -30,18 +31,6 @@ export const dynamic = "force-dynamic";
 function euro(cents: number) {
 
   return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
-
-}
-
-
-
-function deriveVatCents(order: { vatCents: number; subtotalCents: number }, vatRatePercent: number) {
-
-  if (order.vatCents > 0) return order.vatCents;
-
-  const vatRateDec = vatRatePercent / 100;
-
-  return Math.round((order.subtotalCents * vatRateDec) / (1 + vatRateDec));
 
 }
 
@@ -758,329 +747,98 @@ export default async function AdminDashboard({
 
 
 
-  // Load Store Settings and Leonardo Overrides
-
-  const voucherCheckouts = readVoucherCheckouts(prisma, start, endExclusive);
-  const [voucherRows, sales, storeSettings, overridesRow, revenueAgg] = await Promise.all([
-
+  // Load Store Settings, Monthly Orders/Vouchers and Leonardo Overrides
+  const { startMonthDate, endMonthDate } = metricsMonthWindow(startISO, endISO);
+  const voucherCheckouts = readVoucherCheckouts(prisma, startMonthDate, endMonthDate);
+  const [voucherRows, sales, storeSettings, overridesRow, revenueAgg, monthlyOrders] = await Promise.all([
     voucherCheckouts,
     readSalesMetrics(prisma, start, endExclusive, undefined, voucherCheckouts),
-
     getStoreSettings(),
-
     prisma.setting.findUnique({ where: { key: "leonardo_conti_data" } }),
-
     prisma.order.aggregate({
-
       where: {
-
         createdAt: { gte: start, lt: endExclusive },
-
         status: { in: [...PAID_LIKE] },
         isTest: false,
-
       },
-
       _sum: { totalCents: true, stripeFeeCents: true, refundCents: true },
-
     }),
-
+    prisma.order.findMany({
+      where: {
+        status: { in: [...PAID_LIKE] },
+        isTest: false,
+        createdAt: { gte: startMonthDate, lt: endMonthDate },
+      },
+      select: {
+        createdAt: true,
+        totalCents: true,
+        subtotalCents: true,
+        shippingCents: true,
+        vatCents: true,
+        stripeFeeCents: true,
+      },
+    }),
   ]);
 
   const vouchers = summarizeVoucherCheckouts(voucherRows, start, endExclusive);
+  const monthlyVouchers = paidVouchersInPeriod(voucherRows, startMonthDate, endMonthDate);
   const conversion = salesConversion(sales.paidOrders, uniqueSessionsCount);
   const vatRatePercent = storeSettings.vatRatePercent;
-
   const overrides = overridesRow ? JSON.parse(overridesRow.value) : {};
 
-
-
-  // Fetch all orders in the monthly periods overlapping the selected date range
-
-  const { startMonthDate, endMonthDate } = metricsMonthWindow(startISO, endISO);
-
-  const monthlyOrders = await prisma.order.findMany({
-
-    where: {
-
-      status: { in: [...PAID_LIKE] },
-      isTest: false,
-
-      createdAt: { gte: startMonthDate, lt: endMonthDate },
-
-    },
-
-    select: {
-
-      createdAt: true,
-
-      totalCents: true,
-
-      subtotalCents: true,
-
-      shippingCents: true,
-
-      vatCents: true,
-
-      stripeFeeCents: true,
-
-    },
-
-  });
-
-
-
-  // Group monthly orders by month key
-
-  const monthsDbTotals: Record<
-
-    string,
-
-    {
-
-      gross: number;
-
-      shipping: number;
-
-      vat: number;
-
-      stripe: number;
-
-    }
-
-  > = {};
-
-
-
-  for (const order of monthlyOrders) {
-
-    const d = new Date(order.createdAt);
-
-    const monthKey = metricsMonthKey(d);
-
-
-
-    const autoStripe = order.stripeFeeCents > 0 ? order.stripeFeeCents : Math.round(order.totalCents * 0.015 + 25);
-
-    const autoVat = deriveVatCents(order, vatRatePercent);
-
-
-
-    if (!monthsDbTotals[monthKey]) {
-
-      monthsDbTotals[monthKey] = { gross: 0, shipping: 0, vat: 0, stripe: 0 };
-
-    }
-
-
-
-    const m = monthsDbTotals[monthKey];
-
-    m.gross += order.totalCents;
-
-    m.shipping += order.shippingCents;
-
-    m.vat += autoVat;
-
-    m.stripe += autoStripe;
-
-  }
-
-
-
-  // Calculate overridden/actual totals for the selected range
-
-  let rangeGrossCents = 0;
-
-  let rangeShippingCents = 0;
-
-  let rangeVatCents = 0;
-
-  let rangeStripeCents = 0;
-
-  let rangeLeonardoCents = 0;
-
-
-
-  for (const order of monthlyOrders) {
-
-    // Only process orders within the selected dashboard date range
-
-    if (order.createdAt >= start && order.createdAt < endExclusive) {
-
-      const d = new Date(order.createdAt);
-
-      const monthKey = metricsMonthKey(d);
-
-
-
-      const ov = overrides[monthKey] || {};
-
-      const mDb = monthsDbTotals[monthKey];
-
-
-
-      const hasOverrides =
-
-        ov.manualGrossCents !== undefined ||
-
-        ov.manualGlsCents !== undefined ||
-
-        ov.manualVatCents !== undefined ||
-
-        ov.manualStripeFeeCents !== undefined;
-
-
-
-      if (!hasOverrides) {
-
-        // Use standard DB values
-
-        const stripeVal = order.stripeFeeCents > 0 ? order.stripeFeeCents : Math.round(order.totalCents * 0.015 + 25);
-
-        const vatVal = deriveVatCents(order, vatRatePercent);
-
-
-
-        rangeGrossCents += order.totalCents;
-
-        rangeShippingCents += order.shippingCents;
-
-        rangeVatCents += vatVal;
-
-        rangeStripeCents += stripeVal;
-
-        rangeLeonardoCents += Math.round(order.totalCents * 0.1);
-
-      } else {
-
-        // Distribute overridden totals proportionally
-
-        const orderRatio = mDb && mDb.gross > 0 ? order.totalCents / mDb.gross : 0;
-
-
-
-        const actualMonthGross = ov.manualGrossCents !== undefined ? ov.manualGrossCents : mDb.gross;
-
-        const actualMonthShipping = ov.manualGlsCents !== undefined ? ov.manualGlsCents : mDb.shipping;
-
-        const actualMonthVat = ov.manualVatCents !== undefined ? ov.manualVatCents : mDb.vat;
-
-        const actualMonthStripe = ov.manualStripeFeeCents !== undefined ? ov.manualStripeFeeCents : mDb.stripe;
-
-        const actualMonthLeonardo = Math.round(actualMonthGross * 0.1);
-
-
-
-        rangeGrossCents += Math.round(actualMonthGross * orderRatio);
-
-        rangeShippingCents += Math.round(actualMonthShipping * orderRatio);
-
-        rangeVatCents += Math.round(actualMonthVat * orderRatio);
-
-        rangeStripeCents += Math.round(actualMonthStripe * orderRatio);
-
-        rangeLeonardoCents += Math.round(actualMonthLeonardo * orderRatio);
-
-      }
-
-    }
-
-  }
-
-
-
   // Final finance aggregates
-
-  const revenueCents = rangeGrossCents + vouchers.grossCents;
-
-  const stripeCents = rangeStripeCents;
-
-  const vatCents = rangeVatCents;
-
-  const shippingCents = rangeShippingCents;
-
-  const leonardoCents = rangeLeonardoCents;
-
-
-
-  const netCents = rangeGrossCents - stripeCents - vatCents - shippingCents - leonardoCents;
+  const {
+    revenueCents,
+    stripeCents,
+    netCents,
+  } = computeDashboardFinance({
+    monthlyOrders,
+    monthlyVouchers,
+    overrides,
+    vatRatePercent,
+    start,
+    endExclusive,
+  });
 
   const paidCount = paidOrders + vouchers.paid.length;
   const aovCents = paidCount > 0 ? Math.round(revenueCents / paidCount) : 0;
 
-
-
-  const feeRate = rangeGrossCents > 0 ? stripeCents / rangeGrossCents : 0;
-
-  const refundRate = rangeGrossCents > 0 ? (revenueAgg._sum.refundCents ?? 0) / rangeGrossCents : 0;
-
-
+  const feeRate = revenueCents > 0 ? stripeCents / revenueCents : 0;
+  const refundRate = revenueCents > 0 ? (revenueAgg._sum.refundCents ?? 0) / revenueCents : 0;
 
   // ========= OPERATIVO (filtrato per periodo) =========
-
   const toShipInPeriod = await prisma.order.count({
-
     where: {
-
-      status: { in: ["PAGATO", "IN_PREPARAZIONE"] }, // oppure solo ["PAGATO","IN_PREPARAZIONE"] se preferisci
+      status: { in: ["PAGATO", "IN_PREPARAZIONE"] },
       isTest: false,
-
       shippedAt: null,
-
       createdAt: { gte: start, lt: endExclusive },
-
     },
-
   });
-
-
-
-
 
   const shippedInPeriod = await prisma.order.findMany({
-
     where: {
-
-      status: "SPEDITO",
+      status: { in: ["SPEDITO", "CONSEGNATO"] },
       isTest: false,
-
-      shippedAt: { not: null },
-
-      paidAt: { not: null },
-
       createdAt: { gte: start, lt: endExclusive },
-
     },
-
     select: { paidAt: true, shippedAt: true },
-
     take: 1000,
-
   });
 
-
-
+  const fulfillmentSamples = shippedInPeriod.filter(
+    (o): o is { paidAt: Date; shippedAt: Date } => o.paidAt !== null && o.shippedAt !== null,
+  );
   const avgFulfillmentMs =
-
-    shippedInPeriod.length === 0
-
+    fulfillmentSamples.length === 0
       ? 0
-
       : Math.round(
-
-        shippedInPeriod.reduce((acc, o) => {
-
-          const a = o.paidAt ? new Date(o.paidAt).getTime() : 0;
-
-          const b = o.shippedAt ? new Date(o.shippedAt).getTime() : 0;
-
+        fulfillmentSamples.reduce((acc, o) => {
+          const a = new Date(o.paidAt).getTime();
+          const b = new Date(o.shippedAt).getTime();
           return acc + Math.max(0, b - a);
-
-        }, 0) / shippedInPeriod.length
-
+        }, 0) / fulfillmentSamples.length
       );
-
   const avgFulfillmentHours = avgFulfillmentMs ? Math.round(avgFulfillmentMs / (1000 * 60 * 60)) : 0;
 
 
