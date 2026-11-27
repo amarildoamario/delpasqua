@@ -52,7 +52,7 @@ export function VoucherProposalForm({ tastings, detailBase }: {
   const router = useRouter();
   const { ready, busy, error, setError, submit } = useProposalSubmit("/api/admin/vouchers/", ({ id }) => {
     if (!id) throw new Error("Salvataggio non confermato.");
-    router.push(`${detailBase}/${id}/`);
+    router.push(`${detailBase}${id}/`);
   });
 
   function save(event: FormEvent<HTMLFormElement>) {
@@ -71,9 +71,8 @@ export function VoucherProposalForm({ tastings, detailBase }: {
     });
   }
 
-  return <form method="post" onSubmit={save} className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
-    <h2 className="text-lg font-bold">Nuova proposta</h2>
-    <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-[2fr_1fr_1fr_1.2fr]">
+  return <form method="post" onSubmit={save} className="border-t border-neutral-200 p-4 sm:p-5">
+    <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-[2fr_1fr_1fr_1.2fr]">
       <div className="sm:col-span-3 lg:col-span-1">
         <label htmlFor="voucher-tasting" className="text-sm font-semibold">Degustazione</label>
         <select id="voucher-tasting" name="tastingType" defaultValue="" required disabled={busy} className={field}>
@@ -132,7 +131,9 @@ export function VoucherProposalEmailForm({ id, tastingTitle }: { id: string; tas
   </form>;
 }
 
-export function DeleteVoucherProposal({ id, tastingTitle, testRun }: { id: string; tastingTitle: string; testRun: boolean }) {
+export function DeleteVoucherProposal({ id, tastingTitle, testRun, returnTo }: {
+  id: string; tastingTitle: string; testRun: boolean; returnTo: string;
+}) {
   const router = useRouter();
   const ready = useSyncExternalStore(subscribeToHydration, clientReady, serverReady);
   const [deleting, setDeleting] = useState(false);
@@ -150,6 +151,7 @@ export function DeleteVoucherProposal({ id, tastingTitle, testRun }: { id: strin
         const result: FormResult = await response.json();
         throw new Error(result.error || "Impossibile eliminare la proposta.");
       }
+      router.replace(returnTo);
       router.refresh();
     } catch (error) {
       setDeleting(false);
