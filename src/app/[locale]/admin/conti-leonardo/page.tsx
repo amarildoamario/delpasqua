@@ -614,80 +614,129 @@ export default function ContiLeonardoPage() {
         ) : null}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-neutral-400">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="flex min-h-[20px] items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
             <span>Fatturato</span>
-            <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-extrabold text-neutral-700">
-              Auto {euro(totals.autoGross)}
-            </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-neutral-900">
+          <div className="mt-2.5 text-2xl font-extrabold leading-none tracking-tight text-neutral-950 tabular-nums">
             {euro(totals.actualGross)}
           </div>
-          <div className="mt-1 text-xs text-neutral-500">
-            {totals.ordersCount} ordini shop · {totals.tastingCount} checkout degustazione
-            <br />Incassi degustazioni e voucher {euro(totals.tastingGross)}
-          </div>
+          <dl className="mt-4 space-y-1.5 border-t border-neutral-100 pt-3 text-[11px]">
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Automatico</dt>
+              <dd className="font-semibold text-neutral-700 tabular-nums">
+                {euro(totals.autoGross)}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Ordini shop</dt>
+              <dd className="font-semibold text-neutral-800 tabular-nums">
+                {totals.ordersCount}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Degust. e voucher</dt>
+              <dd className="font-semibold text-neutral-800 tabular-nums">
+                {totals.tastingCount} · {euro(totals.tastingGross)}
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-neutral-400">
+        <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="flex min-h-[20px] items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
             <span>Costo Spedizioni</span>
-            <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-extrabold text-neutral-700">
-              Auto {euro(totals.autoShipping)}
-            </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-neutral-900">
+          <div className="mt-2.5 text-2xl font-extrabold leading-none tracking-tight text-neutral-950 tabular-nums">
             {euro(totals.actualShipping)}
           </div>
-          <div className="mt-1 text-xs text-neutral-500">
-            GLS/manuale batte il valore automatico
-          </div>
+          <dl className="mt-4 space-y-1.5 border-t border-neutral-100 pt-3 text-[11px]">
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Automatico</dt>
+              <dd className="font-semibold text-neutral-700 tabular-nums">
+                {euro(totals.autoShipping)}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Priorità</dt>
+              <dd className="font-semibold text-neutral-800">
+                GLS / manuale
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-neutral-400">
+        <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="flex min-h-[20px] items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
             <span>IVA</span>
-            <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-extrabold text-neutral-700">
-              Auto {euro(totals.autoVat)}
-            </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-neutral-900">
+          <div className="mt-2.5 text-2xl font-extrabold leading-none tracking-tight text-neutral-950 tabular-nums">
             {euro(totals.actualVat)}
           </div>
-          <div className="mt-1 text-xs text-neutral-500">
-            Shop {vatRatePercent}% · Degustazioni e voucher {tastingVatRate}%
-            <br />IVA degustazioni e voucher {euro(totals.tastingVat)}
-          </div>
+          <dl className="mt-4 space-y-1.5 border-t border-neutral-100 pt-3 text-[11px]">
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Automatico</dt>
+              <dd className="font-semibold text-neutral-700 tabular-nums">
+                {euro(totals.autoVat)}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Aliquote</dt>
+              <dd className="font-semibold text-neutral-800 tabular-nums">
+                Shop {vatRatePercent}% · Deg. {tastingVatRate}%
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">IVA degust./voucher</dt>
+              <dd className="font-semibold text-neutral-800 tabular-nums">
+                {euro(totals.tastingVat)}
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-neutral-400">
+        <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="flex min-h-[20px] items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
             <span>Stripe</span>
-            <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-extrabold text-neutral-700">
-              Auto {euro(totals.autoStripe)}
-            </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight text-rose-700">
+          <div className="mt-2.5 text-2xl font-extrabold leading-none tracking-tight text-rose-700 tabular-nums">
             {euro(totals.actualStripe)}
           </div>
-          <div className="mt-1 text-xs text-neutral-500">
-            Fee reali da Stripe con fallback automatico
-          </div>
+          <dl className="mt-4 space-y-1.5 border-t border-neutral-100 pt-3 text-[11px]">
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Automatico</dt>
+              <dd className="font-semibold text-neutral-700 tabular-nums">
+                {euro(totals.autoStripe)}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-neutral-500">Calcolo</dt>
+              <dd className="font-semibold text-neutral-800">
+                Fee reali / stima
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="rounded-xl border border-emerald-500 bg-gradient-to-br from-emerald-600 to-teal-800 p-5 sm:p-6 text-white shadow-lg shadow-emerald-950/20 sm:col-span-2 lg:col-span-1">
-          <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-emerald-100">
+        <div className="flex h-full flex-col rounded-3xl border border-emerald-500 bg-gradient-to-br from-emerald-600 to-teal-800 p-5 text-white shadow-lg shadow-emerald-950/20 sm:col-span-2 xl:col-span-1">
+          <div className="flex min-h-[20px] items-center justify-between gap-2 text-[11px] font-black uppercase tracking-wider text-emerald-100">
             <span>Quota Leonardo</span>
-            <Coins className="h-4 w-4" />
+            <Coins className="h-4 w-4 shrink-0 text-emerald-200" />
           </div>
-          <div className="mt-3 sm:mt-4 text-3xl sm:text-4xl font-black tracking-tight text-white">
+          <div className="mt-2.5 text-2xl font-black leading-none tracking-tight text-white tabular-nums">
             {euro(totals.leonardoShare)}
           </div>
-          <div className="mt-3 border-t border-white/10 pt-2.5 text-xs font-extrabold tracking-wide text-emerald-100">
-            10% di ogni checkout effettivamente pagato
-          </div>
+          <dl className="mt-4 space-y-1.5 border-t border-white/15 pt-3 text-[11px]">
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-emerald-100/80">Percentuale</dt>
+              <dd className="font-bold text-white tabular-nums">10%</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <dt className="text-emerald-100/80">Base</dt>
+              <dd className="font-bold text-white">Checkout pagati</dd>
+            </div>
+          </dl>
         </div>
       </div>
 
@@ -741,15 +790,26 @@ export default function ContiLeonardoPage() {
                 key={detail.month}
                 className="rounded-2xl border border-neutral-200 bg-neutral-50/50 p-3.5 space-y-3"
               >
-                <div className="flex items-center justify-between gap-2 border-b border-neutral-200 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 shrink-0 text-neutral-900" />
-                    <span className="text-base font-black text-neutral-950">{detail.month}</span>
-                    <span className="rounded-full bg-neutral-200/80 px-2 py-0.5 text-[11px] font-bold text-neutral-800">
-                      {detail.orderCount} ordini shop · {detail.tastingCount} checkout degustazione
-                    </span>
+                <div className="flex items-start justify-between gap-3 border-b border-neutral-200 pb-2.5">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 shrink-0 text-neutral-700" />
+                      <span className="text-base font-black text-neutral-950 tabular-nums">
+                        {detail.month}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="rounded-full bg-neutral-200/80 px-2 py-0.5 text-[11px] font-bold text-neutral-800 tabular-nums">
+                        {detail.orderCount} shop
+                      </span>
+                      {detail.tastingCount > 0 ? (
+                        <span className="rounded-full bg-neutral-200/80 px-2 py-0.5 text-[11px] font-bold text-neutral-800 tabular-nums">
+                          {detail.tastingCount} degust.
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
-                  <div className="text-right">
+                  <div className="shrink-0 text-right tabular-nums">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
                       Leonardo 10%
                     </div>
@@ -761,10 +821,10 @@ export default function ContiLeonardoPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block space-y-1">
-                    <span className="block text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
-                      Fatturato
+                    <span className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      <span>Fatturato</span>
                     </span>
-                    <span className="block text-[10px] font-semibold text-neutral-500">
+                    <span className="block text-[10px] font-semibold text-neutral-500 tabular-nums">
                       Auto {euro(detail.autoGrossCents)}
                     </span>
                     <input
@@ -779,7 +839,7 @@ export default function ContiLeonardoPage() {
                           event.target.value
                         )
                       }
-                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black tabular-nums text-black transition-colors focus:border-black focus:outline-none ${
                         detail.isGrossOverridden
                           ? "border-amber-500 bg-amber-50 text-amber-950"
                           : ""
@@ -799,7 +859,7 @@ export default function ContiLeonardoPage() {
                         </span>
                       ) : null}
                     </span>
-                    <span className="block text-[10px] font-semibold text-neutral-500">
+                    <span className="block text-[10px] font-semibold text-neutral-500 tabular-nums">
                       Auto {euro(detail.autoShippingCents)}
                     </span>
                     <input
@@ -815,7 +875,7 @@ export default function ContiLeonardoPage() {
                           event.target.value
                         )
                       }
-                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black tabular-nums text-black transition-colors focus:border-black focus:outline-none ${
                         detail.pdfGlsFileName
                           ? "border-emerald-500 bg-emerald-50 text-emerald-950"
                           : detail.isShippingOverridden
@@ -826,10 +886,10 @@ export default function ContiLeonardoPage() {
                   </label>
 
                   <label className="block space-y-1">
-                    <span className="block text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
-                      IVA
+                    <span className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      <span>IVA</span>
                     </span>
-                    <span className="block text-[10px] font-semibold text-neutral-500">
+                    <span className="block text-[10px] font-semibold text-neutral-500 tabular-nums">
                       Auto {euro(detail.autoVatCents)}
                     </span>
                     <input
@@ -844,7 +904,7 @@ export default function ContiLeonardoPage() {
                           event.target.value
                         )
                       }
-                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black tabular-nums text-black transition-colors focus:border-black focus:outline-none ${
                         detail.isVatOverridden
                           ? "border-amber-500 bg-amber-50 text-amber-950"
                           : ""
@@ -853,10 +913,10 @@ export default function ContiLeonardoPage() {
                   </label>
 
                   <label className="block space-y-1">
-                    <span className="block text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
-                      Stripe
+                    <span className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wide text-neutral-700">
+                      <span>Stripe</span>
                     </span>
-                    <span className="block text-[10px] font-semibold text-neutral-500">
+                    <span className="block text-[10px] font-semibold text-neutral-500 tabular-nums">
                       Auto {euro(detail.autoStripeCents)}
                     </span>
                     <input
@@ -871,7 +931,7 @@ export default function ContiLeonardoPage() {
                           event.target.value
                         )
                       }
-                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black text-black transition-colors focus:border-black focus:outline-none ${
+                      className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-2 text-right text-base font-black tabular-nums text-black transition-colors focus:border-black focus:outline-none ${
                         detail.isStripeOverridden
                           ? "border-amber-500 bg-amber-50 text-amber-950"
                           : ""
@@ -887,35 +947,49 @@ export default function ContiLeonardoPage() {
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full whitespace-nowrap text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-300 text-xs font-extrabold uppercase tracking-wider text-neutral-950">
-                  <th className="py-3.5 pl-2 pr-4 text-black">Mese</th>
-                  <th className="py-3.5 pr-4 text-center text-black">Ordini</th>
-                  <th className="py-3.5 pr-4 text-right text-black">Fatturato</th>
-                  <th className="py-3.5 pr-4 text-right text-black">Spedizioni</th>
-                  <th className="py-3.5 pr-4 text-right text-black">IVA</th>
-                  <th className="py-3.5 pr-4 text-right text-black">Stripe</th>
-                  <th className="py-3.5 pr-2 text-right text-black">Leonardo 10%</th>
+                <tr className="border-b border-neutral-200 bg-neutral-50/80 text-[11px] font-extrabold uppercase tracking-wider text-neutral-700">
+                  <th className="rounded-l-xl py-3 pl-3 pr-4 text-left">Mese</th>
+                  <th className="px-4 py-3 text-center">Ordini</th>
+                  <th className="px-4 py-3 text-right">Fatturato</th>
+                  <th className="px-4 py-3 text-right">Spedizioni</th>
+                  <th className="px-4 py-3 text-right">IVA</th>
+                  <th className="px-4 py-3 text-right">Stripe</th>
+                  <th className="rounded-r-xl py-3 pl-4 pr-3 text-right">Leonardo 10%</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-200 text-black">
+              <tbody className="divide-y divide-neutral-200 text-neutral-950">
                 {financialDetails.map((detail) => (
                   <tr
                     key={detail.month}
-                    className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/75"
+                    className="transition-colors hover:bg-neutral-50/80"
                   >
-                    <td className="flex items-center gap-2 py-4.5 pl-2 pr-4 text-sm font-black text-black">
-                      <Calendar className="h-4.5 w-4.5 shrink-0 text-neutral-900" />
-                      <span>{detail.month}</span>
+                    <td className="py-3.5 pl-3 pr-4 align-middle">
+                      <div className="flex items-center gap-2 text-sm font-black text-neutral-950 tabular-nums">
+                        <Calendar className="h-4 w-4 shrink-0 text-neutral-500" />
+                        <span>{detail.month}</span>
+                      </div>
                     </td>
 
-                    <td className="py-4.5 pr-4 text-center text-sm font-black text-black">
-                      <span>{detail.orderCount}</span>
-                      {detail.tastingCount > 0 && <span className="block text-xs text-neutral-500">{detail.tastingCount} degust.</span>}
+                    <td className="px-4 py-3.5 text-center align-middle">
+                      <div className="inline-flex flex-col items-center justify-center gap-0.5 tabular-nums">
+                        <span className="text-sm font-black leading-tight text-neutral-950">
+                          {detail.orderCount}
+                        </span>
+                        {detail.tastingCount > 0 ? (
+                          <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-bold text-neutral-600">
+                            {detail.tastingCount} degust.
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-medium text-neutral-400">
+                            shop
+                          </span>
+                        )}
+                      </div>
                     </td>
 
-                    <td className="py-4.5 pr-4 text-right">
-                      <div className="space-y-1">
-                        <div className="text-[10px] font-bold text-neutral-500">
+                    <td className="px-4 py-3.5 text-right align-middle">
+                      <div className="inline-flex w-32 flex-col items-end gap-1">
+                        <div className="text-[10px] font-semibold text-neutral-500 tabular-nums">
                           Auto {euro(detail.autoGrossCents)}
                         </div>
                         <input
@@ -929,7 +1003,7 @@ export default function ContiLeonardoPage() {
                               event.target.value
                             )
                           }
-                          className={`w-28 rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-black text-black transition-colors focus:border-black focus:outline-none ${
+                          className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-extrabold tabular-nums text-neutral-950 transition-colors focus:border-neutral-950 focus:outline-none ${
                             detail.isGrossOverridden
                               ? "border-amber-500 bg-amber-50 text-amber-950"
                               : ""
@@ -943,55 +1017,53 @@ export default function ContiLeonardoPage() {
                       </div>
                     </td>
 
-                    <td className="py-4.5 pr-4 text-right">
-                      <div className="space-y-1">
-                        <div className="text-[10px] font-bold text-neutral-500">
-                          Auto {euro(detail.autoShippingCents)}
-                        </div>
-                        <div className="flex items-center justify-end gap-1.5">
-                          <input
-                            key={`${detail.month}-shipping-${detail.actualShippingCents}`}
-                            type="text"
-                            placeholder="0.00"
-                            defaultValue={centsToInputValue(
-                              detail.actualShippingCents,
-                              true
-                            )}
-                            onBlur={(event) =>
-                              handleOverrideChange(
-                                detail.month,
-                                "manualGlsCents",
-                                event.target.value
-                              )
-                            }
-                            className={`w-28 rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-black text-black transition-colors focus:border-black focus:outline-none ${
-                              detail.pdfGlsFileName
-                                ? "border-emerald-500 bg-emerald-50 text-emerald-950"
-                                : detail.isShippingOverridden
-                                  ? "border-amber-500 bg-amber-50 text-amber-950"
-                                  : ""
-                            }`}
-                            title={
-                              detail.isShippingOverridden
-                                ? "Valore manuale inserito"
-                                : "Valore automatico"
-                            }
-                          />
+                    <td className="px-4 py-3.5 text-right align-middle">
+                      <div className="inline-flex w-32 flex-col items-end gap-1">
+                        <div className="flex w-full items-center justify-end gap-1.5 text-[10px] font-semibold text-neutral-500 tabular-nums">
                           {detail.pdfGlsFileName ? (
                             <span
-                              className="shrink-0 cursor-help select-none text-xs font-bold text-emerald-800"
+                              className="shrink-0 cursor-help select-none rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-emerald-800"
                               title={`Caricata fattura GLS: ${detail.pdfGlsFileName}`}
                             >
                               PDF
                             </span>
                           ) : null}
+                          <span>Auto {euro(detail.autoShippingCents)}</span>
                         </div>
+                        <input
+                          key={`${detail.month}-shipping-${detail.actualShippingCents}`}
+                          type="text"
+                          placeholder="0.00"
+                          defaultValue={centsToInputValue(
+                            detail.actualShippingCents,
+                            true
+                          )}
+                          onBlur={(event) =>
+                            handleOverrideChange(
+                              detail.month,
+                              "manualGlsCents",
+                              event.target.value
+                            )
+                          }
+                          className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-extrabold tabular-nums text-neutral-950 transition-colors focus:border-neutral-950 focus:outline-none ${
+                            detail.pdfGlsFileName
+                              ? "border-emerald-500 bg-emerald-50 text-emerald-950"
+                              : detail.isShippingOverridden
+                                ? "border-amber-500 bg-amber-50 text-amber-950"
+                                : ""
+                          }`}
+                          title={
+                            detail.isShippingOverridden
+                              ? "Valore manuale inserito"
+                              : "Valore automatico"
+                          }
+                        />
                       </div>
                     </td>
 
-                    <td className="py-4.5 pr-4 text-right">
-                      <div className="space-y-1">
-                        <div className="text-[10px] font-bold text-neutral-500">
+                    <td className="px-4 py-3.5 text-right align-middle">
+                      <div className="inline-flex w-32 flex-col items-end gap-1">
+                        <div className="text-[10px] font-semibold text-neutral-500 tabular-nums">
                           Auto {euro(detail.autoVatCents)}
                         </div>
                         <input
@@ -1005,7 +1077,7 @@ export default function ContiLeonardoPage() {
                               event.target.value
                             )
                           }
-                          className={`w-28 rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-black text-black transition-colors focus:border-black focus:outline-none ${
+                          className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-extrabold tabular-nums text-neutral-950 transition-colors focus:border-neutral-950 focus:outline-none ${
                             detail.isVatOverridden
                               ? "border-amber-500 bg-amber-50 text-amber-950"
                               : ""
@@ -1019,9 +1091,9 @@ export default function ContiLeonardoPage() {
                       </div>
                     </td>
 
-                    <td className="py-4.5 pr-4 text-right">
-                      <div className="space-y-1">
-                        <div className="text-[10px] font-bold text-neutral-500">
+                    <td className="px-4 py-3.5 text-right align-middle">
+                      <div className="inline-flex w-32 flex-col items-end gap-1">
+                        <div className="text-[10px] font-semibold text-neutral-500 tabular-nums">
                           Auto {euro(detail.autoStripeCents)}
                         </div>
                         <input
@@ -1035,7 +1107,7 @@ export default function ContiLeonardoPage() {
                               event.target.value
                             )
                           }
-                          className={`w-28 rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-black text-black transition-colors focus:border-black focus:outline-none ${
+                          className={`w-full rounded-xl border border-neutral-300 bg-white px-2.5 py-1.5 text-right text-xs font-extrabold tabular-nums text-neutral-950 transition-colors focus:border-neutral-950 focus:outline-none ${
                             detail.isStripeOverridden
                               ? "border-amber-500 bg-amber-50 text-amber-950"
                               : ""
@@ -1049,10 +1121,15 @@ export default function ContiLeonardoPage() {
                       </div>
                     </td>
 
-                    <td className="py-4.5 pr-2 text-right">
-                      <span className="text-sm font-black text-emerald-700">
-                        {euro(detail.leonardoShareCents)}
-                      </span>
+                    <td className="py-3.5 pl-4 pr-3 text-right align-middle">
+                      <div className="inline-flex flex-col items-end gap-0.5 tabular-nums">
+                        <span className="text-[10px] font-semibold text-emerald-700/75">
+                          10% lordo
+                        </span>
+                        <span className="text-sm font-black text-emerald-700">
+                          {euro(detail.leonardoShareCents)}
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 ))}
