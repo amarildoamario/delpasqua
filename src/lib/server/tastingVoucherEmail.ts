@@ -24,7 +24,7 @@ function encryptAttachment(pdf: Buffer) {
   return Buffer.concat([iv, cipher.getAuthTag(), encrypted]);
 }
 
-function decryptAttachment(encrypted: Uint8Array) {
+export function decryptVoucherAttachment(encrypted: Uint8Array) {
   const decipher = createDecipheriv("aes-256-gcm", attachmentKey(), encrypted.subarray(0, 12));
   decipher.setAuthTag(encrypted.subarray(12, 28));
   return Buffer.concat([decipher.update(encrypted.subarray(28)), decipher.final()]);
@@ -122,7 +122,7 @@ export async function deliverTastingVoucher(voucherId: string) {
   const result = await new Resend(apiKey).emails.send({
     from: delivery.from, to: delivery.recipient, subject: delivery.subject, text: delivery.body,
     ...(delivery.replyTo ? { replyTo: delivery.replyTo } : {}),
-    attachments: [{ filename: delivery.filename, content: decryptAttachment(delivery.pdfEncrypted), contentType: "application/pdf" }],
+    attachments: [{ filename: delivery.filename, content: decryptVoucherAttachment(delivery.pdfEncrypted), contentType: "application/pdf" }],
   }, { idempotencyKey: `voucher-delivery/${voucherId}` });
   if (result.error || !result.data?.id) throw new Error("Invio voucher non confermato dal servizio email");
   await prisma.tastingVoucherDelivery.update({ where: { voucherId }, data: { providerId: result.data.id, sentAt: new Date() } });

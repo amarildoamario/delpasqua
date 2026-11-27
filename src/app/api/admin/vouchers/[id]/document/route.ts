@@ -4,6 +4,7 @@ import { prisma } from "@/lib/server/prisma";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { quoteAppOrigin } from "@/lib/server/quoteCheckout";
 import { Id64Schema } from "@/lib/server/schemas";
+import { decryptVoucherAttachment } from "@/lib/server/tastingVoucherEmail";
 import { buildVoucherProposalPdf, VoucherProposalIdSchema } from "@/lib/server/tastingVoucherProposal";
 
 export const runtime = "nodejs";
@@ -18,7 +19,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const limit = await rateLimit({ key: `admin:voucher-pdf:${getClientIpFromHeaders(req.headers) || "unknown"}`, limit: 15, windowSeconds: 60 });
   if (!limit.ok) return respond("Troppi download. Riprova tra un minuto.", 429);
   try {
-    const emailId = new URL(req.url).searchParams.get("email");
+    const query = new URL(req.url).searchParams;
+    const emailId = query.get("email");
+    const voucherId = query.get("voucher");
+    if (emailId !== null && voucherId !== null) return respond("Allegato non valido.", 400);
     let attachment;
     if (emailId !== null) {
       if (!Id64Schema.safeParse(emailId).success) return respond("Allegato non valido.", 400);
@@ -27,6 +31,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       });
       if (!email) return respond("Allegato non trovato.", 404);
       attachment = { content: email.pdf, filename: email.filename };
+    } else if (voucherId !== null) {
+      if (!VoucherProposalIdSchema.safeParse(voucherId).success) return respond("Allegato non valido.", 400);
+      const delivery = await prisma.tastingVoucherDelivery.findFirst({
+        where: { voucherId, voucher: { checkout: { proposalId: id.data } } },
+        select: { pdfEncrypted: true, filename: true },
+      });
+      if (!delivery) return respond("Allegato non trovato.", 404);
+      attachment = { content: decryptVoucherAttachment(delivery.pdfEncrypted), filename: delivery.filename };
     } else {
       const proposal = await prisma.tastingVoucherProposal.findUnique({ where: { id: id.data } });
       if (!proposal) return respond("Proposta non trovata.", 404);
@@ -39,6 +51,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       "X-Content-Type-Options": "nosniff",
     } }));
   } catch {
-    return respond("Impossibile scaricare la proposta. Riprova.", 500);
+    return respond("Impossibile scaricare il PDF. Riprova.", 500);
   }
 }

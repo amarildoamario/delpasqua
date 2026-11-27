@@ -11,7 +11,7 @@ import { voucherCheckoutMode } from "@/lib/server/tastingVoucherPayment";
 import { isTestVoucher } from "@/lib/server/voucherTest";
 import PageHeader from "../../_components/PageHeader";
 import { DeleteVoucherProposal, VoucherProposalEmailForm } from "../VoucherProposalForms";
-import VoucherPaymentDetails, { voucherArchivePaymentSelect } from "../VoucherPaymentDetails";
+import VoucherPaymentDetails, { voucherPaymentSelect } from "../VoucherPaymentDetails";
 
 const dateTime = new Intl.DateTimeFormat("it-IT", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Rome" });
 const action = "inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-50";
@@ -31,12 +31,26 @@ export default async function VoucherProposalPage({ params }: { params: Promise<
   if (!proposal) notFound();
   const payments = await prisma.tastingVoucher.findMany({
     where: { checkout: { proposalId: id } }, orderBy: { paidAt: "desc" },
-    select: voucherArchivePaymentSelect,
+    select: voucherPaymentSelect,
   });
   const checkoutMode = voucherCheckoutMode();
   const paid = payments.length > 0;
   const removableTest = isRemovableVoucherTest(proposal.id);
   const pdf = `/api/admin/vouchers/${id}/document/`;
+  const emailHistory = [
+    ...proposal.emails.map((email) => ({
+      ...email,
+      kind: "manual" as const,
+      attachment: `${pdf}?email=${email.id}`,
+    })),
+    ...payments.flatMap(({ id, delivery }) => delivery ? [{
+      ...delivery,
+      id,
+      kind: "automatic" as const,
+      lastError: null,
+      attachment: `${pdf}?voucher=${id}`,
+    }] : []),
+  ].sort((a, b) => (b.sentAt ?? b.createdAt).getTime() - (a.sentAt ?? a.createdAt).getTime());
   return <div className="space-y-4">
     <Link href={base} className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-700 hover:underline">
       <ArrowLeft size={16} aria-hidden="true" /> Archivio voucher
@@ -77,26 +91,33 @@ export default async function VoucherProposalPage({ params }: { params: Promise<
     <section className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
       <h2 className="text-lg font-bold">Pagamenti registrati</h2>
       {!paid && <p className="mt-2 text-sm text-neutral-600">Nessun pagamento registrato.</p>}
-      <ul className="mt-2 divide-y divide-neutral-200">
-        {payments.map((payment) => <li key={payment.id} className="py-3">
+      {paid && <ul className="mt-3 space-y-3">
+        {payments.map((payment) => <li key={payment.id}>
           <VoucherPaymentDetails payment={payment} people={proposal.people} />
         </li>)}
-      </ul>
+      </ul>}
     </section>
     <div className="grid items-start gap-6 lg:grid-cols-2">
       {!databaseReadOnly && <VoucherProposalEmailForm id={id} tastingTitle={proposal.tastingTitle} />}
       <section className="min-w-0 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
         <h2 className="text-lg font-bold">Storico email</h2>
-        {!proposal.emails.length && <p className="mt-3 text-sm text-neutral-600">Nessuna email in archivio.</p>}
+        {!emailHistory.length && <p className="mt-3 text-sm text-neutral-600">Nessuna email in archivio.</p>}
         <ul className="mt-2 divide-y divide-neutral-200">
-          {proposal.emails.map((email) => <li key={email.id} className="space-y-2 py-3 text-sm">
-            <p className="break-words font-semibold">{email.recipient}</p>
+          {emailHistory.map((email) => <li key={`${email.kind}-${email.id}`} className="space-y-2 py-3 text-sm">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <p className="min-w-0 font-semibold [overflow-wrap:anywhere]">{email.recipient}</p>
+              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${email.kind === "automatic" ? "bg-emerald-50 text-emerald-800" : "bg-neutral-100 text-neutral-700"}`}>
+                {email.kind === "automatic" ? "Voucher automatico" : "Proposta manuale"}
+              </span>
+            </div>
             <p className="text-neutral-600">{dateTime.format(email.sentAt ?? email.createdAt)} · {email.sentAt ? "Accettata dal servizio email" : email.lastError ? "Invio non confermato" : "In attesa di conferma"}</p>
             <details>
               <summary className="cursor-pointer break-words font-medium">{email.subject}</summary>
               <p className="mt-2 whitespace-pre-wrap break-words text-neutral-700">{email.body}</p>
             </details>
-            <a className="underline" href={`${pdf}?email=${email.id}`}>Scarica allegato</a>
+            <a className="inline-flex items-center gap-1.5 font-semibold text-neutral-700 underline-offset-4 hover:underline" href={email.attachment}>
+              <Download size={14} aria-hidden="true" /> Scarica allegato
+            </a>
           </li>)}
         </ul>
       </section>
