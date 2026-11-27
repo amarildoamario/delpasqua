@@ -63,7 +63,7 @@ test("metrics count shop and voucher payments without browser purchase events or
         { voucher: { isTest: false, totalCents: { not: 50 } } },
       ] });
       return [{
-        id: "voucher-checkout", stripeSessionId: "cs_voucher", createdAt: new Date("2026-11-08T10:00:00Z"), failedAt: null,
+        id: "voucher-checkout", stripeSessionId: "cs_live_voucher", createdAt: new Date("2026-11-08T10:00:00Z"), failedAt: null,
         proposal: { id: "proposal", tastingTitle: "Degustazione intermedia", totalCents: 7000 },
         voucher: { email: "buyer@example.com", paidAt: new Date("2026-11-08T10:00:45Z"), totalCents: 7000 },
       }];
@@ -72,7 +72,21 @@ test("metrics count shop and voucher payments without browser purchase events or
       const query = args as { where: { type: unknown } };
       return query.where.type === "add_to_cart" ? cartEvents : [];
     } },
-    contactMessage: { count: async () => 5 }, tastingBooking: { count: async () => 2 },
+    contactMessage: { count: async () => 5 },
+    tastingBooking: { count: async () => 2, findMany: async (args: unknown) => {
+      const query = args as { where: { voucherId: null; stripeSessionId: { startsWith: string } } };
+      assert.equal(query.where.voucherId, null);
+      assert.equal(query.where.stripeSessionId.startsWith, "cs_live_");
+      const createdAt = new Date("2026-11-08T10:00:00Z");
+      return [
+        { id: "tasting-paid", stripeSessionId: "cs_live_tasting_paid", createdAt, updatedAt: createdAt, status: "CONFIRMED" },
+        { id: "tasting-expired", stripeSessionId: "cs_live_tasting_expired", createdAt, updatedAt: createdAt, status: "CANCELED" },
+      ];
+    } },
+    stripeWebhookEvent: { findMany: async () => [
+      { sessionId: "cs_live_tasting_paid", type: "checkout.session.completed", created: Date.parse("2026-11-08T10:05:00Z") / 1000, paymentIntentId: "pi_tasting" },
+      { sessionId: "cs_live_tasting_expired", type: "checkout.session.expired", created: Date.parse("2026-11-08T10:30:00Z") / 1000, paymentIntentId: null },
+    ] },
     adminSession: { findFirst: async () => ({ id: "admin", createdAt: new Date(), rotatedAt: new Date() }) },
   };
   try {
@@ -92,6 +106,18 @@ test("metrics count shop and voucher payments without browser purchase events or
     assert.equal(report.kpis.storefrontPaidOrders, 2);
     assert.equal(report.kpis.voucherPaidOrders, 1);
     assert.equal(report.paidTastingVouchers[0].totalCents, 7000);
+    const channels = new Map<string, { started: number; paid: number; expiredUnpaid: number; canceledUnpaid: number }>(
+      report.checkoutCohort.byChannel.map((row: { channel: string }) => [row.channel, row]),
+    );
+    assert.equal(channels.get("voucher")?.started, 1);
+    assert.equal(channels.get("voucher")?.paid, 1);
+    assert.equal(channels.get("tasting")?.started, 2);
+    assert.equal(channels.get("tasting")?.paid, 1);
+    assert.equal(channels.get("tasting")?.expiredUnpaid, 1);
+    assert.equal(channels.get("tasting")?.canceledUnpaid, 0);
+    assert.equal(report.checkoutCohort.stripeCheckoutsStarted, 3);
+    assert.equal(report.insights.stripe.started, report.checkoutCohort.stripeCheckoutsStarted);
+    assert.equal(report.insights.daily[0].checkoutsStarted, 3);
     assert.equal(report.kpis.uniqueSessions, 2);
     assert.equal(report.kpis.uniqueVisitors, 1);
     assert.equal(report.kpis.pageViews, 4);

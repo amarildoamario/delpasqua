@@ -202,7 +202,7 @@ test("checkoutCohort separates open, cancel_url return, expired, failed, cancele
   ];
 
   const res = computeFunnelsAndSeries({
-    orders,
+    orders: orders.map((order) => ({ ...order, stripeCheckoutSessionId: `cs_${order.id}` })),
     events,
     start,
     endExclusive: end,

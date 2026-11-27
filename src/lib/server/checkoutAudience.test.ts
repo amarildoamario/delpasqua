@@ -23,8 +23,8 @@ test("owner-only attempts disappear from lost checkout count/value; external use
   const at = new Date("2026-11-15T12:00:00Z");
   const base = { id: "owner", isTest: false, createdAt: at, paidAt: null, userAgent: null, totalCents: 30000,
     stripeCheckoutSessionId: "cs_test", status: "SCADUTO", updatedAt: at, events: [{ type: CHECKOUT_INTERNAL, metaJson: null }] };
-  const shared = { ...base, id: "shared", totalCents: 7200, events: [...base.events, { type: CHECKOUT_EXTERNAL, metaJson: null }] };
-  const paid = { ...base, id: "paid", paidAt: at };
+  const shared = { ...base, id: "shared", stripeCheckoutSessionId: "cs_shared", totalCents: 7200, events: [...base.events, { type: CHECKOUT_EXTERNAL, metaJson: null }] };
+  const paid = { ...base, id: "paid", stripeCheckoutSessionId: "cs_paid", paidAt: at };
   const sales = summarizeSales([base, shared, paid], start, end);
   assert.equal(excludedCheckout(base), true);
   assert.equal(excludedCheckout(shared), false);

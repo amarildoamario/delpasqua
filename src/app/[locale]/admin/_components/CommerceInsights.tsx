@@ -12,6 +12,12 @@ type Insights = Awaited<ReturnType<typeof readCommerceInsights>>;
 type Customers = Awaited<ReturnType<typeof readCustomerMetrics>>;
 const number = (value: number | null, digits = 1) => value === null ? "—" : new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value);
 const percent = (value: number | null) => value === null ? "—" : `${number(value * 100, 2)}%`;
+const stripeChannelLabels = {
+  shop: "Shop",
+  quote: "Preventivi PDF",
+  voucher: "Acquisto voucher degustazione",
+  tasting: "Prenotazioni degustazione con pagamento diretto",
+};
 const cartFunnelSteps = {
   additions: {
     label: "Con aggiunte",
@@ -207,13 +213,13 @@ export default function CommerceInsights({ insights, customers, activity, activi
         ))}</dl>
       </section>
       <section className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-4">
-        <h2 className="flex items-center gap-1 text-xs sm:text-sm font-bold leading-tight">Checkout annullati<InfoTooltip label="Checkout annullati o scaduti" description="Considera i checkout commerciali Stripe creati nel periodo. Conta una volta i checkout non pagati con ritorno di annullamento o con annullamento, scadenza o fallimento registrati nel database entro la fine del periodo. Il rapporto è checkout chiusi senza pagamento / (checkout chiusi senza pagamento + pagati della stessa coorte). Chi poi paga viene contato tra i pagati. I checkout ancora in corso restano separati. Gli ordini di prova sono esclusi." /></h2>
+        <h2 className="flex items-center gap-1 text-xs sm:text-sm font-bold leading-tight">Uscite da Stripe senza pagamento<InfoTooltip label="Uscite da Stripe senza pagamento" description="Quota di uscite osservate tra i tentativi con pagamento, chiusura o ritorno di annullamento. Un ritorno di annullamento può lasciare la sessione Stripe aperta. Il funnel mostra il dettaglio per canale." /></h2>
         <p className="mt-1.5 text-xl sm:text-2xl font-extrabold tabular-nums">{stripe.exitRate === null ? "—" : `${number(stripe.exitRate * 100)}%`}</p>
-        <p className="mt-1 text-[11px] text-neutral-600 leading-tight">{stripe.canceledUnpaid} chiusi / ({stripe.canceledUnpaid} + {stripe.paid} pagati)</p>
+        <p className="mt-1 text-[11px] text-neutral-600 leading-tight">{stripe.canceledUnpaid} uscite / ({stripe.canceledUnpaid} + {stripe.paid} pagati)</p>
         <p className="mt-1 text-[10px] text-neutral-500 leading-tight">{stripe.started} checkout Stripe creati · {stripe.recovered} rec. · {stripe.pendingOrUnobserved} in corso</p>
         {checkoutCohort ? (
           <p className="mt-1 text-[10px] text-neutral-500 leading-tight">
-            Stati non pagati: {checkoutCohort.expiredUnpaid} scad. · {checkoutCohort.canceledUnpaid} annull. · {checkoutCohort.failedUnpaid} fall. · {checkoutCohort.canceledReturnOpen} ritorno cancel
+            {checkoutCohort.expiredUnpaid} scaduti · {checkoutCohort.canceledUnpaid} annullati · {checkoutCohort.failedUnpaid} falliti · {checkoutCohort.unknownClosedUnpaid} chiusi senza motivo registrato · {checkoutCohort.canceledReturnOpen} ritorni con sessione aperta
           </p>
         ) : null}
       </section>
@@ -278,18 +284,38 @@ export default function CommerceInsights({ insights, customers, activity, activi
         <CartFunnelDiagram funnel={cartFunnel} />
       </section>
       <section className="min-w-0 rounded-[5px] border border-neutral-200 bg-white p-3 sm:p-4">
-        <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel checkout Stripe<InfoTooltip label="Funnel checkout Stripe" description="Conta ogni checkout Stripe creato nel periodo, anche quando una visita genera più tentativi o quando si apre Stripe da un preventivo PDF senza una visita tracciata. I recuperati sono inclusi nei pagati." /></h3>
+        <h3 className="flex items-center gap-1 text-xs font-bold sm:text-sm">Funnel checkout Stripe<InfoTooltip label="Funnel checkout Stripe" description="Una riga per canale e un conteggio per sessione Stripe creata nel periodo. Gli esiti si riferiscono alla fine del periodo. I pagamenti recuperati sono inclusi nei pagati. I checkout di prova sono esclusi." /></h3>
+        <p className="mt-1 text-xs text-neutral-600">Ogni tentativo Stripe conta una volta. Una prenotazione con un voucher già pagato non apre un nuovo checkout.</p>
         <p className="mt-1 text-xs text-neutral-600 tabular-nums">
           Con visita collegata <b>{number(checkoutCohort.stripeCheckoutsWithSiteSession, 0)}</b> (su <b>{number(checkoutCohort.siteSessionsWithStripeCheckout, 0)}</b> visite distinte)
           {" · "}Senza visita collegata <b>{number(checkoutCohort.stripeCheckoutsWithoutSiteSession, 0)}</b>
         </p>
         <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
           <FunnelCard label="Checkout Stripe creati" value={checkoutCohort.stripeCheckoutsStarted} />
-          <FunnelCard label="In corso" value={checkoutCohort.openPending} />
-          <FunnelCard label="Ritorni da annullamento" value={checkoutCohort.canceledReturnOpen} />
+          <FunnelCard label="In corso o senza esito" value={checkoutCohort.openPending} />
+          <FunnelCard label="Ritorni con Stripe ancora aperto" value={checkoutCohort.canceledReturnOpen} />
           <FunnelCard label="Chiusi senza pagamento" value={checkoutCohort.definitiveClosedUnpaid} detail={percent(checkoutCohort.definitiveCloseRate)} />
           <FunnelCard label="Pagati" value={checkoutCohort.paid} detail={percent(checkoutCohort.paidRate)} />
           <FunnelCard label="Di cui recuperati" value={checkoutCohort.recoveredAfterCancelOrClose} />
+        </div>
+        <div className="mt-3 overflow-x-auto">
+          <table aria-label="Checkout Stripe per canale" className="w-full border-collapse text-left text-xs tabular-nums">
+            <thead className="border-y border-neutral-200 bg-neutral-50 text-neutral-700">
+              <tr>{["Canale", "Creati", "Pagati", "In corso o senza esito", "Ritorni con sessione aperta", "Chiusi senza pagamento", "Di cui pagati dopo un’uscita"].map((label, index) => (
+                <th key={label} scope="col" className={`px-2.5 py-2 ${index > 0 ? "text-right" : ""}`}>{label}</th>
+              ))}</tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200">
+              {checkoutCohort.byChannel.map((row) => (
+                <tr key={row.channel}>
+                  <th scope="row" className="px-2.5 py-2 font-medium">{stripeChannelLabels[row.channel]}</th>
+                  {[row.started, row.paid, row.openPending, row.canceledReturnOpen, row.definitiveClosedUnpaid, row.recovered].map((value, index) => (
+                    <td key={index} className="px-2.5 py-2 text-right">{number(value, 0)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
     </div>

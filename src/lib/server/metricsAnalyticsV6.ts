@@ -24,6 +24,8 @@ export type V6EventInput = {
 
 export type V6OrderInput = {
   id: string;
+  channel?: "voucher" | "tasting";
+  failedAt?: Date | null;
   quoteId?: string | null;
   userAgent?: string | null;
   email?: string | null;
@@ -36,6 +38,12 @@ export type V6OrderInput = {
   updatedAt?: Date;
   events: { metaJson: string | null; type?: string; createdAt?: Date; toStatus?: string | null }[];
 };
+
+const stripeChannels = ["shop", "quote", "voucher", "tasting"] as const;
+const stripeOutcomeCounts = () => ({
+  started: 0, openPending: 0, canceledReturnOpen: 0, expiredUnpaid: 0,
+  failedUnpaid: 0, canceledUnpaid: 0, unknownClosedUnpaid: 0, paid: 0, recovered: 0,
+});
 
 const ROME_DAY_FMT = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Europe/Rome",
@@ -135,6 +143,7 @@ function parseAddedQty(data: unknown): number {
 
 export function computeFunnelsAndSeries(args: {
   orders: V6OrderInput[];
+  additionalStripeCheckouts?: V6OrderInput[];
   events: V6EventInput[];
   history?: V6EventInput[];
   start: Date;
@@ -146,6 +155,7 @@ export function computeFunnelsAndSeries(args: {
 }) {
   const {
     orders,
+    additionalStripeCheckouts = [],
     events,
     history = [],
     start,
@@ -163,7 +173,12 @@ export function computeFunnelsAndSeries(args: {
   const uniqueOrders = [...new Map(orders.filter((o) => !o.isTest).map((o) => [o.id, o])).values()];
   const paidOrders = uniqueOrders.filter((o) => o.paidAt && inRange(o.paidAt));
   const createdOrders = uniqueOrders.filter((o) => inRange(o.createdAt) && !excludedCheckout(o));
-  const stripeCohort = createdOrders.filter((o) => Boolean(o.stripeCheckoutSessionId));
+  const stripeCohort = new Map<string, V6OrderInput>();
+  for (const checkout of [...createdOrders, ...additionalStripeCheckouts]) {
+    const sessionId = checkout.stripeCheckoutSessionId;
+    if (sessionId && !sessionId.startsWith("cs_test_") && !checkout.isTest && inRange(checkout.createdAt) &&
+      !excludedCheckout(checkout) && !stripeCohort.has(sessionId)) stripeCohort.set(sessionId, checkout);
+  }
 
   // Build session cohort S: sessions with at least one site page_view in [start, endExclusive)
   const sessionFirstPageView = new Map<string, V6EventInput>();
@@ -417,7 +432,7 @@ export function computeFunnelsAndSeries(args: {
     const ctx = orderContext(order, includeInternal);
     if (ctx?.sessionId && cohortSessionIds.has(ctx.sessionId)) {
       checkoutStartedSessionSet.add(ctx.sessionId);
-      if (order.stripeCheckoutSessionId) {
+      if (order.stripeCheckoutSessionId && stripeCohort.get(order.stripeCheckoutSessionId) === order) {
         stripeCheckoutsWithSiteSession++;
         stripeCheckoutSessionSet.add(ctx.sessionId);
       }
@@ -519,15 +534,10 @@ export function computeFunnelsAndSeries(args: {
   const cancelReturnOrderIds = new Set(
     events.filter((e) => e.type === "checkout_canceled" && e.orderId && inRange(e.createdAt)).map((e) => e.orderId!),
   );
-  let openPending = 0;
-  let canceledReturnOpen = 0;
-  let expiredUnpaid = 0;
-  let failedUnpaid = 0;
-  let canceledUnpaid = 0;
-  let cohortPaidCount = 0;
-  let recoveredCount = 0;
-
-  for (const order of stripeCohort) {
+  const byChannel = { shop: stripeOutcomeCounts(), quote: stripeOutcomeCounts(), voucher: stripeOutcomeCounts(), tasting: stripeOutcomeCounts() };
+  const totals = stripeOutcomeCounts();
+  for (const order of stripeCohort.values()) {
+    const channel = byChannel[order.channel ?? (order.quoteId ? "quote" : "shop")];
     const isPaidInWindow = Boolean(order.paidAt && order.paidAt < endExclusive);
     const hasCancelReturn = cancelReturnOrderIds.has(order.id);
     const hasExpiredEv = order.events.some(
@@ -543,44 +553,46 @@ export function computeFunnelsAndSeries(args: {
         (ev.type === "ORDER_CANCELED" || ev.toStatus === "ANNULLATO"),
     ) || (order.status === "ANNULLATO" && Boolean(order.updatedAt && order.updatedAt < endExclusive));
 
-    if (isPaidInWindow) {
-      cohortPaidCount++;
-      if (hasCancelReturn || hasExpiredEv || hasFailedEv || hasCanceledEv) {
-        recoveredCount++;
-      }
-    } else if (hasFailedEv) {
-      failedUnpaid++;
-    } else if (hasCanceledEv) {
-      canceledUnpaid++;
-    } else if (hasExpiredEv) {
-      expiredUnpaid++;
-    } else if (hasCancelReturn) {
-      canceledReturnOpen++;
-    } else {
-      openPending++;
+    const hasUnknownClosure = Boolean(order.failedAt && order.failedAt >= order.createdAt && order.failedAt < endExclusive);
+    const outcome = isPaidInWindow ? "paid"
+      : hasFailedEv ? "failedUnpaid"
+      : hasCanceledEv ? "canceledUnpaid"
+      : hasExpiredEv ? "expiredUnpaid"
+      : hasUnknownClosure ? "unknownClosedUnpaid"
+      : hasCancelReturn ? "canceledReturnOpen" : "openPending";
+    for (const counts of [totals, channel]) {
+      counts.started++;
+      counts[outcome]++;
+      if (isPaidInWindow && (hasCancelReturn || hasExpiredEv || hasFailedEv || hasCanceledEv || hasUnknownClosure)) counts.recovered++;
     }
   }
 
-  const definitiveClosedUnpaid = expiredUnpaid + failedUnpaid + canceledUnpaid;
+  const definitiveClosed = (counts: ReturnType<typeof stripeOutcomeCounts>) =>
+    counts.expiredUnpaid + counts.failedUnpaid + counts.canceledUnpaid + counts.unknownClosedUnpaid;
+  const definitiveClosedUnpaid = definitiveClosed(totals);
   const checkoutCohort = {
     ordersCreated: createdOrders.length,
     storefrontOrdersCreated: createdOrders.filter((o) => !o.quoteId).length,
     quoteOrdersCreated: createdOrders.filter((o) => Boolean(o.quoteId)).length,
-    stripeCheckoutsStarted: stripeCohort.length,
+    stripeCheckoutsStarted: totals.started,
     stripeCheckoutsWithSiteSession,
-    stripeCheckoutsWithoutSiteSession: stripeCohort.length - stripeCheckoutsWithSiteSession,
+    stripeCheckoutsWithoutSiteSession: totals.started - stripeCheckoutsWithSiteSession,
     siteSessionsWithStripeCheckout: stripeCheckoutSessionSet.size,
-    openPending,
-    canceledReturnOpen,
-    expiredUnpaid,
-    failedUnpaid,
-    canceledUnpaid,
+    openPending: totals.openPending,
+    canceledReturnOpen: totals.canceledReturnOpen,
+    expiredUnpaid: totals.expiredUnpaid,
+    failedUnpaid: totals.failedUnpaid,
+    canceledUnpaid: totals.canceledUnpaid,
+    unknownClosedUnpaid: totals.unknownClosedUnpaid,
     definitiveClosedUnpaid,
-    paid: cohortPaidCount,
-    recoveredAfterCancelOrClose: recoveredCount,
-    paidRate: stripeCohort.length > 0 ? cohortPaidCount / stripeCohort.length : null,
-    definitiveCloseRate: stripeCohort.length > 0 ? definitiveClosedUnpaid / stripeCohort.length : null,
-    unpaidAtObservationRate: stripeCohort.length > 0 ? (stripeCohort.length - cohortPaidCount) / stripeCohort.length : null,
+    paid: totals.paid,
+    recoveredAfterCancelOrClose: totals.recovered,
+    paidRate: totals.started > 0 ? totals.paid / totals.started : null,
+    definitiveCloseRate: totals.started > 0 ? definitiveClosedUnpaid / totals.started : null,
+    unpaidAtObservationRate: totals.started > 0 ? (totals.started - totals.paid) / totals.started : null,
+    byChannel: stripeChannels.map((channel) => ({
+      channel, ...byChannel[channel], definitiveClosedUnpaid: definitiveClosed(byChannel[channel]),
+    })),
   };
 
   // Product Funnel & Variant Funnel (with distinct sessions vs repeated clicks!)
@@ -719,7 +731,7 @@ export function computeFunnelsAndSeries(args: {
   }
 
   // Checkouts created per day
-  for (const order of stripeCohort) {
+  for (const order of stripeCohort.values()) {
     const dISO = toRomeDateISO(order.createdAt);
     const bucket = dailyMap.get(dISO);
     if (bucket) bucket.checkoutsStarted++;

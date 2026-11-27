@@ -11,7 +11,7 @@ const start = new Date("2026-11-08T23:00:00Z"), end = new Date("2026-11-09T23:00
 type Event = Parameters<typeof summarizeCommerceInsights>[1][number];
 type Order = Parameters<typeof summarizeCommerceInsights>[0][number];
 const event = (extra: Partial<Event> = {}): Event => ({ type: "page_view", createdAt: new Date("2026-11-09T09:00:00Z"), visitorId: "visitor-0001", sessionId: "session-0001", cartId: "cart-00001", orderId: null, path: "/shop/", referrer: null, userAgent: null, data: null, ...extra });
-const order = (extra: Partial<Order> = {}): Order => ({ id: "order-00001", isTest: false, createdAt: new Date("2026-11-09T09:00:00Z"), paidAt: new Date("2026-11-09T10:00:00Z"), stripeCheckoutSessionId: "cs_1", events: [{ metaJson: JSON.stringify({ visitorId: "visitor-0001", sessionId: "session-0001", env: "prod" }) }], ...extra });
+const order = (extra: Partial<Order> = {}): Order => ({ id: "order-00001", isTest: false, createdAt: new Date("2026-11-09T09:00:00Z"), paidAt: new Date("2026-11-09T10:00:00Z"), stripeCheckoutSessionId: `cs_${extra.id ?? "1"}`, events: [{ metaJson: JSON.stringify({ visitorId: "visitor-0001", sessionId: "session-0001", env: "prod" }) }], ...extra });
 
 test("acquisition uses specific app signatures and bounded referrer domains, never Chrome alone", () => {
   assert.deepEqual(acquisitionSource("Instagram 300 FBAV/123", null), { source: "instagram", evidence: "browser" });

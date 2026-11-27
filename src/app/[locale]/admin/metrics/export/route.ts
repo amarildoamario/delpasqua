@@ -666,6 +666,7 @@ export async function GET(req: Request) {
 
     definitions: {
       "sessionFunnel.shopBreakdown": "Sessioni Shop ripartite fra solo elenco, elenco e schede, oppure solo schede. listPageViews conta le visualizzazioni dell'elenco in tutte le lingue, comprese le riaperture nella stessa sessione.",
+      "checkoutCohort.byChannel": "Sessioni Stripe live create nel periodo, ripartite tra shop, preventivi PDF, acquisto voucher e degustazioni pagate direttamente. Gli esiti sono osservati fino alla fine del periodo. Le prove e i riscatti senza checkout sono esclusi.",
       "insights.blogProductCards.introductionDate": "Data di inizio del conteggio dei clic dalle 00:00 in Europe/Rome e del periodo Dopo.",
       "insights.blogProductCards.trackingStartsAt": "Istante di inizio del conteggio in formato ISO 8601 UTC.",
       "insights.blogProductCards.periods": "Stessa coorte del funnel su indice, categorie e articoli in tutte le lingue. Ogni sessione è assegnata a Prima o Dopo secondo la sua prima visita al blog nel periodo selezionato. Il tasso usa lo stesso criterio di passaggio dal blog al prodotto del funnel.",
