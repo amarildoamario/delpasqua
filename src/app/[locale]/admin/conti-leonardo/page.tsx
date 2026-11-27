@@ -37,6 +37,10 @@ type MonthData = {
   autoVatCents: number;
   autoStripeFeeCents: number;
   orderCount: number;
+  tastingCount: number;
+  autoTastingGrossCents: number;
+  autoTastingVatCents: number;
+  leonardoShareCents: number;
 };
 
 type OverrideData = {
@@ -84,6 +88,8 @@ export default function ContiLeonardoPage() {
   const [monthsData, setMonthsData] = useState<Record<string, MonthData>>({});
   const [overrides, setOverrides] = useState<Record<string, OverrideData>>({});
   const [vatRatePercent, setVatRatePercent] = useState(4);
+  const [tastingVatRate, setTastingVatRate] = useState(10);
+  const [unresolvedTastingPayments, setUnresolvedTastingPayments] = useState(0);
 
   const [parsedGls, setParsedGls] = useState<ParsedGlsInvoice | null>(null);
   const [targetGlsMonth, setTargetGlsMonth] = useState("");
@@ -110,7 +116,9 @@ export default function ContiLeonardoPage() {
       if (json.ok) {
         setMonthsData(json.monthsData || {});
         setOverrides(json.overrides || {});
-        setVatRatePercent(json.vatRate || 4);
+        setVatRatePercent(json.vatRate ?? 4);
+        setTastingVatRate(json.tastingVatRate ?? 10);
+        setUnresolvedTastingPayments(json.unresolvedTastingPayments ?? 0);
       }
     } catch (error) {
       console.error("Errore fetch dati conti leonardo:", error);
@@ -200,6 +208,10 @@ export default function ContiLeonardoPage() {
         autoVatCents: 0,
         autoStripeFeeCents: 0,
         orderCount: 0,
+        tastingCount: 0,
+        autoTastingGrossCents: 0,
+        autoTastingVatCents: 0,
+        leonardoShareCents: 0,
       };
 
       const ov = overrides[month] || {};
@@ -217,6 +229,9 @@ export default function ContiLeonardoPage() {
       return {
         month,
         orderCount: db.orderCount,
+        tastingCount: db.tastingCount,
+        autoTastingGrossCents: db.autoTastingGrossCents,
+        autoTastingVatCents: db.autoTastingVatCents,
         autoGrossCents: db.autoGrossCents,
         actualGrossCents,
         isGrossOverridden: ov.manualGrossCents !== undefined,
@@ -229,7 +244,7 @@ export default function ContiLeonardoPage() {
         autoStripeCents: db.autoStripeFeeCents,
         actualStripeCents,
         isStripeOverridden: ov.manualStripeFeeCents !== undefined,
-        leonardoShareCents: Math.round(actualGrossCents * 0.1),
+        leonardoShareCents: db.leonardoShareCents,
         pdfGlsFileName: ov.pdfGlsFileName,
       };
     });
@@ -246,6 +261,9 @@ export default function ContiLeonardoPage() {
     let actualStripe = 0;
     let leonardoShare = 0;
     let ordersCount = 0;
+    let tastingCount = 0;
+    let tastingGross = 0;
+    let tastingVat = 0;
 
     financialDetails.forEach((detail) => {
       autoGross += detail.autoGrossCents;
@@ -258,6 +276,9 @@ export default function ContiLeonardoPage() {
       actualStripe += detail.actualStripeCents;
       leonardoShare += detail.leonardoShareCents;
       ordersCount += detail.orderCount;
+      tastingCount += detail.tastingCount;
+      tastingGross += detail.autoTastingGrossCents;
+      tastingVat += detail.autoTastingVatCents;
     });
 
     return {
@@ -271,6 +292,9 @@ export default function ContiLeonardoPage() {
       actualStripe,
       leonardoShare,
       ordersCount,
+      tastingCount,
+      tastingGross,
+      tastingVat,
     };
   }, [financialDetails]);
 
@@ -436,7 +460,7 @@ export default function ContiLeonardoPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
           title="Conti Leonardo"
-          subtitle="Fatturato, spedizioni, IVA, Stripe e quota Leonardo con gerarchia manuale > automatico."
+          subtitle="Fatturato dello shop e delle degustazioni, spedizioni, IVA, commissioni Stripe e quota Leonardo."
         />
 
         <div className="flex items-center gap-2 self-start rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-600 shadow-sm sm:self-center">
@@ -453,6 +477,12 @@ export default function ContiLeonardoPage() {
           )}
         </div>
       </div>
+
+      {unresolvedTastingPayments > 0 && (
+        <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Importo Stripe da verificare per {unresolvedTastingPayments} {unresolvedTastingPayments === 1 ? "checkout degustazione" : "checkout degustazioni"}.
+        </p>
+      )}
 
       <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm">
         <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -596,7 +626,8 @@ export default function ContiLeonardoPage() {
             {euro(totals.actualGross)}
           </div>
           <div className="mt-1 text-xs text-neutral-500">
-            Totale effettivo su {totals.ordersCount} ordini
+            {totals.ordersCount} ordini shop · {totals.tastingCount} checkout degustazione
+            <br />Incassi degustazioni e voucher {euro(totals.tastingGross)}
           </div>
         </div>
 
@@ -626,7 +657,8 @@ export default function ContiLeonardoPage() {
             {euro(totals.actualVat)}
           </div>
           <div className="mt-1 text-xs text-neutral-500">
-            Sul venduto prodotti al {vatRatePercent}%
+            Shop {vatRatePercent}% · Degustazioni e voucher {tastingVatRate}%
+            <br />IVA degustazioni e voucher {euro(totals.tastingVat)}
           </div>
         </div>
 
@@ -654,7 +686,7 @@ export default function ContiLeonardoPage() {
             {euro(totals.leonardoShare)}
           </div>
           <div className="mt-3 border-t border-white/10 pt-2.5 text-xs font-extrabold tracking-wide text-emerald-100">
-            10% del fatturato lordo effettivo
+            10% di ogni checkout effettivamente pagato
           </div>
         </div>
       </div>
@@ -714,7 +746,7 @@ export default function ContiLeonardoPage() {
                     <Calendar className="h-4 w-4 shrink-0 text-neutral-900" />
                     <span className="text-base font-black text-neutral-950">{detail.month}</span>
                     <span className="rounded-full bg-neutral-200/80 px-2 py-0.5 text-[11px] font-bold text-neutral-800">
-                      {detail.orderCount} ordini
+                      {detail.orderCount} ordini shop · {detail.tastingCount} checkout degustazione
                     </span>
                   </div>
                   <div className="text-right">
@@ -877,7 +909,8 @@ export default function ContiLeonardoPage() {
                     </td>
 
                     <td className="py-4.5 pr-4 text-center text-sm font-black text-black">
-                      {detail.orderCount}
+                      <span>{detail.orderCount}</span>
+                      {detail.tastingCount > 0 && <span className="block text-xs text-neutral-500">{detail.tastingCount} degust.</span>}
                     </td>
 
                     <td className="py-4.5 pr-4 text-right">
@@ -1037,11 +1070,10 @@ export default function ContiLeonardoPage() {
             Logica Contabile
           </h4>
           <p className="text-xs leading-relaxed text-neutral-600">
-            Manuale batte automatico. Il fatturato e le fee Stripe arrivano in
-            automatico da Stripe quando recuperabili, con fallback ai dati ordine e alla
-            stima fee. Le spedizioni usano il valore automatico dell&apos;ordine finche non
-            inserisci un costo GLS/manuale. L&apos;IVA resta calcolata sul venduto come ora,
-            e la quota Leonardo e sempre il 10% del fatturato lordo effettivo del mese.
+            Gli incassi delle degustazioni e dei voucher rientrano nel mese del pagamento.
+            L&apos;IVA è inclusa nel prezzo. Usiamo le commissioni effettive da Stripe quando disponibili
+            e le stimiamo quando mancano. I valori manuali sostituiscono i rispettivi aggregati.
+            La quota Leonardo si calcola sempre sul lordo pagato dei singoli checkout.
           </p>
         </div>
       </div>

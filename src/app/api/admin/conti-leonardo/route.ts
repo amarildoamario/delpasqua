@@ -3,6 +3,11 @@ export const runtime = "nodejs";
 import { prisma } from "@/lib/server/prisma";
 import { requireAdminApi } from "@/lib/server/adminAuth";
 import { getStoreSettings } from "@/lib/server/settings";
+import { databasePolicy } from "@/lib/server/databaseSafety.mjs";
+import { metricsMonthKey } from "@/lib/server/salesMetrics";
+import { estimateStripeFeeCents, readTastingLedger } from "@/lib/server/tastingLedger";
+import { TASTING_VAT_PERCENT } from "@/lib/server/tastingVat";
+import { calcVatCentsFromSubtotal } from "@/lib/server/vat";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -32,14 +37,9 @@ type LedgerOrder = {
   stripeChargeId: string | null;
 };
 
-function estimateStripeFeeCents(totalCents: number) {
-  return Math.round(totalCents * 0.015 + 25);
-}
-
 function deriveVatCents(order: Pick<LedgerOrder, "vatCents" | "subtotalCents">, vatRatePercent: number) {
   if (order.vatCents > 0) return order.vatCents;
-  const vatRateDec = vatRatePercent / 100;
-  return Math.round((order.subtotalCents * vatRateDec) / (1 + vatRateDec));
+  return calcVatCentsFromSubtotal(order.subtotalCents, vatRatePercent / 100);
 }
 
 async function resolveStripeAutoValues(order: LedgerOrder) {
@@ -103,44 +103,32 @@ export async function GET(req: Request) {
   if (!guard.ok) return guard.response;
 
   try {
-    // 1) Carica impostazioni del negozio (IVA predefinita)
-    const settings = await getStoreSettings();
-    const vatRate = settings.vatRatePercent; // ad es: 4 (che equivale al 4%)
-
-    // 2) Carica gli override manuali salvati
-    const overridesRow = await prisma.setting.findUnique({
-      where: { key: "leonardo_conti_data" },
-    });
-    const overrides = overridesRow ? JSON.parse(overridesRow.value) : {};
-
-    // 3) Carica tutti gli ordini pagati/in corso
-    const orders = await prisma.order.findMany({
-      where: {
-        isTest: false,
-        status: {
-          in: [...PAID_LIKE_STATUSES],
+    const [settings, overridesRow, orders, tastings] = await Promise.all([
+      getStoreSettings(),
+      prisma.setting.findUnique({ where: { key: "leonardo_conti_data" } }),
+      prisma.order.findMany({
+        where: { isTest: false, status: { in: [...PAID_LIKE_STATUSES] } },
+        select: {
+          createdAt: true,
+          totalCents: true,
+          subtotalCents: true,
+          shippingCents: true,
+          vatCents: true,
+          stripeFeeCents: true,
+          stripePaymentIntentId: true,
+          stripeChargeId: true,
         },
-      },
-      select: {
-        createdAt: true,
-        totalCents: true,
-        subtotalCents: true,
-        shippingCents: true,
-        vatCents: true,
-        stripeFeeCents: true,
-        stripePaymentIntentId: true,
-        stripeChargeId: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        orderBy: { createdAt: "desc" },
+      }),
+      readTastingLedger(prisma, databasePolicy().mode === "deployed-production" ? stripe : null),
+    ]);
+    const vatRate = settings.vatRatePercent;
+    const overrides = overridesRow ? JSON.parse(overridesRow.value) : {};
 
     const stripeAutoValues = await Promise.all(
       orders.map(async (order) => resolveStripeAutoValues(order))
     );
 
-    // 4) Aggrega i dati in memoria per mese (formato YYYY-MM)
     const monthsData: Record<
       string,
       {
@@ -149,14 +137,29 @@ export async function GET(req: Request) {
         autoVatCents: number;
         autoStripeFeeCents: number;
         orderCount: number;
+        tastingCount: number;
+        autoTastingGrossCents: number;
+        autoTastingVatCents: number;
+        leonardoShareCents: number;
       }
     > = {};
 
+    function getMonth(date: Date) {
+      const key = metricsMonthKey(date);
+      return monthsData[key] ??= {
+        autoGrossCents: 0,
+        autoShippingCents: 0,
+        autoVatCents: 0,
+        autoStripeFeeCents: 0,
+        orderCount: 0,
+        tastingCount: 0,
+        autoTastingGrossCents: 0,
+        autoTastingVatCents: 0,
+        leonardoShareCents: 0,
+      };
+    }
+
     for (const [index, order] of orders.entries()) {
-      const d = new Date(order.createdAt);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const monthKey = `${year}-${month}`;
       const stripeData = stripeAutoValues[index];
       const autoGrossCents = stripeData?.grossCents ?? order.totalCents;
       const autoShippingCents = order.shippingCents;
@@ -165,28 +168,32 @@ export async function GET(req: Request) {
         stripeData?.stripeFeeCents ??
         (order.stripeFeeCents > 0 ? order.stripeFeeCents : estimateStripeFeeCents(autoGrossCents));
 
-      if (!monthsData[monthKey]) {
-        monthsData[monthKey] = {
-          autoGrossCents: 0,
-          autoShippingCents: 0,
-          autoVatCents: 0,
-          autoStripeFeeCents: 0,
-          orderCount: 0,
-        };
-      }
-
-      const m = monthsData[monthKey];
+      const m = getMonth(order.createdAt);
       m.autoGrossCents += autoGrossCents;
       m.autoShippingCents += autoShippingCents;
       m.autoVatCents += autoVatCents;
       m.autoStripeFeeCents += autoStripeFeeCents;
+      m.leonardoShareCents += Math.round(autoGrossCents / 10);
       m.orderCount += 1;
+    }
+
+    for (const payment of tastings.payments) {
+      const m = getMonth(payment.paidAt);
+      m.autoGrossCents += payment.grossCents;
+      m.autoVatCents += payment.vatCents;
+      m.autoStripeFeeCents += payment.stripeFeeCents;
+      m.tastingCount += 1;
+      m.autoTastingGrossCents += payment.grossCents;
+      m.autoTastingVatCents += payment.vatCents;
+      m.leonardoShareCents += Math.round(payment.grossCents / 10);
     }
 
     return guard.attach(
       NextResponse.json({
         ok: true,
         vatRate,
+        tastingVatRate: TASTING_VAT_PERCENT,
+        unresolvedTastingPayments: tastings.unresolvedBookings,
         monthsData,
         overrides,
         hierarchy: ["manual", "stripe", "database", "estimate"],

@@ -6,6 +6,8 @@ import { prisma } from "./prisma";
 import { localStripeTestError } from "./stripeEnvironment";
 import { isTestVoucher } from "./voucherTest";
 import { isRemovedVoucherTestCheckout } from "./deleteVoucherProposal";
+import { getTastingStripeTaxRate } from "./tastingStripeTax";
+import { TASTING_VAT_PERCENT } from "./tastingVat";
 
 export const VOUCHER_CHECKOUT_TYPE = "tasting-voucher";
 export const TASTING_VOUCHER_EMAIL_EVENT = "TASTING_VOUCHER_PAID";
@@ -99,13 +101,18 @@ export async function startVoucherCheckout(proposalId: string, internal: boolean
       });
       if (previous && !previous.failedAt) {
         const session = await stripe.checkout.sessions.retrieve(previous.stripeSessionId);
-        if (session.status === "open" && session.url) return session.url;
-        if (session.status !== "expired") throw new VoucherCheckoutError("processing", previous.id);
+        if (session.status === "open") {
+          if (session.url && session.metadata?.vatRate === String(TASTING_VAT_PERCENT) && session.total_details?.amount_tax) return session.url;
+          await stripe.checkout.sessions.expire(previous.stripeSessionId);
+        } else if (session.status !== "expired") {
+          throw new VoucherCheckoutError("processing", previous.id);
+        }
       }
 
       const id = randomUUID();
       const returnUrl = new URL(`/voucher/${proposalId}/`, origin).href;
-      const metadata = { type: VOUCHER_CHECKOUT_TYPE, voucherCheckoutId: id };
+      const metadata = { type: VOUCHER_CHECKOUT_TYPE, voucherCheckoutId: id, vatRate: String(TASTING_VAT_PERCENT) };
+      const taxRate = await getTastingStripeTaxRate(stripe);
       const prefillEmail = proposal.emails[0]?.recipient;
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
@@ -115,7 +122,7 @@ export async function startVoucherCheckout(proposalId: string, internal: boolean
         phone_number_collection: { enabled: true },
         billing_address_collection: "auto",
         expires_at: Math.floor(Date.now() / 1000) + 31 * 60,
-        line_items: [{ quantity: 1, price_data: {
+        line_items: [{ quantity: 1, tax_rates: [taxRate], price_data: {
           currency: "eur",
           unit_amount: proposal.totalCents,
           product_data: { name: proposal.tastingTitle, description: `Adulti: ${proposal.people} · Bambini: ${proposal.children}` },
@@ -126,7 +133,8 @@ export async function startVoucherCheckout(proposalId: string, internal: boolean
         cancel_url: `${returnUrl}?checkout=cancelled`,
       }, { idempotencyKey: `voucher-checkout/${id}` });
       sessionToExpire = session.id;
-      if (!session.url || session.livemode !== livemode || session.amount_total !== proposal.totalCents || session.currency !== "eur") {
+      if (!session.url || session.livemode !== livemode || session.amount_total !== proposal.totalCents
+        || session.currency !== "eur" || !session.total_details?.amount_tax) {
         throw new VoucherCheckoutError("unavailable");
       }
       await tx.tastingVoucherCheckout.create({

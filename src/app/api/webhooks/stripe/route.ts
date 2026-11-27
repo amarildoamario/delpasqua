@@ -458,7 +458,12 @@ export async function POST(req: NextRequest) {
                 paymentIntentId,
                 outcome: "processed",
                 processedAt: new Date(),
-                payloadSnippet: JSON.stringify({ paymentStatus: session.payment_status }),
+                payloadSnippet: JSON.stringify({
+                  paymentStatus: session.payment_status,
+                  amountTotal: session.amount_total,
+                  amountTax: session.total_details?.amount_tax,
+                  currency: session.currency,
+                }),
               },
             });
 
@@ -697,6 +702,14 @@ export async function POST(req: NextRequest) {
               outcome: "review",
               processedAt: new Date(),
               errorMessage: "Order not found for async payment success",
+              ...(session.metadata?.type === "tasting_booking" ? {
+                payloadSnippet: JSON.stringify({
+                  paymentStatus: session.payment_status,
+                  amountTotal: session.amount_total,
+                  amountTax: session.total_details?.amount_tax,
+                  currency: session.currency,
+                }),
+              } : {}),
             },
           });
           return NextResponse.json({ received: true }, { status: 200 });

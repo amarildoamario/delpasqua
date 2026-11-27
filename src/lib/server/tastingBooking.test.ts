@@ -44,6 +44,11 @@ class MockTastingDb {
 const db = new MockTastingDb();
 db.reset();
 
+const tastingTaxRates = {
+  data: [{ id: "txr_tasting", percentage: 10, country: "IT", state: null, tax_type: "vat" }],
+  has_more: false,
+};
+
 type MockPrisma = {
   tastingBooking: {
     findMany: (args: any) => Promise<Array<{ slotStart: Date; slotEnd: Date }>>;
@@ -189,8 +194,12 @@ test("concurrent tasting bookings on the same slot allow only one successful che
   t.mock.method(
     (Stripe as any).StripeResource.prototype,
     "_makeRequest",
-    async (_args: any, spec: any) => {
+    async (args: any, spec: any) => {
+      if (spec.fullPath === "/v1/tax_rates") return tastingTaxRates;
       if (spec.fullPath === "/v1/checkout/sessions") {
+        assert.deepEqual(args[0].line_items[0].tax_rates, ["txr_tasting"]);
+        assert.equal(args[0].line_items[0].price_data.unit_amount, 2000);
+        assert.equal(args[0].line_items[0].quantity, 2);
         const sessionId = `cs_tasting_${sessionSeq++}`;
         return {
           id: sessionId,
@@ -237,6 +246,7 @@ test("paid tasting booking is deleted when Stripe checkout session creation fail
     (Stripe as any).StripeResource.prototype,
     "_makeRequest",
     async (_args: any, spec: any) => {
+      if (spec.fullPath === "/v1/tax_rates") return tastingTaxRates;
       if (spec.fullPath === "/v1/checkout/sessions") {
         throw new Error("Simulated Stripe checkout failure");
       }

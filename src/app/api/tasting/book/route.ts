@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import Stripe from "stripe";
 import { localStripeTestError } from "@/lib/server/stripeEnvironment";
+import { getTastingStripeTaxRate } from "@/lib/server/tastingStripeTax";
 import { prisma } from "@/lib/server/prisma";
 import { getTastingTypes } from "@/lib/tasting/slots";
 import { sendTastingBookingAdminEmail } from "@/lib/server/tastingEmail";
@@ -182,9 +183,11 @@ export async function POST(req: Request) {
     try {
       const appUrl = resolveAppUrl(req);
       const priceCents = pricePerPerson * 100;
+      const taxRate = await getTastingStripeTaxRate(stripe);
       const lineItems = [
         {
           quantity: data.people,
+          tax_rates: [taxRate],
           price_data: {
             currency: "eur",
             unit_amount: priceCents,
