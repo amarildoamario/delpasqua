@@ -5,12 +5,12 @@ import CountryFlag from "@/components/CountryFlag";
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 
 import { prisma } from "@/lib/server/prisma";
-import { voucherMetrics } from "@/lib/server/voucherMetrics";
+import { readVoucherCheckouts, summarizeVoucherCheckouts } from "@/lib/server/voucherMetrics";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 
 import PageHeader from "@/app/[locale]/admin/_components/PageHeader";
 import RangePicker from "./RangerPicker";
-import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
+import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
 
 import { readCatalog } from "@/lib/server/catalog";
 
@@ -776,9 +776,11 @@ export default async function AdminDashboard({
 
   // Load Store Settings and Leonardo Overrides
 
-  const [vouchers, storeSettings, overridesRow, revenueAgg] = await Promise.all([
+  const voucherCheckouts = readVoucherCheckouts(prisma, start, endExclusive);
+  const [voucherRows, sales, storeSettings, overridesRow, revenueAgg] = await Promise.all([
 
-    voucherMetrics(start, endExclusive),
+    voucherCheckouts,
+    readSalesMetrics(prisma, start, endExclusive, undefined, voucherCheckouts),
 
     getStoreSettings(),
 
@@ -801,6 +803,8 @@ export default async function AdminDashboard({
 
   ]);
 
+  const vouchers = summarizeVoucherCheckouts(voucherRows, start, endExclusive);
+  const conversion = salesConversion(sales.paidOrders, uniqueSessionsCount);
   const vatRatePercent = storeSettings.vatRatePercent;
 
   const overrides = overridesRow ? JSON.parse(overridesRow.value) : {};
@@ -1004,7 +1008,7 @@ export default async function AdminDashboard({
 
   // Final finance aggregates
 
-  const revenueCents = rangeGrossCents;
+  const revenueCents = rangeGrossCents + vouchers.grossCents;
 
   const stripeCents = rangeStripeCents;
 
@@ -1016,15 +1020,16 @@ export default async function AdminDashboard({
 
 
 
-  const netCents = revenueCents - stripeCents - vatCents - shippingCents - leonardoCents;
+  const netCents = rangeGrossCents - stripeCents - vatCents - shippingCents - leonardoCents;
 
-  const aovCents = paidOrders > 0 ? Math.round(revenueCents / paidOrders) : 0;
+  const paidCount = paidOrders + vouchers.paid.length;
+  const aovCents = paidCount > 0 ? Math.round(revenueCents / paidCount) : 0;
 
 
 
-  const feeRate = revenueCents > 0 ? stripeCents / revenueCents : 0;
+  const feeRate = rangeGrossCents > 0 ? stripeCents / rangeGrossCents : 0;
 
-  const refundRate = revenueCents > 0 ? (revenueAgg._sum.refundCents ?? 0) / revenueCents : 0;
+  const refundRate = rangeGrossCents > 0 ? (revenueAgg._sum.refundCents ?? 0) / rangeGrossCents : 0;
 
 
 
@@ -1162,7 +1167,7 @@ export default async function AdminDashboard({
 
 
 
-  const trendRows = await readDashboardTrend(prisma, start, endExclusive, marketFilter, PAID_LIKE);
+  const trendRows = await readDashboardTrend(prisma, start, endExclusive, marketFilter, PAID_LIKE, vouchers);
   const maxPaidGross = Math.max(1, ...trendRows.map((row) => row.paidGrossCents));
 
   function getMarketQuery(marketCode?: string) {
@@ -1501,13 +1506,13 @@ export default async function AdminDashboard({
 
               title="Ordini totali"
 
-              value={String(totalOrders)}
+              value={String(totalOrders + vouchers.paid.length)}
 
-              tooltip="Numero totale di ordini creati nel periodo selezionato, inclusi ordini pagati, in attesa e annullati (esclusi carrelli abbandonati)."
+              tooltip="Ordini creati nel periodo e voucher degustazione incassati. I carrelli abbandonati sono esclusi."
 
             />
 
-            <CountryBarChart title="Ordini per Nazione" data={filteredTotalOrdersCountriesData} />
+            <CountryBarChart title="Ordini shop per Nazione" data={filteredTotalOrdersCountriesData} />
 
           </div>
 
@@ -1517,13 +1522,13 @@ export default async function AdminDashboard({
 
               title="Pagati"
 
-              value={String(paidOrders)}
+              value={String(paidCount)}
 
-              tooltip="Numero di ordini che hanno completato con successo il pagamento e sono in fase di preparazione, spediti o consegnati."
+              tooltip="Ordini pagati e voucher degustazione incassati."
 
             />
 
-            <CountryBarChart title="Pagati per Nazione" data={filteredPaidOrdersCountriesData} />
+            <CountryBarChart title="Pagati shop per Nazione" data={filteredPaidOrdersCountriesData} />
 
           </div>
 
@@ -1567,13 +1572,13 @@ export default async function AdminDashboard({
 
               hint="Annullati, scaduti o falliti"
 
-              value={String(checkoutCanceled)}
+              value={String(checkoutCanceled + vouchers.closed.length)}
 
               tooltip="Checkout Stripe creati nel periodo e chiusi senza pagamento: annullati, scaduti o falliti. Un annullamento resta contato anche dopo la scadenza della sessione. Ogni checkout conta una volta; prove e checkout ancora in attesa sono esclusi."
 
             />
 
-            <CountryBarChart title="Checkout per Nazione" data={filteredCheckoutCanceledCountriesData} />
+            <CountryBarChart title="Checkout shop per Nazione" data={filteredCheckoutCanceledCountriesData} />
 
           </div>
 
@@ -1583,17 +1588,24 @@ export default async function AdminDashboard({
 
 
 
-      {vouchers && <Section title="Voucher degustazioni" subtitle="Attività commerciale nel periodo selezionato.">
+      <Section title="Voucher degustazioni" subtitle="Attività commerciale nel periodo selezionato.">
         <div className="grid gap-3 sm:grid-cols-3">
-          <StatCard title="Checkout avviati" value={String(vouchers.checkouts)} />
-          <StatCard title="Voucher pagati" value={String(vouchers.paid)} />
+          <StatCard title="Checkout avviati" value={String(vouchers.started.length)} />
+          <StatCard title="Voucher pagati" value={String(vouchers.paid.length)} />
           <StatCard title="Incassi lordi voucher" value={euro(vouchers.grossCents)} />
         </div>
-      </Section>}
+      </Section>
 
       {/* Finanza */}
 
       <Section title="Finanza" subtitle="Ricavi pagati, fee, rimborsi e medie nel periodo.">
+
+        <div className="mb-3 grid gap-3 sm:grid-cols-2">
+          <StatCard title="Conversione vendite" value={conversion === null ? "—" : `${(conversion * 100).toFixed(1)}%`}
+            hint={`${sales.paidOrders} vendite pagate / ${uniqueSessionsCount} sessioni misurate`} />
+          <StatCard title="Tempo medio pagamento" value={sales.avgPaymentMs === null ? "—" : `${Math.round(sales.avgPaymentMs / 1000)} s`}
+            hint={`${sales.paymentSamples} pagamenti, dal checkout alla conferma`} />
+        </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -1605,7 +1617,7 @@ export default async function AdminDashboard({
 
               value={euro(revenueCents)}
 
-              tooltip="Somma lorda degli incassi ricevuti con successo per gli ordini pagati nel periodo."
+              tooltip="Somma lorda degli incassi per ordini pagati e voucher degustazione."
 
             />
 
@@ -1617,7 +1629,7 @@ export default async function AdminDashboard({
 
             <StatCard
 
-              title="Netto stimato"
+              title="Netto stimato shop"
 
               value={euro(netCents)}
 
@@ -1651,7 +1663,7 @@ export default async function AdminDashboard({
 
             <StatCard
 
-              title="Fee / Refund"
+              title="Fee / Refund shop"
 
               value={`${(feeRate * 100).toFixed(2)}% / ${(refundRate * 100).toFixed(2)}%`}
 

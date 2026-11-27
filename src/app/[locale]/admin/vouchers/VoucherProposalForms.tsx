@@ -132,14 +132,16 @@ export function VoucherProposalEmailForm({ id, tastingTitle }: { id: string; tas
   </form>;
 }
 
-export function DeleteVoucherProposal({ id, tastingTitle }: { id: string; tastingTitle: string }) {
+export function DeleteVoucherProposal({ id, tastingTitle, testRun }: { id: string; tastingTitle: string; testRun: boolean }) {
   const router = useRouter();
   const ready = useSyncExternalStore(subscribeToHydration, clientReady, serverReady);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
   async function remove() {
-    if (!window.confirm(`Eliminare definitivamente la proposta «${tastingTitle}»? Lo storico email e gli allegati saranno eliminati e il link della proposta smetterà di funzionare.`)) return;
+    if (!window.confirm(testRun
+      ? `Eliminare definitivamente la prova «${tastingTitle}» da 0,50 €? Verranno rimossi anche il checkout e gli eventuali voucher e prenotazione di prova.`
+      : `Eliminare definitivamente la proposta «${tastingTitle}»? Lo storico email e gli allegati saranno eliminati e il link della proposta smetterà di funzionare.`)) return;
     setDeleting(true);
     setError("");
     try {

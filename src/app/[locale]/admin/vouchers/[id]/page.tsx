@@ -5,9 +5,10 @@ import { formatMoney } from "@/lib/money";
 import { prisma, databaseReadOnly } from "@/lib/server/prisma";
 import { requireAdminPage } from "@/lib/server/adminAuth";
 import { VoucherProposalIdSchema } from "@/lib/server/tastingVoucherProposal";
-import { voucherCheckoutMode, voucherEmailAllowed, voucherNumber } from "@/lib/server/tastingVoucherPayment";
+import { voucherCheckoutMode } from "@/lib/server/tastingVoucherPayment";
 import PageHeader from "../../_components/PageHeader";
 import { VoucherProposalEmailForm } from "../VoucherProposalForms";
+import VoucherPaymentDetails, { voucherArchivePaymentSelect } from "../VoucherPaymentDetails";
 
 const dateTime = new Intl.DateTimeFormat("it-IT", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Rome" });
 
@@ -25,8 +26,7 @@ export default async function VoucherProposalPage({ params }: { params: Promise<
   if (!proposal) notFound();
   const payments = await prisma.tastingVoucher.findMany({
     where: { checkout: { proposalId: id } }, orderBy: { paidAt: "desc" },
-    select: { sequence: true, isTest: true, paidAt: true, email: true, phone: true, fullName: true,
-      delivery: { select: { sentAt: true } } },
+    select: voucherArchivePaymentSelect,
   });
   const checkoutMode = voucherCheckoutMode();
   const pdf = `/api/admin/vouchers/${id}/document/`;
@@ -47,20 +47,15 @@ export default async function VoucherProposalPage({ params }: { params: Promise<
         <a href={`/api/vouchers/${id}/checkout/`} target="_blank" rel="noreferrer" className="underline underline-offset-4">Apri il link di pagamento</a>
       </div>
     </section>
-    {payments.length > 0 && <section className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
+    <section className="rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">
       <h2 className="text-lg font-bold">Pagamenti registrati</h2>
+      {payments.length === 0 && <p className="mt-2 text-sm font-semibold text-neutral-600">Da pagare</p>}
       <ul className="mt-2 divide-y divide-neutral-200">
-        {payments.map((payment) => <li key={payment.sequence} className="space-y-1 py-3 text-sm">
-          <p className="font-semibold">{voucherNumber(payment, proposal.people)}{payment.isTest && " · Prova esclusa dalle metriche"}</p>
-          <p className="break-words text-neutral-700">{[payment.fullName, payment.email, payment.phone].filter(Boolean).join(" · ")}</p>
-          <p className="text-neutral-600">{dateTime.format(payment.paidAt)}</p>
-          <p className="text-neutral-600">{payment.delivery?.sentAt
-            ? `Email accettata dal servizio di invio il ${dateTime.format(payment.delivery.sentAt)}`
-            : voucherEmailAllowed(payment.isTest, payment.email) ? "Email del voucher in attesa di conferma"
-              : "Email di prova non abilitata per questo indirizzo"}</p>
+        {payments.map((payment) => <li key={payment.id} className="py-3">
+          <VoucherPaymentDetails payment={payment} people={proposal.people} />
         </li>)}
       </ul>
-    </section>}
+    </section>
     <div className="grid items-start gap-6 lg:grid-cols-2">
       {!databaseReadOnly && <VoucherProposalEmailForm id={id} tastingTitle={proposal.tastingTitle} />}
       <section className="min-w-0 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6">

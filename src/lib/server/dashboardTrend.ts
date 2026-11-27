@@ -1,6 +1,7 @@
 import type { OrderStatus, PrismaClient } from "@/generated/prisma";
 import { closedCheckoutWhere } from "./checkoutMetrics";
 import { toRomeDateISO } from "./metricsAnalyticsV6";
+import type { summarizeVoucherCheckouts } from "./voucherMetrics";
 
 type TrendRow = {
   day: string;
@@ -17,6 +18,7 @@ export async function readDashboardTrend(
   endExclusive: Date,
   market: string | null,
   paidStatuses: readonly OrderStatus[],
+  vouchers?: ReturnType<typeof summarizeVoucherCheckouts>,
 ) {
   const country = market ? { countryCode: market } : {};
   const paid = { in: [...paidStatuses] };
@@ -60,6 +62,15 @@ export async function readDashboardTrend(
   }
   for (const checkout of closed) rowFor(checkout.createdAt).closedCheckouts++;
   for (const checkout of excluded) rowFor(checkout.createdAt).excludedCheckouts++;
+  if (!market && vouchers) {
+    for (const voucher of vouchers.paid) {
+      const row = rowFor(voucher.paidAt);
+      row.orders++;
+      row.paidOrders++;
+      row.paidGrossCents += voucher.totalCents;
+    }
+    for (const checkout of vouchers.closed) rowFor(checkout.createdAt).closedCheckouts++;
+  }
 
   return [...rows.values()].sort((a, b) => a.day.localeCompare(b.day));
 }

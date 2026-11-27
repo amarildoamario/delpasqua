@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
 import { requireAdminApi } from "@/lib/server/adminAuth";
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
+import { paidVouchersInPeriod, readVoucherCheckouts } from "@/lib/server/voucherMetrics";
+import { commercialTastingBooking } from "@/lib/server/voucherTest";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
 import {
   canonicalizeSitePath,
@@ -121,7 +123,9 @@ export async function GET(req: Request) {
   }
 
   // Visits come from the tracker; confirmed sales come exclusively from orders.
-  const sales = await readSalesMetrics(prisma, start, endExclusive, sessionDeviceMap);
+  const voucherCheckouts = readVoucherCheckouts(prisma, start, endExclusive);
+  const sales = await readSalesMetrics(prisma, start, endExclusive, sessionDeviceMap, voucherCheckouts);
+  const paidVouchers = paidVouchersInPeriod(await voucherCheckouts, start, endExclusive);
   const cartTotalN = cartsTotal.length;
   const conversionAnalytics = salesConversion(sales.paidOrders, uniqueSessions);
   const avgPaymentMs = sales.avgPaymentMs;
@@ -243,7 +247,7 @@ export async function GET(req: Request) {
       select: { productKey: true, variantKey: true, data: true, cartId: true },
     }),
     prisma.contactMessage.count({ where: rangeWhere }),
-    prisma.tastingBooking.count({ where: rangeWhere }),
+    prisma.tastingBooking.count({ where: { ...rangeWhere, ...commercialTastingBooking } }),
   ]);
 
   const listCtr = listViews > 0 ? productClicks / listViews : null;
@@ -309,7 +313,7 @@ export async function GET(req: Request) {
   });
 
   const [insights, customers] = await Promise.all([
-    readCommerceInsights(prisma, start, endExclusive, includeInternal), readCustomerMetrics(prisma),
+    readCommerceInsights(prisma, start, endExclusive, includeInternal, voucherCheckouts), readCustomerMetrics(prisma),
   ]);
   const historicalRetention = computeHistoricalCustomerRetention(
     sales.paidOrdersMeta,
@@ -372,12 +376,12 @@ export async function GET(req: Request) {
         filterApplied: includeInternal ? "none" : "env=prod & isInternal=false",
       },
       filters: {
-        siteOnlyExcludedPrefixes: ["/checkout", "/payment", "/payments", "/stripe", "/api", "/_next", "/admin"],
+        siteOnlyExcludedPrefixes: ["/checkout", "/payment", "/payments", "/stripe", "/api", "/_next", "/admin", "/voucher"],
         shopDurationNormalized: "For /shop/* the duration is aggregated ignoring query string (?v=...)",
         testOrderPolicy: "excluded_where_isTest_true",
         quoteOrderPolicy: "included_in_commercial_totals_and_separated_in_quotePaidOrders",
       },
-      salesSource: "Order.paidAt",
+      salesSource: "Order.paidAt + TastingVoucher.paidAt",
       conversionDenominator: "uniqueSessions",
     },
 
@@ -385,6 +389,7 @@ export async function GET(req: Request) {
       paidOrdersWithSession: insights.orderAttribution.ordersWithSession,
       paidOrdersWithoutSession: insights.orderAttribution.ordersWithoutSession,
       storefrontPaidOrders: sales.storefrontPaidOrders,
+      voucherPaidOrders: sales.voucherPaidOrders,
       quotePaidOrders: sales.quotePaidOrders,
       sourceAttributionCoverage: insights.orderAttribution.sourceCoverage,
       deviceAttributionCoverage: insights.orderAttribution.deviceCoverage,
@@ -474,6 +479,7 @@ export async function GET(req: Request) {
       paidOrders: sales.paidOrders,
       storefrontPaidOrders: sales.storefrontPaidOrders,
       quotePaidOrders: sales.quotePaidOrders,
+      voucherPaidOrders: sales.voucherPaidOrders,
       conversionAnalytics,
       conversionAnalyticsPct: pct(conversionAnalytics),
       listViews,
@@ -511,6 +517,7 @@ export async function GET(req: Request) {
       realizedAovEur: sales.realizedAovEur,
       storefrontPaidOrders: sales.storefrontPaidOrders,
       quotePaidOrders: sales.quotePaidOrders,
+      voucherPaidOrders: sales.voucherPaidOrders,
       potentialCheckoutRevenueEur: sales.potentialCheckoutRevenueEur,
       lostCheckoutRevenueEur: sales.lostCheckoutRevenueEur,
       potentialCartRevenueEur,
@@ -545,6 +552,9 @@ export async function GET(req: Request) {
       netGoodsRevenueEur: sales.netGoodsRevenueEur,
       estimatedContributionMarginEur: sales.estimatedContributionMarginEur,
     },
+    paidTastingVouchers: paidVouchers.map(({ proposalId, tastingTitle, paidAt, totalCents }) => ({
+      proposalId, tastingTitle, paidAt, totalCents,
+    })),
 
     leadsAndDirectSales: {
       whatsappClicks: contactMap.get("whatsapp") ?? 0,
@@ -696,7 +706,7 @@ export async function GET(req: Request) {
       "leadsAndDirectSales.tastingBookingsCount": "Prenotazioni di degustazione registrate nel periodo.",
       "funnel.cartsTotal": "Numero di carrelli distinti (cartId) che hanno avuto add_to_cart o begin_checkout nel periodo.",
       "funnel.sessionAddToCartRatePct": "Percentuale di sessioni con almeno un add_to_cart (sessionsWithAddToCart / uniqueSessions).",
-      "funnel.paidOrders": "Ordini commerciali pagati nel periodo, da Order.paidAt.",
+      "funnel.paidOrders": "Vendite commerciali pagate nel periodo, inclusi i voucher degustazione.",
       "funnel.unpaidCheckouts": "Ordini commerciali creati nel periodo e attualmente privi di paidAt; include checkout ancora in corso, non equivale ad abbandoni definitivi.",
       "funnel.unpaidCheckoutRate": "unpaidCheckouts / checkoutsStarted, oppure null senza checkout. I carrelli tracciati sono separati dagli ordini.",
       "funnel.avgPaymentMs": "Media (Order.paidAt - Order.createdAt) degli ordini commerciali pagati nel periodo, inclusi pagamenti differiti.",

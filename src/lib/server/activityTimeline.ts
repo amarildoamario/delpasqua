@@ -1,6 +1,7 @@
 import type { PrismaClient } from "@/generated/prisma";
 import { isSitePage } from "@/lib/analytics/acquisition";
 import { metricsPeriod } from "./salesMetrics";
+import { readVoucherCheckouts } from "./voucherMetrics";
 
 export const ACTIVITY_TIMEFRAMES = [
   { key: "hour", label: "Ultima ora", days: 1, stepHours: 1 / 12, resolution: "Fasce di 5 minuti" },
@@ -82,13 +83,14 @@ export function summarizeActivityTimeline(events: TimelineEvent[], orders: Timel
   return { key: window.key, resolution: window.resolution, anchorDay: window.anchorDay, subtitle: window.subtitle, rows };
 }
 
-export async function readActivityTimeline(db: Pick<PrismaClient, "analyticsEvent" | "order">, value: string | undefined, anchorDay: string, includeInternal = false, now = new Date()) {
+export async function readActivityTimeline(db: Pick<PrismaClient, "analyticsEvent" | "order"> & Partial<Pick<PrismaClient, "tastingVoucherCheckout">>, value: string | undefined, anchorDay: string, includeInternal = false, now = new Date()) {
   const window = activityWindow(value, anchorDay, now);
   const range = { gte: window.start, lt: window.end };
-  const [events, orders] = await Promise.all([
+  const [events, orders, vouchers] = await Promise.all([
     db.analyticsEvent.findMany({ where: { createdAt: range, type: { in: ["page_view", "add_to_cart"] }, ...(includeInternal ? {} : { env: "prod", isInternal: false }) },
       select: { type: true, createdAt: true, sessionId: true, visitorId: true, cartId: true, path: true } }),
     db.order.findMany({ where: { isTest: false, paidAt: range }, select: { id: true, paidAt: true, isTest: true } }),
+    readVoucherCheckouts(db, window.start, window.end),
   ]);
-  return summarizeActivityTimeline(events, orders, window);
+  return summarizeActivityTimeline(events, [...orders, ...vouchers], window);
 }

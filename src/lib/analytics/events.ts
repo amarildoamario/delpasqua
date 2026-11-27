@@ -34,6 +34,10 @@ export function analyticsPath(path: string) {
   return path.split(/[?#]/, 1)[0].replace(/(\/(?:[a-z]{2}\/)?(?:preventivo|voucher))\/[^/]+\/?$/, "$1").slice(0, 300);
 }
 
+export function isVoucherCheckoutPath(path: string) {
+  return /^\/(?:[a-z]{2}\/)?voucher(?:\/|$)/.test(path);
+}
+
 export function isAdminPath(path: string) {
   return /^\/(?:[a-z]{2}\/)?(?:admin|developer)(?:\/|$)/.test(path);
 }

@@ -3,6 +3,7 @@ import { getClientIpFromHeaders, requireAdminApi } from "@/lib/server/adminAuth"
 import { databaseReadOnly, prisma } from "@/lib/server/prisma";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { VoucherProposalIdSchema } from "@/lib/server/tastingVoucherProposal";
+import { deleteVoucherProposal } from "@/lib/server/deleteVoucherProposal";
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const guard = await requireAdminApi(req, { csrf: true });
@@ -17,11 +18,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   if (!limit.ok) return respond({ error: "Troppe richieste. Riprova tra un minuto." }, 429);
 
   try {
-    const removed = await prisma.tastingVoucherProposal.deleteMany({
-      where: { id: id.data, checkouts: { none: {} } },
-    });
-    if (!removed.count && await prisma.tastingVoucherProposal.findUnique({ where: { id: id.data }, select: { id: true } })) {
-      return respond({ error: "La proposta ha un checkout associato. Il record di pagamento deve restare in archivio." }, 409);
+    if (!await deleteVoucherProposal(prisma, id.data)) {
+      return respond({ error: "I checkout associati a questa proposta devono restare in archivio." }, 409);
     }
     return respond({ ok: true });
   } catch (error) {

@@ -4,6 +4,7 @@ import { metricsPeriod } from "./salesMetrics";
 import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
 import { computeFunnelsAndSeries, toRomeDateISO } from "./metricsAnalyticsV6";
 import { summarizeBlogCards } from "./blogCardMetrics";
+import { readVoucherCheckouts } from "./voucherMetrics";
 
 type InsightEvent = {
   type: string; createdAt: Date; visitorId: string; sessionId: string;
@@ -13,6 +14,8 @@ type InsightEvent = {
 };
 type InsightOrder = {
   id: string; quoteId?: string | null; userAgent?: string | null;
+  channel?: "voucher";
+  failedAt?: Date | null;
   email?: string | null; totalCents?: number;
   createdAt: Date; paidAt: Date | null; isTest: boolean; stripeCheckoutSessionId: string | null;
   status?: string; updatedAt?: Date;
@@ -59,7 +62,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     // Legacy rows may lack a status event. Do not apply a status changed after
     // the selected period to an earlier cohort snapshot.
     const legacyClosure = closedStatuses.has(order.status ?? "") && order.updatedAt && order.updatedAt < endExclusive;
-    if (observedClosure || legacyClosure) canceledIds.add(order.id);
+    if (observedClosure || legacyClosure || (order.failedAt && order.failedAt < endExclusive)) canceledIds.add(order.id);
   }
   const cohortPaid = cohort.filter((o) => o.paidAt && o.paidAt < endExclusive);
   const canceledUnpaid = cohort.filter((o) => canceledIds.has(o.id) && (!o.paidAt || o.paidAt >= endExclusive));
@@ -91,8 +94,10 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   let ordersWithSession = 0;
   let ordersWithDevice = 0;
   let quotePaidOrders = 0;
+  let voucherPaidOrders = 0;
   for (const order of paid) {
     if (order.quoteId) quotePaidOrders++;
+    if (order.channel === "voucher") voucherPaidOrders++;
     const saved = context(order, includeInternal);
     const legacy = legacyLinks.get(order.id);
     const sessionId = saved?.sessionId;
@@ -134,7 +139,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
     decisionSessions.push(measured.size);
   }
   const ordersWithSource = paid.length - unattributedOrders;
-  const storefrontPaidOrders = paid.length - quotePaidOrders;
+  const storefrontPaidOrders = paid.length - quotePaidOrders - voucherPaidOrders;
 
   const buckets = (count: number) => Array.from({ length: count }, () => ({ visits: new Set<string>(), carts: new Set<string>(), orders: new Set<string>() }));
   const hours = buckets(24), days = buckets(7);
@@ -171,7 +176,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   const startISO = toRomeDateISO(start);
   const now = new Date();
   const v6 = computeFunnelsAndSeries({
-    orders,
+    orders: orders.filter((order) => order.channel !== "voucher"),
     events,
     history,
     start,
@@ -208,6 +213,7 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
       paidOrders: paid.length,
       storefrontPaidOrders,
       quotePaidOrders,
+      voucherPaidOrders,
       ordersWithSession,
       ordersWithoutSession: paid.length - ordersWithSession,
       ordersWithSource,
@@ -238,15 +244,22 @@ export function summarizeCommerceInsights(orders: InsightOrder[], events: Insigh
   };
 }
 
-export async function readCommerceInsights(db: Pick<PrismaClient, "order" | "analyticsEvent">, start: Date, endExclusive: Date, includeInternal = false) {
+export async function readCommerceInsights(
+  db: Pick<PrismaClient, "order" | "analyticsEvent"> & Partial<Pick<PrismaClient, "tastingVoucherCheckout">>,
+  start: Date,
+  endExclusive: Date,
+  includeInternal = false,
+  voucherCheckouts = readVoucherCheckouts(db, start, endExclusive),
+) {
   const quality = includeInternal ? {} : { env: "prod", isInternal: false };
-  const [orders, events] = await Promise.all([
+  const [orders, events, vouchers] = await Promise.all([
     db.order.findMany({ where: { isTest: false, OR: [{ createdAt: { gte: start, lt: endExclusive } }, { paidAt: { gte: start, lt: endExclusive } }] },
       select: { id: true, quoteId: true, userAgent: true, email: true, totalCents: true, isTest: true, createdAt: true, paidAt: true, stripeCheckoutSessionId: true, status: true, updatedAt: true,
         events: { where: { OR: [{ type: { in: ["ANALYTICS_CONTEXT", "ORDER_EXPIRED", "ORDER_CANCELED", "STRIPE_SESSION_FAILED", ...CHECKOUT_AUDIENCE_TYPES] } }, { toStatus: { in: ["ANNULLATO", "SCADUTO", "FALLITO"] } }] },
           select: { metaJson: true, type: true, createdAt: true, toStatus: true } } } }),
     db.analyticsEvent.findMany({ where: { ...quality, createdAt: { gte: start, lt: endExclusive }, type: { in: ["page_view", "add_to_cart", "checkout_canceled", "purchase", "product_view", "select_variant", "view_cart", "checkout_click", "begin_checkout", "contact_click", "blog_product_click"] } },
       select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, productKey: true, variantKey: true, referrer: true, userAgent: true, data: true } }),
+    voucherCheckouts,
   ]);
   const visitorIds = new Set<string>();
   for (const order of orders) { const value = context(order, includeInternal); if (value) visitorIds.add(value.visitorId); }
@@ -255,5 +268,5 @@ export async function readCommerceInsights(db: Pick<PrismaClient, "order" | "ana
     where: { ...quality, type: "page_view", visitorId: { in: [...visitorIds] }, createdAt: { lt: start } },
     select: { type: true, createdAt: true, visitorId: true, sessionId: true, cartId: true, orderId: true, path: true, referrer: true, userAgent: true, data: true },
   }) : [];
-  return summarizeCommerceInsights(orders, events, history, start, endExclusive, includeInternal);
+  return summarizeCommerceInsights([...orders, ...vouchers], events, history, start, endExclusive, includeInternal);
 }

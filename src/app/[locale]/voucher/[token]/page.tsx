@@ -4,6 +4,7 @@ import { formatMoney } from "@/lib/money";
 import { prisma } from "@/lib/server/prisma";
 import { VoucherProposalIdSchema } from "@/lib/server/tastingVoucherProposal";
 import { voucherCheckoutMode } from "@/lib/server/tastingVoucherPayment";
+import { isTestVoucher } from "@/lib/server/voucherTest";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -40,7 +41,7 @@ export default async function VoucherProposalPreview({ params, searchParams }: {
   };
   const failed = !!completed?.failedAt && !completed.voucher;
   const status = completed
-    ? completed.voucher ? (mode === "test" ? "Pagamento di prova registrato." : "Pagamento confermato. Riceverai il voucher via email.") : failed
+    ? completed.voucher ? (mode === "test" || isTestVoucher(proposal) ? "Pagamento di prova registrato." : "Pagamento confermato. Riceverai il voucher via email.") : failed
       ? "Il pagamento non è andato a buon fine. Puoi riprovare." : "Attendiamo la conferma del pagamento da Stripe."
     : checkout && messages[checkout];
   const canStart = failed || (!completed && checkout !== "paid" && checkout !== "processing" && checkout !== "internal");

@@ -8,7 +8,9 @@ import { requireAdminApi, getClientIpFromHeaders } from "@/lib/server/adminAuth"
 import { rateLimit } from "@/lib/server/rateLimit";
 import { readCatalog } from "@/lib/server/catalog";
 import { getStoreSettings } from "@/lib/server/settings";
-import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod } from "@/lib/server/salesMetrics";
+import { ADMIN_REPORT_LOOKBACK_DAYS, metricsMonthKey, metricsMonthWindow, metricsPeriod, readSalesMetrics, salesConversion } from "@/lib/server/salesMetrics";
+import { readVoucherCheckouts, summarizeVoucherCheckouts } from "@/lib/server/voucherMetrics";
+import { toRomeDateISO } from "@/lib/server/metricsAnalyticsV6";
 import { getAnalyticsCountryCode, summarizeTrafficGeography } from "@/lib/server/trafficGeography";
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 
@@ -253,7 +255,10 @@ export async function GET(req: Request) {
   })).sort((a, b) => b.revenueCents - a.revenueCents);
 
   // Load Store Settings and Leonardo Overrides
-  const [storeSettings, overridesRow, revenueAgg] = await Promise.all([
+  const voucherCheckouts = readVoucherCheckouts(prisma, start, endExclusive);
+  const [voucherRows, sales, storeSettings, overridesRow, revenueAgg] = await Promise.all([
+    voucherCheckouts,
+    readSalesMetrics(prisma, start, endExclusive, undefined, voucherCheckouts),
     getStoreSettings(),
     prisma.setting.findUnique({ where: { key: "leonardo_conti_data" } }),
     prisma.order.aggregate({
@@ -366,14 +371,16 @@ export async function GET(req: Request) {
     }
   }
 
-  const revenueCents = rangeGrossCents;
+  const vouchers = summarizeVoucherCheckouts(voucherRows, start, endExclusive);
+  const revenueCents = rangeGrossCents + vouchers.grossCents;
   const stripeCents = rangeStripeCents;
   const vatCents = rangeVatCents;
   const shippingCents = rangeShippingCents;
   const leonardoCents = rangeLeonardoCents;
 
-  const netCents = revenueCents - stripeCents - vatCents - shippingCents - leonardoCents;
-  const aovCents = paidOrders > 0 ? Math.round(revenueCents / paidOrders) : 0;
+  const netCents = rangeGrossCents - stripeCents - vatCents - shippingCents - leonardoCents;
+  const paidCount = paidOrders + vouchers.paid.length;
+  const aovCents = paidCount > 0 ? Math.round(revenueCents / paidCount) : 0;
 
   // ========= OPERATIVO =========
   const toShipInPeriod = await prisma.order.count({
@@ -472,6 +479,23 @@ export async function GET(req: Request) {
     ORDER BY day ASC
   `) ?? [];
 
+  const dailyTrend = new Map(trendRows.map((r) => [r.day, {
+    day: r.day,
+    orders: Number(r.orders),
+    paidOrders: Number(r.paidOrders),
+    grossCents: Number(r.grossCents ?? 0),
+    paidGrossCents: Number(r.paidGrossCents ?? 0),
+  }]));
+  for (const voucher of vouchers.paid) {
+    const day = toRomeDateISO(voucher.paidAt);
+    const row = dailyTrend.get(day) ?? { day, orders: 0, paidOrders: 0, grossCents: 0, paidGrossCents: 0 };
+    row.orders++;
+    row.paidOrders++;
+    row.grossCents += voucher.totalCents;
+    row.paidGrossCents += voucher.totalCents;
+    dailyTrend.set(day, row);
+  }
+
   const payload = {
     ok: true,
     period: {
@@ -482,11 +506,16 @@ export async function GET(req: Request) {
       revenueCents,
       netEstimatedCents: netCents,
       aovCents,
-      totalOrders,
-      paidOrders,
+      totalOrders: totalOrders + vouchers.paid.length,
+      paidOrders: paidCount,
       pendingOrders,
       canceledOrders,
-      checkoutCanceled,
+      checkoutCanceled: checkoutCanceled + vouchers.closed.length,
+      voucherPaidOrders: vouchers.paid.length,
+      voucherRevenueCents: vouchers.grossCents,
+      avgPaymentMs: sales.avgPaymentMs,
+      paymentSamples: sales.paymentSamples,
+      salesConversion: salesConversion(sales.paidOrders, uniqueSessionsCount),
       toShip: toShipInPeriod,
       shipped: shippedInPeriod.length,
       avgFulfillmentHours,
@@ -516,13 +545,7 @@ export async function GET(req: Request) {
       qty: Number(p.qty),
       revenueCents: Number(p.revenueCents),
     })),
-    dailyTrend: trendRows.map((r) => ({
-      day: r.day,
-      orders: Number(r.orders),
-      paidOrders: Number(r.paidOrders),
-      grossCents: Number(r.grossCents ?? 0),
-      paidGrossCents: Number(r.paidGrossCents ?? 0),
-    })),
+    dailyTrend: [...dailyTrend.values()].sort((a, b) => a.day.localeCompare(b.day)),
   };
 
   const filename = `dashboard_report_${startISO}__${endISO}.json`;

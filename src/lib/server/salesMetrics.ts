@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@/generated/prisma";
 import { CHECKOUT_AUDIENCE_TYPES, excludedCheckout } from "./checkoutAudience";
+import { readVoucherCheckouts } from "./voucherMetrics";
 
 export type SalesOrderItem = {
   productId?: string;
@@ -12,6 +13,7 @@ export type SalesOrderItem = {
 
 export type SalesOrder = {
   id: string;
+  channel?: "voucher";
   quoteId?: string | null;
   isTest: boolean;
   createdAt: Date;
@@ -243,7 +245,8 @@ export function summarizeSales(
   const started = unique.filter((order) => inPeriod(order.createdAt) && !excludedCheckout(order));
   const unpaidCheckouts = started.filter((order) => order.paidAt === null).length;
   const quotePaidOrders = paid.filter((order) => Boolean(order.quoteId)).length;
-  const storefrontPaidOrders = paid.length - quotePaidOrders;
+  const voucherPaidOrders = paid.filter((order) => order.channel === "voucher").length;
+  const storefrontPaidOrders = paid.length - quotePaidOrders - voucherPaidOrders;
   const durations: number[] = [];
   const devices = new Map<string, { purchases: number; durations: number[] }>();
 
@@ -263,8 +266,9 @@ export function summarizeSales(
   const paidRevenueCents = paid.reduce((sum, o) => sum + (o.totalCents ?? 0), 0);
   const realizedRevenueEur = +(paidRevenueCents / 100).toFixed(2);
   const realizedAovEur = paid.length > 0 ? +((paidRevenueCents / 100) / paid.length).toFixed(2) : null;
-  const realizedSubtotalCents = paid.reduce((sum, o) => sum + (o.subtotalCents ?? o.totalCents ?? 0), 0);
-  const realizedDiscountCents = paid.reduce((sum, o) => sum + (o.discountCents ?? 0), 0);
+  const goods = paid.filter((order) => order.channel !== "voucher");
+  const realizedSubtotalCents = goods.reduce((sum, o) => sum + (o.subtotalCents ?? o.totalCents ?? 0), 0);
+  const realizedDiscountCents = goods.reduce((sum, o) => sum + (o.discountCents ?? 0), 0);
   const netGoodsRevenueEur = +((realizedSubtotalCents - realizedDiscountCents) / 100).toFixed(2);
   const estimatedContributionMarginEur = +(netGoodsRevenueEur * 0.60).toFixed(2);
 
@@ -314,6 +318,7 @@ export function summarizeSales(
     paidOrders: paid.length,
     storefrontPaidOrders,
     quotePaidOrders,
+    voucherPaidOrders,
     startedCheckouts: started.length,
     unpaidCheckouts,
     unpaidCheckoutRate: salesConversion(unpaidCheckouts, started.length),
@@ -345,14 +350,15 @@ export function summarizeSales(
 }
 
 export async function readSalesMetrics(
-  db: Pick<PrismaClient, "order">,
+  db: Pick<PrismaClient, "order"> & Partial<Pick<PrismaClient, "tastingVoucherCheckout">>,
   start: Date,
   endExclusive: Date,
   sessionDevices?: ReadonlyMap<string, string>,
+  voucherCheckouts = readVoucherCheckouts(db, start, endExclusive),
 ) {
   // One read replaces the former purchase/cart/device analytics queries. The
   // payment record exists even when no success page, JS or tracking cookie runs.
-  const orders = await db.order.findMany({
+  const [orders, vouchers] = await Promise.all([db.order.findMany({
     where: {
       isTest: false,
       OR: [
@@ -383,6 +389,6 @@ export async function readSalesMetrics(
         },
       },
     },
-  });
-  return summarizeSales(orders, start, endExclusive, sessionDevices);
+  }), voucherCheckouts]);
+  return summarizeSales([...orders, ...vouchers], start, endExclusive, sessionDevices);
 }

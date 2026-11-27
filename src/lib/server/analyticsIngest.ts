@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { z } from "zod";
-import { analyticsPath, isAdminPath } from "@/lib/analytics/events";
+import { analyticsPath, isAdminPath, isVoucherCheckoutPath } from "@/lib/analytics/events";
 import type { AnalyticsEventSchema } from "@/lib/server/schemas";
 import { normalizeTrafficCountry } from "@/lib/server/trafficGeography";
 import { acquisitionSource } from "@/lib/analytics/acquisition";
@@ -43,7 +43,7 @@ export function prepareAnalyticsEvents(events: IncomingEvent[], req: Request, no
   const unique = new Map<string, Record<string, unknown>>();
   for (const event of events) {
     const path = analyticsPath(event.path ?? "/");
-    if (isAdminPath(path) || event.productKey === "prodotto-test") continue;
+    if (isAdminPath(path) || isVoucherCheckoutPath(path) || event.productKey === "prodotto-test") continue;
     if (event.isInternal || (isProductionHost && event.env && event.env !== "prod")) continue;
     const createdAt = event.occurredAt ? Date.parse(event.occurredAt) : now;
     if (!Number.isFinite(createdAt) || createdAt < now - MAX_AGE_MS || createdAt > now + 60_000) continue;

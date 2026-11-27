@@ -4,6 +4,8 @@ import { z } from "zod";
 import { databasePolicy } from "./databaseSafety.mjs";
 import { prisma } from "./prisma";
 import { localStripeTestError } from "./stripeEnvironment";
+import { isTestVoucher } from "./voucherTest";
+import { isRemovedVoucherTestCheckout } from "./deleteVoucherProposal";
 
 export const VOUCHER_CHECKOUT_TYPE = "tasting-voucher";
 export const TASTING_VOUCHER_EMAIL_EVENT = "TASTING_VOUCHER_PAID";
@@ -56,6 +58,15 @@ export function voucherRedemptionCode(id: string) {
 
 export function voucherCodeDigest(code: string) {
   return createHash("sha256").update(code).digest("hex");
+}
+
+export function issuedVoucherCode(voucher: { id: string; codeDigest: string }) {
+  const secret = voucherSecret();
+  if (!secret) return null;
+  const code = voucherRedemptionCode(voucher.id);
+  if (voucherCodeDigest(code) === voucher.codeDigest) return code;
+  const legacy = createHmac("sha256", secret).update(voucher.id).digest("hex").slice(0, 16).toUpperCase().match(/.{4}/g)?.join("-");
+  return legacy && voucherCodeDigest(legacy) === voucher.codeDigest ? legacy : null;
 }
 
 export function voucherEmailAllowed(isTest: boolean, email: string) {
@@ -146,7 +157,11 @@ export async function processVoucherCheckoutEvent(event: {
       return false;
     };
     // The signed event may arrive before Checkout creation commits. Retry instead of dropping it.
-    if (!checkout) throw new Error("Voucher checkout not available yet");
+    if (!checkout) {
+      if (session.currency === "eur" && session.amount_total !== null && isTestVoucher({ totalCents: session.amount_total })
+        && isRemovedVoucherTestCheckout(session.metadata?.voucherCheckoutId)) return finishEvent("processed");
+      throw new Error("Voucher checkout not available yet");
+    }
     if (session.metadata?.voucherCheckoutId !== checkout.id || session.livemode !== checkout.livemode
       || session.livemode !== event.livemode || session.currency !== "eur" || session.amount_total !== checkout.proposal.totalCents) {
       return finishEvent("review", "Voucher checkout identity, mode, currency or amount mismatch");
@@ -164,7 +179,7 @@ export async function processVoucherCheckoutEvent(event: {
     }
     const id = randomUUID();
     const codeDigest = voucherCodeDigest(voucherRedemptionCode(id));
-    const isTest = !session.livemode;
+    const isTest = isTestVoucher({ livemode: session.livemode, totalCents: checkout.proposal.totalCents });
     await tx.tastingVoucher.create({ data: {
       id, checkoutId: checkout.id, codeDigest, stripePaymentIntentId: paymentIntentId,
       totalCents: checkout.proposal.totalCents, fullName: session.customer_details?.name?.trim() || null,

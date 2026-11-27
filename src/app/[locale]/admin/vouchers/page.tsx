@@ -8,6 +8,9 @@ import { getTastingTypes } from "@/lib/tasting/slots";
 import { routing } from "@/i18n/routing";
 import PageHeader from "../_components/PageHeader";
 import { DeleteVoucherProposal, VoucherProposalForm } from "./VoucherProposalForms";
+import VoucherPaymentDetails, { voucherArchivePaymentSelect } from "./VoucherPaymentDetails";
+import { isTestVoucher } from "@/lib/server/voucherTest";
+import { isRemovableVoucherTest } from "@/lib/server/deleteVoucherProposal";
 
 const batchSize = 25;
 
@@ -23,7 +26,14 @@ export default async function VouchersPage({ params, searchParams }: {
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: batchSize + 1,
     ...(cursor.success ? { cursor: { id: cursor.data }, skip: 1 } : {}),
-    select: { id: true, tastingTitle: true, people: true, children: true, totalCents: true, createdAt: true, _count: { select: { emails: true } } },
+    select: {
+      id: true, tastingTitle: true, people: true, children: true, totalCents: true, createdAt: true,
+      _count: { select: { emails: true, checkouts: true } },
+      checkouts: {
+        where: { voucher: { isNot: null } }, orderBy: { voucher: { paidAt: "desc" } },
+        select: { voucher: { select: voucherArchivePaymentSelect } },
+      },
+    },
   }).catch((error: unknown) => {
     if (databaseReadOnly && typeof error === "object" && error !== null && "code" in error && error.code === "P2021") return null;
     throw error;
@@ -44,11 +54,17 @@ export default async function VouchersPage({ params, searchParams }: {
             <p className="mt-1 text-sm text-neutral-600">
               {proposal.createdAt.toLocaleDateString("it-IT", { timeZone: "Europe/Rome" })} · Adulti {proposal.people} · Bambini {proposal.children}
               {proposal._count.emails > 0 && ` · ${proposal._count.emails} email in archivio`}
+              {isTestVoucher(proposal) && " · Prova"}
             </p>
+            <div className="mt-2 space-y-2">
+              {proposal.checkouts.length === 0 && <p className="text-sm font-semibold text-neutral-600">Da pagare</p>}
+              {proposal.checkouts.map(({ voucher }) => voucher && <VoucherPaymentDetails key={voucher.id} payment={voucher} people={proposal.people} />)}
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <strong className="text-sm tabular-nums">{formatMoney(proposal.totalCents, "EUR")}</strong>
-            {!databaseReadOnly && <DeleteVoucherProposal id={proposal.id} tastingTitle={proposal.tastingTitle} />}
+            {!databaseReadOnly && (proposal._count.checkouts === 0 || isRemovableVoucherTest(proposal.id)) &&
+              <DeleteVoucherProposal id={proposal.id} tastingTitle={proposal.tastingTitle} testRun={isRemovableVoucherTest(proposal.id)} />}
           </div>
         </li>)}
       </ul>

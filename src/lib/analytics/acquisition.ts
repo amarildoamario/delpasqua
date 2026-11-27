@@ -29,5 +29,5 @@ export function acquisitionSource(userAgent: string, referrer?: string | null) {
 }
 
 export function isSitePage(path?: string | null) {
-  return !!path && !/^\/(?:[a-z]{2}\/)?(?:checkout|payments?|stripe|api|_next|admin|developer)(?:\/|$)/.test(path);
+  return !!path && !/^\/(?:[a-z]{2}\/)?(?:checkout|payments?|stripe|api|_next|admin|developer|voucher)(?:\/|$)/.test(path);
 }

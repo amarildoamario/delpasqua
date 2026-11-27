@@ -5,6 +5,7 @@ import { prisma } from "../src/lib/server/prisma";
 import { metricsPeriod, readSalesMetrics } from "../src/lib/server/salesMetrics";
 import { readCommerceInsights } from "../src/lib/server/commerceInsights";
 import { readCustomerMetrics } from "../src/lib/server/customerMetrics";
+import { VOUCHER_TEST_AMOUNT_CENTS } from "../src/lib/server/voucherTest";
 
 async function main() {
   const now = new Date();
@@ -16,6 +17,14 @@ async function main() {
       const insights = await readCommerceInsights(db, start, endExclusive);
       const customers = await readCustomerMetrics(db, now);
       const paid = await db.order.aggregate({ where: { isTest: false, paidAt: { gte: start, lt: endExclusive } }, _count: { id: true }, _sum: { totalCents: true } });
+      const vouchers = await db.tastingVoucher.aggregate({
+        where: {
+          isTest: false, paidAt: { gte: start, lt: endExclusive }, totalCents: { not: VOUCHER_TEST_AMOUNT_CENTS },
+          checkout: { livemode: true, proposal: { totalCents: { not: VOUCHER_TEST_AMOUNT_CENTS } } },
+        },
+        _count: { id: true }, _sum: { totalCents: true },
+      });
+      const paidCount = paid._count.id + vouchers._count.id;
       const [history] = await db.$queryRaw<{ customers: number; net: bigint }[]>`
         SELECT COUNT(*)::int AS customers, COALESCE(SUM(net), 0)::bigint AS net FROM (
           SELECT LOWER(BTRIM(email)) AS email,
@@ -24,11 +33,11 @@ async function main() {
           GROUP BY LOWER(BTRIM(email))
         ) customers
       `;
-      assert.equal(sales.paidOrders, paid._count.id);
-      assert.equal(Math.round(sales.realizedRevenueEur * 100), paid._sum.totalCents ?? 0);
-      assert.equal(insights.decision.paidOrders, paid._count.id);
-      assert.equal(insights.hourly.reduce((n, row) => n + row.orders, 0), paid._count.id);
-      assert.equal(insights.weekdays.reduce((n, row) => n + row.orders, 0), paid._count.id);
+      assert.equal(sales.paidOrders, paidCount);
+      assert.equal(Math.round(sales.realizedRevenueEur * 100), (paid._sum.totalCents ?? 0) + (vouchers._sum.totalCents ?? 0));
+      assert.equal(insights.decision.paidOrders, paidCount);
+      assert.equal(insights.hourly.reduce((n, row) => n + row.orders, 0), paidCount);
+      assert.equal(insights.weekdays.reduce((n, row) => n + row.orders, 0), paidCount);
       assert.equal(customers.totalCustomers, history.customers);
       assert.equal(customers.totalLtvCents, Number(history.net));
       assert.equal(Object.values(customers.segments).reduce((n, count) => n + count, 0), customers.totalCustomers);

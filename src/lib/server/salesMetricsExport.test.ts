@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-test("metrics export counts two paid orders without any browser purchase events, using visits rather than visitors or pageviews", async () => {
+test("metrics count shop and voucher payments without browser purchase events or test voucher checkouts", async () => {
   let orderReads = 0;
   const findMany = async (args: unknown) => {
     orderReads++;
@@ -54,6 +54,20 @@ test("metrics export counts two paid orders without any browser purchase events,
   ];
   globalState.prismaPostgres = {
     order: { findMany, count: async () => 3 },
+    tastingVoucherCheckout: { findMany: async (args: unknown) => {
+      const query = args as { where: { livemode: boolean; proposal: unknown; AND: unknown[] } };
+      assert.equal(query.where.livemode, true);
+      assert.deepEqual(query.where.proposal, { totalCents: { not: 50 } });
+      assert.deepEqual(query.where.AND[0], { OR: [
+        { internal: false, voucher: null },
+        { voucher: { isTest: false, totalCents: { not: 50 } } },
+      ] });
+      return [{
+        id: "voucher-checkout", stripeSessionId: "cs_voucher", createdAt: new Date("2026-11-08T10:00:00Z"), failedAt: null,
+        proposal: { id: "proposal", tastingTitle: "Degustazione intermedia", totalCents: 7000 },
+        voucher: { email: "buyer@example.com", paidAt: new Date("2026-11-08T10:00:45Z"), totalCents: 7000 },
+      }];
+    } },
     analyticsEvent: { count, groupBy, findMany: async (args: unknown) => {
       const query = args as { where: { type: unknown } };
       return query.where.type === "add_to_cart" ? cartEvents : [];
@@ -72,25 +86,28 @@ test("metrics export counts two paid orders without any browser purchase events,
     const report = await response.json();
     assert.equal(report.meta.version, "metrics-export-v6");
     assert.equal(report.meta.legacyVersionAlias, "metrics-export-v5");
-    assert.equal(report.meta.salesSource, "Order.paidAt");
+    assert.equal(report.meta.salesSource, "Order.paidAt + TastingVoucher.paidAt");
     assert.equal(report.meta.conversionDenominator, "uniqueSessions");
-    assert.equal(report.kpis.paidOrders, 2);
+    assert.equal(report.kpis.paidOrders, 3);
+    assert.equal(report.kpis.storefrontPaidOrders, 2);
+    assert.equal(report.kpis.voucherPaidOrders, 1);
+    assert.equal(report.paidTastingVouchers[0].totalCents, 7000);
     assert.equal(report.kpis.uniqueSessions, 2);
     assert.equal(report.kpis.uniqueVisitors, 1);
     assert.equal(report.kpis.pageViews, 4);
     assert.equal(report.kpis.cartsCheckoutClicked, 1);
     assert.equal(report.kpis.checkoutClickRate, 1, "Orphan click events cannot inflate checkout conversion above measured carts");
-    assert.equal(report.kpis.conversionAnalytics, 1);
-    assert.equal(report.kpis.conversionAnalyticsPct, 100);
+    assert.equal(report.kpis.conversionAnalytics, 1.5);
+    assert.equal(report.kpis.conversionAnalyticsPct, 150);
     assert.equal(report.devices.rows[0].purchases, 2);
     assert.equal(report.devices.rows[0].conversion, 1);
     assert.equal(report.funnel.cartsTotal, 1);
-    assert.equal(report.funnel.paidOrders, 2);
+    assert.equal(report.funnel.paidOrders, 3);
     assert.equal(report.funnel.unpaidCheckouts, 1);
-    assert.equal(report.funnel.avgPaymentMs, 300_000);
+    assert.equal(report.funnel.avgPaymentMs, 215_000);
     assert.equal(report.funnel.sessionAddToCartRate, 0.5, "orphan add events cannot inflate measured-session rates");
-    assert.equal(report.commercial.realizedRevenueEur, 60);
-    assert.equal(report.commercial.realizedAovEur, 30);
+    assert.equal(report.commercial.realizedRevenueEur, 130);
+    assert.equal(report.commercial.realizedAovEur, 43.33);
     assert.equal(report.commercial.lostCheckoutRevenueEur, 30);
     assert.equal(report.commercial.potentialCartRevenueEur, 62);
     assert.equal(report.commercial.avgCartValueEur, 62);
@@ -127,7 +144,7 @@ test("metrics export counts two paid orders without any browser purchase events,
     visit(tree);
     assert.deepEqual(pageInsights, report.insights, "Dashboard component and export share the same insight calculations");
     assert.deepEqual(pageRankings, [{ path: "/shop/evo", views: 4, totalMs: 19000, samples: 10, averageMs: 1900, longestMs: 2000 }]);
-    assert.equal(activity?.rows.reduce((sum, row) => sum + row.orders, 0), 2);
+    assert.equal(activity?.rows.reduce((sum, row) => sum + row.orders, 0), 3);
     assert.equal(kpis.get("Valore Prodotti Aggiunti"), new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(report.commercial.potentialCartRevenueEur));
     assert.equal(kpis.get("Litri Richiesti a Carrello"), "2.8 L");
     assert.equal(kpis.get("Valore Checkout Non Pagati"), new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(30));

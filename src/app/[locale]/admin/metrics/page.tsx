@@ -1,5 +1,6 @@
 import { SITE_ANALYTICS_FILTER } from "@/lib/server/analyticsFilters";
 import React from "react";
+import { Link } from "@/i18n/routing";
 import RangePicker from "@/app/[locale]/admin/dashboard/RangerPicker";
 import { prisma } from "@/lib/server/prisma";
 import {
@@ -14,6 +15,8 @@ import CommerceInsights from "../_components/CommerceInsights";
 import PageRankings from "../_components/PageRankings";
 import { summarizePageRankings } from "@/lib/pageRankings";
 import { ACTIVITY_TIMEFRAMES, readActivityTimeline } from "@/lib/server/activityTimeline";
+import { paidVouchersInPeriod, readVoucherCheckouts } from "@/lib/server/voucherMetrics";
+import { commercialTastingBooking } from "@/lib/server/voucherTest";
 import { readCommerceInsights } from "@/lib/server/commerceInsights";
 import { readCustomerMetrics } from "@/lib/server/customerMetrics";
 import { computeHistoricalCustomerRetention } from "@/lib/server/metricsAnalyticsV6";
@@ -141,7 +144,9 @@ export default async function AdminMetricsPage({
     deviceSessions.set(k, (deviceSessions.get(k) ?? 0) + 1);
   }
 
-  const sales = await readSalesMetrics(prisma, start, endExclusive, sessionDeviceMap);
+  const voucherCheckouts = readVoucherCheckouts(prisma, start, endExclusive);
+  const sales = await readSalesMetrics(prisma, start, endExclusive, sessionDeviceMap, voucherCheckouts);
+  const paidVouchers = paidVouchersInPeriod(await voucherCheckouts, start, endExclusive).sort((a, b) => +b.paidAt - +a.paidAt);
   const conversionAnalytics = salesConversion(sales.paidOrders, uniqueSessions);
 
   const avgPagesPerSession = uniqueSessions > 0 ? pageViews / uniqueSessions : null;
@@ -277,7 +282,7 @@ export default async function AdminMetricsPage({
       select: { productKey: true, variantKey: true, data: true, cartId: true },
     }),
     prisma.contactMessage.count({ where: rangeWhere }),
-    prisma.tastingBooking.count({ where: rangeWhere }),
+    prisma.tastingBooking.count({ where: { ...rangeWhere, ...commercialTastingBooking } }),
   ]);
 
   const listCtr = listViews > 0 ? productClicks / listViews : null;
@@ -303,7 +308,7 @@ export default async function AdminMetricsPage({
 
   const addToCartTotalMap = addsByProduct;
   const [insights, customers, activity] = await Promise.all([
-    readCommerceInsights(prisma, start, endExclusive, includeInternal),
+    readCommerceInsights(prisma, start, endExclusive, includeInternal, voucherCheckouts),
     readCustomerMetrics(prisma),
     readActivityTimeline(prisma, getOne(sp.activity), endISO, includeInternal),
   ]);
@@ -483,12 +488,26 @@ export default async function AdminMetricsPage({
           subtitle="Richieste ricevute dal form"
         />
         <Kpi
-          title="Degustazioni"
+          title="Prenotazioni degustazioni"
           value={nice(tastingBookingsCount)}
-          subtitle="Prenotazioni tour/visite"
+          subtitle="Richieste di prenotazione"
         />
       </div>
     </div>
+
+    <section className="rounded-2xl border border-neutral-200 bg-white p-4">
+      <h2 className="text-sm font-extrabold text-neutral-900">Voucher degustazioni pagati</h2>
+      {!paidVouchers.length && <p className="mt-2 text-sm text-neutral-600">Nessun pagamento nel periodo.</p>}
+      <ul className="divide-y divide-neutral-200">
+        {paidVouchers.map((voucher) => (
+          <li key={voucher.id} className="flex flex-wrap justify-between gap-2 py-2 text-sm">
+            <Link href={`/admin/vouchers/${voucher.proposalId}/`} className="font-semibold underline underline-offset-4">{voucher.tastingTitle}</Link>
+            <span className="text-neutral-600">{voucher.paidAt.toLocaleString("it-IT", { timeZone: "Europe/Rome", dateStyle: "short", timeStyle: "short" })}</span>
+            <strong className="tabular-nums">{formatEur(voucher.totalCents / 100)}</strong>
+          </li>
+        ))}
+      </ul>
+    </section>
 
     {/* KPI (v2) */}
     <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3">
@@ -504,7 +523,7 @@ export default async function AdminMetricsPage({
       <Kpi
         title="Ordini effettuati"
         value={nice(sales.paidOrders)}
-        subtitle={sales.quotePaidOrders > 0 ? `${nice(sales.storefrontPaidOrders)} shop · ${nice(sales.quotePaidOrders)} prev.` : "pagati · test esclusi"}
+        subtitle={`${nice(sales.storefrontPaidOrders)} shop · ${nice(sales.quotePaidOrders)} prev. · ${nice(sales.voucherPaidOrders)} voucher`}
       />
     </div>
 

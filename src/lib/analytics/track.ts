@@ -1,7 +1,7 @@
 "use client";
 
 import { getOrCreateCartId } from "./cartId";
-import { ANALYTICS_TYPES, analyticsPath, isAdminPath, type AnalyticsEvent } from "./events";
+import { ANALYTICS_TYPES, analyticsPath, isAdminPath, isVoucherCheckoutPath, type AnalyticsEvent } from "./events";
 import { AnalyticsQueue, ANALYTICS_BATCH_SIZE, ANALYTICS_FLUSH_MS } from "./queue";
 import { browserAnalyticsExcluded } from "./exclusion";
 import { blogProductClickData } from "./blogProductClick";
@@ -33,7 +33,7 @@ export function analyticsAllowed() {
   if (mode === "1") setCookie("internal", "1", 86400);
   if (mode === "0") setCookie("internal", "", 0);
   return mode !== "1" && analyticsCookie("internal") !== "1" &&
-    analyticsCookie("analytics_consent") !== "0" && !isAdminPath(location.pathname);
+    analyticsCookie("analytics_consent") !== "0" && !isAdminPath(location.pathname) && !isVoucherCheckoutPath(location.pathname);
 }
 
 function persist() {
