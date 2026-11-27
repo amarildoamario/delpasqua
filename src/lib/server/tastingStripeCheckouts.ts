@@ -40,16 +40,16 @@ export async function readTastingStripeCheckouts(
     where: {
       sessionId: { in: [...bySession.keys()] },
       livemode: true,
-      outcome: "processed",
       created: { gte: Math.floor(+start / 1000), lt: Math.ceil(+endExclusive / 1000) },
-      type: { in: [
-        "checkout.session.completed", "checkout.session.async_payment_succeeded",
-        "checkout.session.expired", "checkout.session.async_payment_failed",
-      ] },
+      OR: [
+        { outcome: "processed", type: { in: ["checkout.session.completed", "checkout.session.expired", "checkout.session.async_payment_failed"] } },
+        { outcome: { in: ["processed", "review"] }, type: "checkout.session.async_payment_succeeded" },
+      ],
     },
     orderBy: { created: "asc" },
-    select: { sessionId: true, type: true, created: true, paymentIntentId: true },
+    select: { sessionId: true, type: true, created: true, paymentIntentId: true, payloadSnippet: true },
   });
+  const asyncSessions = new Set(events.filter((event) => event.type.includes(".async_payment_")).map((event) => event.sessionId));
   for (const event of events) {
     const checkout = event.sessionId ? bySession.get(event.sessionId) : undefined;
     if (!checkout) continue;
@@ -59,7 +59,11 @@ export async function readTastingStripeCheckouts(
         metaJson: null, createdAt, type: event.type === "checkout.session.expired" ? "ORDER_EXPIRED" : "STRIPE_SESSION_FAILED",
       });
     } else if (checkout.channel === "tasting" && !checkout.paidAt && event.paymentIntentId) {
-      checkout.paidAt = createdAt;
+      // Older completions only recorded the payment intent. A later async
+      // outcome distinguishes a pending legacy completion from a payment.
+      const explicitStatus = /"paymentStatus"\s*:\s*"([^"]+)"/.exec(event.payloadSnippet ?? "")?.[1];
+      if (event.type === "checkout.session.async_payment_succeeded" || explicitStatus === "paid" ||
+        (!explicitStatus && !asyncSessions.has(event.sessionId))) checkout.paidAt = createdAt;
     }
   }
   for (const checkout of bySession.values()) {

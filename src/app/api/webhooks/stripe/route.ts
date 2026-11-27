@@ -458,6 +458,7 @@ export async function POST(req: NextRequest) {
                 paymentIntentId,
                 outcome: "processed",
                 processedAt: new Date(),
+                payloadSnippet: JSON.stringify({ paymentStatus: session.payment_status }),
               },
             });
 

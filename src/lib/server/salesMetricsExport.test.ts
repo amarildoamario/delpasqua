@@ -81,11 +81,16 @@ test("metrics count shop and voucher payments without browser purchase events or
       return [
         { id: "tasting-paid", stripeSessionId: "cs_live_tasting_paid", createdAt, updatedAt: createdAt, status: "CONFIRMED" },
         { id: "tasting-expired", stripeSessionId: "cs_live_tasting_expired", createdAt, updatedAt: createdAt, status: "CANCELED" },
+        { id: "tasting-pending", stripeSessionId: "cs_live_tasting_pending", createdAt, updatedAt: createdAt, status: "CONFIRMED" },
+        { id: "tasting-failed", stripeSessionId: "cs_live_tasting_failed", createdAt, updatedAt: createdAt, status: "CONFIRMED" },
       ];
     } },
     stripeWebhookEvent: { findMany: async () => [
       { sessionId: "cs_live_tasting_paid", type: "checkout.session.completed", created: Date.parse("2026-11-08T10:05:00Z") / 1000, paymentIntentId: "pi_tasting" },
       { sessionId: "cs_live_tasting_expired", type: "checkout.session.expired", created: Date.parse("2026-11-08T10:30:00Z") / 1000, paymentIntentId: null },
+      { sessionId: "cs_live_tasting_pending", type: "checkout.session.completed", created: Date.parse("2026-11-08T10:05:00Z") / 1000, paymentIntentId: "pi_pending", payloadSnippet: '{"paymentStatus":"unpaid"}' },
+      { sessionId: "cs_live_tasting_failed", type: "checkout.session.completed", created: Date.parse("2026-11-08T10:05:00Z") / 1000, paymentIntentId: "pi_failed" },
+      { sessionId: "cs_live_tasting_failed", type: "checkout.session.async_payment_failed", created: Date.parse("2026-11-08T10:08:00Z") / 1000, paymentIntentId: "pi_failed" },
     ] },
     adminSession: { findFirst: async () => ({ id: "admin", createdAt: new Date(), rotatedAt: new Date() }) },
   };
@@ -106,18 +111,20 @@ test("metrics count shop and voucher payments without browser purchase events or
     assert.equal(report.kpis.storefrontPaidOrders, 2);
     assert.equal(report.kpis.voucherPaidOrders, 1);
     assert.equal(report.paidTastingVouchers[0].totalCents, 7000);
-    const channels = new Map<string, { started: number; paid: number; expiredUnpaid: number; canceledUnpaid: number }>(
+    const channels = new Map<string, { started: number; paid: number; expiredUnpaid: number; canceledUnpaid: number; openPending: number; failedUnpaid: number }>(
       report.checkoutCohort.byChannel.map((row: { channel: string }) => [row.channel, row]),
     );
     assert.equal(channels.get("voucher")?.started, 1);
     assert.equal(channels.get("voucher")?.paid, 1);
-    assert.equal(channels.get("tasting")?.started, 2);
+    assert.equal(channels.get("tasting")?.started, 4);
     assert.equal(channels.get("tasting")?.paid, 1);
     assert.equal(channels.get("tasting")?.expiredUnpaid, 1);
     assert.equal(channels.get("tasting")?.canceledUnpaid, 0);
-    assert.equal(report.checkoutCohort.stripeCheckoutsStarted, 3);
+    assert.equal(channels.get("tasting")?.openPending, 1);
+    assert.equal(channels.get("tasting")?.failedUnpaid, 1);
+    assert.equal(report.checkoutCohort.stripeCheckoutsStarted, 5);
     assert.equal(report.insights.stripe.started, report.checkoutCohort.stripeCheckoutsStarted);
-    assert.equal(report.insights.daily[0].checkoutsStarted, 3);
+    assert.equal(report.insights.daily[0].checkoutsStarted, 5);
     assert.equal(report.kpis.uniqueSessions, 2);
     assert.equal(report.kpis.uniqueVisitors, 1);
     assert.equal(report.kpis.pageViews, 4);
